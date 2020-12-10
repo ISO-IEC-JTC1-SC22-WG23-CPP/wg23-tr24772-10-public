@@ -11,6 +11,5 @@ cat <<!EOF >index.md
 for i in 6*.html
 do
   base=`basename "$i" .html`
-  echo "[$base](https:$i)" >> index.md
-  echo "" >> index.md # provide separate lines
+  echo "[$base](https:$i)<br/>" >> index.md
 done
