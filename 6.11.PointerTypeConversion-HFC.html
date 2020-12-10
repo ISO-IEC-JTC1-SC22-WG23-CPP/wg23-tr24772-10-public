@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>parts/6.11.PointerTypeConversion-HFC.md</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">parts/6.11.PointerTypeConversion-HFC.md</h1>
+</header>
+<h2 id="pointer-type-conversions-hfc">6.11 Pointer Type Conversions [HFC]</h2>
+<h3 id="applicability-to-language">6.11.1 Applicability to language</h3>
+<p><em>In this clause, all C++ references, in addition to pointers. The <code class="sourceCode cpp">shared_ptr</code> casts</em></p>
+<p>The vulnerabilites as described in ISO/IEC TR 24772-1:2019 clause 6.11.1 applies to C++.</p>
+<p>In general casting pointers breaks the type system and should be avoided.</p>
+<p>In C++, a C-style cast is defined in terms of the C++ cast operators <code class="sourceCode cpp"><span class="kw">const_cast</span></code>, <code class="sourceCode cpp"><span class="kw">static_cast</span></code>, and <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. In some cases, it is unspecified which cast is used, for example when a cast operation involves an incomplete type, a <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> may be used for the conversion which can produce an incorrect result.</p>
+<p>Especially, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> has the problem that it simply treats the unmodified pattern of bits in the pointer as being of the target type rather than the original type, but the C++ standard recognizes that the language or compiler may impose constraints or additional data requirements on a pointer. <code class="sourceCode cpp"><span class="kw">static_cast</span></code> and <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> take this difference into account, but other cast operators do not take this into consideration and hence can give incorrect results. For example, in the use of multiple inheritance, the address of an object may be different than one of its base class sub-objects, causing the potential for the exploitable access of adjacent memory.</p>
+<p>C++ permits the change of constant or volatile properties as part of a conversion. Such conversions, unless done in extremely limited ways, puts the program at risk of creating undefined behavior.</p>
+<p>A typical use of pointer conversion in C++ occurs where there is a hierarchy of classes declared, as in:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Base {<span class="kw">virtual</span> ~Base() = <span class="cf">default</span>; };</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Derived: Base { };</span></code></pre></div>
+<p>Where a <code>Base</code> pointer needs to be converted to <code>Derived</code> pointer, <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> will check at runtime that the pointer is to an object of the correct type. If it’s not, either <code class="sourceCode cpp"><span class="kw">nullptr</span></code> will be returned, or an is exception thrown in case references are used as source and target type.<span data-custom-style="annotation reference"></span></p>
+<p><em>C++ Dynamic cast and the use of it during construction and destruction needs further exposition. The this pointer type can have surprising effects.</em></p>
+<p><em>AI</em> <em>–</em> <em>Paul, Richard to review</em> <em>– Writeup about incomplete objects before or after their lifetime and related to translation units.<span data-custom-style="annotation reference"></span></em><span data-custom-style="annotation reference"></span></p>
+<p>Pointer casts to a more strictly aligned pointer type is undefined behaviour.</p>
+<p><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> for pointer-interconvertible on objects (see clause 6.9.2 of IS 14882)</p>
+<p>C++ permits <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> to be used to convert a pointer to an object, a, to a pointer to another object, b, only in specific restricted circumstances, i.e., when</p>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>a and b are the same object,</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>either a or b is a standard-layout union object and the other is a non-static data member of that object,</p>
+</div>
+<ul>
+<li>Examples: <code>{.cpp}     union A { int i; double d; } a;\     int\* iptr = reinterpret_cast\&lt;int\*\&gt;(&amp;a);\     double\* dptr = reinterpret_cast\&lt;double\*\&gt;(&amp;a);\     A\* uptr1 = reinterpret_cast\&lt;A\*\&gt;(iptr);\     A\* uptr2 = reinterpret_cast\&lt;A\*\&gt;(dptr);</code></li>
+</ul></li>
+<li><div data-custom-style="List Paragraph">
+<p>either a or b is a standard-layout class object and the other is the first non-static data member of that object,</p>
+</div>
+<ul>
+<li>Examples: <code>{.cpp}     struct B { int i; double d; } b;\     int\* iptr = reinterpret_cast\&lt;int\*\&gt;(&amp;b);\     B\* bptr = reinterpret_cast\&lt;B\*\&gt;(iptr);</code></li>
+</ul></li>
+<li><p>either a or b is a standard-layout class object with no non-static data members and the other is the first base class subobject of that object, or,</p>
+<ul>
+<li>Examples: <code>{.cpp}     struct A { double d; };\     struct B : A { static int i; } b;\     double\* dptr = reinterpret_cast\&lt;double\*\&gt;(&amp;b.d);\     B\* cptr = reinterpret_cast\&lt;B\*\&gt;(dptr);</code></li>
+</ul></li>
+<li><div data-custom-style="List Paragraph">
+<p>there exists an object c where a and c are <em>pointer-interconvertible</em> and c and b are pointer-interconvertible.<span data-custom-style="annotation reference"></span></p>
+</div></li>
+</ul>
+<p>In essence, such pointer-interconvertibility implies objects a and b have the same address, however, having the same address does not imply a and b are pointer-interconvertible! For example, an array and its first element have the same address but they are not pointer-interconvertible. This means that one cannot use reinterpret_cast to cast an array object to the type of its first element or vice versa. [Reference: ISO 14882 Section 6.9.2 [basic.compound], Paragraph 4].</p>
+<h3 id="guidance-to-language-users">6.11.2 Guidance to language users</h3>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>Follow the advice provided in ISO/IEC TR 24772-1:2019 clause 6.11.5.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Prefer C++ <code class="sourceCode cpp">T&amp;</code> references to <code class="sourceCode cpp">T*</code> pointers</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause 6.65.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>When downcasting, prefer <code>dynamic_cast</code> and explicitly handle the possible failure cases. <em>What about</em> <em>references???</em></p>
+</div>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p><em>C++ Core guidelines C.146, 1.47 and 1.48</em></p>
+</div></li>
+</ul></li>
+<li><div data-custom-style="List Paragraph">
+<p>Only be made using <code>dynamic_cast</code> for casts between two bases in a multiple inheritance hierarchy shall o. <em>What about references???</em></p>
+</div>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p><em>C++ Core guidelines C.146</em></p>
+</div></li>
+</ul></li>
+<li><div data-custom-style="List Paragraph">
+<p>Heed compiler warnings that are issued for pointer conversion instances. The decision may be made to avoid all conversions so any warnings must be addressed. Note that casting into and out of <code>void *</code> pointers will most likely not generate a compiler warning as this is valid in C++</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Use <code>new</code> and <code>delete</code> to allocate/deallocate memory, rather than <code>malloc()</code>/<code>free()</code>.</p>
+</div>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>EXP51-CPP. Do not delete an array through a pointer of the incorrect type (implied by 6.11)</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>EXP57-CPP. Do not cast or delete pointers to incomplete classes (-&gt; 6.11)</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>EXP36-C. Do not cast pointers into more strictly aligned pointer types (-&gt; 6.11)</p>
+</div></li>
+<li></li>
+<li><div data-custom-style="List Paragraph">
+<p>MISRA C++ 10-1-1 - Classes should not be derived from virtual bases.</p>
+</div></li>
+</ul></li>
+</ul>
+</body>
+</html>

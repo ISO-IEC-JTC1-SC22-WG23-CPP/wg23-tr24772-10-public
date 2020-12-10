@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>parts/6.40.TemplatesAndGenerics-SYM.md</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">parts/6.40.TemplatesAndGenerics-SYM.md</h1>
+</header>
+<h2 id="templates-and-generics-sym">6.40 Templates and Generics [SYM]</h2>
+<h3 id="applicability-to-language">6.40.1 Applicability to language<span data-custom-style="annotation reference"></span></h3>
+<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.40 exists in C++. C++ provides the facility <em>Templates</em> to support the generic programming methodology. C++ Templates can be variadic templates. C++ Templates can accept as arguments types, templates, and values, including addresses of global variables. <em>Concepts</em> improve template argument checking at compile time.</p>
+<p>Programming language compilers help programmers avoid run-time errors by performing static analysis on the code and generating diagnostics that prevent run-time errors. Therefore, the goal of the C++ language is to help transition code towards compile-time analysis instead of relying on runtime executions that result in run-time failures. Templates are one of the favourable mechanisms to achieve this goal of maximizing compile-time analysis to reduce or eliminate run-time analysis.</p>
+<p>When used appropriately, they are suitable for embedded and safety critical systems;</p>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>They provide type safe generic in contrast to legacy void*-based or macro-based genericity;</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>They have no runtime overhead for inline operations; and</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>They have no memory used or code generated for unused operations which are both critical in limited resource systems.</p>
+</div></li>
+</ul>
+<p>Excessive use of templates can lead to cognitive overload in terms of learning, understanding and the maintainability of the code. This clause provides explanation and guidance to mitigate problems that can arise.</p>
+<p>From ISO/IEC TR 24772-1:2019 clause 6.40.1 (or .3) "Confusion, and hence potential vulnerability, can arise where the instantiated code is apparently invalid, but does not result in a compiler error. For example, a generic class defines a set of members, a subset of which rely on a particular property of the instantiation type (such as a generic container class with a sort member function, only the sort function relies on the instantiating type having a defined relational operator). In some languages, such as C++, if the generic is instantiated with a type that does not meet all the requirements but the program never subsequently makes use of the subset of members that rely on the property of the instantiating type, the code will compile and execute (for example, the generic container is instantiated with a user defined class that does not define a relational operator, but the program never calls the sort member of this instantiation). When the code is reviewed the generic class will appear to reference a member of the instantiating type that does not exist."</p>
+<p>The above paragraph does not correctly characterise the issue. In an implicit instantiation of a class template, only those functions that are ODR (one definition rule)-used are instantiated. Therefore, a template argument need not provide all of the operations used by all possible member functions of the class template. This case is exhibited in the standard library. std::vector&lt;T&gt;::emplace requires an accessible constructor of T. The Factory pattern makes constructors of a class C inaccessible to anyone but the factory functions. Still it is desirable to use std::vector with objects of type C. In this case, emplace cannot be used, which is clearly the intended behaviour of the class because objects of type C should only be constructed by the factory functions.</p>
+<p>It is the nature of templates that every method that is not called is not compiled. If the program is changed such that a function is later ODR-used and the program recompiled, Three possible outcomes are:</p>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>The program compiles and executes safely;</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>The program fails to compile; or</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>The program executes erroneously.</p>
+</div></li>
+</ul>
+<p>Vulnerabilities that arise from the third case are covered elsewhere in the document(list), however, in the case of templates, the fact that code is written and may not be instantiated for a long time since code that invokes it has not been written, errors may not appear until later.</p>
+<p>Features such as concepts and <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can be used to mitigate the issue.</p>
+<p><em>Mitigation</em> <em>– ensure complete coverage of Template code with unit tests</em></p>
+<p>The third case is not specific to templates, except that the problem may be hidden is addressed in 6.2.</p>
+<p>In the above paragraph, cases can arise where the programmer has not provided a type with all of the operations needed to function correctly in the template. For example,</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; <span class="kw">typename</span> ForwardIterator , <span class="kw">typename</span> Value &gt;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   ForwardIterator find (ForwardIterator first, ForwardIterator last, <span class="at">const</span> Value &amp; val)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>       <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>       ++ first ;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> first</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   }</span></code></pre></div>
+<p>The standard says that</p>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>the first template argument must be a forward iterator.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>the second template argument type must be comparable to the value type of that iterator using <code class="sourceCode cpp">==</code>.</p>
+</div></li>
+</ul>
+<p>These requirements are implicit and all the compiler has to go by is their use in the function</p>
+<p>body. The result is great flexibility, splendid generated code for correct calls, and spectacularly bad</p>
+<p>error messages for incorrect calls. The obvious solution is to specify the first two requirements as</p>
+<p>part of the template’s interface:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; forward_iterator Iter , <span class="kw">typename</span> Value &gt;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="kw">requires</span> equality_comparable &lt;Value, Iter :: <span class="dt">value_type</span> &gt;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find ( Iter first, Iter last, <span class="at">const</span> Value &amp; val );</span></code></pre></div>
+<p>This is roughly what C++20 offers. Note the equality_comparable concept. It captures the</p>
+<p>required relationship between the two template arguments.</p>
+<p>The general C++11 <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can also be used:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span> ( Equality_comparable &lt;<span class="dt">int</span> &gt;);       <span class="co">// succeeds</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> &lt; Eeqality_comparable &lt;<span class="dt">int</span> ,<span class="dt">long</span> &gt;); <span class="co">// succeeds</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> S { <span class="dt">int</span> a; };</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> ( Equality_comparable &lt;S&gt;);         <span class="co">// fails because structs don&#39;t</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                                       <span class="co">// automatically get == &amp; !=</span></span></code></pre></div>
+<p><code class="sourceCode cpp"><span class="kw">static_assert</span> ( Equality_comparable \&lt;<span class="dt">int</span> \&gt;);</code></p>
+<p><strong><u>Discussion of “ranges”</u></strong></p>
+<p>Using the example above, the first two function arguments must denote a sequence. To express this requirement (that [first:last) is a sequence), requires a library extension. C++20 offers that in the Ranges standard-library component (§9.3.5). Hence in the example below we replace iterators with ranges:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; range R, <span class="kw">typename</span> Value &gt;</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">requires</span> equality_comparable &lt;Value , Range :: <span class="dt">value_type</span> &gt;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find (R r, <span class="at">const</span> Value &amp; val )</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> first = begin (r);</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">auto</span> last = end (r);</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>   <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>   ++ first ;</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> first</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><span data-custom-style="annotation reference"></span></p>
+<p><strong>Other issues</strong></p>
+<p>Overload resolution of templates differs from the overload resolution of non-template code. This can result in methods or operators being chosen that are unexpected by the developer.</p>
+<p>A template constructor is never a copy or move constructor and hence does not prevent the implicit definition of a copy or move constructor even if the constructor looks similar.</p>
+<p>There are cases, however, where the instantiation of a template with a parameter that matches syntactic but not semantic requirements, such as ++ for a pointer, will compile and execute but will be wrong and can result in undefined behaviour. Other examples relate to incomplete class types, see clause 6.2 <em>Type system.</em></p>
+<p>Another issue – likely to be placed elsewhere and referenced here</p>
+<p>Standard vector construction issue where braces are replaced with curly braces. (Paul)</p>
+<p>Guidance – use braces initially and only use other format if the compiler fails ???</p>
+<p><em>(Examples needed</em>)</p>
+<p>Core guidelines (fill in references)</p>
+<p>I.9 T.10, T.11, 12, 13, T.20, T.21, T.22, T.23, T.24, T.25, T.26, T.30, T.31 – forward to Clive.</p>
+<p>(<em>We may wish to summarize)</em></p>
+<h3 id="guidance-to-language-users">6.40.2 Guidance to language users</h3>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>Use static analysis tools to diagnose the use of inappropriate types in a template interface</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p><em>Cyclic dependencies and ODR (one definition rule) use …</em></p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Consider using <em>concepts</em> for each template type parameter</p>
+</div>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>Create and use concepts that specify “meaningful” semantics</p>
+</div></li>
+</ul></li>
+<li><div data-custom-style="List Paragraph">
+<p>Write templates that check if a specific template argument fulfills the minimal syntactic requirements for the template, for example by using static_assert with type_traits.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>For generic operator functions, consider providing them as hidden friends through<span data-custom-style="annotation reference"></span> mix-in class templates.</p>
+</div></li>
+</ul>
+<blockquote>
+<p>As an example, the following class template defines equality operators for single-element structs (Template parameter U):</p>
+</blockquote>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> U&gt;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Eq{</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">operator</span>==(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">auto</span> <span class="at">const</span> &amp;[vl]=l;</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">auto</span> <span class="at">const</span> &amp;[vr]=r;</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> vl == vr;</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">operator</span>!=(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> !(l==r);</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">// usage of the above, check that type X obtains operator== and operator!=</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X: Eq&lt;X&gt;{</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> val;</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constexpr</span> <span class="kw">explicit</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        X(<span class="dt">int</span> v):val{v}{}</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">static_assert</span>(X{<span class="dv">42</span>} != X{<span class="dv">43</span>} &amp;&amp; X{<span class="dv">42</span>} == X{<span class="dv">42</span>} );</span></code></pre></div>
+<div data-custom-style="List Paragraph">
+<p>The advantage in using the above mechanism is that these overloads are only visible comparing objects of type X, and not for other types. Implementing them as free functions increases likelihood that implicit conversions will result in the wrong function being called.</p>
+</div>
+<ul>
+<li><div data-custom-style="Text Body">
+<p>Use qualified-id or this-&gt; to refer to names that may be found in a dependent base</p>
+</div></li>
+</ul>
+<div data-custom-style="Text Body">
+<blockquote>
+<p><em>Needs an example and explanation in 6.40.1 (AI Paul)</em></p>
+</blockquote>
+</div>
+<ul>
+<li><div data-custom-style="Text Body">
+<p>For template specialization, declared the specialization:</p>
+</div>
+<ol type="1">
+<li><div data-custom-style="Text Body">
+<p>In the same file as the primary template; or</p>
+</div></li>
+<li><div data-custom-style="Text Body">
+<p>In the same file as the user-defined type for which the specialization is declared.</p>
+</div></li>
+</ol></li>
+<li><div data-custom-style="Text Body">
+<p>Do not specialize function templates, except when specialization is on a non-deduceable template parameter</p>
+</div></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>parts/6.47.Inter-languageCalling-DJS.md</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">parts/6.47.Inter-languageCalling-DJS.md</h1>
+</header>
+<h2 id="inter-language-calling-djs">6.47 Inter-language Calling [DJS]</h2>
+<h3 id="applicability-to-language">6.47.1 Applicability to language</h3>
+<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.47 is applicable to C++.</p>
+<p>C++ is a multi-paradigm language with a number of features that do not interface simply with other language systems. It is left to the implementation team the task of converting the results of these paradigms to constructs that can cross an interface for further processing in other languages.</p>
+<p>C++ compilers provide an application binary interface (ABI) that delineates areas of interoperability with other languages or other C++ compiler/runtime systems. An ABI includes calling conventions, data layout, error and exception handling and return conventions, name mangling, data model, initialization of memory, and linkage to operating systems and libraries.</p>
+<p>C++ compilers implement a C++ language linkage and a C language linkage. It is implementation-defined what other languages the implementation supports. Alternatively, other language systems provide linkages to C systems[^3](Ada has developed a standard for interfacing with C. Fortran has included a Clause 15 that explains how to call C functions.), leaving the developer the task of channeling everything through this common language system.</p>
+<h3 id="guidance-to-language-users">6.47.2 Guidance to language users</h3>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>Follow the guidance contained in ISO/IEC TR 24772-1:2019 clause 6.47.5</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Use standard layout types for the interoperable interfaces.</p>
+</div>
+<ul>
+<li><div data-custom-style="List Paragraph">
+<p>Use language linkage facilities that support the languages being used.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>EXP56-CPP. Do not call a function with a mismatched language linkage (-&gt; 6.47)</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>EXP60-CPP. Do not pass a nonstandard-layout type object across (-&gt; 6.47 ?)<br />
+execution boundaries</p>
+</div></li>
+</ul></li>
+<li><div data-custom-style="List Paragraph">
+<p>Be aware that the static initialization phase and dynamic initialization for every language system are required before the system begins execution</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Be aware that C++ exceptions are not usually compatible with exceptions in other languages.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Segregate outgoing cross-language interfacing code into functions that present a C++ interface to the C++ code and implements that interface by calling code compatible with the other language system. Similarly implement incoming cross-language interfaces by providing simplified functions that presents a simplified (C or other language) interface and is implemented by calling C++ code with the correct style.</p>
+</div></li>
+<li><div data-custom-style="List Paragraph">
+<p>Separate the interfacing code from the code containing the main functionality</p>
+</div></li>
+</ul>
+<p>See also the C++ Core Guidelines CPL.3.</p>
+<p><em>AI 63-6 – group – add the guidance from 6.47.2 Interoperability into the Core Guidelines.</em></p>
+</body>
+</html>
