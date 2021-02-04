@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>parts/4.concepts.md</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">parts/4.concepts.md</h1>
+</header>
+<h1 id="language-concepts">4. Language concepts</h1>
+<p><u><em>This clause requires a rewrite. See C++ Core Guidelines CPL for a good explanation of the differences</em>.</u></p>
+<p>C++ has a rich type system with many nuances. In addition to the C base types (int, long, float, double, char, and arrays with their C-style vulnerabilities), C++ provides the following:</p>
+<ul>
+<li><pre><code>Distinct types for char, signed char, unsigned char</code></pre></li>
+<li><pre><code>bool with a true Boolean context</code></pre></li>
+<li><pre><code>enum with fixed underlying type</code></pre></li>
+<li><pre><code>Classes as the primary user-defined types</code></pre></li>
+<li><pre><code>Arrays</code></pre></li>
+<li><pre><code>References in addition to pointers</code></pre></li>
+<li><pre><code>Parameterized types</code></pre></li>
+</ul>
+<p>Many vulnerabilities can be mitigated more easily by using library facilities rather than the base language types. (e.g. std::string rather than char*)</p>
+<ul>
+<li><pre><code>Use of the `explicit`{.cpp} keyword for constructors and conversion
+operators</code></pre></li>
+<li><pre><code>`operator bool()`{.cpp} discussion</code></pre></li>
+<li><pre><code>many built-in implicit conversions, refer to TR 24772-3 clause 6.2
+and other clauses (C)</code></pre></li>
+<li><pre><code>conversion to bool and null pointer conversions</code></pre></li>
+<li><pre><code>legacy code operator void\* - change to explicit operator bool</code></pre></li>
+<li><pre><code>C-style casts break type safety.</code></pre></li>
+<li><pre><code>static_cast</code></pre></li>
+<li><pre><code>explicit casts highlight mismatches between the design and
+implementation.</code></pre></li>
+<li><pre><code>const and volatile</code></pre></li>
+<li><pre><code>constexpr -- needs a writeup -- (in C++:11 , encouraged heavy stack
+use and possible exhaustion).</code></pre></li>
+</ul>
+<p>Narrowly tailored number-like class types, such as time_point and duration, improve safety by providing only safe and appropriate operations. User-defined types tailored to a particular use case can provide additional safety.</p>
+<p>C++ was initially defined as a syntactic superset of the C programming language: adding object oriented features such as classes, encapsulation, dynamic dispatch, namespaces and templates. It was a “syntactic superset” because whilst there is a core of C++ that is syntactically identical to C, it has always been the case that there are subtle semantic differences between the two, for example:</p>
+<ul>
+<li><p>Historically, C permitted the use of a function before its declaration (though this is now deprecated in C) . This is illegal in C++</p></li>
+<li><p>Where a struct is defined within another struct, in C the inner declaration is in effect made at file scope, so the definition is available for use later in the program. In C++, the inner declaration name is qualified by that of the parent, so without qualification, the inner struct cannot be used later in the program, as in the following example</p></li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> S1 {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>   <span class="kw">struct</span> S2 {...} m1;</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>   ...</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> S2 v1; /\* legal in C <span class="kw">not</span> C++ \*/</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>S1::S2 v2 <span class="co">// legal in C++ not C</span></span></code></pre></div>
+<p>Subsequently, the two languages have diverged, both adding features not present in the other. Not withstanding that, there is still a significant syntactic and semantic overlap between C and C++, so the starting point for this report has been the equivalent for C. However, in many cases, the additional features of C++ provide mechanisms for avoiding the vulnerabilities inherited from C, and these are reflected in the following sections.</p>
+<p><em>Include discussions of Object orientation, <strong>static</strong>, and <strong>const,</strong> scoped enumerations</em></p>
+<p>C++ includes concurrency within the language, expressed by <em>threads</em> and <em>tasks.</em> Threads are sequences of execution that can be executed concurrently with the entity (thread) that created them, and with each other. There are good reasons to use threads in a C++ program:</p>
+<ol type="a">
+<li><p>The running program, or a running thread, block for real-world events, such as awaiting input, awaiting completion of a system-level event, or communications with non-local systems.</p></li>
+<li><p>Threading permit other parts of the program to continue execution even while one or more parts are blocked, or lets a program to await and respond to sets of events in the order that they are received.</p></li>
+<li><p>Threading lets the program make effective use of multiple cores, proving significantly more computing power to a program.</p></li>
+</ol>
+<p>Threads are initiated by calling std::threads constructor. The thread is then initialized and begins execution on its sequence of instructions. A thread can be <em>joined</em>, i.e. the joining thread awaits the completion of the joined thread, or a thread can be <em>detached</em>.</p>
+<p>Threads share data and events via <em>atomic</em> variables, <em>condition_variables</em>, <em>futures</em>, and <em>mutexes</em>.</p>
+<p>Threads terminate when they complete the execution of the function that was named at thread initiation.</p>
+<p>C++ also has the notion of light weight concurrency in the form of <em>tasks</em>. These tasks are created by calling the std:packaged_task with a <em>function</em>, <em>lambda expression</em>, <em>bind expression</em> or another <em>function object</em>. It is expected that the results of a task execution is collected at the end of that execution by calling <em>get_future</em> (t) and waiting for that/those completion(s).</p>
+<p>In addition, C++ programs can interact with other programs executing in a system using operating system-level calls to initiate, schedule, communicate and destroy/terminate itself or others.</p>
+<p>There are a number of significant vulnerabilities associated with concurrency, which are described in clause 6.59 through 6.63 of this document.</p>
+</body>
+</html>
