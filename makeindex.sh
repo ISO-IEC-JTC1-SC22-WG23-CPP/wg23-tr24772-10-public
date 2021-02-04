@@ -4,6 +4,13 @@ cat <<!EOF >index.md
 
 [full document](https:all.html)
 
+## non-rule parts
+
+[3.terms](https:3.terms.html)<br/>
+[4.concepts](https:4.concepts.html)<br/>
+[5.avoiding](https:5.avoiding.html)<br/>
+
+
 ## Index of rules
 
 !EOF
