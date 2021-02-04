@@ -229,33 +229,17 @@
 <p>C++ does not flag accesses outside of array bounds, so an off by one error may not be as detectable in C++ as in some other languages. Several good and freely available tools can be used to help detect accesses beyond the bounds of arrays that are caused by an off by one error. However, such tools will not help in the case where only a portion of the array is used, and the access is still within the bounds of the array.</p>
 <p>C++ mitigates these issues by providing</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Range-based for loops</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">std</code> algorithms</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Iterator style loops terminated by <code class="sourceCode cpp">!=</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Container classes</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">gsl::span</code> (soon to be <code class="sourceCode cpp"><span class="bu">std::</span>span</code>)</p>
-</div></li>
+<li><p>Range-based for loops</p></li>
+<li><p><code class="sourceCode cpp">std</code> algorithms</p></li>
+<li><p>Iterator style loops terminated by <code class="sourceCode cpp">!=</code></p></li>
+<li><p>Container classes</p></li>
+<li><p><code class="sourceCode cpp">gsl::span</code> (soon to be <code class="sourceCode cpp"><span class="bu">std::</span>span</code>)</p></li>
 </ul>
 <h3 id="guidance-to-language-users">6.30.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.30.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use range-based for loops, std algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p>
-</div></li>
+<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.30.5.</p></li>
+<li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++.</p></li>
+<li><p>Use range-based for loops, std algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p></li>
 </ul>
 <blockquote>
 <p>See also the C++ Core guidelines ES.1, ES.42, ES.71, SL.con.3 (more to come)</p>

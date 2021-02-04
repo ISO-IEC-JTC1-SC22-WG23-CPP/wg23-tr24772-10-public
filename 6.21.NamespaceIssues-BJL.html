@@ -156,27 +156,18 @@
 <h3 id="applicability-to-language">6.21.1 Applicability to language</h3>
 <p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.21 is restricted to the following cases:</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Overloading, where clause 6.20 applies;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Overriding, where clause 6.41 applies.</p>
-</div></li>
+<li><p>Overloading, where clause 6.20 applies;</p></li>
+<li><p>Overriding, where clause 6.41 applies.</p></li>
 </ul>
 <p>In all other cases, C++ compilers are required to diagnose an ambiguity.</p>
 <p><em>Note: there might be corner cases with extern “C” functions declared in different namespaces (Peter)</em></p>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p>
-</div>
+<li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>DCL60-CPP. Obey the one-definition rule (6.21)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
-</div></li>
+<li><pre><code>  DCL60-CPP. Obey the one-definition rule (6.21)</code></pre></li>
+<li><pre><code>  DCL40-C. Do not create incompatible declarations of the same</code></pre>
+function or object (6.21)</li>
 </ul></li>
 </ul>
 </body>

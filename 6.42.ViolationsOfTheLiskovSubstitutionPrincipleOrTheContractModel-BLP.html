@@ -234,24 +234,12 @@
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.42.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Obey all preconditions and postconditions of each member function, whether they are specified in the language or not.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prohibit the strengthening of preconditions (specified or not) by overriding member functions.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prohibit the weakening of postconditions (specified or not) by overriding member functions.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prohibit the use of public inheritance for “has-a” relationships. Use composition for “has-a”-relationships instead.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use static analysis tools that identify misuse of inheritance in the contract model.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes. If this cannot be ensured, make the base class private, or avoid inheritance.</p>
-</div></li>
+<li><p>Obey all preconditions and postconditions of each member function, whether they are specified in the language or not.</p></li>
+<li><p>Prohibit the strengthening of preconditions (specified or not) by overriding member functions.</p></li>
+<li><p>Prohibit the weakening of postconditions (specified or not) by overriding member functions.</p></li>
+<li><p>Prohibit the use of public inheritance for “has-a” relationships. Use composition for “has-a”-relationships instead.</p></li>
+<li><p>Use static analysis tools that identify misuse of inheritance in the contract model.</p></li>
+<li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes. If this cannot be ensured, make the base class private, or avoid inheritance.</p></li>
 </ul>
 <blockquote>
 <p>See also C++ Core Guidelines C.120, C.121, C.122, C.126, C.127, and C.129 through C.133.</p>

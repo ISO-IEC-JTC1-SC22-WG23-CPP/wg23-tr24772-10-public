@@ -219,18 +219,10 @@
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.24 exists in C++.</p>
 <p>The evaluation of an expression includes: (i) its value computation; and (ii) its side-effects. The value computation is the value returned by the expression, e.g., the valuation of <code>3 * 2 + 1</code> is <code>7</code>. The side-effect of an expression are</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Write accesses to objects in that expression,</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Reading a volatile object,</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Calling a library I/O function, and</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Calling a function that does any of the above.</p>
-</div></li>
+<li><p>Write accesses to objects in that expression,</p></li>
+<li><p>Reading a volatile object,</p></li>
+<li><p>Calling a library I/O function, and</p></li>
+<li><p>Calling a function that does any of the above.</p></li>
 </ul>
 <p>For example consider:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i = <span class="dv">2</span>;</span>
@@ -290,41 +282,20 @@
 <p>[Stephen: My write-up here is lengthy but should help get more terse wording... but I note this: C++ operator information is in C++17 Clause 8 and Clause 16.5, ... Also per 16.5.1 para 2. unary and binary forms of the same operator are considered to have the same name so one can hide another from an enclosing scope. Thus, this is also another possible vulnerability.]</p>
 <h3 id="guidance-to-language-users">6.24.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.24.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Write expressions so that the same effects will occur under any order of evaluation that C++ permits since side effects can be dependent on an implementation specific order of evaluation.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid overloading logical operators (&amp;&amp; and ||), as these overloaded versions will not short-circuit.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><em>Ensure that</em> ++, --, @= <em>are used as solitary items in a statement.</em></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Be aware to which C++ standard a compiler is compiling code against. This determines the semantics of all operator (overloaded and built-in) expressions.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid placing multiple operations with side effects in a single expression.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Write simple code expressions and statements so that within any expression or statement an object is one of:</p>
-</div>
+<li><p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.24.5.</p></li>
+<li><p>Write expressions so that the same effects will occur under any order of evaluation that C++ permits since side effects can be dependent on an implementation specific order of evaluation.</p></li>
+<li><p>Avoid overloading logical operators (&amp;&amp; and ||), as these overloaded versions will not short-circuit.</p></li>
+<li><p><em>Ensure that</em> ++, --, @= <em>are used as solitary items in a statement.</em></p></li>
+<li><p>Be aware to which C++ standard a compiler is compiling code against. This determines the semantics of all operator (overloaded and built-in) expressions.</p></li>
+<li><p>Avoid placing multiple operations with side effects in a single expression.</p></li>
+<li><p>Write simple code expressions and statements so that within any expression or statement an object is one of:</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Read from;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Only modified once; or</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Only read and modified by: a single increment; a single decrement; a single simple assignment; or a single compound assignment.</p>
-</div></li>
+<li><pre><code>  Read from;</code></pre></li>
+<li><pre><code>  Only modified once; or</code></pre></li>
+<li><pre><code>  Only read and modified by: a single increment; a single</code></pre>
+decrement; a single simple assignment; or a single compound assignment.</li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Be aware that different versions of C++ have different evaluation order specifications and program accordingly.</p>
-</div></li>
+<li><p>Be aware that different versions of C++ have different evaluation order specifications and program accordingly.</p></li>
 </ul>
 </body>
 </html>

@@ -237,24 +237,12 @@
 <p><em>C++ mitigations – AI – Peter Sommerlad. Possibly using MISRA material.</em></p>
 <h3 id="guidance-to-language-users">6.51.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Ensure that if a function-like macro must be used, that its arguments and body are parenthesized.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>In a function-like macro, ensure that each argument is evaluated at most once.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Do not embed pre-processor directives or side-effects such as an assignment, increment/decrement, volatile access, or function call in a function-like macro.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><em>C++-specific guidance.</em></p>
-</div></li>
+<li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
+<li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
+<li><p>Ensure that if a function-like macro must be used, that its arguments and body are parenthesized.</p></li>
+<li><p>In a function-like macro, ensure that each argument is evaluated at most once.</p></li>
+<li><p>Do not embed pre-processor directives or side-effects such as an assignment, increment/decrement, volatile access, or function call in a function-like macro.</p></li>
+<li><p><em>C++-specific guidance.</em></p></li>
 </ul>
 </body>
 </html>

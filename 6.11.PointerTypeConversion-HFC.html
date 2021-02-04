@@ -232,18 +232,12 @@
 <p><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> for pointer-interconvertible on objects (see clause 6.9.2 of IS 14882)</p>
 <p>C++ permits <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> to be used to convert a pointer to an object, a, to a pointer to another object, b, only in specific restricted circumstances, i.e., when</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>a and b are the same object,</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>either a or b is a standard-layout union object and the other is a non-static data member of that object,</p>
-</div>
+<li><p>a and b are the same object,</p></li>
+<li><p>either a or b is a standard-layout union object and the other is a non-static data member of that object,</p>
 <ul>
 <li>Examples: <code>{.cpp}     union A { int i; double d; } a;\     int\* iptr = reinterpret_cast\&lt;int\*\&gt;(&amp;a);\     double\* dptr = reinterpret_cast\&lt;double\*\&gt;(&amp;a);\     A\* uptr1 = reinterpret_cast\&lt;A\*\&gt;(iptr);\     A\* uptr2 = reinterpret_cast\&lt;A\*\&gt;(dptr);</code></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>either a or b is a standard-layout class object and the other is the first non-static data member of that object,</p>
-</div>
+<li><p>either a or b is a standard-layout class object and the other is the first non-static data member of that object,</p>
 <ul>
 <li>Examples: <code>{.cpp}     struct B { int i; double d; } b;\     int\* iptr = reinterpret_cast\&lt;int\*\&gt;(&amp;b);\     B\* bptr = reinterpret_cast\&lt;B\*\&gt;(iptr);</code></li>
 </ul></li>
@@ -251,61 +245,35 @@
 <ul>
 <li>Examples: <code>{.cpp}     struct A { double d; };\     struct B : A { static int i; } b;\     double\* dptr = reinterpret_cast\&lt;double\*\&gt;(&amp;b.d);\     B\* cptr = reinterpret_cast\&lt;B\*\&gt;(dptr);</code></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>there exists an object c where a and c are <em>pointer-interconvertible</em> and c and b are pointer-interconvertible.<span data-custom-style="annotation reference"></span></p>
-</div></li>
+<li><p>there exists an object c where a and c are <em>pointer-interconvertible</em> and c and b are pointer-interconvertible.<span data-custom-style="annotation reference"></span></p></li>
 </ul>
 <p>In essence, such pointer-interconvertibility implies objects a and b have the same address, however, having the same address does not imply a and b are pointer-interconvertible! For example, an array and its first element have the same address but they are not pointer-interconvertible. This means that one cannot use reinterpret_cast to cast an array object to the type of its first element or vice versa. [Reference: ISO 14882 Section 6.9.2 [basic.compound], Paragraph 4].</p>
 <h3 id="guidance-to-language-users">6.11.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the advice provided in ISO/IEC TR 24772-1:2019 clause 6.11.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer C++ <code class="sourceCode cpp">T&amp;</code> references to <code class="sourceCode cpp">T*</code> pointers</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause 6.65.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>When downcasting, prefer <code>dynamic_cast</code> and explicitly handle the possible failure cases. <em>What about</em> <em>references???</em></p>
-</div>
+<li><p>Follow the advice provided in ISO/IEC TR 24772-1:2019 clause 6.11.5.</p></li>
+<li><p>Prefer C++ <code class="sourceCode cpp">T&amp;</code> references to <code class="sourceCode cpp">T*</code> pointers</p></li>
+<li><p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p></li>
+<li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause 6.65.</p></li>
+<li><p>When downcasting, prefer <code>dynamic_cast</code> and explicitly handle the possible failure cases. <em>What about</em> <em>references???</em></p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p><em>C++ Core guidelines C.146, 1.47 and 1.48</em></p>
-</div></li>
+<li><pre><code>  *C++ Core guidelines C.146, 1.47 and 1.48*</code></pre></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Only be made using <code>dynamic_cast</code> for casts between two bases in a multiple inheritance hierarchy shall o. <em>What about references???</em></p>
-</div>
+<li><p>Only be made using <code>dynamic_cast</code> for casts between two bases in a multiple inheritance hierarchy shall o. <em>What about references???</em></p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p><em>C++ Core guidelines C.146</em></p>
-</div></li>
+<li><pre><code>  *C++ Core guidelines C.146*</code></pre></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Heed compiler warnings that are issued for pointer conversion instances. The decision may be made to avoid all conversions so any warnings must be addressed. Note that casting into and out of <code>void *</code> pointers will most likely not generate a compiler warning as this is valid in C++</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use <code>new</code> and <code>delete</code> to allocate/deallocate memory, rather than <code>malloc()</code>/<code>free()</code>.</p>
-</div>
+<li><p>Heed compiler warnings that are issued for pointer conversion instances. The decision may be made to avoid all conversions so any warnings must be addressed. Note that casting into and out of <code>void *</code> pointers will most likely not generate a compiler warning as this is valid in C++</p></li>
+<li><p>Use <code>new</code> and <code>delete</code> to allocate/deallocate memory, rather than <code>malloc()</code>/<code>free()</code>.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>EXP51-CPP. Do not delete an array through a pointer of the incorrect type (implied by 6.11)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>EXP57-CPP. Do not cast or delete pointers to incomplete classes (-&gt; 6.11)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>EXP36-C. Do not cast pointers into more strictly aligned pointer types (-&gt; 6.11)</p>
-</div></li>
+<li><pre><code>  EXP51-CPP. Do not delete an array through a pointer of the</code></pre>
+<p>incorrect type (implied by 6.11)</p></li>
+<li><pre><code>  EXP57-CPP. Do not cast or delete pointers to incomplete classes</code></pre>
+<p>(-&gt; 6.11)</p></li>
+<li><pre><code>  EXP36-C. Do not cast pointers into more strictly aligned pointer</code></pre>
+<p>types (-&gt; 6.11)</p></li>
 <li></li>
-<li><div data-custom-style="List Paragraph">
-<p>MISRA C++ 10-1-1 - Classes should not be derived from virtual bases.</p>
-</div></li>
+<li><pre><code>  MISRA C++ 10-1-1 - Classes should not be derived from virtual</code></pre>
+<p>bases.</p></li>
 </ul></li>
 </ul>
 </body>

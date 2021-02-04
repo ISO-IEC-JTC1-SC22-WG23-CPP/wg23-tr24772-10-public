@@ -222,21 +222,11 @@
 <p>For the definition of “dead store” in C++, non-trivial destructors constitute “use of an object” .</p>
 <h3 id="guidance-to-language-users">6.18.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Use compilers and static analysis tools to identify dead stores in the program.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Declare variables to be accessed by other execution threads that represent values of type <code>T</code> as <code class="sourceCode cpp"><span class="bu">std::</span>atomic&lt;T&gt;</code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>If variables are intended to be accessed by external devices, declare them as <code class="sourceCode cpp"><span class="at">volatile</span></code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>If variables are intended to be used to communicate with signal handlers, declare them as <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Declare variables as <code class="sourceCode cpp"><span class="at">volatile</span></code> when they are intentional targets of a store whose value does not appear to be used.</p>
-</div></li>
+<li><p>Use compilers and static analysis tools to identify dead stores in the program.</p></li>
+<li><p>Declare variables to be accessed by other execution threads that represent values of type <code>T</code> as <code class="sourceCode cpp"><span class="bu">std::</span>atomic&lt;T&gt;</code>.</p></li>
+<li><p>If variables are intended to be accessed by external devices, declare them as <code class="sourceCode cpp"><span class="at">volatile</span></code>.</p></li>
+<li><p>If variables are intended to be used to communicate with signal handlers, declare them as <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code>.</p></li>
+<li><p>Declare variables as <code class="sourceCode cpp"><span class="at">volatile</span></code> when they are intentional targets of a store whose value does not appear to be used.</p></li>
 </ul>
 </body>
 </html>

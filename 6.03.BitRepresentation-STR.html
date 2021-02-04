@@ -230,29 +230,15 @@
 <p>See C++ Core Guidelines ES101 use unsigned types for bit manipulation.</p>
 <p>CERT INT34-C</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Do not use <code class="sourceCode cpp"><span class="bu">std::</span>vector&lt;<span class="dt">bool</span>&gt;</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use bit-fields with care or avoid them entirely. Instead, use a class type containing one or more unsigned integer data members and member functions appropriate to the particular situation.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Do not create a bit-field of a signed type and size one.</p>
-</div></li>
+<li><p>Do not use <code class="sourceCode cpp"><span class="bu">std::</span>vector&lt;<span class="dt">bool</span>&gt;</code></p></li>
+<li><p>Use bit-fields with care or avoid them entirely. Instead, use a class type containing one or more unsigned integer data members and member functions appropriate to the particular situation.</p></li>
+<li><p>Do not create a bit-field of a signed type and size one.</p></li>
 </ul>
-<div data-custom-style="List Paragraph">
 <p>See AUTOSAR A9-6-1</p>
-</div>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid using <code>bit_cast</code> or heavily analyse and document its use.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer performing member-by-member copies and moves instead of using <code>std::memcpy</code> or <code>std::memmove</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Cover known padding with named members to eliminate padding. This can be checked with a <code>static_assert(std::has_unique_object_representations_v&lt;T&gt;)</code>. If this assertion is true then there are no padding bits.</p>
-</div></li>
+<li><p>Avoid using <code>bit_cast</code> or heavily analyse and document its use.</p></li>
+<li><p>Prefer performing member-by-member copies and moves instead of using <code>std::memcpy</code> or <code>std::memmove</code></p></li>
+<li><p>Cover known padding with named members to eliminate padding. This can be checked with a <code>static_assert(std::has_unique_object_representations_v&lt;T&gt;)</code>. If this assertion is true then there are no padding bits.</p></li>
 </ul>
 <p>CERT EXP62-CPP</p>
 </body>

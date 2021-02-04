@@ -221,18 +221,10 @@
 </div>
 <p>Operator precedence and associativity in C++ are determined by the C++ grammar. There are four operators that cannot be overloaded (user-defined)</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">::</code> ;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">.</code> ;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">.\*</code> ; and</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">?:</code> .</p>
-</div></li>
+<li><p><code class="sourceCode cpp">::</code> ;</p></li>
+<li><p><code class="sourceCode cpp">.</code> ;</p></li>
+<li><p><code class="sourceCode cpp">.\*</code> ; and</p></li>
+<li><p><code class="sourceCode cpp">?:</code> .</p></li>
 </ul>
 <p>Due to the large number of operators, one is recommended to consult an operator precedence table when needed, e.g., <a href="https://en.cppreference.com/w/cpp/language/operator_precedence"><span data-custom-style="Hyperlink">https://en.cppreference.com/w/cpp/language/operator_precedence</span></a>. For example, in C++, the bitwise logical and shift operators are sometimes incorrectly treated as having the same precedence as arithmetic operations even though the bitwise operators have lower precedence. For example, the following (correct) expression subtracts one from <code class="sourceCode cpp">x</code> and then checks if the result is zero:</p>
 <p><code class="sourceCode cpp">x - <span class="dv">1</span> == <span class="dv">0</span></code></p>
@@ -243,18 +235,10 @@
 <p>Note: overloaded assignment falls into this category.</p>
 <p>C++ overloading of operators can cause significant issues. One hazard up-to the C++20 standard is that the overloaded comparison operators do not automatically connect the inverse operator, such as:</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">!=</code>;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">\&lt;</code> and <code class="sourceCode cpp">\&gt;=</code>;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp">\&gt;</code> and <code class="sourceCode cpp">\&lt;=;</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>etc.</p>
-</div></li>
+<li><p><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">!=</code>;</p></li>
+<li><p><code class="sourceCode cpp">\&lt;</code> and <code class="sourceCode cpp">\&gt;=</code>;</p></li>
+<li><p><code class="sourceCode cpp">\&gt;</code> and <code class="sourceCode cpp">\&lt;=;</code></p></li>
+<li><p>etc.</p></li>
 </ul>
 <blockquote>
 <p>Unless the declarer declares all relevant operators, unexpected results occur. In addition, overloaded operators <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">\|\|</code> do not have shortcut semantics and thus behave differently. This is problematic since the safety of evaluating a right-hand operand of a short circuit operator often depends on the result of the left-hand operand, e.g. an existence test before the value is read.</p>
@@ -262,32 +246,16 @@
 <p><em>This needs to be adjusted to C++20 changes for comparison, should include combined assignment in examples instead. Peter</em></p>
 <h3 id="guidance-to-language-users">6.23.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.23.5 [JCW].</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Enable all C++ compiler/tool warnings and static analysis tool diagnostics concerning possible issues with precedence and associativity to help avoid and detect mistakes.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Even if technically unnecessary, use parentheses around operator (sub)expressions that are known to be or felt likely to be sources of error.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid overloading the following operators:</p>
-</div>
+<li><p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.23.5 [JCW].</p></li>
+<li><p>Enable all C++ compiler/tool warnings and static analysis tool diagnostics concerning possible issues with precedence and associativity to help avoid and detect mistakes.</p></li>
+<li><p>Even if technically unnecessary, use parentheses around operator (sub)expressions that are known to be or felt likely to be sources of error.</p></li>
+<li><p>Avoid overloading the following operators:</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p><code>&amp;&amp;</code> ;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code>||</code> ;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code>,</code> ;</p>
-</div></li>
+<li><pre><code>  `&amp;&amp;` ;</code></pre></li>
+<li><pre><code>  `||` ;</code></pre></li>
+<li><pre><code>  `,` ;</code></pre></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Break up complex expressions and use temporary variables to make complex expressions easier to understand and maintain.</p>
-</div></li>
+<li><p>Break up complex expressions and use temporary variables to make complex expressions easier to understand and maintain.</p></li>
 </ul>
 </body>
 </html>

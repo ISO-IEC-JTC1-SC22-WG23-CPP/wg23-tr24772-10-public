@@ -231,58 +231,35 @@
 <p>From C++ 2017 forward, casting a value to an enumeration type is undefined behavior unless the source value is within the range of values of an enumeration type. See CERT INT50-CPP.</p>
 <h3 id="guidance-to-language-users">6.5.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Use <em>scoped enumerations</em> in preference to the C-style <em>unscoped enumerations</em> for related values, especially at namespace-level.</p>
-</div>
+<li><p>Use <em>scoped enumerations</em> in preference to the C-style <em>unscoped enumerations</em> for related values, especially at namespace-level.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>See CPP Core Guidelines Enum.3 “Prefer class enums over ‘plain’ enums”.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>See AUTOSAR A7-2-3 “Enumerations shall be declared as scoped enum classes”</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>See MISRA C++ 28.5.5</p>
-</div></li>
+<li><pre><code>  See CPP Core Guidelines Enum.3 &quot;Prefer class enums over &#39;plain&#39;</code></pre>
+<p>enums".</p></li>
+<li><pre><code>  See AUTOSAR A7-2-3 &quot;Enumerations shall be declared as scoped</code></pre>
+<p>enum classes"</p></li>
+<li><pre><code>  See MISRA C++ 28.5.5</code></pre></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use <code class="sourceCode cpp"><span class="kw">constexpr</span></code> to declare a set of unrelated values, such as <code class="sourceCode cpp"><span class="kw">constexpr</span> <span class="dt">size_t</span> bufferLen = <span class="dv">128</span>;</code> <code class="sourceCode cpp"><span class="kw">constexpr</span> <span class="dt">char</span> special_char = <span class="ch">&#39;a&#39;</span>;</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Provide operators and functions that perform the arithmetic operations and conversions appropriate to the enumerated type. Outside those functions, avoid directly performing arithmetic or conversions on objects of the enumerated type.</p>
-</div>
+<li><p>Use <code class="sourceCode cpp"><span class="kw">constexpr</span></code> to declare a set of unrelated values, such as <code class="sourceCode cpp"><span class="kw">constexpr</span> <span class="dt">size_t</span> bufferLen = <span class="dv">128</span>;</code> <code class="sourceCode cpp"><span class="kw">constexpr</span> <span class="dt">char</span> special_char = <span class="ch">&#39;a&#39;</span>;</code></p></li>
+<li><p>Provide operators and functions that perform the arithmetic operations and conversions appropriate to the enumerated type. Outside those functions, avoid directly performing arithmetic or conversions on objects of the enumerated type.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>See CPP Core Guidelines Enum.4 “Define operations on enumerations for safe and simple use”</p>
-</div></li>
+<li><pre><code>  See CPP Core Guidelines Enum.4 &quot;Define operations on</code></pre>
+enumerations for safe and simple use"</li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>If <em>unscoped enumerations</em> are used, follow the general advice of TR 24772-3 clause 6.5.2 as well as the following:</p>
-</div>
+<li><p>If <em>unscoped enumerations</em> are used, follow the general advice of TR 24772-3 clause 6.5.2 as well as the following:</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid casting arbitrary integer values to enumeration type. If it is unavoidable, use braced initialization instead of C-style or static casts<br />
+<li><pre><code>  Avoid casting arbitrary integer values to enumeration type. If it is</code></pre>
+<p>unavoidable, use braced initialization instead of C-style or static casts<br />
 <code>e_type{7};</code></p>
-</div>
-<div data-custom-style="List Paragraph">
-<blockquote>
-<p>See CERT INT50-CPP “Do no Cast to an out-of-range-value”</p>
-</blockquote>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Obtain the underlying enumeration value, by casting the enumeration to its underlying type, e.g.,</p>
-</div>
-<div data-custom-style="List Paragraph">
+<pre><code>  &gt; See CERT INT50-CPP &quot;Do no Cast to an out-of-range-value&quot;</code></pre></li>
+</ul></li>
+<li><pre><code>Obtain the underlying enumeration value, by casting the enumeration</code></pre>
+<p>to its underlying type, e.g.,</p>
 <blockquote>
 <p><code class="sourceCode cpp"><span class="kw">enum</span> <span class="dt">e_type</span>{A, B, C};</code></p>
 </blockquote>
-</div>
-<div data-custom-style="List Paragraph">
 <blockquote>
 <p><code class="sourceCode cpp"><span class="kw">auto</span> value = <span class="kw">static_cast</span>\&lt;<span class="bu">std::</span>underlying_type_t<span class="bu">\</span>&lt;<span class="dt">e_type</span>\&gt;\&gt;(B);</code></p>
-</blockquote>
-</div></li>
-</ul></li>
+</blockquote></li>
 </ul>
 </body>
 </html>

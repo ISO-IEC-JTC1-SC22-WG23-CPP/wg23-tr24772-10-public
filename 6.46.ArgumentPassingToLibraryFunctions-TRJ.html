@@ -160,15 +160,9 @@
 <p>This vulnerability applies in particular to C++ libraries which are designed for high efficiency; responsibility for satisfying the preconditions for most functions rests with the caller. When these preconditions are not met, the result will be undefined behaviour. In addition, error conditions are specified by the language for specific functions, such as raising an exception, returning an error code or a known value, such as NaN.</p>
 <h3 id="guidance-to-language-users">6.46.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidelines of ISO/IEC TR 24772-1 clause 6.47.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use translation modes provided the implementation to perform addition analysis or checking, such as contracts checks, or instrumentation of executing code.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Pay attention to the distinction between precondition violation and error conditions in library documentation. The former results in undefined behaviour; the latter results in defined but possibly unwanted behaviour.</p>
-</div></li>
+<li><p>Follow the guidelines of ISO/IEC TR 24772-1 clause 6.47.5.</p></li>
+<li><p>Use translation modes provided the implementation to perform addition analysis or checking, such as contracts checks, or instrumentation of executing code.</p></li>
+<li><p>Pay attention to the distinction between precondition violation and error conditions in library documentation. The former results in undefined behaviour; the latter results in defined but possibly unwanted behaviour.</p></li>
 </ul>
 </body>
 </html>

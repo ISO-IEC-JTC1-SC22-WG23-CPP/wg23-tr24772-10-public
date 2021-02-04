@@ -219,24 +219,12 @@
 <p>The vulnerability as expressed in ISO/IEC TR 24772-1:2019 and ISO/IEC TR 24772-3:2020 C exists in C++. C++, however, provides mechanisms to mitigate the vulnerability.</p>
 <p>C++ provides a rich set of types whose objects may dangle, e.g.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>References</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Pointers</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Iterators</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp"><span class="bu">std::</span>string_view</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp"><span class="bu">std::</span>span</code></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code></p>
-</div></li>
+<li><p>References</p></li>
+<li><p>Pointers</p></li>
+<li><p>Iterators</p></li>
+<li><p><code class="sourceCode cpp"><span class="bu">std::</span>string_view</code></p></li>
+<li><p><code class="sourceCode cpp"><span class="bu">std::</span>span</code></p></li>
+<li><p><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code></p></li>
 </ul>
 <p>We call these types <em>potentially dangling</em><span data-custom-style="annotation reference"></span><em>.</em></p>
 <p><em>Also have the issue of being thread-safe. Needs a writeup</em> <em>in 6.61</em> <em>likely..</em></p>
@@ -274,24 +262,12 @@
 <h3 id="guidance-to-language-users">6.14.2 Guidance to language users</h3>
 <p>In addition to the guidance provided in TR 24772-1 clause 6.14.5:<span data-custom-style="annotation reference"></span></p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer value types, for example <code>std::string</code> instead of <code>const char *</code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Adopt a style that makes explicit the ownership and lifetime of all resources.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use programming techniques such as RAII (resource allocation is initialization) to limit the scope of potentially dangling objects.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Document the referents of potentially dangling objects created by or modified by a function if any potentially dangling object outlives the invocation of that function. See the example above.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Document any allowable aliasing between the referents of function parameters. Absent such documentation, avoid passing aliased parameters. See the example above.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>When allocating an object, adopt a style that all copies of any potentially dangling reference are guaranteed to be cleaned up before the referent’s lifetime ends.</p>
-</div></li>
+<li><p>Prefer value types, for example <code>std::string</code> instead of <code>const char *</code>.</p></li>
+<li><p>Adopt a style that makes explicit the ownership and lifetime of all resources.</p></li>
+<li><p>Use programming techniques such as RAII (resource allocation is initialization) to limit the scope of potentially dangling objects.</p></li>
+<li><p>Document the referents of potentially dangling objects created by or modified by a function if any potentially dangling object outlives the invocation of that function. See the example above.</p></li>
+<li><p>Document any allowable aliasing between the referents of function parameters. Absent such documentation, avoid passing aliased parameters. See the example above.</p></li>
+<li><p>When allocating an object, adopt a style that all copies of any potentially dangling reference are guaranteed to be cleaned up before the referent’s lifetime ends.</p></li>
 </ul>
 </body>
 </html>

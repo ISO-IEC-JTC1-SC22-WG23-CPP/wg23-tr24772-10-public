@@ -178,29 +178,16 @@
 <p>Use of volatile (keyword type qualifier) for signal handlers (communicating with hardware?). Prefer volatile for communicating with hardware?</p>
 <h3 id="guidance-to-language-users">6.61.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of ISO/IEC TR 24772-1 clause 6.62.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use mutexes, condition variables (convar) in preference to atomic variables to protect data from simultaneous access.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use volatile only for synchronizing abstract machine state from memory.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid the use of volatile for synchronizing access to shared memory between threads (which needs mutex, condvar, or atomics)</p>
-</div>
+<li><p>Follow the guidance of ISO/IEC TR 24772-1 clause 6.62.5.</p></li>
+<li><p>Use mutexes, condition variables (convar) in preference to atomic variables to protect data from simultaneous access.</p></li>
+<li><p>Use volatile only for synchronizing abstract machine state from memory.</p></li>
+<li><p>Avoid the use of volatile for synchronizing access to shared memory between threads (which needs mutex, condvar, or atomics)</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>See C++ Core guidelines CP.8, CP.200, CP.111,<span data-custom-style="annotation reference"></span></p>
-</div></li>
+<li><pre><code>  See C++ Core guidelines CP.8, CP.200,</code></pre>
+CP.111,<span data-custom-style="annotation reference"></span></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid relaxed atomic operations whenever possible. Prefer the sequentially consistent std::memory_order_seq_cst instead .</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use mutexes appropriately to protect accesses to non-atomic shared objects.</p>
-</div></li>
+<li><p>Avoid relaxed atomic operations whenever possible. Prefer the sequentially consistent std::memory_order_seq_cst instead .</p></li>
+<li><p>Use mutexes appropriately to protect accesses to non-atomic shared objects.</p></li>
 </ul>
 </body>
 </html>

@@ -162,21 +162,11 @@
 <p>Note: Why CERT does not address this issue – involves programmer intent and not readily tool-checkable.</p>
 <h3 id="guidance-to-language-users">6.38.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer the composition of most types from types that have either value semantics or semantics that support the intended copy and move semantics of the enclosing type.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>When the above is not achievable, ensure that the copy assignment operator, copy constructor, move assignment operator, move constructor and destructor provide the desired semantics.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid the use of raw pointers with the copy operation and (finish or delete)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of C++ core guidelines C.20, C.22, C.32, C.67</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><em>&lt;This may belong elsewhere – TBD&gt;</em> Avoid updating the value of a string while there are valid string views in existence.</p>
-</div></li>
+<li><p>Prefer the composition of most types from types that have either value semantics or semantics that support the intended copy and move semantics of the enclosing type.</p></li>
+<li><p>When the above is not achievable, ensure that the copy assignment operator, copy constructor, move assignment operator, move constructor and destructor provide the desired semantics.</p></li>
+<li><p>Avoid the use of raw pointers with the copy operation and (finish or delete)</p></li>
+<li><p>Follow the guidance of C++ core guidelines C.20, C.22, C.32, C.67</p></li>
+<li><p><em>&lt;This may belong elsewhere – TBD&gt;</em> Avoid updating the value of a string while there are valid string views in existence.</p></li>
 </ul>
 </body>
 </html>

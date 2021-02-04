@@ -160,36 +160,21 @@
 <p>C++ compilers implement a C++ language linkage and a C language linkage. It is implementation-defined what other languages the implementation supports. Alternatively, other language systems provide linkages to C systems[^3](Ada has developed a standard for interfacing with C. Fortran has included a Clause 15 that explains how to call C functions.), leaving the developer the task of channeling everything through this common language system.</p>
 <h3 id="guidance-to-language-users">6.47.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance contained in ISO/IEC TR 24772-1:2019 clause 6.47.5</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use standard layout types for the interoperable interfaces.</p>
-</div>
+<li><p>Follow the guidance contained in ISO/IEC TR 24772-1:2019 clause 6.47.5</p></li>
+<li><p>Use standard layout types for the interoperable interfaces.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Use language linkage facilities that support the languages being used.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>EXP56-CPP. Do not call a function with a mismatched language linkage (-&gt; 6.47)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>EXP60-CPP. Do not pass a nonstandard-layout type object across (-&gt; 6.47 ?)<br />
-execution boundaries</p>
-</div></li>
+<li><pre><code>  Use language linkage facilities that support the languages being</code></pre>
+<p>used.</p></li>
+<li><pre><code>  EXP56-CPP. Do not call a function with a mismatched language</code></pre>
+<p>linkage (-&gt; 6.47)</p></li>
+<li><pre><code>  EXP60-CPP. Do not pass a nonstandard-layout type object across</code></pre>
+<p>(-&gt; 6.47 ?)<br />
+execution boundaries</p></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Be aware that the static initialization phase and dynamic initialization for every language system are required before the system begins execution</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Be aware that C++ exceptions are not usually compatible with exceptions in other languages.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Segregate outgoing cross-language interfacing code into functions that present a C++ interface to the C++ code and implements that interface by calling code compatible with the other language system. Similarly implement incoming cross-language interfaces by providing simplified functions that presents a simplified (C or other language) interface and is implemented by calling C++ code with the correct style.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Separate the interfacing code from the code containing the main functionality</p>
-</div></li>
+<li><p>Be aware that the static initialization phase and dynamic initialization for every language system are required before the system begins execution</p></li>
+<li><p>Be aware that C++ exceptions are not usually compatible with exceptions in other languages.</p></li>
+<li><p>Segregate outgoing cross-language interfacing code into functions that present a C++ interface to the C++ code and implements that interface by calling code compatible with the other language system. Similarly implement incoming cross-language interfaces by providing simplified functions that presents a simplified (C or other language) interface and is implemented by calling C++ code with the correct style.</p></li>
+<li><p>Separate the interfacing code from the code containing the main functionality</p></li>
 </ul>
 <p>See also the C++ Core Guidelines CPL.3.</p>
 <p><em>AI 63-6 – group – add the guidance from 6.47.2 Interoperability into the Core Guidelines.</em></p>

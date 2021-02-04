@@ -217,7 +217,7 @@
 <h1 id="modifying-constants-ujo">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 8.2 exists in C++. The model of <code class="sourceCode cpp"><span class="at">const</span></code> in C++ is known as "bit-wise const" or "physical const".</p>
-<p>C++ can also model logical-const <em>&lt;need more&gt;</em><span data-custom-style="annotation reference"></span></p>
+<p>C++ can also model logical-const <em>&lt;need more&gt;</em></p>
 <p><em>Also include discussion of keyword</em> <code class="sourceCode cpp"><span class="at">mutable</span></code></p>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime:</p>
 <p><code class="sourceCode cpp"><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;</code></p>
@@ -293,18 +293,10 @@ It is undefined behavior to attempt to modify a const object. The programmer can
 <p>C++ container iterator types, <code class="sourceCode cpp">iterator</code> and <code class="sourceCode cpp">const_iterator</code>, are examples of use of this pattern.</p>
 <h3 id="guidance-to-language-users">6.65.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1and</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>If a</p>
-</div></li>
+<li><p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p></li>
+<li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p></li>
+<li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1and</p></li>
+<li><p>If a</p></li>
 </ul>
 </body>
 </html>

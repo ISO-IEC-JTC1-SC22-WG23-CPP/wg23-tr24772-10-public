@@ -218,18 +218,10 @@
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.13 exists in C++. C++ does, however, provide a number of mechanisms that allow the programmer to create, manipulate and destroy objects without the explicit use of raw pointers.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Containers manage memory and separate memory management from the use of objects.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>The container interface throws an exception if a container cannot be allocated.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Smart pointer creation functions allocate heap memory and handle memory management.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>References provide similar functionality as pointers but cannot be null.</p>
-</div></li>
+<li><p>Containers manage memory and separate memory management from the use of objects.</p></li>
+<li><p>The container interface throws an exception if a container cannot be allocated.</p></li>
+<li><p>Smart pointer creation functions allocate heap memory and handle memory management.</p></li>
+<li><p>References provide similar functionality as pointers but cannot be null.</p></li>
 </ul>
 <p>The C++ mechanism new, by default, throws an exception if the allocated object cannot be created (i.e. if a null pointer would be returned). C++ does provide other allocation mechanism, including C malloc and a non-throwing new, that are not recommended for general use<span data-custom-style="annotation reference"></span>.<span data-custom-style="annotation reference"></span></p>
 <p>See C++ Core Guidelines R: Resource Management, and CERT EXP34-C “Do not dereference null pointers”</p>
@@ -239,18 +231,10 @@
 <h3 id="guidance-to-language-users">6.13.2 Guidance to language users</h3>
 <p>When dereferencing objects of pointer-like types that may contain a null value, follow the guidance from TR 24772-3 clause 6.13.2.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid the use of direct memory allocation. Instead use containers such as <code>std::array</code>, <code>std::vector</code>, and <code>std::span</code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider the use of library facilities of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code>std::shared_ptr</code> to manage the lifetime of the object being referenced.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use references to reduce the number of places where pointers are dereferenced. <span data-custom-style="annotation reference"></span></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Do not suppress exceptions on memory allocation and handle any exceptions that arise. If exceptions are suppressed, follow the guidance of TR 24772-3:2020 clause 6.13.2.</p>
-</div></li>
+<li><p>Avoid the use of direct memory allocation. Instead use containers such as <code>std::array</code>, <code>std::vector</code>, and <code>std::span</code>.</p></li>
+<li><p>Consider the use of library facilities of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code>std::shared_ptr</code> to manage the lifetime of the object being referenced.</p></li>
+<li><p>Use references to reduce the number of places where pointers are dereferenced. <span data-custom-style="annotation reference"></span></p></li>
+<li><p>Do not suppress exceptions on memory allocation and handle any exceptions that arise. If exceptions are suppressed, follow the guidance of TR 24772-3:2020 clause 6.13.2.</p></li>
 </ul>
 </body>
 </html>

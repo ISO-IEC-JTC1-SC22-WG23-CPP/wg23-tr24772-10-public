@@ -227,37 +227,18 @@
 <p>The “<code class="sourceCode cpp"><span class="kw">auto</span></code>” capability lets the compiler select the type of the target, but it permits type mismatches when multiple “<code class="sourceCode cpp"><span class="kw">auto</span></code>” types are later combined in functions, such as signed and unsigned parameters.</p>
 <p>Ensure that you know the type of the result when using “<code>auto</code>” to (what?)</p>
 <p>Use the <code class="sourceCode cpp"><span class="kw">explicit</span></code> keyword on single parameter functions and constructors to prevent the compiler from implicitly converting parameter types.</p>
-<p><span data-custom-style="annotation reference"></span></p>
 <h3 id="guidance-to-language-users">6.15.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.15.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Write signed arithmetic expressions to avoid overflow (including overflow negatively) .</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>If you intend arithmetic to wrap, use an unsigned type and ensure that it never promotes to <code>int</code>.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid mixed types, signed, unsigned in the same expression.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider the use of <code>numeric_limits&lt;T&gt;::modulo</code> to determine whether or not an integer type <code class="sourceCode cpp">T</code> wraps for the target system.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Document where wraparound is expected for a type.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider creating classes that encapsulate integers and that detect or avoid wraparound errors.</p>
-</div></li>
+<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.15.5.</p></li>
+<li><p>Write signed arithmetic expressions to avoid overflow (including overflow negatively) .</p></li>
+<li><p>If you intend arithmetic to wrap, use an unsigned type and ensure that it never promotes to <code>int</code>.</p></li>
+<li><p>Avoid mixed types, signed, unsigned in the same expression.</p></li>
+<li><p>Consider the use of <code>numeric_limits&lt;T&gt;::modulo</code> to determine whether or not an integer type <code class="sourceCode cpp">T</code> wraps for the target system.</p></li>
+<li><p>Document where wraparound is expected for a type.</p></li>
+<li><p>Consider creating classes that encapsulate integers and that detect or avoid wraparound errors.</p></li>
 <li><p>~Consider creating classes that explicitly allow wrap around behaviour.~</p></li>
-<li><div data-custom-style="List Paragraph">
-<p>Ensure that you know the type that <code class="sourceCode cpp"><span class="kw">auto</span></code> will generate, and resist using it for the predefined types.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Document code that appears convoluted but has been created to avoid wrapping.</p>
-</div></li>
+<li><p>Ensure that you know the type that <code class="sourceCode cpp"><span class="kw">auto</span></code> will generate, and resist using it for the predefined types.</p></li>
+<li><p>Document code that appears convoluted but has been created to avoid wrapping.</p></li>
 </ul>
 <p>References:</p>
 <blockquote>

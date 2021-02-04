@@ -240,15 +240,9 @@
 <p><em>AI – Steve – include a comparison of concurrency approaches in clause 4.</em></p>
 <p>Major differences between Tasks and Threads</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Threads need to be explicitly joined and cleaned up.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Tasks are owned by a master.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Tasks and threads share the same scheduler.</p>
-</div></li>
+<li><p>Threads need to be explicitly joined and cleaned up.</p></li>
+<li><p>Tasks are owned by a master.</p></li>
+<li><p>Tasks and threads share the same scheduler.</p></li>
 </ul>
 <p>C++ uses the fork-join model for task creation. When a thread object is created, either all resources needed to execute the thread have been acquired, or an exception is be thrown in the creating thread. Non-standard threading packages may have the vulnerability that the creating thread does not know if the created thread successfully begins execution.</p>
 <p>As soon as the created thread is successfully created, it begins execution and the creating thread resumes execution. If multiple threads are to be created, say in a loop, then each creation is an individual step. Should a resource allocation error occur during the creation of multiple threads, the exception handler associated with the creation will only know which creation cause the exception if the application makes a record of successful creations.</p>
@@ -293,24 +287,12 @@
 <p>Package tasks can be detached and return a future or</p>
 <h3 id="guidance-to-language-users">6.59.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidelines of TR 24772-1 clause 6.60.5.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Either <code>.join()</code> or <code>.detach()</code> a created thread.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use lambda and explicit copy</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>When using an <code>async</code> call, delay a local’s destruction until</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Create and manage threads</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use <code>std::jthread</code> (from C++ 20) or another implementation of a joining thread instead of <code>std::thread</code></p>
-</div></li>
+<li><p>Follow the guidelines of TR 24772-1 clause 6.60.5.</p></li>
+<li><p>Either <code>.join()</code> or <code>.detach()</code> a created thread.</p></li>
+<li><p>Use lambda and explicit copy</p></li>
+<li><p>When using an <code>async</code> call, delay a local’s destruction until</p></li>
+<li><p>Create and manage threads</p></li>
+<li><p>Use <code>std::jthread</code> (from C++ 20) or another implementation of a joining thread instead of <code>std::thread</code> :::</p></li>
 </ul>
 </body>
 </html>

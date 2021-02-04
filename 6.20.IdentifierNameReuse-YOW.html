@@ -221,28 +221,16 @@
 <p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See clause 6.41 for inheritance issues associated with name reuse.</p>
 <h3 id="guidance-to-language-users">6.20.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.20, with the exclusion of guidance related to truncated identifiers.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Document argument-dependent lookup usage where name qualification is not desirable.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Enable compiler diagnostics that inform about the hiding of declarations.</p>
-</div>
+<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.20, with the exclusion of guidance related to truncated identifiers.</p></li>
+<li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
+<li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
+<li><p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p></li>
+<li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>[]{#_Toc310518176 .anchor}DCL60-CPP. Obey the one-definition rule (6.21)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
-</div></li>
+<li><pre><code>  []{#_Toc310518176 .anchor}DCL60-CPP. Obey the one-definition</code></pre>
+<p>rule (6.21)</p></li>
+<li><pre><code>  DCL40-C. Do not create incompatible declarations of the same</code></pre>
+<p>function or object (6.21)</p></li>
 </ul></li>
 </ul>
 </body>

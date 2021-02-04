@@ -248,18 +248,10 @@
 <p><em>need to say something about lifetime extension, returning references, range for vulnerability with dangling references from temporaries. Peter</em></p>
 <h3 id="guidance-to-language-users">6.33.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist. This is done in order to avoid the possibility of a dangling reference.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Do not return the address of a local variable as the result of a function call.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Do not return a local variable as the result of a function returning a reference type</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid capturing by reference in lambdas that will be used non-locally, including return, or passing it to another thread, or stored in dynamic memory</p>
-</div></li>
+<li><p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist. This is done in order to avoid the possibility of a dangling reference.</p></li>
+<li><p>Do not return the address of a local variable as the result of a function call.</p></li>
+<li><p>Do not return a local variable as the result of a function returning a reference type</p></li>
+<li><p>Avoid capturing by reference in lambdas that will be used non-locally, including return, or passing it to another thread, or stored in dynamic memory</p></li>
 </ul>
 <p>See also C++ Core Guidelines F.53, …</p>
 </body>

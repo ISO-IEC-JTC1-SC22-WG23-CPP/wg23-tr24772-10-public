@@ -242,45 +242,19 @@
 <p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope.</p>
 <h3 id="guidance-to-language-users">6.36.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the mitigation mechanisms of subclause 6.36.5 of ISO/IEC TR 24772-1:2019.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Check the returned error status upon return from a function. The C standard library functions provide an error status as the return value and sometimes in an additional global error value.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use static analysis tools to detect and report missing or ineffective error detection or handling.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid error handling based on global state.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> to prevent callers from ignoring error values.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer throwing exceptions to returning error values.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use destructors to manage the finalization of the current context upon exit, whether erroneous or not.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Return error values from each enclosing function until an alternative strategy is available. Consider throwing an exception in lieu of returning an error value.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Handle exceptions at each function where an alternative strategy is available. In functions where no alternative strategy is available, do not catch the exception.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider termination as a last resort strategy for main or for noexcept functions.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Notify higher level constructs before a thread is allowed to terminate.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider the use of an <code>exception_ptr</code> object to transport an exception from the terminating thread to another thread for further processing.</p>
-</div></li>
+<li><p>Follow the mitigation mechanisms of subclause 6.36.5 of ISO/IEC TR 24772-1:2019.</p></li>
+<li><p>Check the returned error status upon return from a function. The C standard library functions provide an error status as the return value and sometimes in an additional global error value.</p></li>
+<li><p>Use static analysis tools to detect and report missing or ineffective error detection or handling.</p></li>
+<li><p>Avoid error handling based on global state.</p></li>
+<li><p>Use <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> to prevent callers from ignoring error values.</p></li>
+<li><p>Prefer throwing exceptions to returning error values.</p></li>
+<li><p>Use destructors to manage the finalization of the current context upon exit, whether erroneous or not.</p></li>
+<li><p>Return error values from each enclosing function until an alternative strategy is available. Consider throwing an exception in lieu of returning an error value.</p></li>
+<li><p>Handle exceptions at each function where an alternative strategy is available. In functions where no alternative strategy is available, do not catch the exception.</p></li>
+<li><p>Consider termination as a last resort strategy for main or for noexcept functions.</p></li>
+<li><p>Notify higher level constructs before a thread is allowed to terminate.</p></li>
+<li><p>Consider the use of an <code>exception_ptr</code> object to transport an exception from the terminating thread to another thread for further processing.</p></li>
 </ul>
-<div data-custom-style="List Paragraph">
 <p>See also C++ Core Guidelines E.1, E.2, E.5, E.6, E.13, E.17, E.19, E.25, and E.28.</p>
-</div>
 </body>
 </html>

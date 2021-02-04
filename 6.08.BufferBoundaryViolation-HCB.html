@@ -216,7 +216,7 @@
 </header>
 <h2 id="buffer-boundary-violation-hcb">6.8 Buffer Boundary Violation [HCB]</h2>
 <h3 id="applicability-to-language">6.8.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.8 exists in C++ when arrays are managed using raw pointers and indexing. To avoid the vulnerability, C++ provides facilities to encapsulate code that may suffer from this vulnerability. The standard library provides classes that mitigate or circumvent this vulnerability. For example, <code class="sourceCode cpp"><span class="bu">std::</span>string,</code> <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> and <code class="sourceCode cpp">iostreams</code> manage buffers internally using “range-for” such as for (auto I: <em>some container</em>) and the algorithm library to access elements of the container without the possibility of a buffer boundary violation.<span data-custom-style="annotation reference"></span></p>
+<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.8 exists in C++ when arrays are managed using raw pointers and indexing. To avoid the vulnerability, C++ provides facilities to encapsulate code that may suffer from this vulnerability. The standard library provides classes that mitigate or circumvent this vulnerability. For example, <code class="sourceCode cpp"><span class="bu">std::</span>string,</code> <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> and <code class="sourceCode cpp">iostreams</code> manage buffers internally using “range-for” such as for (auto I: <em>some container</em>) and the algorithm library to access elements of the container without the possibility of a buffer boundary violation.</p>
 <p><del>A buffer boundary violation condition occurs when an array is indexed outside its bounds, or pointer arithmetic results in an access to storage that occurs outside the bounds of the object accessed. This behaviour may occur when copying, initializing, writing or reading.</del></p>
 <p><del>In C++, the built-in subscript operator <code class="sourceCode cpp">\[\]</code> is defined such that <code class="sourceCode cpp">E1\[E2\]</code> is identical to <code class="sourceCode cpp">(\*((E1)+(E2))</code>), so that in either representation, the value in location (E1+E2) is returned. C++ does not perform bounds checking on arrays: arrays may be accessed outside of their bounds which is undefined behaviour. For example, in C++ the following code is syntactically valid, though, if offset has the value <code class="sourceCode cpp"><span class="dv">10</span></code>, the behaviour is undefined:</del></p>
 <blockquote>
@@ -228,69 +228,33 @@
 <p><del>}</del></p>
 </blockquote>
 <p><del>or, when written using iterators, the same issues can occur</del></p>
-<div data-custom-style="p1">
 <blockquote>
 <p><del>int foo(const int offset) {</del></p>
 </blockquote>
-</div>
-<div data-custom-style="p1">
 <blockquote>
-<p><del><span data-custom-style="apple-converted-space"></span> std::array&lt;int, 5&gt; a;</del></p>
+<p>~~ std::array&lt;int, 5&gt; a;~~</p>
 </blockquote>
-</div>
-<div data-custom-style="p1">
 <blockquote>
-<p><del><span data-custom-style="apple-converted-space"></span> return *(a.begin() + offset);</del></p>
+<p>~~ return *(a.begin() + offset);~~</p>
 </blockquote>
-</div>
-<div data-custom-style="p1">
 <p>Another way that overflows can occur is through the use of C-style strings, which can be treated as arrays of characters, but the nul termination can make overflows possible. See clause 6.7 String Termination.</p>
-</div>
-<div data-custom-style="p1">
 <p>For further explanation and examples, see</p>
-</div>
-<div data-custom-style="p1">
 <p><a href="https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR50-CPP.+Guarantee+that+container+indices+and+iterators+are+within+the+valid+range"><span data-custom-style="Hyperlink">https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR50-CPP.+Guarantee+that+container+indices+and+iterators+are+within+the+valid+range</span></a></p>
-</div>
-<div data-custom-style="p2">
 <p><a href="https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR53-CPP.+Use+valid+iterator+ranges"><span data-custom-style="Hyperlink">https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR53-CPP.+Use+valid+iterator+ranges</span></a></p>
-</div>
-<div data-custom-style="p2">
 <p><a href="https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR55-CPP.+Do+not+use+an+additive+operator+on+an+iterator+if+the+result+would+overflow"><span data-custom-style="Hyperlink">https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR55-CPP.+Do+not+use+an+additive+operator+on+an+iterator+if+the+result+would+overflow</span></a></p>
-</div>
 <p>Note: Consider C++ Core guidelines if completed.</p>
 <h3 id="guidance-to-language-users">6.8.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Avoid C-style arrays. Guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use a library class such as <code>std::array</code> to encapsulate an array, or write a class with similar behavior.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use library classes such as <code>std::span</code> or <code>std::string_view</code> to represent ranges of elements within an array or container. (AI – Paul, double check)</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use containers of the standard library, such as <code>std::vector</code> or <code>std::deque</code>, to model arrays with dynamically changing size.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use iterator-based algorithms, such as those of the standard library.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use the range-based for loop construct such as <code>for (auto e:</code> <em>some container</em><code>)</code> to iterate within the defined bounds of the object.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use iterators over the range of elements to be accessed instead of using an array and bounds as parameters.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>When using C-style arrays, statically show that an access outside of the array cannot occur, or alternatively perform range checking before indexing into the array.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>When performing random access by indexing, follow the guidance of clause 6.9.2. When performing other forms of random access, follow the guidance of clause 6.12.2. <em>)</em><span data-custom-style="annotation reference"></span></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Use static analysis tools to detect buffer boundary violations.</p>
-</div></li>
+<li><p>Avoid C-style arrays. Guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p></li>
+<li><p>Use a library class such as <code>std::array</code> to encapsulate an array, or write a class with similar behavior.</p></li>
+<li><p>Use library classes such as <code>std::span</code> or <code>std::string_view</code> to represent ranges of elements within an array or container. (AI – Paul, double check)</p></li>
+<li><p>Use containers of the standard library, such as <code>std::vector</code> or <code>std::deque</code>, to model arrays with dynamically changing size.</p></li>
+<li><p>Use iterator-based algorithms, such as those of the standard library.</p></li>
+<li><p>Use the range-based for loop construct such as <code>for (auto e:</code> <em>some container</em><code>)</code> to iterate within the defined bounds of the object.</p></li>
+<li><p>Use iterators over the range of elements to be accessed instead of using an array and bounds as parameters.</p></li>
+<li><p>When using C-style arrays, statically show that an access outside of the array cannot occur, or alternatively perform range checking before indexing into the array.</p></li>
+<li><p>When performing random access by indexing, follow the guidance of clause 6.9.2. When performing other forms of random access, follow the guidance of clause 6.12.2. <em>)</em></p></li>
+<li><p>Use static analysis tools to detect buffer boundary violations.</p></li>
 </ul>
 </body>
 </html>

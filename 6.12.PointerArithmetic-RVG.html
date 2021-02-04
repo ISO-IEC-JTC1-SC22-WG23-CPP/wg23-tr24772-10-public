@@ -158,31 +158,17 @@
 <p>Although based on the same implementation principles, iterators provide a layer of abstraction over pointer arithmetic. Their use typically restricts the arithmetic to the safe access to elements of the container. This restriction is enforced by the typical usage, not necessarily by the capability of iterators.</p>
 <h3 id="guidance-to-language-users">6.12.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Follow the guidance of clause 6.8.2.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer standard algorithms to hand-written loops</p>
-</div>
+<li><p>Follow the guidance of clause 6.8.2.</p></li>
+<li><p>Prefer standard algorithms to hand-written loops</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>See Core Guideline.ES.1 (TBD)</p>
-</div></li>
+<li><pre><code>  See Core Guideline.ES.1 (TBD)</code></pre></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Prefer ranges over iterators; and iterators over pointer arithmetic.<br />
-&lt;&lt;&lt;John McF. to provide list of extras.&gt;&gt;&gt;</p>
-</div></li>
+<li><p>Prefer ranges over iterators; and iterators over pointer arithmetic.<br />
+&lt;&lt;&lt;John McF. to provide list of extras.&gt;&gt;&gt;</p></li>
 <li></li>
-<li><div data-custom-style="List Paragraph">
-<p>When using iterators, use an iterator that checks against the bounds of the container before performing the intended operation on the container.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider an outright ban on pointer arithmetic due to the error-prone nature of pointer arithmetic.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Verify that all pointers are assigned a valid memory address for use.</p>
-</div></li>
+<li><p>When using iterators, use an iterator that checks against the bounds of the container before performing the intended operation on the container.</p></li>
+<li><p>Consider an outright ban on pointer arithmetic due to the error-prone nature of pointer arithmetic.</p></li>
+<li><p>Verify that all pointers are assigned a valid memory address for use.</p></li>
 </ul>
 </body>
 </html>

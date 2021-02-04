@@ -220,30 +220,18 @@
 <p>Programming language compilers help programmers avoid run-time errors by performing static analysis on the code and generating diagnostics that prevent run-time errors. Therefore, the goal of the C++ language is to help transition code towards compile-time analysis instead of relying on runtime executions that result in run-time failures. Templates are one of the favourable mechanisms to achieve this goal of maximizing compile-time analysis to reduce or eliminate run-time analysis.</p>
 <p>When used appropriately, they are suitable for embedded and safety critical systems;</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>They provide type safe generic in contrast to legacy void*-based or macro-based genericity;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>They have no runtime overhead for inline operations; and</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>They have no memory used or code generated for unused operations which are both critical in limited resource systems.</p>
-</div></li>
+<li><p>They provide type safe generic in contrast to legacy void*-based or macro-based genericity;</p></li>
+<li><p>They have no runtime overhead for inline operations; and</p></li>
+<li><p>They have no memory used or code generated for unused operations which are both critical in limited resource systems.</p></li>
 </ul>
 <p>Excessive use of templates can lead to cognitive overload in terms of learning, understanding and the maintainability of the code. This clause provides explanation and guidance to mitigate problems that can arise.</p>
 <p>From ISO/IEC TR 24772-1:2019 clause 6.40.1 (or .3) "Confusion, and hence potential vulnerability, can arise where the instantiated code is apparently invalid, but does not result in a compiler error. For example, a generic class defines a set of members, a subset of which rely on a particular property of the instantiation type (such as a generic container class with a sort member function, only the sort function relies on the instantiating type having a defined relational operator). In some languages, such as C++, if the generic is instantiated with a type that does not meet all the requirements but the program never subsequently makes use of the subset of members that rely on the property of the instantiating type, the code will compile and execute (for example, the generic container is instantiated with a user defined class that does not define a relational operator, but the program never calls the sort member of this instantiation). When the code is reviewed the generic class will appear to reference a member of the instantiating type that does not exist."</p>
 <p>The above paragraph does not correctly characterise the issue. In an implicit instantiation of a class template, only those functions that are ODR (one definition rule)-used are instantiated. Therefore, a template argument need not provide all of the operations used by all possible member functions of the class template. This case is exhibited in the standard library. std::vector&lt;T&gt;::emplace requires an accessible constructor of T. The Factory pattern makes constructors of a class C inaccessible to anyone but the factory functions. Still it is desirable to use std::vector with objects of type C. In this case, emplace cannot be used, which is clearly the intended behaviour of the class because objects of type C should only be constructed by the factory functions.</p>
 <p>It is the nature of templates that every method that is not called is not compiled. If the program is changed such that a function is later ODR-used and the program recompiled, Three possible outcomes are:</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>The program compiles and executes safely;</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>The program fails to compile; or</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>The program executes erroneously.</p>
-</div></li>
+<li><p>The program compiles and executes safely;</p></li>
+<li><p>The program fails to compile; or</p></li>
+<li><p>The program executes erroneously.</p></li>
 </ul>
 <p>Vulnerabilities that arise from the third case are covered elsewhere in the document(list), however, in the case of templates, the fact that code is written and may not be instantiated for a long time since code that invokes it has not been written, errors may not appear until later.</p>
 <p>Features such as concepts and <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can be used to mitigate the issue.</p>
@@ -259,12 +247,8 @@
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   }</span></code></pre></div>
 <p>The standard says that</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>the first template argument must be a forward iterator.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>the second template argument type must be comparable to the value type of that iterator using <code class="sourceCode cpp">==</code>.</p>
-</div></li>
+<li><p>the first template argument must be a forward iterator.</p></li>
+<li><p>the second template argument type must be comparable to the value type of that iterator using <code class="sourceCode cpp">==</code>.</p></li>
 </ul>
 <p>These requirements are implicit and all the compiler has to go by is their use in the function</p>
 <p>body. The result is great flexibility, splendid generated code for correct calls, and spectacularly bad</p>
@@ -308,84 +292,56 @@
 <p>(<em>We may wish to summarize)</em></p>
 <h3 id="guidance-to-language-users">6.40.2 Guidance to language users</h3>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Use static analysis tools to diagnose the use of inappropriate types in a template interface</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p><em>Cyclic dependencies and ODR (one definition rule) use …</em></p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Consider using <em>concepts</em> for each template type parameter</p>
-</div>
+<li><p>Use static analysis tools to diagnose the use of inappropriate types in a template interface</p></li>
+<li><p><em>Cyclic dependencies and ODR (one definition rule) use …</em></p></li>
+<li><p>Consider using <em>concepts</em> for each template type parameter</p>
 <ul>
-<li><div data-custom-style="List Paragraph">
-<p>Create and use concepts that specify “meaningful” semantics</p>
-</div></li>
+<li><pre><code>  Create and use concepts that specify &quot;meaningful&quot; semantics</code></pre></li>
 </ul></li>
-<li><div data-custom-style="List Paragraph">
-<p>Write templates that check if a specific template argument fulfills the minimal syntactic requirements for the template, for example by using static_assert with type_traits.</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions</p>
-</div></li>
-<li><div data-custom-style="List Paragraph">
-<p>For generic operator functions, consider providing them as hidden friends through<span data-custom-style="annotation reference"></span> mix-in class templates.</p>
-</div></li>
+<li><p>Write templates that check if a specific template argument fulfills the minimal syntactic requirements for the template, for example by using static_assert with type_traits.</p></li>
+<li><p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions</p></li>
+<li><p>For generic operator functions, consider providing them as hidden friends through<span data-custom-style="annotation reference"></span> mix-in class templates.</p></li>
 </ul>
 <blockquote>
 <p>As an example, the following class template defines equality operators for single-element structs (Template parameter U):</p>
 </blockquote>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> U&gt;</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Eq{</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">operator</span>==(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">auto</span> <span class="at">const</span> &amp;[vl]=l;</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">auto</span> <span class="at">const</span> &amp;[vr]=r;</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> vl == vr;</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">operator</span>!=(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> !(l==r);</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">// usage of the above, check that type X obtains operator== and operator!=</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X: Eq&lt;X&gt;{</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> val;</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constexpr</span> <span class="kw">explicit</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        X(<span class="dt">int</span> v):val{v}{}</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">static_assert</span>(X{<span class="dv">42</span>} != X{<span class="dv">43</span>} &amp;&amp; X{<span class="dv">42</span>} == X{<span class="dv">42</span>} );</span></code></pre></div>
-<div data-custom-style="List Paragraph">
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> U&gt;</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Eq{</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>==(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vl]=l;</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vr]=r;</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vl == vr;</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>!=(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> !(l==r);</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">// usage of the above, check that type X obtains operator== and operator!=</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X: Eq&lt;X&gt;{</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> val;</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constexpr</span> <span class="kw">explicit</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    X(<span class="dt">int</span> v):val{v}{}</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">static_assert</span>(X{<span class="dv">42</span>} != X{<span class="dv">43</span>} &amp;&amp; X{<span class="dv">42</span>} == X{<span class="dv">42</span>} );</span></code></pre></div>
 <p>The advantage in using the above mechanism is that these overloads are only visible comparing objects of type X, and not for other types. Implementing them as free functions increases likelihood that implicit conversions will result in the wrong function being called.</p>
-</div>
 <ul>
-<li><div data-custom-style="Text Body">
-<p>Use qualified-id or this-&gt; to refer to names that may be found in a dependent base</p>
-</div></li>
+<li>Use qualified-id or this-&gt; to refer to names that may be found in a dependent base</li>
 </ul>
-<div data-custom-style="Text Body">
 <blockquote>
 <p><em>Needs an example and explanation in 6.40.1 (AI Paul)</em></p>
 </blockquote>
-</div>
 <ul>
-<li><div data-custom-style="Text Body">
-<p>For template specialization, declared the specialization:</p>
-</div>
+<li><p>For template specialization, declared the specialization:</p>
 <ol type="1">
-<li><div data-custom-style="Text Body">
-<p>In the same file as the primary template; or</p>
-</div></li>
-<li><div data-custom-style="Text Body">
-<p>In the same file as the user-defined type for which the specialization is declared.</p>
-</div></li>
+<li><p>In the same file as the primary template; or</p></li>
+<li><p>In the same file as the user-defined type for which the specialization is declared.</p></li>
 </ol></li>
-<li><div data-custom-style="Text Body">
-<p>Do not specialize function templates, except when specialization is on a non-deduceable template parameter</p>
-</div></li>
+<li><p>Do not specialize function templates, except when specialization is on a non-deduceable template parameter</p></li>
 </ul>
 </body>
 </html>
