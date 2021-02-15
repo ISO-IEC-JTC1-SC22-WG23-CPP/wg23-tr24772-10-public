@@ -2747,18 +2747,15 @@ execution boundaries</p></li>
 <p>This example expands to:</p>
 <div class="sourceCode" id="cb183"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
+<p><em>C++ mitigations – AI – Peter Sommerlad. Possibly using MISRA material.</em></p>
 <h3 id="guidance-to-language-users">6.51.2 Guidance to language users</h3>
 <ul>
 <li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
 <li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
-<li><p>Replace conditional compilation with the preprocessor with <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> where possible, e.g., in function bodies. This includes cases, where compile-time define of a macro (as empty) controls if a macro definition is used to expand to an empty statement or another statement.</p></li>
-<li><p>Replace preprocessor include directives with module <code class="sourceCode cpp"><span class="kw">import</span></code> where possible.</p></li>
-<li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> mechanisms over employing macros that use <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, or <code class="sourceCode cpp"><span class="ot">__func__</span></code>.</p></li>
-<li><p>If a function-like macro must be used, ensure that its parameters and body are parenthesized.</p></li>
+<li><p>Ensure that if a function-like macro must be used, that its arguments and body are parenthesized.</p></li>
 <li><p>In a function-like macro, ensure that each argument is evaluated at most once.</p></li>
 <li><p>Do not embed pre-processor directives or side-effects such as an assignment, increment/decrement, volatile access, or function call in a function-like macro.</p></li>
-<li><p>Macros should only be used for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments.</p></li>
-<li><p>Macro paramters that are used as argument for <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> or <code class="sourceCode cpp"><span class="er">#</span></code> should not be used otherwise in the macro.</p></li>
+<li><p><em>C++-specific guidance.</em></p></li>
 </ul>
 <h2 id="suppression-of-language-defined-run-time-checking-mxb">6.52 Suppression of Language-defined Run-time Checking [MXB]</h2>
 <h3 id="applicability-to-language">6.52.1 Applicability to language</h3>
@@ -3011,11 +3008,15 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <h3 id="applicability-to-language">6.64.1 Applicability to language</h3>
 <p>C++ inherits the C libraries which provide a large family of input and output functions that use a control string to interpret the data read or format the output. These strings include all the feature described in ISO/IEC TR 24772-1:2019 clause 6.64.1.</p>
 <p>C++ provides type-safe alternatives for input/output, which do not use format strings and which should be used in preference, such as</p>
-<div class="sourceCode" id="cb186"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb186-1"><a href="#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;Hello world this is &quot;</span> &lt;&lt; myName </span>
-<span id="cb186-2"><a href="#cb186-2" aria-hidden="true" tabindex="-1"></a>          &lt;&lt; <span class="st">&quot; and I am &quot;</span> &lt;&lt; myAge &lt;&lt; <span class="st">&quot; years old.</span><span class="sc">\n</span><span class="st">&quot;</span>;</span></code></pre></div>
-<p>In addition operator overloading for output operators allows to extend formatting abilities to user-defined types.</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb186-1"><a href="#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> aNumber{};</span>
+<span id="cb186-2"><a href="#cb186-2" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;Enter a whole number, please:&quot;</span>;</span>
+<span id="cb186-3"><a href="#cb186-3" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>cin &gt;&gt; aNumber;</span>
+<span id="cb186-4"><a href="#cb186-4" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>cout &gt;&gt; <span class="st">&quot;Thank you, the number can be represented as &quot;</span></span>
+<span id="cb186-5"><a href="#cb186-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>cout &lt;&lt; <span class="bu">std::</span>format(<span class="st">&quot;0b</span><span class="sc">{0:b}</span><span class="st"> </span><span class="sc">{0:d}</span><span class="st"> 0</span><span class="sc">{0:o}</span><span class="st"> 0x</span><span class="sc">{0:x}</span><span class="st">&quot;</span>, aNumber);</span></code></pre></div>
+<p>In addition, operator overloading of output operators allows to extend formatting abilities to user-defined types.</p>
 <h3 id="guidance-to-language-users">6.64.2 Guidance to language users</h3>
-<p>Do not use the C libraries from <strong><code>&lt;cstdio&gt;</code></strong>.</p>
+<p>Do not use the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p>
+<p>If <em>printf-style</em> formatting of output or strings is desired, use the mechanisms provided by the standard library header <code class="sourceCode cpp">&lt;format&gt;</code> or similar libraries.</p>
 <h1 id="modifying-constants-ujo">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 8.2 exists in C++. The model of <code class="sourceCode cpp"><span class="at">const</span></code> in C++ is known as "bit-wise const" or "physical const".</p>
