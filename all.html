@@ -1701,14 +1701,11 @@ The value of <code class="sourceCode cpp">E1 \&gt;\&gt; E2</code> is <code class
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant.</p>
 <p>C++ provides the scope resolution operator <code class="sourceCode cpp">::</code> to access identifier from non-local scopes.</p>
 <p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See clause 6.41 for inheritance issues associated with name reuse.</p>
-<p>Overloaded function names and operators considered in an expression are not restricted to a simple scope hierarchy, because of argument-dependent lookup (ADL). ADL can be powerful, but also lead to programmer surprises.</p>
 <h3 id="guidance-to-language-users">6.20.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.20, with the exclusion of guidance related to truncated identifiers.</p></li>
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
-<li><p>Limit the visibility of overloaded operators or functions for class types by defining them as <em>hidden friends</em>. This is achieved by declaring all corresponding overloads as <code class="sourceCode cpp"><span class="kw">friend</span></code> functions in the class that take the class’ objects as arguments. Generic base classes can provide mix-in facilities for <em>hidden friends</em> by taking the argument type that is the derived class as template parameter.</p></li>
-<li><p>Overloaded operators that are not class members and cannot be provided as <em>hidden friends</em> should be put together with their argument type in a namespace that is not the global namespace.</p></li>
 <li><p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p></li>
 <li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p>
 <ul>
@@ -2750,15 +2747,18 @@ execution boundaries</p></li>
 <p>This example expands to:</p>
 <div class="sourceCode" id="cb183"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
-<p><em>C++ mitigations – AI – Peter Sommerlad. Possibly using MISRA material.</em></p>
 <h3 id="guidance-to-language-users">6.51.2 Guidance to language users</h3>
 <ul>
 <li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
 <li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
-<li><p>Ensure that if a function-like macro must be used, that its arguments and body are parenthesized.</p></li>
+<li><p>Replace conditional compilation with the preprocessor with <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> where possible, e.g., in function bodies. This includes cases, where compile-time define of a macro (as empty) controls if a macro definition is used to expand to an empty statement or another statement.</p></li>
+<li><p>Replace preprocessor include directives with module <code class="sourceCode cpp"><span class="kw">import</span></code> where possible.</p></li>
+<li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> mechanisms over employing macros that use <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, or <code class="sourceCode cpp"><span class="ot">__func__</span></code>.</p></li>
+<li><p>If a function-like macro must be used, ensure that its parameters and body are parenthesized.</p></li>
 <li><p>In a function-like macro, ensure that each argument is evaluated at most once.</p></li>
 <li><p>Do not embed pre-processor directives or side-effects such as an assignment, increment/decrement, volatile access, or function call in a function-like macro.</p></li>
-<li><p><em>C++-specific guidance.</em></p></li>
+<li><p>Macros should only be used for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments.</p></li>
+<li><p>Macro paramters that are used as argument for <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> or <code class="sourceCode cpp"><span class="er">#</span></code> should not be used otherwise in the macro.</p></li>
 </ul>
 <h2 id="suppression-of-language-defined-run-time-checking-mxb">6.52 Suppression of Language-defined Run-time Checking [MXB]</h2>
 <h3 id="applicability-to-language">6.52.1 Applicability to language</h3>

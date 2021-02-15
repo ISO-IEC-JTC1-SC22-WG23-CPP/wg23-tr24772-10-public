@@ -219,14 +219,11 @@
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant.</p>
 <p>C++ provides the scope resolution operator <code class="sourceCode cpp">::</code> to access identifier from non-local scopes.</p>
 <p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See clause 6.41 for inheritance issues associated with name reuse.</p>
-<p>Overloaded function names and operators considered in an expression are not restricted to a simple scope hierarchy, because of argument-dependent lookup (ADL). ADL can be powerful, but also lead to programmer surprises.</p>
 <h3 id="guidance-to-language-users">6.20.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.20, with the exclusion of guidance related to truncated identifiers.</p></li>
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
-<li><p>Limit the visibility of overloaded operators or functions for class types by defining them as <em>hidden friends</em>. This is achieved by declaring all corresponding overloads as <code class="sourceCode cpp"><span class="kw">friend</span></code> functions in the class that take the class’ objects as arguments. Generic base classes can provide mix-in facilities for <em>hidden friends</em> by taking the argument type that is the derived class as template parameter.</p></li>
-<li><p>Overloaded operators that are not class members and cannot be provided as <em>hidden friends</em> should be put together with their argument type in a namespace that is not the global namespace.</p></li>
 <li><p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p></li>
 <li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p>
 <ul>
