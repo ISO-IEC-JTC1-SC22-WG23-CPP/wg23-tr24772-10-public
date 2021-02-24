@@ -216,20 +216,16 @@
 </header>
 <h2 id="string-termination-cjm">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IECTR 24772-1:2019 exists in C++ when C-style strings are used. C++ provides alternative string capabilities that do not exhibit those vulnerabilities.</p>
-<p>String view and Span and raw string literals – TBD – AI - Peter</p>
-<p>C++ provides a string class, <code class="sourceCode cpp"><span class="bu">std::</span>string</code> that manages the space for the string and the string length. On concatenation, the string object will increase in size to contain the resulting string and will add the <code>'\0'</code> character.</p>
-<p>(<em>We also discuss high integrity projects that refuse to use <code>std::string</code>. The recommendation is to</em></p>
-<p>Unlike C-style strings, the string class permits embedded null characters to be used safely.</p>
-<p>If an attempt is made to copy or append a string that results in a string larger than the current size of the array, a new larger array is allocated.</p>
-<p>UNICODE and multibyte strings??</p>
+<p>The vulnerability as documented in ISO/IECTR 24772-1:2019 exists in C++ when C-style strings are used. C++ provides the library class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_stringview</code> and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> that implment reference semantics to non-owned buffers. These classes do not include a string termination character and their use can result in this vulnerability. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
+<p>C++ provides a class template for string processing, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> that manages the space for the string and the string length and always includes a termination character. On concatenation, the string object will increase in size to contain the resulting string. The class <code class="sourceCode cpp"><span class="bu">std::</span>filesystem<span class="bu">::</span>path</code> also provides string processing capabilities among other facilities by wrapping <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>.</p>
+<p>Unlike C-style strings, the class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string_view</code>, and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> permit embedded null characters to be used safely.</p>
 <h3 id="guidance-to-language-users">6.7.2 Guidance to language users</h3>
 <ul>
-<li><p>Avoid C-style strings. Use <code>std::string</code>.</p></li>
-<li><p>If <code>std::string</code> is not appropriate, provide your own encapsulation and perform the appropriate verifications.</p></li>
+<li><p>Avoid C-style strings. Use <code class="sourceCode cpp"><span class="bu">std::</span>string</code> or corresponding instantiations of <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> for the character type used.</p></li>
+<li><p>If <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> is not appropriate, provide your own encapsulation and perform the appropriate verifications.</p></li>
 <li><p>If C-style strings are used, follow the guidance of ISO/IEC TR 24772-3 clause 6.7.2.</p></li>
-<li></li>
-<li><p><em>Provide guidance on collecting C-style strings at interfaces and</em> <em>providing a string view or converting to</em> <code class="sourceCode cpp"><span class="bu">std::</span>string</code><em>.</em> <em>AI - Peter</em></p></li>
+<li><p>When calling interfaces that expect C-style strings as arguments, pass the result of a <code class="sourceCode cpp"><span class="bu">std::</span>string<span class="bu">::</span>c_str()</code> as an argument. Do not employ types that cannot guarantee the string termination.</p></li>
+<li><p>When obtaining C-style strings via character pointers from interfaces, manage the string via a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> only if lifetime and content of the underlying buffer is persistent, or store it in a <code class="sourceCode cpp"><span class="bu">std::</span>string</code> object otherwise.</p></li>
 </ul>
 </body>
 </html>
