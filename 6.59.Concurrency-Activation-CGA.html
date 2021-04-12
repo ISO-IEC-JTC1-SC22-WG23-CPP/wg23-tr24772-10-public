@@ -216,83 +216,19 @@
 </header>
 <h2 id="concurrency-activation-cga">6.59 Concurrency – Activation [CGA]</h2>
 <h3 id="applicability-to-language">6.59.1 Applicability to language</h3>
-<p>Michael’s document on concurrency issues in C++ - https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit</p>
-<p>(<em>From Michael 2 Sep 2020)</em></p>
-<p>C++ uses the fork-join model for task creation. When a thread object is created, either all resources needed to execute the thread have been acquired, or an exception is be thrown in the creating thread. Non-standard threading packages may have the vulnerability that the creating thread does not know if the created thread successfully begins execution.</p>
-<p>As soon as the created thread is successfully created, it begins execution and the creating thread resumes execution. If multiple threads are to be created, say in a loop, then each creation is an individual step. Should a resource allocation error occur during the creation of multiple threads, the exception handler associated with the creation will only know which creation cause the exception if the application makes a record of successful creations.</p>
-<p>C++ provides the <code class="sourceCode cpp"><span class="bu">std::</span>thread<span class="bu">::</span>get_id()</code> call to acquire the identity of the created thread, which can be then recorded to make further queries about the state of each active thread.</p>
-<p>(The vulnerability documented in TR 24772-1 does not apply in C++ when <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> is used for threading.)</p>
-<p>The second vulnerability of attempts to communicate with non-existing threads does not exist since the <code class="sourceCode cpp"><span class="bu">std::</span>thread<span class="bu">::</span>get_id()</code> associated with the thread object is unavailable until after creation has completed.</p>
-<p>Forking new thread will raise exception in the forking thread if unable to create thread.</p>
-<p>There is a scenario where you can think that you are stating a thread, but thread is not launched. Caused by syntax confusion. Declaration of a function that resembles a thread-launching statement (need example)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>thread mythread(backgroundtask(); <span class="co">// declares a function mythread</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">//but does not start a thread.</span></span></code></pre></div>
-<p>Fix <code>std:thread mythread(&amp;backgroundtask);</code> or <code>std::thread mythread{backgroundtask};</code></p>
-<p>Use of a lambda expression avoids this problem, because it is a value and never triggers the vexing parse of a function declaration .</p>
-<p><code class="sourceCode cpp"><span class="bu">std::</span>thread mythread{[](){backgroundtask();}};</code></p>
-<p>Affects lifetime. In standard thread creation, a reference to the object that it will work with is made, but both the initiator and the thread must synchronize how they access the object. When a lambda is used, a local copy is made of all objects mentioned in the braces, so a referenced object will be copied.</p>
-<p>There is no way to know that the thread is still running from the thread object.</p>
-<p>C++ permits concurrent execution through the creation of user-defined threads, hence the vulnerabilities defined <span data-custom-style="annotation reference"></span>by TR 24772-1 apply to C++.</p>
-<p>TR 24772-1 uses the term “activation”, which is not a C++ term. We will use the term “creating thread”, and “created thread”.</p>
-<p>Recommendation to use C++ concurrency instead of OS concurrency such as processes.</p>
-<p>What about OpenMP? – lives on top of OS. Has a decoupled fork-join model where “threads” work on individual work units and deliver their portion at the end of a parallel block.</p>
-<p>These clauses will not discuss non-C++ concurrency approaches.</p>
-<p><em>AI – Steve – include a comparison of concurrency approaches in clause 4.</em></p>
-<p>Major differences between Tasks and Threads</p>
+<p>This vulnerability does not apply to C++, as long as the standard library facilities for creating threads are used.</p>
+<p>Creating a thread using <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> is synchronized with the thread creation site.</p>
+<p>Other vulnerabilities can be created when creating a thread object:</p>
 <ul>
-<li><p>Threads need to be explicitly joined and cleaned up.</p></li>
-<li><p>Tasks are owned by a master.</p></li>
-<li><p>Tasks and threads share the same scheduler.</p></li>
+<li>6.61 Concurrent Data Access,</li>
+<li>6.14 and 6.33 dangling of data reference, if data is passed to the thread function as reference or pointer, instead of passing a copy.</li>
+<li>6.36 undhandle exception leading to premature termination of the program, if the thread object is destroyed and the spawned thread is neither joined nor detached. Creating a new thread through <code class="sourceCode cpp"><span class="bu">std::</span>async</code> will implicitly join.</li>
 </ul>
-<p>C++ uses the fork-join model for task creation. When a thread object is created, either all resources needed to execute the thread have been acquired, or an exception is be thrown in the creating thread. Non-standard threading packages may have the vulnerability that the creating thread does not know if the created thread successfully begins execution.</p>
-<p>As soon as the created thread is successfully created, it begins execution and the creating thread resumes execution. If multiple threads are to be created, say in a loop, then each creation is an individual step. Should a resource allocation error occur during the creation of multiple threads, the exception handler associated with the creation will only know which creation cause the exception if the application makes a record of successful creations.</p>
-<p>C++ provides the std::thread::get_id() call to acquire the identity of the created thread, which can be then recorded to make further queries about the state of each active thread.</p>
-<p>(The vulnerability documented in TR 24772-1 does not apply in C++ when std::thread is used for threading.)</p>
-<p>The second vulnerability of attempts to communicate with non-existing threads does not exist since the std::thread::get_id() associated with the thread object is unavailable until after creation has completed.</p>
-<p>Forking new thread will raise exception in the forking thread if unable to create thread.</p>
-<p>There is a scenario where you can think that you are stating a thread, but thread is not launched. Caused by syntax confusion. Declaration of a function that resembles a thread-launching statement (need example) std::thread mythread(backgroundtask()); // declares a function mythread but does not start a thread. Fix std:thread mythread((backgroundtask())); or std::thread mythread{backgroundtask()};</p>
-<p>Use of a lambda expression avoids this problem.</p>
-<p>std::thread mythread{[](){backgroundtask();}}; // explain // items in [] will be copied and the lifetime will be the same as the background thread.</p>
-<p>Affects lifetime. In standard thread creation, a reference to the object that it will work with is made, but both the initiator and the thread must synchronize how they access the object. When a lambda is used, a local copy is made of all objects mentioned in the braces, so a referenced object will be copied.</p>
-<p>There is no way to know that the thread is still running from the thread object.</p>
-<p>Parallel algorithms rely on “parallel” libraries.</p>
-<p>The std::thread class provides the following methods to query or manipulate a thread:</p>
-<blockquote>
-<p>(constructor) - Construct thread<span data-custom-style="apple-converted-space"></span><span data-custom-style="typ">(public member function )</span></p>
-<p>(destructor) - Thread destructor<span data-custom-style="apple-converted-space"></span><span data-custom-style="typ">(public member function )</span></p>
-<p><a href="http://www.cplusplus.com/reference/thread/thread/operator=/"><span data-custom-style="Hyperlink">operator=</span></a> - Move-assign thread<span data-custom-style="apple-converted-space"></span><span data-custom-style="typ">(public member function )</span></p>
-<p><span data-custom-style="typ">get_id -</span> Get thread id<span data-custom-style="apple-converted-space"></span><span data-custom-style="typ">(public member function )</span></p>
-<p><span data-custom-style="typ">joinable -</span> Check if joinable (public member function ) (Boolean)</p>
-<p><span data-custom-style="typ">join</span> - Join thread (public member function )</p>
-<p><span data-custom-style="typ">detach</span> - Detach thread (public member function )</p>
-<p><span data-custom-style="typ">swap -</span> Swap threads (public member function )</p>
-<p><span data-custom-style="typ">native_handle -</span> Get the native handle (public member function )</p>
-<p><span data-custom-style="typ">hardware_concurrency -</span> Detect hardware concurrency (public static member function )</p>
-</blockquote>
-<p>The following comparisons are available to compare two threads:</p>
-<blockquote>
-<p><span data-custom-style="typ">==</span> (equality),</p>
-<p><span data-custom-style="typ">!=</span> (not equal),</p>
-<p><span data-custom-style="typ">&lt; (</span>less than),</p>
-<p><span data-custom-style="typ">&lt;= (</span>less than or equal),</p>
-<p><span data-custom-style="typ">&gt; (</span>greater), and</p>
-<p><span data-custom-style="typ">&gt;= (</span>greater or equal)</p>
-</blockquote>
-<p>No scoping control, so need to ensure that data passed to another thread could silently go out of scope.</p>
-<p>AI – Michael - Verify that the discussion of joinable is complete.</p>
-<p>Meta Issue: possibly refer to MISRA C++, etc. for guidance on domain-specific issues and more safe programs.</p>
-<p>STL is not thread safe</p>
-<p>Can initiate async objects, which can return an exception or a value through a future. Not a full “RAII” class.</p>
-<p>There are futures or shared futures.</p>
-<p>Package tasks can be detached and return a future or</p>
 <h3 id="guidance-to-language-users">6.59.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the guidelines of TR 24772-1 clause 6.60.5.</p></li>
-<li><p>Either <code>.join()</code> or <code>.detach()</code> a created thread.</p></li>
-<li><p>Use lambda and explicit copy</p></li>
-<li><p>When using an <code>async</code> call, delay a local’s destruction until</p></li>
-<li><p>Create and manage threads</p></li>
-<li><p>Use <code>std::jthread</code> (from C++ 20) or another implementation of a joining thread instead of <code>std::thread</code> :::</p></li>
+<li><p>If you are using a non-standard thread facilities, e.g., by making use of <code>std::thread::native_handle</code> follow the guidelines of TR 24772-1 clause 6.60.5.</p></li>
+<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> for thread creation, or always <code>.join()</code> or <code>.detach()</code> a created <code>std::thread</code>.</p></li>
+<li><p>Pass all thread function arguments by value, or ensure their lifetime outlasts the running thread. In the latter case proper synchronization is required.</p></li>
 </ul>
 </body>
 </html>
