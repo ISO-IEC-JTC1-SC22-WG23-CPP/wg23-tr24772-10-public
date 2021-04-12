@@ -216,29 +216,29 @@
 </header>
 <h1 id="modifying-constants-ujo">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 8.2 exists in C++. The model of <code>const</code> in C++ is known as "bit-wise const" or "physical const".</p>
+<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 8.2 exists in C++. The model of <code class="sourceCode cpp"><span class="at">const</span></code> in C++ is known as "bit-wise const" or "physical const".</p>
 <p>C++ can also model logical-const <em>&lt;need more&gt;</em></p>
-<p><em>Also include discussion of keyword</em> <code>mutable</code></p>
-<p>An object can be declared as <code>const</code>, denoting that its value will not change in its lifetime:</p>
+<p><em>Also include discussion of keyword</em> <code class="sourceCode cpp"><span class="at">mutable</span></code></p>
+<p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime:</p>
 <p><code class="sourceCode cpp"><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;</code></p>
-<p>A object that is not <code>const</code>-qualified can be accessed through a path that is <code>const</code>-qualified:</p>
+<p>A object that is not <code class="sourceCode cpp"><span class="at">const</span></code>-qualified can be accessed through a path that is <code class="sourceCode cpp"><span class="at">const</span></code>-qualified:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  T k = <span class="dv">0</span>;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span> &amp; j = k;                <span class="co">// &#39;j&#39; is a const reference to &#39;k&#39;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span> * p = &amp;k;               <span class="co">// &#39;p&#39; is a pointer to const &#39;k&#39;</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const_cast</span>&lt;T <span class="at">const</span> &amp;&gt;(k);       <span class="co">// The type of the expression is const</span></span></code></pre></div>
-<p>The checking for the correctness of <code>const</code> is enforced based on the access-path and not the type of the target object. For example, the following are ill-formed as the access path of the left-hand expression is <code>const</code>-qualified:</p>
+<p>The checking for the correctness of <code class="sourceCode cpp"><span class="at">const</span></code> is enforced based on the access-path and not the type of the target object. For example, the following are ill-formed as the access path of the left-hand expression is <code class="sourceCode cpp"><span class="at">const</span></code>-qualified:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  i = <span class="dv">0</span>; <span class="co">// T const i;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  j = <span class="dv">0</span>; <span class="co">// T const &amp;j</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  *p = <span class="dv">0</span>; <span class="co">// T const *p</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const_cast</span>&lt;T <span class="at">const</span> &amp;&gt;(k) = <span class="dv">0</span>; <span class="co">// T k i.e. not const</span></span></code></pre></div>
-<p>Note that the object <code>k</code> referred to by <code>j</code>, <code>\*p</code> and the <code>const_cast</code>, is not constant. In each case the access path could be changed to remove <code>const</code> making the program well-formed:<br />
-<code>const_cast\&lt;T&amp;\&gt; (j) = 0; // well-formed</code><br />
+<p>Note that the object <code class="sourceCode cpp">k</code> referred to by <code class="sourceCode cpp">j</code>, <code class="sourceCode cpp">\*p</code> and the <code class="sourceCode cpp"><span class="kw">const_cast</span>,</code> is not constant. In each case the access path could be changed to remove <code class="sourceCode cpp"><span class="at">const</span></code> making the program well-formed:<br />
+<code class="sourceCode cpp"><span class="kw">const_cast</span>\&lt;T&amp;\&gt; (j) = <span class="dv">0</span>; <span class="co">// well-formed</span></code><br />
 <br />
 While it is possible to remove the const-qualification for an access path, attempting to modify a const object this way is undefined-behavior:<br />
-<code>const_cast\&lt;T&amp;\&gt; (i) = 0; // undefined behavior</code><br />
+<code class="sourceCode cpp"><span class="kw">const_cast</span>\&lt;T&amp;\&gt; (i) = <span class="dv">0</span>; <span class="co">// undefined behavior</span></code><br />
 <br />
 We distinguish between qualifications on the pointer’s type (pointer type) and qualifications on the type being referenced (pointer type).</p>
-<p>A pointer type can be qualified as <code>const</code>, however the qualification only applies to the pointer type and not the pointee's type. Qualifying a reference type as <code>const</code> is either ill-formed or ignored.</p>
+<p>A pointer type can be qualified as <code class="sourceCode cpp"><span class="at">const</span></code>, however the qualification only applies to the pointer type and not the pointee's type. Qualifying a reference type as <code class="sourceCode cpp"><span class="at">const</span></code> is either ill-formed or ignored.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T = <span class="dt">int</span>;</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T1 = T &amp;;</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T2 = T *;</span>
@@ -251,7 +251,7 @@ We distinguish between qualifications on the pointer’s type (pointer type) and
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    s1 = <span class="dv">0</span>;            <span class="co">// well-formed</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    *s2 = <span class="dv">0</span>;           <span class="co">// well-formed</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
-<p>This can result in the misconception that a member function qualified with <code>const</code> cannot modify any of its members:</p>
+<p>This can result in the misconception that a member function qualified with <code class="sourceCode cpp"><span class="at">const</span></code> cannot modify any of its members:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  {</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    A * pA;                <span class="co">// Pointer to non-const A</span></span>
@@ -268,7 +268,7 @@ We distinguish between qualifications on the pointer’s type (pointer type) and
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>object</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  };</span></code></pre></div>
-<p>In the const member function f, naming array directly results in a const-qualified access path and so an attempt to modify it is ill-formed. However, the type of pA is A * const, that is a const pointer to a non-const <code>A</code>. An attempt to modify pA is ill-formed, however, modification of the value pointed to by pA is not a const-qualified access path and so is not ill-formed.<br />
+<p>In the const member function f, naming array directly results in a const-qualified access path and so an attempt to modify it is ill-formed. However, the type of pA is A * const, that is a const pointer to a non-const <code class="sourceCode cpp">A</code>. An attempt to modify pA is ill-formed, however, modification of the value pointed to by pA is not a const-qualified access path and so is not ill-formed.<br />
 <br />
 It is undefined behavior to attempt to modify a const object. The programmer can incorrectly assume that a call to a const member function will not modify the object. However, as has been shown above there is no guarantee that this is the case. The following example, therefore, will compile but has undefined behavior as a result of the modification of the const object:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> foo ()</span>
@@ -278,7 +278,7 @@ It is undefined behavior to attempt to modify a const object. The programmer can
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     a1.f();           <span class="co">// OK - &#39;a1&#39; is not const</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     a2.f();           <span class="co">// compiles but has undefined behaviour</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
-<p>Where logical <code>const</code> is desired, C++ classes can be used to provide access to data through member functions:</p>
+<p>Where logical <code class="sourceCode cpp"><span class="at">const</span></code> is desired, C++ classes can be used to provide access to data through member functions:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt; <span class="kw">struct</span> MyRef {   </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    MyRef &amp; <span class="kw">operator</span>=(T &amp; t) {  <span class="va">m_t</span> = t; <span class="cf">return</span> *<span class="kw">this</span>;}</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">private</span>:</span>
@@ -289,13 +289,13 @@ It is undefined behavior to attempt to modify a const object. The programmer can
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> f2() <span class="at">const</span> {  <span class="va">m_i</span> = <span class="dv">0</span>; } <span class="co">// ill-formed, hence compilation fails</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    MyRef&lt;<span class="dt">int</span>&gt; <span class="va">m_i</span>;</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
-<p>In the above, <code>MyRef</code> type hides the reference member behind member functions that an API that does not provide an assignment operator that is callable for a <code>const</code> type. Therefore the above code fails to compile because <code>f2()</code> is a <code>const</code> member function which causes all data members to be treated as <code>const</code>. Since <code>m_i</code> is not a reference or a pointer, its type is effectively <code>const MyRef&lt;int&gt;</code> inside o <code>f2()</code>. Therefore <code>m_i = 0;</code> is invalid.</p>
-<p>C++ container iterator types, <code>iterator</code> and <code>const_iterator</code>, are examples of use of this pattern.</p>
+<p>In the above, <code class="sourceCode cpp">MyRef</code> type hides the reference member behind member functions that an API that does not provide an assignment operator that is callable for a <code class="sourceCode cpp"><span class="at">const</span></code> type. Therefore the above code fails to compile because <code class="sourceCode cpp">f2()</code> is a <code class="sourceCode cpp"><span class="at">const</span></code> member function which causes all data members to be treated as <code class="sourceCode cpp"><span class="at">const</span></code>. Since <code class="sourceCode cpp"><span class="va">m_i</span></code> is not a reference or a pointer, its type is effectively <code class="sourceCode cpp"><span class="at">const</span> MyRef&lt;<span class="dt">int</span>&gt;</code> inside o <code class="sourceCode cpp">f2()</code>. Therefore <code class="sourceCode cpp"><span class="va">m_i</span> = <span class="dv">0</span>;</code> is invalid.</p>
+<p>C++ container iterator types, <code class="sourceCode cpp">iterator</code> and <code class="sourceCode cpp">const_iterator</code>, are examples of use of this pattern.</p>
 <h3 id="guidance-to-language-users">6.65.2 Guidance to language users</h3>
 <ul>
-<li><p>Do not cast-away <code>const</code>.</p></li>
+<li><p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p></li>
 <li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p></li>
-<li><p>Be aware that, while <code>const</code> means “read only”, C++ permits <code>const</code> values to be modified as shown in clause 6.65.1and</p></li>
+<li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1and</p></li>
 <li><p>If a</p></li>
 </ul>
 </body>
