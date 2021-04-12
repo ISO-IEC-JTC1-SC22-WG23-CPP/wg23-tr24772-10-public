@@ -242,13 +242,13 @@ for(char c: make().front()) { // attempt to iterate over first string in vector
 <h3 id="guidance-to-language-users">6.14.2 Guidance to language users</h3>
 <p>In addition to the guidance provided in TR 24772-1 clause 6.14.5:</p>
 <ul>
+<li><p>Do not rely on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
 <li><p>Prefer value types that manage heap memory, for example <code class="sourceCode cpp"><span class="bu">std::</span>string</code> instead of <code class="sourceCode cpp"><span class="at">const</span> <span class="dt">char</span> *</code> or <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, and pass by value/return by value over the use of <em>potentially dangling types</em>.</p></li>
 <li><p>If value types are not feasible, adopt a style that makes explicit the ownership and lifetime of heap resources, by using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> or <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> or similar RAII/SBRM types and allocate heap memory exclusively with their corresponding factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique/<span class="bu">std::</span>make_shared</code>.</p></li>
 <li><p>Adopt a style that ensures all copies of any potentially dangling objects are guaranteed to be cleaned up before the referent’s lifetime ends or never accessed afterwards. For example, do not store the raw pointers managed by smart pointers, e.g., by calling their <code class="sourceCode cpp">get()</code> member function.</p></li>
 <li><p>Consider making member functions ref-qualified, that return potentially dangling types to members or heap allocated objects managed by the class,<br />
 to avoid being called on temporary objects. Note: An rvalue-ref-qualified overload should either return a copy by value, or be defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> to prevent calling it on a temporary that would lead to returning an immediately dangling object.</p></li>
-<li><p>Be aware of the <em>range-for</em> dangling vulnerability, for example, use a variable representing the range and not an expression that might yield a reference to a temporary.</p></li>
-<li><p>Do not rely on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
+<li><p>Show that the <em>range-for</em> dangling vulnerability does not apply or take steps to avoid it, for example, use a variable representing the range and not an expression that might yield a reference to a temporary.</p></li>
 </ul>
 </body>
 </html>
