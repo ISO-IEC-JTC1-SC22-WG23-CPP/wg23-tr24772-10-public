@@ -1631,48 +1631,29 @@ Note: The final 'cast notation' refers to C-style cast.</p>
 <li><p><code class="sourceCode cpp"><span class="bu">std::</span>span</code></p></li>
 <li><p><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code></p></li>
 </ul>
-<p>We call these types <em>potentially dangling</em><span data-custom-style="annotation reference"></span><em>.</em></p>
-<p><em>Also have the issue of being thread-safe. Needs a writeup</em> <em>in 6.61</em> <em>likely..</em></p>
-<p>If the lifetime of a <em>potentially dangling</em> <em>object</em> ends before its referent’s lifetime ends, then the vulnerability does not apply to that potentially dangling object. This is the primary C++ strategy for avoiding vulnerabilities due to potentially dangling objects. For example, passing a potentially dangling object as a function parameter/argument(?), and the function does not take ownership of the referent (for example by deleting the referent), then the language guarantees that the lifetime of the referent is longer than the lifetime of the parameter. This does not apply to further copies made to longer-lived potentially dangling objects. <span data-custom-style="annotation reference"></span></p>
-<p>Unanticipated aliasing between parameters, global objects, or function results may sometimes lead to this vulnerability. Because it is not practical to test for or document all disallowed aliasing, a restrictive stance is preferred: “All aliasing that is not explicitly allowed by documentation is forbidden.” Allowances for aliasing may be given to some classes of functions by blanket documentation. In particular, aliasing is expected and allowed in these classes of functions:</p>
-<ul>
-<li><p>Assignment and compound assignment operators: the right parameter may alias the left parameter. The function result always refers to the left parameter.</p></li>
-<li><p>Functions named <code class="sourceCode cpp">swap</code>: The two parameters to be swapped may refer to the same object.</p></li>
-<li><p>Shift operators used for input and output: the result always refers to the left parameter.</p></li>
-<li><p>Prefix increment and decrement operators: the result always refers to the parameter.</p></li>
-</ul>
-<div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Documentation: &quot;v may refer to a portion of s.  The result refers to s.&quot;</span></span>
-<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view&amp; f( <span class="bu">std::</span>string&amp; s, <span class="bu">std::</span>string_view v )</span>
-<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>   s = v;  <span class="co">// For operator=, aliasing is allowed by blanket documentation.</span></span>
-<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> s;  <span class="co">// Returning result aliased to the parameter explicitly allowed.  </span></span>
-<span id="cb112-6"><a href="#cb112-6" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb112-7"><a href="#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Documentation of this function does not mention aliasing</span></span>
-<span id="cb112-8"><a href="#cb112-8" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> g( <span class="bu">std::</span>string&amp; s, <span class="bu">std::</span>string_view v )</span>
-<span id="cb112-9"><a href="#cb112-9" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb112-10"><a href="#cb112-10" aria-hidden="true" tabindex="-1"></a>                       <span class="co">// If v were to alias s\...</span></span>
-<span id="cb112-11"><a href="#cb112-11" aria-hidden="true" tabindex="-1"></a>   s.clear();   <span class="co">// \...now v would be dangling!</span></span>
-<span id="cb112-12"><a href="#cb112-12" aria-hidden="true" tabindex="-1"></a>   s = v;          <span class="co">// And this would have undefined behavior.    </span></span>
-<span id="cb112-13"><a href="#cb112-13" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb112-14"><a href="#cb112-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> h()</span>
-<span id="cb112-15"><a href="#cb112-15" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb112-16"><a href="#cb112-16" aria-hidden="true" tabindex="-1"></a>   string hello{ <span class="st">&quot;Hello world!&quot;</span> };</span>
-<span id="cb112-17"><a href="#cb112-17" aria-hidden="true" tabindex="-1"></a>   f( hello, hello ); <span class="co">// OK: aliasing is explicitly allowed by f.</span></span>
-<span id="cb112-18"><a href="#cb112-18" aria-hidden="true" tabindex="-1"></a>   g( hello, hello );  <span class="co">// wrong: g does not document an allowance</span></span>
-<span id="cb112-19"><a href="#cb112-19" aria-hidden="true" tabindex="-1"></a>                       <span class="co">// for aliasing, so callers must not pass aliased parameters.</span></span>
-<span id="cb112-20"><a href="#cb112-20" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
-<p>Or even as simple as:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad(<span class="st">&quot;a temporary string&quot;</span><span class="bu">s</span>); <span class="co">// \&quot;bad\&quot; holds a dangling pointer</span></span></code></pre></div>
-<p>RAII - Resource Allocation In Initialization (aka SBRM - scope-based resource management) is a programming technique that uses the constructor if an object to create a state (such as allocating memory or locking a mutex) and the destructor to remove the state (such as deallocating memory and unlocking a mutex) within the same scope. This allows for the pairing of state changes within the object’s lifetime.</p>
+<p>We call these <em>potentially dangling types</em>.</p>
+<p>If the lifetime of a <em>potentially dangling</em> <em>object</em> ends before its referent’s lifetime ends, then the vulnerability does not apply to that potentially dangling object. This is the primary C++ strategy for avoiding vulnerabilities due to potentially dangling objects. For example, using a <em>potentially dangling type</em> as a function parameter and passing an argument that refers to an object (referent) in the scope of the function call, and the function does not take ownership of the referent (for example, by deleting the referent), then the language guarantees that the lifetime of the referent is longer than the lifetime of the parameter, even if the referent is a temporary object created within the function call expression.</p>
+<p>The language guarantees that a const-lvalue-reference or a rvalue-reference that are bound to a temporary object extend the lifetime of the temporary until the reference goes out of scope. Otherwise any temporary object is destroyed at the end of the surrounding full expression. This is the basis for making reference parameters that bind to temporary objects work. This lifetime guarantee does not apply to further copies made to potentially dangling objects that outlive the function call, or if the function is a coroutine.</p>
+<p>A most simple example is where the temporary object referring heap allocation is passed as a constructor argument:</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad(<span class="st">&quot;a temporary string&quot;</span><span class="bu">s</span>); <span class="co">// \&quot;bad\&quot; holds a dangling pointer</span></span></code></pre></div>
+<p>Note: technically in this example the vulnerability exists in the conversion operator <code class="sourceCode cpp"><span class="bu">std::</span>string<span class="bu">::</span>operator string_view()</code>, that returns a potentially dangling type from a member function callable on a temporary object.</p>
+<p>Functions returning potentially dangling types are vulnerable, when the result is not copying the referent, but just stores the potentially dangling object. For example, the range-for statement uses the above mentioned lifetime extension for the range object to be iterated upon. If that range object itself is given as a reference already, the loop will access the elements through dangling iterators.</p>
+<pre class="{cpp}"><code>extern std::vector&lt;std::string&gt; make(); // creates a vector
+
+for(char c: make().front()) { // attempt to iterate over first string in vector
+   // vector and thus contained string is already destroyed
+}</code></pre>
+<p>Note: If the standard library would have defined the member function overloads <code class="sourceCode cpp"><span class="bu">std::</span>vector<span class="bu">::</span>front()</code> as lvalue-ref-qualified, then the above call on a temporary object would not compile.</p>
+<p>For objects directly allocated on the heap C++ provides smart pointers and corresponding factory functions that allow transferring ownership or shared ownership.</p>
 <h3 id="guidance-to-language-users">6.14.2 Guidance to language users</h3>
-<p>In addition to the guidance provided in TR 24772-1 clause 6.14.5:<span data-custom-style="annotation reference"></span></p>
+<p>In addition to the guidance provided in TR 24772-1 clause 6.14.5:</p>
 <ul>
-<li><p>Prefer value types, for example <code>std::string</code> instead of <code>const char *</code>.</p></li>
-<li><p>Adopt a style that makes explicit the ownership and lifetime of all resources.</p></li>
-<li><p>Use programming techniques such as RAII (resource allocation is initialization) to limit the scope of potentially dangling objects.</p></li>
-<li><p>Document the referents of potentially dangling objects created by or modified by a function if any potentially dangling object outlives the invocation of that function. See the example above.</p></li>
-<li><p>Document any allowable aliasing between the referents of function parameters. Absent such documentation, avoid passing aliased parameters. See the example above.</p></li>
-<li><p>When allocating an object, adopt a style that all copies of any potentially dangling reference are guaranteed to be cleaned up before the referent’s lifetime ends.</p></li>
+<li><p>Prefer value types that manage heap memory, for example <code class="sourceCode cpp"><span class="bu">std::</span>string</code> instead of <code class="sourceCode cpp"><span class="at">const</span> <span class="dt">char</span> *</code> or <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, and pass by value/return by value over the use of <em>potentially dangling types</em>.</p></li>
+<li><p>Otherwise, adopt a style that makes explicit the ownership and lifetime of heap resources, by using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> or <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> or similar RAII/SBRM types and allocate heap memory exclusively with their corresponding factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique/<span class="bu">std::</span>make_shared</code>.</p></li>
+<li><p>Adopt a style that ensures all copies of any potentially dangling objects are guaranteed to be cleaned up before the referent’s lifetime ends or never accessed afterwards. For example, do not store the raw pointers managed by smart pointers, e.g., by calling their <code class="sourceCode cpp">get()</code> member function.</p></li>
+<li><p>Member functions that return potentially dangling types to members or heap allocated objects managed by the class, should be ref-qualified to avoid being called on temporary objects. A rvalue-ref-qualified overload should either return a copy by value, or be defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> to prevent calling it on a temporary that would lead to returning an immediately dangling object.</p></li>
+<li><p>Be aware of the range-for dangling vulnerability and use a variable representing the range, not an expression that might yield a reference to a temporary.</p></li>
+<li><p>Do not rely on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
 </ul>
 <p>$incldue 6.15.ArithmeticWrap-aroundError-FIF.md</p>
 <h2 id="using-shift-operations-for-multiplication-and-division-pik">6.16 Using Shift Operations for Multiplication and Division [PIK]</h2>
