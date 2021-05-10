@@ -217,8 +217,8 @@
 <h1 id="modifying-constants-ujo">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 8.2 exists in C++. The model of <code class="sourceCode cpp"><span class="at">const</span></code> in C++ is known as "bit-wise const" or "physical const".</p>
-<p>C++ can also model logical-const <em>&lt;need more&gt;</em></p>
 <p><em>Also include discussion of keyword</em> <code class="sourceCode cpp"><span class="at">mutable</span></code></p>
+<p>Need to consider lambdas in the context of ‘mutable’. In a lambda, member functions are effectively const, unless you use mutable.</p>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime:</p>
 <p><code class="sourceCode cpp"><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;</code></p>
 <p>A object that is not <code class="sourceCode cpp"><span class="at">const</span></code>-qualified can be accessed through a path that is <code class="sourceCode cpp"><span class="at">const</span></code>-qualified:</p>
@@ -291,12 +291,19 @@ It is undefined behavior to attempt to modify a const object. The programmer can
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
 <p>In the above, <code class="sourceCode cpp">MyRef</code> type hides the reference member behind member functions that an API that does not provide an assignment operator that is callable for a <code class="sourceCode cpp"><span class="at">const</span></code> type. Therefore the above code fails to compile because <code class="sourceCode cpp">f2()</code> is a <code class="sourceCode cpp"><span class="at">const</span></code> member function which causes all data members to be treated as <code class="sourceCode cpp"><span class="at">const</span></code>. Since <code class="sourceCode cpp"><span class="va">m_i</span></code> is not a reference or a pointer, its type is effectively <code class="sourceCode cpp"><span class="at">const</span> MyRef&lt;<span class="dt">int</span>&gt;</code> inside o <code class="sourceCode cpp">f2()</code>. Therefore <code class="sourceCode cpp"><span class="va">m_i</span> = <span class="dv">0</span>;</code> is invalid.</p>
 <p>C++ container iterator types, <code class="sourceCode cpp">iterator</code> and <code class="sourceCode cpp">const_iterator</code>, are examples of use of this pattern.</p>
+<p>Sometimes, even though a ‘const’ is declared, it may be necessary to for certain members to be modified, even when an object is ‘const’, such as the use of a cached member to store the result of a complex operation, or a mutex to prevent access to shared data. The C++ ‘mutable’ provides this ability, as shown below.</p>
+<p>#include <mutex></p>
+<p>class MyQueue { public: bool empty () const { std::lock_guard sg (m_mutex); // lock the mutex, which requires m_mutex to be writable return m_head != nullptr; }</p>
+<p>// …</p>
+<p>private: mutable std::mutex m_mutex; int * m_head { nullptr }; };</p>
+<p>TBD Example of the use of mutable in a lambda.</p>
 <h3 id="guidance-to-language-users">6.65.2 Guidance to language users</h3>
 <ul>
 <li><p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p></li>
 <li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p></li>
-<li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1and</p></li>
-<li><p>If a</p></li>
+<li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1; and</p></li>
+<li><p>Consider the use of “constexpr” wherever possible to move the detection</p></li>
+<li><p>Avoid the use of mutable, including inside a lambda …</p></li>
 </ul>
 </body>
 </html>
