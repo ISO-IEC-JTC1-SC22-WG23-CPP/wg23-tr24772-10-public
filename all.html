@@ -1049,7 +1049,8 @@ use and possible exhaustion).</code></pre></li>
 <h2 id="type-system-ihn">6.2 Type System [IHN]</h2>
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
 <p>C++ allows (silent) implicit conversions between values of a source type to a corresponding value of a destination type under the following circumstances:</p>
-<p>when the destination type is <code class="sourceCode cpp"><span class="dt">bool</span></code> (<em>contextual conversion to bool</em>), for example, when assigning to a bool variable, in the condition of the ternary operator, an <code>if</code> statement, or a loop statement, or with non-overloaded logical operators.</p>
+<ol type="1">
+<li><p>when the destination type is <code class="sourceCode cpp"><span class="dt">bool</span></code> (<em>contextual conversion to bool</em>), for example, when assigning to a bool variable, in the condition of the ternary operator, an <code>if</code> statement, or a loop statement, or with non-overloaded logical operators.</p>
 <ul>
 <li>from a class type with a conversion operator bool()</li>
 <li>from a class type with a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> conversion operator to a built-in type convertible to bool</li>
@@ -1061,16 +1062,26 @@ use and possible exhaustion).</code></pre></li>
 <li>from a floating point type</li>
 <li>from <code class="sourceCode cpp"><span class="dt">nullptr_t</span></code></li>
 <li>from an unscoped enumeration</li>
-</ul>
-<p>Further implicit conversions with the destination of a built-in type happen:</p>
+</ul></li>
+<li><p>Further implicit conversions with the destination of a built-in type happen:</p>
 <ul>
 <li>in arithmetic and bitwise expressions combining different built-in types, including unscoped enumeration types. Here, the <em>usual arithmetic conversions</em> including <em>integral promotion</em> happen.</li>
 <li>in an assignment, when passing a function argument, or when returning a value from a different built-in type (including <code>bool</code>), from an unscoped enumeration type, or from a class type with a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> conversion operator to a built-in type.</li>
-</ul>
-<p>For class types, implicit conversions can occur with constructors callable with a single argument and by applying conversion operators.</p>
-<p>For references and pointer to class types, implicit conversion to public base class references and pointers respectively is often a desired feature, but it can also lead to changing the type by slicing a value to become a value of one of its base classes. Only when the base class declares virtual member functions, the dynamic type of the object behind a reference or pointer, i.e., the most derived type, remains accessible via calling a virtual member function or via <code>dynamic_cast</code>.</p>
-<p>Furthermore, implicit <em>pointer decay</em> occurs when an array or function object is passed by value as an argument to a function.</p>
+</ul></li>
+<li><p>For class types, implicit conversions can occur with constructors callable with a single argument and by applying conversion operators.</p></li>
+<li><p>For references and pointer to class types, implicit conversion to public base class references and pointers respectively is often a desired feature, but it can also lead to changing the type by slicing a value to become a value of one of its base classes. Only when the base class declares virtual member functions, the dynamic type of the object behind a reference or pointer, i.e., the most derived type, remains accessible via calling a virtual member function or via <code>dynamic_cast</code>.</p></li>
+<li><p>Furthermore, implicit <em>pointer decay</em> occurs when an array or function object is passed by value as an argument to a function.</p></li>
+</ol>
 <p>Implicit conversions in expressions can surprise programmers, lead to unwanted function overloads being called and can be a symptom of poor modeling of the application domain.</p>
+<p>Explicit conversions can be achieved by type casts. The following C++-specific cast operations are defined by the language:</p>
+<ul>
+<li><code class="sourceCode cpp"><span class="kw">static_cast</span>&lt;destination&gt;(source)</code> : changes the type by applying implicit or explicit conversion operations available. Usually a safe operation if allowed by the compiler.</li>
+<li><code class="sourceCode cpp"><span class="kw">const_cast</span>&lt;destination&gt;(source)</code> : allows adding/removing <code>const</code> (or <code>volatile</code>) qualification from the type of source. Unsafe, if <code>const</code> is removed from the type of an immutable object, which causes undefined behavior.</li>
+<li><code class="sourceCode cpp"><span class="kw">dynamic_cast</span>&lt;destination&gt;(source_ref_or_ptr)</code> : allows casting “down” a polymorphic class hierarchy by towards the dynamic type of the object referrenced by the argument.</li>
+<li><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span>&lt;destination&gt;(source_value)</code> : potentially dangerous re-interpretation of bits in source_value as type destination. Note, fewer valid re-interpretations of data types than in C exist, because C++ does not allow the structural equivalence of C.</li>
+<li><em>C-style casts</em> <code>(destination)source</code> : depending on destination, all of the above casts might happen, therefore, potentially dangerous.</li>
+<li>*constructor-….</li>
+</ul>
 <p><strong>TODO</strong> explicit conversion, further deletion of notes, take MISRA ratinales?</p>
 <p>It is possible to use a single type to define two distinct sets of values, e.g., a double could be used to store the distance in kilometers or miles.:</p>
 <div class="sourceCode" id="cb82"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> miles = <span class="fl">5.67</span>;</span>
