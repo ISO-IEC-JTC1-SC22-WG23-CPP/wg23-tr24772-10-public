@@ -1048,10 +1048,30 @@ use and possible exhaustion).</code></pre></li>
 <p>As part of its design (and with few exceptions), C++ has a common subset with the complete C language. For code portions written in the common subset, the vulnerabilities described and the advice given in ISO/IEC TR 24772-3:2020, <em>Part 3 – Vulnerability descriptions for the programming language C</em>, apply, except when this document provides refined advice. The following subclauses usually do not further acknowledge the issues from the subset since those have been adequately addressed in the referenced document. However, C++ provides mechanisms to mitigate many of the problems that arise. Please refer to the respective clauses of this document for these mitigations and related guidelines.</p>
 <h2 id="type-system-ihn">6.2 Type System [IHN]</h2>
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
-<p>C++ is a strongly- and statically-typed language: all variables and expressions must have a type. C++ also permits implicit and explicit conversions between types.</p>
-<p>C++’s implicit conversions between types include C’s implicit conversions, for example, fundamental types smaller than an <code class="sourceCode cpp"><span class="dt">int</span></code> can be promoted to an <code class="sourceCode cpp"><span class="dt">int</span></code> when participating in an expression. The keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> applied to a constructor or a cast operator prevents implicit conversions. Implicit conversions involving user-defined types are enabled via constructors that can be called with a single-argument and/or cast operators of those types.</p>
-<p>ADVICE: Prefer to define <code class="sourceCode cpp"><span class="kw">explicit</span></code> constructors and cast operators except in cases where it would be safe and meaningful to permit implicit conversions.</p>
-<p>C++’s <code class="sourceCode cpp"><span class="kw">dynamic_cast</span>&lt;T&gt;(expr)</code> operator attempts to cast the expression, <code class="sourceCode cpp">expr</code>, to <code class="sourceCode cpp">type T</code> at run-time using internal type state information the compiler stored with expr’s type. All other casts (implicit or explicit) are computed using only compile-time –not run-time-- information.</p>
+<p>C++ allows (silent) implicit conversions between values of a source type to a corresponding value of a destination type under the following circumstances:</p>
+<p>when the destination type is <code class="sourceCode cpp"><span class="dt">bool</span></code> (<em>contextual conversion to bool</em>), for example, when assigning to a bool variable, in the condition of the ternary operator, an <code>if</code> statement, or a loop statement, or with non-overloaded logical operators.</p>
+<ul>
+<li>from a class type with a conversion operator bool()</li>
+<li>from a class type with a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> conversion operator to a built-in type convertible to bool</li>
+<li>from a object or function pointer</li>
+<li>from a function name/function reference</li>
+<li>from an array name/array reference</li>
+<li>from a pointer to member</li>
+<li>from an integral type</li>
+<li>from a floating point type</li>
+<li>from <code class="sourceCode cpp"><span class="dt">nullptr_t</span></code></li>
+<li>from an unscoped enumeration</li>
+</ul>
+<p>Further implicit conversions with the destination of a built-in type happen:</p>
+<ul>
+<li>in arithmetic and bitwise expressions combining different built-in types, including unscoped enumeration types. Here, the <em>usual arithmetic conversions</em> including <em>integral promotion</em> happen.</li>
+<li>in an assignment, when passing a function argument, or when returning a value from a different built-in type (including <code>bool</code>), from an unscoped enumeration type, or from a class type with a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> conversion operator to a built-in type.</li>
+</ul>
+<p>For class types, implicit conversions can occur with constructors callable with a single argument and by applying conversion operators.</p>
+<p>For references and pointer to class types, implicit conversion to public base class references and pointers respectively is often a desired feature, but it can also lead to changing the type by slicing a value to become a value of one of its base classes. Only when the base class declares virtual member functions, the dynamic type of the object behind a reference or pointer, i.e., the most derived type, remains accessible via calling a virtual member function or via <code>dynamic_cast</code>.</p>
+<p>Furthermore, implicit <em>pointer decay</em> occurs when an array or function object is passed by value as an argument to a function.</p>
+<p>Implicit conversions in expressions can surprise programmers, lead to unwanted function overloads being called and can be a symptom of poor modeling of the application domain.</p>
+<p><strong>TODO</strong> explicit conversion, further deletion of notes, take MISRA ratinales?</p>
 <p>It is possible to use a single type to define two distinct sets of values, e.g., a double could be used to store the distance in kilometers or miles.:</p>
 <div class="sourceCode" id="cb82"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> miles = <span class="fl">5.67</span>;</span>
 <span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> km    = <span class="fl">13.88</span>;</span></code></pre></div>
@@ -1191,7 +1211,9 @@ source somehow)</p></li>
 <li><p>AUTOSAR (AI Peter to work with AUTOSAR to provide references)</p></li>
 </ul>
 <h3 id="guidance-to-language-users">6.2.2 Guidance to language users</h3>
+<p><strong>TODO</strong> consolidate guidance</p>
 <p>For specific types discussed in this document, such as floating point types, see the respective clauses.</p>
+<p>ADVICE: Prefer to define <code class="sourceCode cpp"><span class="kw">explicit</span></code> constructors and cast operators except in cases where it would be safe and meaningful to permit implicit conversions.</p>
 <ul>
 <li><p>Be aware of the rules for typing and conversions with fundamental types (i.e., built-in language types) and operators to avoid vulnerabilities.</p>
 <ul>
@@ -3136,8 +3158,8 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <h1 id="modifying-constants-ujo">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 8.2 exists in C++. The model of <code class="sourceCode cpp"><span class="at">const</span></code> in C++ is known as "bit-wise const" or "physical const".</p>
+<p>C++ can also model logical-const <em>&lt;need more&gt;</em></p>
 <p><em>Also include discussion of keyword</em> <code class="sourceCode cpp"><span class="at">mutable</span></code></p>
-<p>Need to consider lambdas in the context of ‘mutable’. In a lambda, member functions are effectively const, unless you use mutable.</p>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime:</p>
 <p><code class="sourceCode cpp"><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;</code></p>
 <p>A object that is not <code class="sourceCode cpp"><span class="at">const</span></code>-qualified can be accessed through a path that is <code class="sourceCode cpp"><span class="at">const</span></code>-qualified:</p>
@@ -3210,19 +3232,12 @@ It is undefined behavior to attempt to modify a const object. The programmer can
 <span id="cb197-10"><a href="#cb197-10" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
 <p>In the above, <code class="sourceCode cpp">MyRef</code> type hides the reference member behind member functions that an API that does not provide an assignment operator that is callable for a <code class="sourceCode cpp"><span class="at">const</span></code> type. Therefore the above code fails to compile because <code class="sourceCode cpp">f2()</code> is a <code class="sourceCode cpp"><span class="at">const</span></code> member function which causes all data members to be treated as <code class="sourceCode cpp"><span class="at">const</span></code>. Since <code class="sourceCode cpp"><span class="va">m_i</span></code> is not a reference or a pointer, its type is effectively <code class="sourceCode cpp"><span class="at">const</span> MyRef&lt;<span class="dt">int</span>&gt;</code> inside o <code class="sourceCode cpp">f2()</code>. Therefore <code class="sourceCode cpp"><span class="va">m_i</span> = <span class="dv">0</span>;</code> is invalid.</p>
 <p>C++ container iterator types, <code class="sourceCode cpp">iterator</code> and <code class="sourceCode cpp">const_iterator</code>, are examples of use of this pattern.</p>
-<p>Sometimes, even though a ‘const’ is declared, it may be necessary to for certain members to be modified, even when an object is ‘const’, such as the use of a cached member to store the result of a complex operation, or a mutex to prevent access to shared data. The C++ ‘mutable’ provides this ability, as shown below.</p>
-<p>#include <mutex></p>
-<p>class MyQueue { public: bool empty () const { std::lock_guard sg (m_mutex); // lock the mutex, which requires m_mutex to be writable return m_head != nullptr; }</p>
-<p>// …</p>
-<p>private: mutable std::mutex m_mutex; int * m_head { nullptr }; };</p>
-<p>TBD Example of the use of mutable in a lambda.</p>
 <h3 id="guidance-to-language-users">6.65.2 Guidance to language users</h3>
 <ul>
 <li><p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p></li>
 <li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p></li>
-<li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1; and</p></li>
-<li><p>Consider the use of “constexpr” wherever possible to move the detection</p></li>
-<li><p>Avoid the use of mutable, including inside a lambda …</p></li>
+<li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1and</p></li>
+<li><p>If a</p></li>
 </ul>
 <!-- -->
 <h1 id="language-specific-vulnerabilities-for-c">7. Language specific vulnerabilities for C</h1>
