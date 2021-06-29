@@ -216,116 +216,87 @@
 </header>
 <h2 id="type-system-ihn">6.2 Type System [IHN]</h2>
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
-<p>C++ allows (silent) implicit conversions between values of a source type to a corresponding value of a destination type under the following circumstances:</p>
-<ol type="1">
-<li><p>when the destination type is <code class="sourceCode cpp"><span class="dt">bool</span></code> (<em>contextual conversion to bool</em>), for example, when assigning to a bool variable, in the condition of the ternary operator, an <code>if</code> statement, or a loop statement, or with non-overloaded logical operators.</p>
-<ul>
-<li>from a class type with a conversion operator bool()</li>
-<li>from a class type with a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> conversion operator to a built-in type convertible to bool</li>
-<li>from a object or function pointer</li>
-<li>from a function name/function reference</li>
-<li>from an array name/array reference</li>
-<li>from a pointer to member</li>
-<li>from an integral type</li>
-<li>from a floating point type</li>
-<li>from <code class="sourceCode cpp"><span class="dt">nullptr_t</span></code></li>
-<li>from an unscoped enumeration</li>
-</ul></li>
-<li><p>Further implicit conversions with the destination of a built-in type happen:</p>
-<ul>
-<li>in arithmetic and bitwise expressions combining different built-in types, including unscoped enumeration types. Here, the <em>usual arithmetic conversions</em> including <em>integral promotion</em> happen.</li>
-<li>in an assignment, when passing a function argument, or when returning a value from a different built-in type (including <code>bool</code>), from an unscoped enumeration type, or from a class type with a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> conversion operator to a built-in type.</li>
-</ul></li>
-<li><p>For class types, implicit conversions can occur with constructors callable with a single argument and by applying conversion operators.</p></li>
-<li><p>For references and pointer to class types, implicit conversion to public base class references and pointers respectively is often a desired feature, but it can also lead to changing the type by slicing a value to become a value of one of its base classes. Only when the base class declares virtual member functions, the dynamic type of the object behind a reference or pointer, i.e., the most derived type, remains accessible via calling a virtual member function or via <code>dynamic_cast</code>.</p></li>
-<li><p>Furthermore, implicit <em>pointer decay</em> occurs when an array or function object is passed by value as an argument to a function.</p></li>
-</ol>
-<p>Implicit conversions in expressions can surprise programmers, lead to unwanted function overloads being called and can be a symptom of poor modeling of the application domain.</p>
-<p>Explicit conversions can be achieved by type casts. The following C++-specific cast operations are defined by the language:</p>
-<ul>
-<li><code class="sourceCode cpp"><span class="kw">static_cast</span>&lt;destination&gt;(source)</code> : changes the type by applying implicit or explicit conversion operations available. Usually a safe operation if allowed by the compiler.</li>
-<li><code class="sourceCode cpp"><span class="kw">const_cast</span>&lt;destination&gt;(source)</code> : allows adding/removing <code>const</code> (or <code>volatile</code>) qualification from the type of source. Unsafe, if <code>const</code> is removed from the type of an immutable object, which causes undefined behavior.</li>
-<li><code class="sourceCode cpp"><span class="kw">dynamic_cast</span>&lt;destination&gt;(source_ref_or_ptr)</code> : allows casting “down” a polymorphic class hierarchy by towards the dynamic type of the object referrenced by the argument.</li>
-<li><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span>&lt;destination&gt;(source_value)</code> : potentially dangerous re-interpretation of bits in source_value as type destination. Note, fewer valid re-interpretations of data types than in C exist, because C++ does not allow the structural equivalence of C.</li>
-<li><em>C-style casts</em> <code>(destination)source</code> : depending on destination, all of the above casts might happen, therefore, potentially dangerous.</li>
-<li>*constructor-….</li>
-</ul>
-<p><strong>TODO</strong> explicit conversion, further deletion of notes, take MISRA ratinales?</p>
+<p>C++ is a strongly- and statically-typed language: all variables and expressions must have a type. C++ also permits implicit and explicit conversions between types.</p>
+<p>C++’s implicit conversions between types include C’s implicit conversions, for example, fundamental types smaller than an <code class="sourceCode cpp"><span class="dt">int</span></code> can be promoted to an <code class="sourceCode cpp"><span class="dt">int</span></code> when participating in an expression. The keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> applied to a constructor or a cast operator prevents implicit conversions. Implicit conversions involving user-defined types are enabled via constructors that can be called with a single-argument and/or cast operators of those types.</p>
+<p>ADVICE: Prefer to define <code class="sourceCode cpp"><span class="kw">explicit</span></code> constructors and cast operators except in cases where it would be safe and meaningful to permit implicit conversions.</p>
+<p>C++’s <code class="sourceCode cpp"><span class="kw">dynamic_cast</span>&lt;T&gt;(expr)</code> operator attempts to cast the expression, <code class="sourceCode cpp">expr</code>, to <code class="sourceCode cpp">type T</code> at run-time using internal type state information the compiler stored with expr’s type. All other casts (implicit or explicit) are computed using only compile-time –not run-time-- information.</p>
 <p>It is possible to use a single type to define two distinct sets of values, e.g., a double could be used to store the distance in kilometers or miles.:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> miles = <span class="fl">5.67</span>;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> km    = <span class="fl">13.88</span>;</span></code></pre></div>
 <p>If the same underlying type is used then one risks manipulating such without properly converting the units first, e.g.,</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> distance_travelled = miles + km; <span class="co">// =19.55 (what?)</span></span></code></pre></div>
 <p>which will produce an incorrect result. Instead one must define user-defined types with constructors and/or cast operator definitions that will use the type system to correctly convert units. For this example we will use temperatures in Celsius and Fahrenheit.</p>
-<!-- the following code is not C++ (confused, Peter) -->
+<pre><code>&lt;!-- the following code is not C++ (confused, Peter) --&gt;</code></pre>
 <pre><code>t1 : Celsius := -40.0;
 t2 : Fahrenheit := 32.0;</code></pre>
-<p>ASIDE: This code works but needs discussion and brevity.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> miles { <span class="dt">double</span> m; };</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> kilometer { <span class="dt">double</span> km; };</span></code></pre></div>
+<pre><code>&lt;!--
+ASIDE: This code works but needs discussion and brevity.
+--&gt;</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> miles { <span class="dt">double</span> m; };</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> kilometer { <span class="dt">double</span> km; };</span></code></pre></div>
 <!-- code example to be reworked by Paul: -->
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> celsius;</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> fahrenheit;</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> celsius</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> val;</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  celsius() : val{} { }</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  celsius(celsius <span class="at">const</span>&amp;) = <span class="cf">default</span>;            </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  celsius&amp; <span class="kw">operator</span> =(celsius <span class="at">const</span>&amp;) = <span class="cf">default</span>;</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">explicit</span> celsius(<span class="dt">double</span> <span class="at">const</span>&amp; v) : val{v} { }</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="at">const</span>&amp; value() <span class="at">const</span> { <span class="cf">return</span> val; }</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  celsius(fahrenheit <span class="at">const</span>&amp; f);     <span class="co">// permits implicit casts</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> fahrenheit() <span class="at">const</span>;      <span class="co">// permits implicit casts</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> fahrenheit</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The code for fahrenheit is repeated from celsius with “fahrenheit” </span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// replacing “celsius”</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// and missing the last two declarations. </span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>celsius::celsius(fahrenheit <span class="at">const</span>&amp; f) :</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  val{ (f.value() - <span class="fl">32.0</span>) * <span class="fl">5.0</span> / <span class="fl">9.0</span> }         <span class="co">// constructor to celsuis</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>celsius::<span class="kw">operator</span> fahrenheit() <span class="at">const</span>    <span class="co">// cast operator to Fahrenheit!!</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> fahrenheit{ (<span class="kw">this</span>-&gt;val * <span class="fl">9.0</span>) / <span class="fl">5.0</span> + <span class="fl">32.0</span> };</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>celsius <span class="kw">operator</span> <span class="st">&quot;&quot;</span> _C(<span class="dt">long</span> <span class="dt">double</span> temp)</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  { <span class="cf">return</span> celsius(temp); }        <span class="co">// explicit construction w/double</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>fahrenheit <span class="kw">operator</span> <span class="st">&quot;&quot;</span> _F(<span class="dt">long</span> <span class="dt">double</span> temp)</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  { <span class="cf">return</span> fahrenheit(temp); }      <span class="co">// explicit construction w/double</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main()</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> <span class="kw">namespace</span> std;</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> fp = <span class="fl">0.0</span><span class="dv">_C</span>; <span class="co">// Celsius</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> bp = <span class="fl">212.0</span><span class="dv">_F</span>; <span class="co">// Fahrenheit</span></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  fahrenheit fp_F = fp; <span class="co">// implicit conversion</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  celsius bp_C = bp;    <span class="co">// implicit conversion</span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  bp = fp;  <span class="co">// prohibited  ??  See [over.match.best] in C++ standard</span></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  fp = bp;  <span class="co">// prohibited </span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fp == bp)…  <span class="co">// is this equality defined??</span></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>cout &lt;&lt; <span class="st">&quot;Freezing pt: &quot;</span> &lt;&lt; fp &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; fahrenheit{fp} &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; fp_F &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  cout &lt;&lt; <span class="st">&quot;Boiling pt: &quot;</span> &lt;&lt; celsius{bp} &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; bp_C &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; bp &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> celsius;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> fahrenheit;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> celsius</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> val;</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  celsius() : val{} { }</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  celsius(celsius <span class="at">const</span>&amp;) = <span class="cf">default</span>;            </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  celsius&amp; <span class="kw">operator</span> =(celsius <span class="at">const</span>&amp;) = <span class="cf">default</span>;</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">explicit</span> celsius(<span class="dt">double</span> <span class="at">const</span>&amp; v) : val{v} { }</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="at">const</span>&amp; value() <span class="at">const</span> { <span class="cf">return</span> val; }</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  celsius(fahrenheit <span class="at">const</span>&amp; f);     <span class="co">// permits implicit casts</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> fahrenheit() <span class="at">const</span>;      <span class="co">// permits implicit casts</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> fahrenheit</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The code for fahrenheit is repeated from celsius with “fahrenheit” </span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// replacing “celsius”</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// and missing the last two declarations. </span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>celsius::celsius(fahrenheit <span class="at">const</span>&amp; f) :</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  val{ (f.value() - <span class="fl">32.0</span>) * <span class="fl">5.0</span> / <span class="fl">9.0</span> }         <span class="co">// constructor to celsuis</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>celsius::<span class="kw">operator</span> fahrenheit() <span class="at">const</span>    <span class="co">// cast operator to Fahrenheit!!</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> fahrenheit{ (<span class="kw">this</span>-&gt;val * <span class="fl">9.0</span>) / <span class="fl">5.0</span> + <span class="fl">32.0</span> };</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>celsius <span class="kw">operator</span> <span class="st">&quot;&quot;</span> _C(<span class="dt">long</span> <span class="dt">double</span> temp)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  { <span class="cf">return</span> celsius(temp); }        <span class="co">// explicit construction w/double</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>fahrenheit <span class="kw">operator</span> <span class="st">&quot;&quot;</span> _F(<span class="dt">long</span> <span class="dt">double</span> temp)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  { <span class="cf">return</span> fahrenheit(temp); }      <span class="co">// explicit construction w/double</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main()</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> <span class="kw">namespace</span> std;</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> fp = <span class="fl">0.0</span><span class="dv">_C</span>; <span class="co">// Celsius</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> bp = <span class="fl">212.0</span><span class="dv">_F</span>; <span class="co">// Fahrenheit</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  fahrenheit fp_F = fp; <span class="co">// implicit conversion</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  celsius bp_C = bp;    <span class="co">// implicit conversion</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>  bp = fp;  <span class="co">// prohibited  ??  See [over.match.best] in C++ standard</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>  fp = bp;  <span class="co">// prohibited </span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fp == bp)…  <span class="co">// is this equality defined??</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>cout &lt;&lt; <span class="st">&quot;Freezing pt: &quot;</span> &lt;&lt; fp &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; fahrenheit{fp} &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; fp_F &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  cout &lt;&lt; <span class="st">&quot;Boiling pt: &quot;</span> &lt;&lt; celsius{bp} &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; bp_C &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; bp &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>C++ enumeration and class types distinguishes different types with identical structure. In contrast to C, where structural equivalence allows to cast a value from one type as another type with a compatible structure, C++ does have a few cases, (union types, reinterpret_cast) where structurally equivalent types play a role, but those situations come with their own set of vulnerabilities (note: needs section) and should be avoided. Other cases, where C-style casts can be used to reinterpret values as another type, are managed by the use of appropriate C++-style casts (static, const, dynamic, reinterpret), These named casts eliminate many of the issues associated with C-style casts. See clauses 6.6 and 6.37 for a discussion of C++ conversion capabilities and errors.</p>
 <p>Note that C++ aliasing mechanisms for types and templates (using, typedef) do not provide new types or templates and thus a type alias is considered identical to its original type.</p>
 <p>In addition to user-defined class types (<code class="sourceCode cpp"><span class="kw">struct</span></code>, <code class="sourceCode cpp"><span class="kw">union</span></code>, <code class="sourceCode cpp"><span class="kw">class</span></code>), C++ allows the definition of enumeration types and the construction of reference types, pointer types, array types and function types from other types.</p>
@@ -334,11 +305,14 @@ t2 : Fahrenheit := 32.0;</code></pre>
 <p>Since C++ inherits some of the type system of C (arithmetic types and pointers), it suffers similar vulnerabilities, such as those caused by integral promotion, implicit numeric conversion, pointer arithmetic and pointer casts. User-defined class types are vulnerable to unexpected conversions due to implicitly applied converting constructors and conversion operators (see “type conversions”).</p>
 <p>On the other hand, C++ provides mechanisms to define strong domain types (without runtime overhead) that allow appropriate operators through overloading, value range control through constructors and encapsulation of data, without implicit or surprising conversions.</p>
 <p>There exist a few holes in the type system, often for backward compatibility. See clause …</p>
-<blockquote>
-<p>AI – Peter, help by Paul – Write up the introduction to this clause following Erhard’s outline.</p>
-</blockquote>
+<pre><code>&lt;!--
+AI -- Peter, help by Paul -- Write up the introduction to this clause
+following Erhard&#39;s outline.
+--&gt;</code></pre>
 <p>C++-style casts eliminate many of the issues associated with C-style casts. See clauses 6.6 and 6.37 for a discussion of C++ conversion capabilities and errors.</p>
-<p><em>Material from Richard)</em></p>
+<pre><code>&lt;!--
+Material from Richard)
+--&gt;</code></pre>
 <p>Holes in the type system</p>
 <p>Shadow type system (explain) – Thoughts. – exception specification don’t participate in a functions types, until they are invoked. (Michael to provide some text in an email). This is only an issue before C++ 17. Fixed by using noexecpt and avoiding throw.</p>
 <p>Don't write exception specifications on your functions unless you're forced to (because other code you can't change has already introduced them and/or you are in pre C++17 when dynamic exception was banned or C++20 when empty throw specification was banned to be replaced by noexcept)</p>
@@ -355,19 +329,46 @@ t2 : Fahrenheit := 32.0;</code></pre>
 <p>Exceptions : - see 6.36</p>
 <p>Incomplete types and operations on incomplete types – usually checked by the compiler but some holes exist, for example when a virtual function is invoked from within a class constructor or destructor.</p>
 <p>Mitigation, don’t overload unary <code>&amp;</code> or <code>,</code>, don’t delete an object of an incomplete class type,</p>
-<blockquote>
-<p>AI – Paul – explain.</p>
-</blockquote>
+<pre><code>&lt;!--
+&gt; AI -- Paul -- explain.
+--&gt;</code></pre>
 <p>don’t invoke virtual functions in constructors and destructors</p>
-<p>High level issues</p>
-<p>Note: discuss the problems with unions.</p>
-<p><em>NOTE: Ensure that the above explicit text is put into the relevant sections and generalize or forward reference in this section.</em></p>
+<pre><code>&lt;!--
+High level issues
+
+Note: discuss the problems with unions.
+
+*NOTE: Ensure that the above explicit text is put into the relevant
+sections and generalize or forward reference in this section.*
+--&gt;</code></pre>
 <p>C++ overloading of operators can cause significant issues. See clause 6.23.</p>
 <p>C++ does not enforce consistent <code class="sourceCode cpp"><span class="at">const</span></code> along all access paths to an object. See clause 6.65.</p>
-<p><em>13 Feb 2020 - Issue moved here</em> <em>from 6.41(?) Templates and Generics- Templates take a hit because it is possible to invoke a template with a type that does not have all of the operations necessary to correctly execute the operations. For example, if an instantiation of a template type parameter does not implement “&lt;” (or is it “less”?) and the underlying code executes a “sort”, the sort will call whatever “&lt;” it can use. If a “&lt;” had been defined for a related type, then that “&lt;” will be called. The experts at meeting 67 say that this is not exclusive to templates, so the problem should be assigned here and referenced from templates.</em></p>
-<p><em>13 Feb 2020 – Another issue appears</em> <em>to be that some primitive types have operations that are inappropriate for the type. For example, the basic type for characters include operators “+”, “-”, “&lt;”, “*” which operate on the underlying integer representation. Passing such types into templates or into a class can result in the fundamental integer operation being called instead of a higher-level operation to perform, for example, comparison on a ISO 8859 character set. The only work-around appears to be to define classes with the fundamental type and legal operations as the only operators.</em></p>
-<p><em>Question – how does the “.” Operator interact with such types?(Maybe this comma operator?)</em></p>
-<p><em>A recommendation for future revisions of the language could be to provide a way to remove basic operations from types such as enumeration types or characters.</em></p>
+<pre><code>&lt;!--
+13 Feb 2020 - Issue moved here*
+from 6.41(?) 
+--&gt;</code></pre>
+<p>Templates and Generics- Templates take a hit because it is possible to invoke a template with a type that does not have all of the operations necessary to correctly execute the operations. For example, if an instantiation of a template type parameter does not implement “&lt;” (or is it “less”?) and the underlying code executes a “sort”, the sort will call whatever “&lt;” it can use. If a “&lt;” had been defined for a related type, then that “&lt;” will be called. The experts at meeting 67 say that this is not exclusive to templates, so the problem should be assigned here and referenced from templates.*</p>
+<pre><code>&lt;!--
+13 Feb 2020 -- Another issue appears*
+to be that some primitive types
+have operations that are inappropriate for the type. For example, the
+basic type for characters include operators &quot;+&quot;, &quot;-&quot;, &quot;\&lt;&quot;, &quot;\*&quot; which
+operate on the underlying integer representation. Passing such types
+into templates or into a class can result in the fundamental integer
+operation being called instead of a higher-level operation to perform,
+for example, comparison on a ISO 8859 character set. The only
+work-around appears to be to define classes with the fundamental type
+and legal operations as the only operators.*
+---&gt;</code></pre>
+<pre><code>&lt;!--
+*Question -- how does the &quot;.&quot; Operator interact with such types?(Maybe
+this comma operator?)*
+--&gt;</code></pre>
+<pre><code>&lt;!--
+A recommendation for future revisions of the language could be to
+provide a way to remove basic operations from types such as enumeration
+types or characters.*
+--&gt;</code></pre>
 <p>References</p>
 <ul>
 <li><p>CERT section OOP (AI – Aaron to provide others), (note that some of these will likely migrate to other vulnerabilities)x</p>
@@ -390,9 +391,7 @@ source somehow)</p></li>
 <li><p>AUTOSAR (AI Peter to work with AUTOSAR to provide references)</p></li>
 </ul>
 <h3 id="guidance-to-language-users">6.2.2 Guidance to language users</h3>
-<p><strong>TODO</strong> consolidate guidance</p>
 <p>For specific types discussed in this document, such as floating point types, see the respective clauses.</p>
-<p>ADVICE: Prefer to define <code class="sourceCode cpp"><span class="kw">explicit</span></code> constructors and cast operators except in cases where it would be safe and meaningful to permit implicit conversions.</p>
 <ul>
 <li><p>Be aware of the rules for typing and conversions with fundamental types (i.e., built-in language types) and operators to avoid vulnerabilities.</p>
 <ul>
