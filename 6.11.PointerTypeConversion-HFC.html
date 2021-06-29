@@ -216,18 +216,25 @@
 </header>
 <h2 id="pointer-type-conversions-hfc">6.11 Pointer Type Conversions [HFC]</h2>
 <h3 id="applicability-to-language">6.11.1 Applicability to language</h3>
-<p><em>In this clause, all C++ references, in addition to pointers. The <code class="sourceCode cpp">shared_ptr</code> casts</em></p>
+<pre><code>&lt;!--
+In this clause, all C++ references, in addition to pointers. The
+`shared_ptr`{.cpp} casts
+--&gt;</code></pre>
 <p>The vulnerabilites as described in ISO/IEC TR 24772-1:2019 clause 6.11.1 applies to C++.</p>
 <p>In general casting pointers breaks the type system and should be avoided.</p>
 <p>In C++, a C-style cast is defined in terms of the C++ cast operators <code class="sourceCode cpp"><span class="kw">const_cast</span></code>, <code class="sourceCode cpp"><span class="kw">static_cast</span></code>, and <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. In some cases, it is unspecified which cast is used, for example when a cast operation involves an incomplete type, a <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> may be used for the conversion which can produce an incorrect result.</p>
 <p>Especially, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> has the problem that it simply treats the unmodified pattern of bits in the pointer as being of the target type rather than the original type, but the C++ standard recognizes that the language or compiler may impose constraints or additional data requirements on a pointer. <code class="sourceCode cpp"><span class="kw">static_cast</span></code> and <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> take this difference into account, but other cast operators do not take this into consideration and hence can give incorrect results. For example, in the use of multiple inheritance, the address of an object may be different than one of its base class sub-objects, causing the potential for the exploitable access of adjacent memory.</p>
 <p>C++ permits the change of constant or volatile properties as part of a conversion. Such conversions, unless done in extremely limited ways, puts the program at risk of creating undefined behavior.</p>
 <p>A typical use of pointer conversion in C++ occurs where there is a hierarchy of classes declared, as in:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Base {<span class="kw">virtual</span> ~Base() = <span class="cf">default</span>; };</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Derived: Base { };</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Base {<span class="kw">virtual</span> ~Base() = <span class="cf">default</span>; };</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Derived: Base { };</span></code></pre></div>
 <p>Where a <code>Base</code> pointer needs to be converted to <code>Derived</code> pointer, <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> will check at runtime that the pointer is to an object of the correct type. If it’s not, either <code class="sourceCode cpp"><span class="kw">nullptr</span></code> will be returned, or an is exception thrown in case references are used as source and target type.<span data-custom-style="annotation reference"></span></p>
-<p><em>C++ Dynamic cast and the use of it during construction and destruction needs further exposition. The this pointer type can have surprising effects.</em></p>
-<p><em>AI</em> <em>–</em> <em>Paul, Richard to review</em> <em>– Writeup about incomplete objects before or after their lifetime and related to translation units.<span data-custom-style="annotation reference"></span></em><span data-custom-style="annotation reference"></span></p>
+<pre><code>&lt;!--
+C++ Dynamic cast and the use of it during construction and destruction needs further exposition. The this pointer type can have surprising effects.*
+--&gt;</code></pre>
+<pre><code>&lt;!--
+*AI* *--* *Paul, Richard to review* *-- Writeup about incomplete objects before or after their lifetime and related to translation units.[]{custom-style=&quot;annotation reference&quot;}*[]{custom-style=&quot;annotation reference&quot;}
+--&gt;</code></pre>
 <p>Pointer casts to a more strictly aligned pointer type is undefined behaviour.</p>
 <p><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> for pointer-interconvertible on objects (see clause 6.9.2 of IS 14882)</p>
 <p>C++ permits <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> to be used to convert a pointer to an object, a, to a pointer to another object, b, only in specific restricted circumstances, i.e., when</p>
