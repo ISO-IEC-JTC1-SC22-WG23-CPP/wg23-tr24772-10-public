@@ -1889,9 +1889,14 @@ To Do *(Paul)*
 <h2 id="dead-store-wxq">6.18 Dead Store [WXQ]</h2>
 <h3 id="applicability-to-language">6.18.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.18 exists in C++.</p>
-<p>For Volatile, what do you do to ensure that a write reaches memory?</p>
-<p>Initializing part of an array zeros the rest in C++</p>
-<p>For the definition of “dead store” in C++, non-trivial destructors constitute “use of an object” .</p>
+<p>’’’ <!--
+For Volatile, what do you do to ensure that a write reaches memory?
+
+Initializing part of an array zeros the rest in C++
+
+For the definition of "dead store" in C++, non-trivial destructors
+constitute "use of an object" .
+--> ```</p>
 <h3 id="guidance-to-language-users">6.18.2 Guidance to language users</h3>
 <ul>
 <li><p>Use compilers and static analysis tools to identify dead stores in the program.</p></li>
