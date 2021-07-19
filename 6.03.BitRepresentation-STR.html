@@ -217,26 +217,13 @@
 <h2 id="bit-representations-str">6.3 Bit Representations [STR]</h2>
 <h3 id="applicability-to-language">6.3.1 Applicability to language</h3>
 <p>This vulnerabilities described in TR24772-1 clause 6.3 is applicable to C++.</p>
-<pre><code>&lt;!--
-Document the C++ behaviours- handling bit-fields, - hitting enclosing
-word, concurrent access, hardware implications,
---&gt;</code></pre>
+<p><em>Document the C++ behaviours- handling bit-fields, - hitting enclosing word, concurrent access, hardware implications,</em></p>
 <p>Able to use non-integer types (such as enumerations) in accessing bit fields.</p>
 <p>A C++ memory location is either an object is or a contiguous collection of bit-fields.</p>
 <p>C++ bit fields are not separated from adjacent bit-fields for purposes of thread synchronization or volatility. Bit-fields are very difficult to use correctly in these contexts.</p>
-<pre><code>&lt;!--
-TO-DO -- Bit_Cast - Applies a bit representation to an object of a new
-type, for example copy a 64 bit IEEE 654 number to a 64 bit integer to
-perform bit operations and then cast back.
---&gt;</code></pre>
-<pre><code>&lt;!--
-Needs documentation.
---&gt;</code></pre>
-<pre><code>&lt;!--
-Issue was raised about padding bits between object/struct/union members
-can leak information. Where to put this? Mitigation -- use member copy
-instead of byte-wise copy.
---&gt;</code></pre>
+<p><strong>TO-DO – Bit_Cast - Applies a bit representation to an object of a new type, for example copy a 64 bit IEEE 654 number to a 64 bit integer to perform bit operations and then cast back.</strong></p>
+<p><strong>Needs documentation.</strong></p>
+<p>Issue was raised about padding bits between object/struct/union members can leak information. Where to put this? Mitigation – use member copy instead of byte-wise copy.</p>
 <p>When a struct, union or class is embedded within an array, implementations will typically add padding to provide efficient alignment and access. Therefore, the compiler will add padding bytes in case it is used in arrays. The padding bytes can be used as a <em>secret channel</em> to hide information and extract it later.</p>
 <h3 id="guidance-to-language-users">6.3.2 Guidance to language users</h3>
 <p>In addition to the advice of ISO/IEC TR 24772-3:2020 clause 6.3.2:</p>

@@ -225,19 +225,12 @@
 </ul>
 <p>The C++ mechanism new, by default, throws an exception if the allocated object cannot be created (i.e. if a null pointer would be returned). C++ does provide other allocation mechanism, including C malloc and a non-throwing new, that are not recommended for general use<span data-custom-style="annotation reference"></span>.<span data-custom-style="annotation reference"></span></p>
 <p>See C++ Core Guidelines R: Resource Management, and CERT EXP34-C “Do not dereference null pointers”</p>
-<pre><code>&lt;!--
-Capture notion that std::make_shared does not guarantee* *atomaticity
-of the referenced object.
-[]{custom-style=&quot;annotation reference&quot;}
---.</code></pre>
-<pre><code>&lt;!--
-std::span, std.vector and std.array::provide ...
-
-std::span is more lightweight and permit resizing .
---&gt;</code></pre>
+<p><em>Capture notion that std::make_shared does not guarantee</em> <em>atomaticity</em> <em>of the referenced object.</em><span data-custom-style="annotation reference"></span></p>
+<p>std::span, std.vector and std.array::provide …</p>
+<p>std::span is more lightweight and permit resizing .</p>
 <h3 id="guidance-to-language-users">6.13.2 Guidance to language users</h3>
+<p>When dereferencing objects of pointer-like types that may contain a null value, follow the guidance from TR 24772-3 clause 6.13.2.</p>
 <ul>
-<li><p>When dereferencing objects of pointer-like types that may contain a null value, follow the guidance from TR 24772-3 clause 6.13.2.</p></li>
 <li><p>Avoid the use of direct memory allocation. Instead use containers such as <code>std::array</code>, <code>std::vector</code>, and <code>std::span</code>.</p></li>
 <li><p>Consider the use of library facilities of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code>std::shared_ptr</code> to manage the lifetime of the object being referenced.</p></li>
 <li><p>Use references to reduce the number of places where pointers are dereferenced. <span data-custom-style="annotation reference"></span></p></li>

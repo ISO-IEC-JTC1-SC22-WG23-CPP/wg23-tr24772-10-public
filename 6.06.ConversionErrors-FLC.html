@@ -216,29 +216,12 @@
 </header>
 <h2 id="conversion-errors-flc">6.6 Conversion Errors [FLC]</h2>
 <h3 id="applicability-to-language">6.6.1 Applicability to language</h3>
-<pre><code>&lt;!--
-From Michael about &quot;constraint Error*
-
-This was referring to the following case from  Clive:
---&gt;</code></pre>
-<pre><code>&lt;!--
-*The example I intended was int \*i = malloc(10);*
-
-*The context was we wanted to say \&#39;C++ doesn\&#39;t allow implicit cast
-from void\* to any other pointer type\&#39; (which actually may be the best
-way to express this).*
-
-*We were going with something along the lines of \&#39;Attempting to
-implicitly cast void\* to any other pointer type is a constraint error\&#39;
-- at which point I wondered if \&#39;constraint error\&#39; was the appropriate
-C++ term*
-
-I don\&#39;t think I ever heard of constraint error before. Range error yes
-but this is not a range error. In this case, there isn\&#39;t a name as
-such.  In section 4.10.2. It says a T\* can be converted to a void\*. It
-leaves out the reverse, implying you must use a cast. We say it is not
-well-formed. 
---&gt;</code></pre>
+<p>(<em>From Michael about "constraint Error</em>)</p>
+<p>This was referring to the following case from Clive:</p>
+<p><em>The example I intended was int *i = malloc(10);</em></p>
+<p><em>The context was we wanted to say 'C++ doesn't allow implicit cast from void* to any other pointer type' (which actually may be the best way to express this).</em></p>
+<p><em>We were going with something along the lines of 'Attempting to implicitly cast void* to any other pointer type is a constraint error' - at which point I wondered if 'constraint error' was the appropriate C++ term</em></p>
+<p>I don't think I ever heard of constraint error before. Range error yes but this is not a range error. In this case, there isn't a name as such. In section 4.10.2. It says a T* can be converted to a void*. It leaves out the reverse, implying you must use a cast. We say it is not well-formed.</p>
 <p>C++ includes some of the conversion mechanisms of C, as documented in TR 24772-3 clause 6.6.1.</p>
 <p>C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights those differences where C++ eliminates potential vulnerabilities found in C.</p>
 <p>Implicit, i.e., automatic, conversions to a type <code>T</code> can be performed, for example, in the following situations:</p>
@@ -267,17 +250,17 @@ Note: The final 'cast notation' refers to C-style cast.</p>
 </ul>
 <p>Non-explicit unary constructors, non-explicit conversion operators, <em>(and conditionally-explicit unary constructors(??))</em> can provide implicit conversions that are unexpected by the programmer. Such constructors and conversion operators should be declared with the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code>.</p>
 <p>Implicit casting to a class type occurs when a class has a constructor that can take a single parameter, as in the following example:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>      {<span class="kw">public</span>:</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        C(<span class="dt">int</span> x=<span class="dv">10</span>, <span class="dt">float</span> y=<span class="dv">0</span>){...}}</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>      };</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo(C param){...}</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>...  foo(<span class="dv">21</span>); ...</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>      {<span class="kw">public</span>:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        C(<span class="dt">int</span> x=<span class="dv">10</span>, <span class="dt">float</span> y=<span class="dv">0</span>){...}}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      };</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo(C param){...}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>...  foo(<span class="dv">21</span>); ...</span></code></pre></div>
 <p>The call to <code class="sourceCode cpp">foo</code> requires a parameter of type C, but is provided with an int. However, as C has a constructor that can take an <code class="sourceCode cpp"><span class="dt">int</span></code> parameter (the float parameter is ignored because it has a default value), a temporary object of type <code class="sourceCode cpp">C</code> is constructed using <code class="sourceCode cpp"><span class="dv">21</span></code> as the <code class="sourceCode cpp">x</code> parameter. This is passed to foo. The temporary object is destroyed when foo returns.</p>
 <p>Note that this implicit conversion to a class object is the default behavior of constructors that can be called with a single parameter. To prevent this happening, the keyword ‘explicit’ is used before the constructor, as in:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">explicit</span> C(<span class="dt">int</span> x=<span class="dv">10</span>, <span class="dt">float</span> y=<span class="dv">0</span>){...}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">explicit</span> C(<span class="dt">int</span> x=<span class="dv">10</span>, <span class="dt">float</span> y=<span class="dv">0</span>){...}</span></code></pre></div>
 <p>The call <code class="sourceCode cpp">foo(<span class="dv">21</span>)</code> would now not be legal.</p>
 <p>C++ provides:</p>
 <ul>
@@ -295,7 +278,7 @@ Note: The final 'cast notation' refers to C-style cast.</p>
 <li><p>Guidance for numeric conversions: Use the brace form of function style casts</p></li>
 <li><p>Use C++ casts rather than C-style casts, as they provide more checking</p></li>
 <li><p>If a class has a converting constructor and implicit conversions are not required, make that constructor ‘explicit’</p></li>
-<li><p>Avoid casts (see Core guidelines ES48), treat every cast as a candidate for refactoring.</p></li>
+<li><p>Avoid casts (see Core guidelines ES48)</p></li>
 <li><p>If using a cast, use a named cast (see C++ Core Guidelines ES49)</p></li>
 <li><p>Don’t cast away const. See 6.65 Non-constant constants.<br />
 (see C++ Core Guidelines ES50)</p></li>

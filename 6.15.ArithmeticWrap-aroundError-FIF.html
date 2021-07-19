@@ -218,13 +218,7 @@
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
 <p>C++ shares the vulnerability with C as documented in ISO/IEC TR 24772-1:2019 clause 6.15 and TR 24772-3 clause 6.15.1. C++ specifies that signed integer overflow is undefined behaviour. Unsigned integer wraparound is well-defined in C++, but it can result in coding mistakes: Example: <code>4U - 5U</code> yields a large positive value. The smallest signed negative values might not have a positive counterpart (using the same signed integer type). <span data-custom-style="annotation reference"></span>Combined with implicit conversions or promotions for terms in mixed-type expressions, the semantics combine to produce results that can surprise the user.</p>
 <p>The mitigations for wrap-around errors in C++ are different than for C. C++ allows the definition of class types that embed integers together with the operations that provide the wrapping behaviour intended in an efficient way. The operations of the class can enforce safe value ranges and prevent implicit conversions.</p>
-<pre><code>&lt;!--
-Note: Integral promotion -- the addition of 2 `unsigned char`{.cpp} objects or
-`unsigned short int`{.cpp} objects _in C++ versions before 2020 (?? I doubt it changed Peter)_ will promote to
-(signed) `int`{.cpp} _and then cast back (?? Peter)_. Depending upon the relative sizes of
-`int` `short int` and `unsigned char`, this can result in
-implementation-defined behaviour.
---&gt;</code></pre>
+<p>Note: Integral promotion – the addition of 2 <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code> objects or <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">short</span> <span class="dt">int</span></code> objects <em>in C++ versions before 2020 (?? I doubt it changed Peter)</em> will promote to (signed) <code class="sourceCode cpp"><span class="dt">int</span></code> <em>and then cast back (?? Peter)</em>. Depending upon the relative sizes of <code>int</code> <code>short int</code> and <code>unsigned char</code>, this can result in implementation-defined behaviour.</p>
 <p>Avoid implicit conversions on assignment, function calls, and mathematical operations.</p>
 <p>Avoid mixed types, signed, unsigned in the same expression. (explain the problem).</p>
 <p>Handle (Make?) all conversions explicitly to prevent promotions due to implicit conversions <em>(promotions are impossible to suppress - Peter)</em></p>
