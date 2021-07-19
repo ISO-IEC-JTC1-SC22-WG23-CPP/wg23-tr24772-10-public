@@ -227,11 +227,9 @@
 <p>Instead of using the built-in arithmetic types or generic library types such as <code class="sourceCode cpp"><span class="bu">std::</span>string</code> for your domain values, C++ allows to wrap them in user-defined-class types as so-called <em>strong types</em>. <em>Strong types</em> provide only those operator overloads and conversions for each such type that make sense in the application domain. User-defined-literal operators help with providing constants of appropriate strong types.</p>
 <h3 id="guidance-to-language-users">6.2.2 Guidance to language users</h3>
 <ul>
-<li>Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.2.5. and the guidance provided in the different related sections of this document.</li>
-</ul>
-<p>— Be aware of the rules of the type system, overload resolution, and implicit conversions to avoid vulnerabilities.</p>
-<ul>
-<li><p>Enable compiler warnings regarding implicit conversions or use static analysis tools that provide such warnings.</p></li>
+<li><p>Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.2.5. and the guidance provided in the different related sections of this document.</p></li>
+<li><p>Be aware of the rules of the type system, overload resolution, and implicit conversions to avoid vulnerabilities.</p></li>
+<li><p>Enable compiler warnings regarding implicit conversions and/or use static analysis tools that provide such warnings.</p></li>
 <li><p>Define any constructor of a class that can be called with a single argument of a different type as <code class="sourceCode cpp"><span class="kw">explicit</span></code>.</p></li>
 <li><p>Define any conversion operator as <code class="sourceCode cpp"><span class="kw">explicit</span></code></p></li>
 <li><p>Exclusively, use <em>strong types</em> for domain values instead of the built-in types except on system boundaries, e.g., output and input.</p></li>
