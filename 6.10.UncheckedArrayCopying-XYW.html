@@ -225,16 +225,7 @@
 <ul>
 <li><p>Use standard library containers, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
 <li><p>When copying C-style arrays, statically shown that an access outside of the array cannot occur, or alternatively perform range checking before copying the array.</p></li>
-</ul>
-<pre><code>&lt;!--
-Deleted text
--   ~~For copies of fixed-sized arrays, perform range checking to
-    prevent out-of-bounds access on the target and the source arrays. In
-    the interest of speed and efficiency, range checking only needs to
-    be done when it cannot be statically shown that an access outside of
-    the arrays cannot occur.~~
---&gt;</code></pre>
-<ul>
+<li><p><del>For copies of fixed-sized arrays, perform range checking to prevent out-of-bounds access on the target and the source arrays. In the interest of speed and efficiency, range checking only needs to be done when it cannot be statically shown that an access outside of the arrays cannot occur.</del></p></li>
 <li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> to represent immutable string literals<span data-custom-style="annotation reference"></span>.</p></li>
 <li><p>Use <code class="sourceCode cpp">std:string</code> to represent mutable strings<span data-custom-style="annotation reference"></span>.</p></li>
 <li><p>Place arrays in containers with whole-array and bounds-checking operations. <span data-custom-style="annotation reference"></span></p></li>

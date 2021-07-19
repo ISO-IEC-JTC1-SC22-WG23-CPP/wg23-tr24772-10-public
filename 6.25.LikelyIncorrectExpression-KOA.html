@@ -251,15 +251,11 @@
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
 <p>Unary ‘<code>+</code>’ on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’. A unary ‘<code>-</code>’ on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2<sup>n</sup> where n is the number of bits in the unsinged type.</p>
-<pre><code>&lt;--
-Document with comments any use of `+`{.cpp} or
-`-`{.cpp} applied as a unary since (as opposed to the
-binary `+`{.cpp} or `-`{.cpp}.
-
--   Unary minus on unsigned type (MISRA 5-3-2)
-
--   Size of a pointer
---&gt;</code></pre>
+<p>Document with comments any use of <code class="sourceCode cpp">+</code> or <code class="sourceCode cpp">-</code> applied as a unary since (as opposed to the binary <code class="sourceCode cpp">+</code> or <code class="sourceCode cpp">-</code>.</p>
+<ul>
+<li><p>Unary minus on unsigned type (MISRA 5-3-2)</p></li>
+<li><p>Size of a pointer</p></li>
+</ul>
 <h3 id="guidance-to-language-users">6.25.2 Guidance to language users</h3>
 <ul>
 <li><blockquote>
@@ -277,15 +273,15 @@ binary `+`{.cpp} or `-`{.cpp}.
 <li><blockquote>
 <p>Avoid assignments embedded within other statements, as these can be problematic. Each of the following would be clearer and have less potential for problems if the embedded assignments were conducted outside of the expressions:</p>
 </blockquote>
-<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b,c,d;</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* ... */</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((a == b) || (c = (d-<span class="dv">1</span>)))    <span class="co">/* the assignment to c may not</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">                                       occur if a is equal to b */</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b,c,d;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* ... */</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((a == b) || (c = (d-<span class="dv">1</span>)))    <span class="co">/* the assignment to c may not</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">                                       occur if a is equal to b */</span></span></code></pre></div>
 <p>or:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b,c;</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  foo (a=b, c);</span></code></pre></div></li>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b,c;</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  foo (a=b, c);</span></code></pre></div></li>
 </ul>
 <p>Each may have unintended results.</p>
 <ul>
