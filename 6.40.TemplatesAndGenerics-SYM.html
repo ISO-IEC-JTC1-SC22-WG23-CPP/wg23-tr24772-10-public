@@ -235,69 +235,82 @@
 </ul>
 <p>Vulnerabilities that arise from the third case are covered elsewhere in the document(list), however, in the case of templates, the fact that code is written and may not be instantiated for a long time since code that invokes it has not been written, errors may not appear until later.</p>
 <p>Features such as concepts and <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can be used to mitigate the issue.</p>
-<p><em>Mitigation</em> <em>– ensure complete coverage of Template code with unit tests</em></p>
+<pre><code>&lt;!--
+Mitigation* *-- ensure complete coverage of Template code with unit tests
+--&gt;</code></pre>
 <p>The third case is not specific to templates, except that the problem may be hidden is addressed in 6.2.</p>
 <p>In the above paragraph, cases can arise where the programmer has not provided a type with all of the operations needed to function correctly in the template. For example,</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; <span class="kw">typename</span> ForwardIterator , <span class="kw">typename</span> Value &gt;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   ForwardIterator find (ForwardIterator first, ForwardIterator last, <span class="at">const</span> Value &amp; val)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   {</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>       <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>       ++ first ;</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> first</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   }</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; <span class="kw">typename</span> ForwardIterator , <span class="kw">typename</span> Value &gt;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   ForwardIterator find (ForwardIterator first, ForwardIterator last, <span class="at">const</span> Value &amp; val)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>       ++ first ;</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> first</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>   }</span></code></pre></div>
 <p>The standard says that</p>
 <ul>
 <li><p>the first template argument must be a forward iterator.</p></li>
 <li><p>the second template argument type must be comparable to the value type of that iterator using <code class="sourceCode cpp">==</code>.</p></li>
 </ul>
-<p>These requirements are implicit and all the compiler has to go by is their use in the function</p>
-<p>body. The result is great flexibility, splendid generated code for correct calls, and spectacularly bad</p>
-<p>error messages for incorrect calls. The obvious solution is to specify the first two requirements as</p>
-<p>part of the template’s interface:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; forward_iterator Iter , <span class="kw">typename</span> Value &gt;</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="kw">requires</span> equality_comparable &lt;Value, Iter :: <span class="dt">value_type</span> &gt;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find ( Iter first, Iter last, <span class="at">const</span> Value &amp; val );</span></code></pre></div>
-<p>This is roughly what C++20 offers. Note the equality_comparable concept. It captures the</p>
-<p>required relationship between the two template arguments.</p>
+<p>These requirements are implicit and all the compiler has to go by is their use in the function body. The result is great flexibility, splendid generated code for correct calls, and spectacularly bad error messages for incorrect calls. The obvious solution is to specify the first two requirements as part of the template’s interface:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; forward_iterator Iter , <span class="kw">typename</span> Value &gt;</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>          <span class="kw">requires</span> equality_comparable &lt;Value, Iter :: <span class="dt">value_type</span> &gt;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find ( Iter first, Iter last, <span class="at">const</span> Value &amp; val );</span></code></pre></div>
+<p>This is roughly what C++20 offers. Note the equality_comparable concept. It captures the required relationship between the two template arguments.</p>
 <p>The general C++11 <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can also be used:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span> ( Equality_comparable &lt;<span class="dt">int</span> &gt;);       <span class="co">// succeeds</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> &lt; Eeqality_comparable &lt;<span class="dt">int</span> ,<span class="dt">long</span> &gt;); <span class="co">// succeeds</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> S { <span class="dt">int</span> a; };</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> ( Equality_comparable &lt;S&gt;);         <span class="co">// fails because structs don&#39;t</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                                       <span class="co">// automatically get == &amp; !=</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span> ( Equality_comparable &lt;<span class="dt">int</span> &gt;);       <span class="co">// succeeds</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> &lt; Eeqality_comparable &lt;<span class="dt">int</span> ,<span class="dt">long</span> &gt;); <span class="co">// succeeds</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> S { <span class="dt">int</span> a; };</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> ( Equality_comparable &lt;S&gt;);         <span class="co">// fails because structs don&#39;t</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                                       <span class="co">// automatically get == &amp; !=</span></span></code></pre></div>
 <p><code class="sourceCode cpp"><span class="kw">static_assert</span> ( Equality_comparable \&lt;<span class="dt">int</span> \&gt;);</code></p>
 <p><strong><u>Discussion of “ranges”</u></strong></p>
 <p>Using the example above, the first two function arguments must denote a sequence. To express this requirement (that [first:last) is a sequence), requires a library extension. C++20 offers that in the Ranges standard-library component (§9.3.5). Hence in the example below we replace iterators with ranges:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; range R, <span class="kw">typename</span> Value &gt;</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">requires</span> equality_comparable &lt;Value , Range :: <span class="dt">value_type</span> &gt;</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find (R r, <span class="at">const</span> Value &amp; val )</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> first = begin (r);</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">auto</span> last = end (r);</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>   <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>   ++ first ;</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> first</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; range R, <span class="kw">typename</span> Value &gt;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">requires</span> equality_comparable &lt;Value , Range :: <span class="dt">value_type</span> &gt;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find (R r, <span class="at">const</span> Value &amp; val )</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> first = begin (r);</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">auto</span> last = end (r);</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>   <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>   ++ first ;</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> first</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><span data-custom-style="annotation reference"></span></p>
 <p><strong>Other issues</strong></p>
 <p>Overload resolution of templates differs from the overload resolution of non-template code. This can result in methods or operators being chosen that are unexpected by the developer.</p>
 <p>A template constructor is never a copy or move constructor and hence does not prevent the implicit definition of a copy or move constructor even if the constructor looks similar.</p>
 <p>There are cases, however, where the instantiation of a template with a parameter that matches syntactic but not semantic requirements, such as ++ for a pointer, will compile and execute but will be wrong and can result in undefined behaviour. Other examples relate to incomplete class types, see clause 6.2 <em>Type system.</em></p>
-<p>Another issue – likely to be placed elsewhere and referenced here</p>
-<p>Standard vector construction issue where braces are replaced with curly braces. (Paul)</p>
-<p>Guidance – use braces initially and only use other format if the compiler fails ???</p>
-<p><em>(Examples needed</em>)</p>
-<p>Core guidelines (fill in references)</p>
-<p>I.9 T.10, T.11, 12, 13, T.20, T.21, T.22, T.23, T.24, T.25, T.26, T.30, T.31 – forward to Clive.</p>
-<p>(<em>We may wish to summarize)</em></p>
+<pre><code>&lt;!--
+Another issue -- likely to be placed elsewhere and referenced here
+
+Standard vector construction issue where braces are replaced with curly
+braces. (Paul)
+
+Guidance -- use braces initially and only use other format if the
+compiler fails ???
+--&gt;</code></pre>
+<pre><code>&lt;!--
+(Examples needed)
+--&gt;</code></pre>
+<pre><code>&lt;!--
+Core guidelines (fill in references)
+
+I.9 T.10, T.11, 12, 13, T.20, T.21, T.22, T.23, T.24, T.25, T.26, T.30,
+T.31 -- forward to Clive.
+
+(*We may wish to summarize)*
+--&gt;</code></pre>
 <h3 id="guidance-to-language-users">6.40.2 Guidance to language users</h3>
 <ul>
-<li><p>Use static analysis tools to diagnose the use of inappropriate types in a template interface</p></li>
-<li><p><em>Cyclic dependencies and ODR (one definition rule) use …</em></p></li>
-<li><p>Consider using <em>concepts</em> for each template type parameter</p>
+<li>Use static analysis tools to diagnose the use of inappropriate types in a template interface</li>
+</ul>
+<pre><code>&lt;!--
+-   *Cyclic dependencies and ODR (one definition rule) use ...*
+--&gt;</code></pre>
 <ul>
+<li><p>Consider using <em>concepts</em> for each template type parameter</p></li>
 <li><pre><code>  Create and use concepts that specify &quot;meaningful&quot; semantics</code></pre></li>
-</ul></li>
 <li><p>Write templates that check if a specific template argument fulfills the minimal syntactic requirements for the template, for example by using static_assert with type_traits.</p></li>
 <li><p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions</p></li>
 <li><p>For generic operator functions, consider providing them as hidden friends through<span data-custom-style="annotation reference"></span> mix-in class templates.</p></li>
@@ -305,29 +318,29 @@
 <blockquote>
 <p>As an example, the following class template defines equality operators for single-element structs (Template parameter U):</p>
 </blockquote>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> U&gt;</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Eq{</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>==(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vl]=l;</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vr]=r;</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vl == vr;</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>!=(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> !(l==r);</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">// usage of the above, check that type X obtains operator== and operator!=</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X: Eq&lt;X&gt;{</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> val;</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constexpr</span> <span class="kw">explicit</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    X(<span class="dt">int</span> v):val{v}{}</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">static_assert</span>(X{<span class="dv">42</span>} != X{<span class="dv">43</span>} &amp;&amp; X{<span class="dv">42</span>} == X{<span class="dv">42</span>} );</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> U&gt;</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Eq{</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>==(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vl]=l;</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vr]=r;</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vl == vr;</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>!=(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> !(l==r);</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">// usage of the above, check that type X obtains operator== and operator!=</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X: Eq&lt;X&gt;{</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> val;</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constexpr</span> <span class="kw">explicit</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    X(<span class="dt">int</span> v):val{v}{}</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">static_assert</span>(X{<span class="dv">42</span>} != X{<span class="dv">43</span>} &amp;&amp; X{<span class="dv">42</span>} == X{<span class="dv">42</span>} );</span></code></pre></div>
 <p>The advantage in using the above mechanism is that these overloads are only visible comparing objects of type X, and not for other types. Implementing them as free functions increases likelihood that implicit conversions will result in the wrong function being called.</p>
 <ul>
 <li>Use qualified-id or this-&gt; to refer to names that may be found in a dependent base</li>

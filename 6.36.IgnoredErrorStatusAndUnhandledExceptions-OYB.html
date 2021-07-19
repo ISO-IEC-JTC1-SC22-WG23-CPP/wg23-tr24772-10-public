@@ -232,12 +232,16 @@
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> {</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">// handle errors</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p><em>Should we include a discussion about C++ error_code??? AI – Michael Wong</em></p>
+<pre><code>&lt;!--
+Should we include a discussion about C++ error_code??? AI -- Michael Wong
+--&gt;</code></pre>
 <p>The header <code>&lt;system_error&gt;</code> defines types and functions used to report error conditions originating from the operating system, streams I/O, <a href="https://en.cppreference.com/w/cpp/thread/future"><code>std::future</code></a>, or other low-level APIs.</p>
 <p>Defined in header <code>&lt;system_error&gt;</code> since C++11.</p>
 <p>std::error_category serves as the base class for specific error category types, such as <a href="https://en.cppreference.com/w/cpp/error/system_category"><code class="sourceCode cpp"><span class="bu">std::</span>system_category</code></a>, <a href="http://en.cppreference.com/w/cpp/io/iostream_category"><code class="sourceCode cpp"><span class="bu">std::</span>iostream_category</code></a>, etc. Each specific category class defines the <code>error_code</code> - error_condition mapping and holds the explanatory strings for all error_conditions. The objects of error category classes are treated as singletons, passed by reference.</p>
 <p><code>std::error_code</code> is a platform-dependent error code. Each <code>std::error_code</code> object holds an error code originating from the operating system or some low-level interface and a pointer to an object of type <a href="https://en.cppreference.com/w/cpp/error/error_category"><code class="sourceCode cpp"><span class="bu">std::</span>error_category</code></a>, which corresponds to the said interface. The error code values may be not unique across different error categories.</p>
-<p>_Discuss global error states, such as errno (which is thread-local) but still static.__</p>
+<pre><code>&lt;!--
+Discuss global error states, such as errno (which is thread-local) but still static.
+---&gt;</code></pre>
 <p>Global state for error codes is hard to manage and it is easy to forget to check it (C++ Core Guidelines E.28).</p>
 <p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope.</p>
 <h3 id="guidance-to-language-users">6.36.2 Guidance to language users</h3>
