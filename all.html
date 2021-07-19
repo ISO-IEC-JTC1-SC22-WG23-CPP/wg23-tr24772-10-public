@@ -1056,7 +1056,7 @@ use and possible exhaustion).</code></pre></li>
 <li><p>Values of an unscoped enumeration convert to their underlying integral type in arithmetic expressions (see 6.5 [CCB]).</p></li>
 <li><p>Built-in array types as well as function types will decay to a pointer type. For array types this is problematic, because the array’s extent is lost.</p></li>
 <li><p>Pointer and reference types referring a derived class object can implicitly convert to a pointer or reference to one of its public base classes respectively (see 6.44 [BKK]).</p></li>
-<li><p>User-defined class types can define converting constructors, that can be called with a single argument, or conversion operators. If these member functions are not declared with the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> they are eligible for use in implicit conversion.</p></li>
+<li><p>User-defined class types can define converting constructors, that can be called with a single argument, or conversion operators. If these member functions are not declared with the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> they are eligible for use in implicit conversions.</p></li>
 <li><p>Boolean contexts are a special case, because in addition to arithmetic types all pointer types implicitly convert to <code>bool</code>. In such contexts even an <code class="sourceCode cpp"><span class="kw">explicit</span> <span class="kw">operator</span> <span class="dt">bool</span>()</code> conversion operator is used. The latter conversions (pointer and explicit conversion operator) are desirable, the conversions from an arithmetic type in boolean contexts often indicate a missing comparison.</p></li>
 </ul>
 <p>Note that type aliases (<code class="sourceCode cpp"><span class="kw">using</span></code>, <code class="sourceCode cpp"><span class="kw">typedef</span></code>) do not define a different type from their alias just a different name and thus do not incur any conversion between the alias and the aliased type.</p>
@@ -1068,9 +1068,7 @@ use and possible exhaustion).</code></pre></li>
 <li><p>Enable compiler warnings regarding implicit conversions and/or use static analysis tools that provide such warnings.</p></li>
 <li><p>Define any constructor of a class that can be called with a single argument of a different type as <code class="sourceCode cpp"><span class="kw">explicit</span></code>.</p></li>
 <li><p>Define any conversion operator as <code class="sourceCode cpp"><span class="kw">explicit</span></code></p></li>
-<li><p>Exclusively, use <em>strong types</em> for domain values instead of the built-in types except on system boundaries, e.g., output and input.</p></li>
-<li><p>Use C++ casts rather than C-style casts, as they provide more compile-time checking and are more restrictive in what they can change, - rationale – syntactic distinction – in C++ obvious. <!-- check if another rule --></p></li>
-<li><p>Treat every cast as a candidate for refactoring.</p></li>
+<li><p>Use <em>strong types</em> for domain values instead of the built-in types except on system boundaries, e.g., output and input.</p></li>
 <li><p>When defining variables of arithmetic types, use a braced-initializer to get notified of a potential narrowing conversion from the initial value’s type.</p></li>
 </ul>
 <h2 id="bit-representations-str">6.3 Bit Representations [STR]</h2>
@@ -1251,7 +1249,7 @@ Note: The final 'cast notation' refers to C-style cast.</p>
 <li><p>Guidance for numeric conversions: Use the brace form of function style casts</p></li>
 <li><p>Use C++ casts rather than C-style casts, as they provide more checking</p></li>
 <li><p>If a class has a converting constructor and implicit conversions are not required, make that constructor ‘explicit’</p></li>
-<li><p>Avoid casts (see Core guidelines ES48)</p></li>
+<li><p>Avoid casts (see Core guidelines ES48), treat every cast as a candidate for refactoring.</p></li>
 <li><p>If using a cast, use a named cast (see C++ Core Guidelines ES49)</p></li>
 <li><p>Don’t cast away const. See 6.65 Non-constant constants.<br />
 (see C++ Core Guidelines ES50)</p></li>
