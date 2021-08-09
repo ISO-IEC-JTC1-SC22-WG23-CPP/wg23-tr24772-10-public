@@ -220,78 +220,38 @@
 <p>For example</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> *bad_pointer() {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> &amp;a;      <span class="co">// Error. Returning the address of a local variable - Undefined Behaviour.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> &amp;a;</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a> }</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; bad_reference() {</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a;      <span class="co">// Error, returning a reference to a local variable.</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt;::iterator bad_iterator()</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a> {</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt; a = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> };</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a.begin();  <span class="co">// Error, returning an iterator object that contains a pointer to first element of the local array &quot;a&quot;.</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { x = <span class="dv">1</span>; };   <span class="co">// Error, &#39;&amp;&#39; causes x to be captured by reference</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> erroneous_use() {</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_pointer();</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_reference();</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_iterator();</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_lambda()();</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
-<p>C++ provides the ability to extend the lifetime of a temporary. Issues are below.</p>
-<pre><code>#include &lt;array&gt;
-struct A
-{
- std::array&lt;int, 2&gt; const &amp; getArray () const {
-   return m_array;
- }
- std::array&lt;int, 2&gt; m_array;
-};
-A getA ();
-
-void foo1 ()
-{
- for (auto i : getA ().getArray ())  // The initialization of i causes Undefined Behaviour
- {
- }
-}
-
-void foo2 ()
-{
-  auto const &amp; arr2 = getA();  // arr is a variable declaration that extends the lifetime of the return from getA
-  for ( auto i : arr2.getArray ())
-  {
-  }
-}
-
-void foo3 ()
-{
-  auto &amp;&amp; arr3 = getA();  // arr is a variable declaration that extends the lifetime of the return from getA
-  for ( auto i : arr3.getArray ())
-  {
-  }
-}
-
-</code></pre>
-<p>In the example above for <code>foo1()</code>, there is no lifetime extension of the temporary returned from <code>getA()</code>, therefore <code>m_array</code> is destroyed before it is used, resulting in undefined behaviour. However, in <code>foo2()</code> and <code>foo3 ()</code>, the temporaries are extended because the declarations of the variables <code>arr2</code> and <code>arr3</code> receive the returns of <code>getA()</code> are bound to a const Lvalue reference and an Rvalue reference respectively.</p>
-<p><em>need to say something about lifetime extension , returning references , ‘range for’ vulnerability with dangling references from temporaries. Peter</em> (Group thinks it is covered.)</p>
-<p>_Remaining scenarios on lifetime extension: The lifetime of a temporary object created when evaluating the default arguments of a default or copy constructor used to initialize an element of an array ends before the next element of the array begins initialization. (Candidate for deletion unless we can create a scenario.)</p>
-<p>Subtle text from [class.temporary] para 5 in C++17 or C++20</p>
-<p>The temporary object to which the reference is bound or the temporary object that is the complete object of a subobject to which the reference is bound persists for the lifetime of the reference [Needs addressing with an example]</p>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; bad_reference() {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt;::iterator bad_iterator()</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a> {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt; a = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> };</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a.begin();</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { x = <span class="dv">1</span>; };</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> erroneous_use() {</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_pointer();</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_reference();</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_iterator();</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_lambda()();</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
+<p><em>need to say something about lifetime extension, returning references, range for vulnerability with dangling references from temporaries. Peter</em></p>
 <h3 id="guidance-to-language-users">6.33.2 Guidance to language users</h3>
 <ul>
-<li><p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist, in order to avoid the possibility of a dangling reference.</p></li>
-<li><p>Do not returning the address or reference of a local variable as the result of a function call.</p></li>
-<li><p>Avoid capturing by reference in lambdas that will be used non-locally, including return, or passing it to another thread, or stored in dynamic memory.</p></li>
-<li><p>If attempting to bind a reference to a temporary object, … thinking …</p></li>
+<li><p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist. This is done in order to avoid the possibility of a dangling reference.</p></li>
+<li><p>Do not return the address of a local variable as the result of a function call.</p></li>
+<li><p>Do not return a local variable as the result of a function returning a reference type</p></li>
+<li><p>Avoid capturing by reference in lambdas that will be used non-locally, including return, or passing it to another thread, or stored in dynamic memory</p></li>
 </ul>
 <p>See also C++ Core Guidelines F.53, …</p>
 </body>
