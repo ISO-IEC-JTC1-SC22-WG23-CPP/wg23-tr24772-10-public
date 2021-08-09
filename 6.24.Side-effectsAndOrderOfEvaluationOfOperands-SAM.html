@@ -262,24 +262,33 @@
 <p>makes it unambiguous what the value of i is during the array assignment and eliminates the possibility of vulnerabilities.</p>
 <p>In addition, it is important to note that overloading an operator disables short-circuiting behaviours (e.g., built-in boolean operators): those operators' operands are all evaluated before the operator itself.</p>
 <p>The C++ built-in (two-argument) Boolean operators (e.g., <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">\|\|</code>)as well as <code>&lt;type_traits&gt;</code>’s <code class="sourceCode cpp"><span class="bu">std::</span>conjunction</code> and <code class="sourceCode cpp"><span class="bu">std::</span>disjunction</code> operations are all short-circuiting, i.e., if the value of an earlier (from left-to-right) operand of an operation determines the result of the operation, then all remaining arguments are not evaluated.</p>
-<p><em>conjunction and disjunction operate at compile time and the short-circuiting is about template instantiations that might lead to compile errors otherwiese. This is not a runtime safety issue. I suggest dropping that (Peter)</em></p>
+<pre><code>&lt;!--
+Conjunction and disjunction operate at compile time and the short-circuiting is about template instantiations that might lead to compile errors otherwiese. This is not a runtime safety issue. I suggest dropping that (Peter)_
+--&gt;</code></pre>
 <p>Typically this allows one to write code like this, e.g.,</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> *p;</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (p != <span class="kw">nullptr</span> &amp;&amp; *p != <span class="dv">0</span>) {</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* do something */</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> *p;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (p != <span class="kw">nullptr</span> &amp;&amp; *p != <span class="dv">0</span>) {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* do something */</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <p>i.e., if <code class="sourceCode cpp">p</code> is <code class="sourceCode cpp"><span class="kw">nullptr</span></code>, then <code class="sourceCode cpp">*p != <span class="dv">0</span></code> is never executed, thus, avoiding undefined behaviour. Only when <code>p</code> is not <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is *p != 0 is evaluated. It must be stressed that this only applies to the built-in <code class="sourceCode cpp">&amp;&amp;</code> and <code>||</code> operators: user-defined operator overloads as functions always evaluate all operands first.</p>
 <p>Consequently should one want to always evaluate all operands of a boolean expression, one should not write code like this:</p>
 <p><code class="sourceCode cpp"><span class="dt">bool</span> x = foo() &amp;&amp; bar();</code></p>
 <p>where <code>foo()</code> and <code>bar()</code> are functions that return something convertible to <code>bool</code>. In this expression, if <code>foo()</code> returns <code class="sourceCode cpp"><span class="kw">false</span></code>, then <code>bar()</code> will never be executed; –only when <code>foo()</code> returns <code class="sourceCode cpp"><span class="kw">true</span></code> will <code>bar()</code> be executed. Similarly for <code>||</code>:</p>
 <p><code class="sourceCode cpp"><span class="dt">bool</span> y = foo() || bar();</code></p>
 <p>i.e., only when <code class="sourceCode cpp">foo()</code> returns <code class="sourceCode cpp"><span class="kw">false</span></code> will <code class="sourceCode cpp">bar()</code> be executed if <code class="sourceCode cpp">foo()</code> returns <code class="sourceCode cpp"><span class="kw">true</span></code> then <code class="sourceCode cpp">bar()</code> will never be executed. Thus, if both <code class="sourceCode cpp">foo()</code> and <code class="sourceCode cpp">bar()</code> are both required to be executed, then execute them in separate statements first, e.g.,</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> foo_result = foo();</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> bar_result = bar();</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> x = foo_result &amp;&amp; bar_result;</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> y = foo_result \|\| bar_result;</span></code></pre></div>
-<p>[Stephen: My write-up here is lengthy but should help get more terse wording... but I note this: C++ operator information is in C++17 Clause 8 and Clause 16.5, ... Also per 16.5.1 para 2. unary and binary forms of the same operator are considered to have the same name so one can hide another from an enclosing scope. Thus, this is also another possible vulnerability.]</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> foo_result = foo();</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> bar_result = bar();</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> x = foo_result &amp;&amp; bar_result;</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> y = foo_result \|\| bar_result;</span></code></pre></div>
+<pre><code>&lt;!--
+Stephen: My write-up here is lengthy but should help get more terse
+wording\... but I note this: C++ operator information is in C++17 Clause
+8 and Clause 16.5, \... Also per 16.5.1 para 2. unary and binary forms
+of the same operator are considered to have the same name so one can
+hide another from an enclosing scope. Thus, this is also another
+possible vulnerability.\]
+--&gt;</code></pre>
 <h3 id="guidance-to-language-users">6.24.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.24.5.</p></li>

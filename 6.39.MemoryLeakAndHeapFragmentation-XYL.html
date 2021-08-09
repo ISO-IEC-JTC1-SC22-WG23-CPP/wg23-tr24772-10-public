@@ -217,7 +217,7 @@
 <h2 id="memory-leak-and-heap-fragmentation-xyl">6.39 Memory Leak and Heap Fragmentation [XYL]</h2>
 <h3 id="applicability-to-language">6.39.1 Applicability to language</h3>
 <p>The memory leak vulnerability documented in ISO/IEC TR24772-1:2019 clause 6.39 exists in C++, unless the programmer takes steps to avoid it.</p>
-<p>C++ uses destructors, and a pattern called Resource Acquisition Is Initialization (RAII) which performs recovery of resources. Destructors (and therefore memory and resource releases) are deterministically ordered with respect to other events on their thread. Object destructors will not be called</p>
+<p>C++ uses destructors, and a pattern called <em>Resource Acquisition Is Initialization (RAII)</em> which performs recovery of resources. Destructors (and therefore memory and resource releases) are deterministically ordered with respect to other events on their thread. Object destructors will not be called</p>
 <ul>
 <li><p>When an unhandled exception escapes its thread of execution</p></li>
 <li><p>Under conditions of abnormal termination</p></li>
@@ -225,7 +225,9 @@
 <p>See CERT ERR50-CPP for list of cases.</p>
 <p>The steps mentioned above will mitigate most memory leak issues.</p>
 <p>The mechanisms <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> and <code class="sourceCode cpp"><span class="bu">std::</span>shared_future</code> and similarly constructed reference-counting user code do not detect cycles which will cause leaks because the shared pointers (and hence what they point to) will not be destroyed.</p>
-<p><em>need to clarify to rely on memory managing types, containers, and unique ptr, shared ptr is often bad , Peter</em></p>
+<pre><code>&lt;!--
+need to clarify to rely on memory managing types, containers, and unique ptr, shared ptr is often bad , Peter
+--&gt;</code></pre>
 <h3 id="guidance-to-language-users">6.39.2 Guidance to language users</h3>
 <ul>
 <li><p>Use containers and smart pointers in preference to direct (manual) memory management.</p></li>

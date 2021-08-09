@@ -142,68 +142,6 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -216,21 +154,56 @@
 </header>
 <h2 id="using-shift-operations-for-multiplication-and-division-pik">6.16 Using Shift Operations for Multiplication and Division [PIK]</h2>
 <h3 id="applicability-to-language">6.16.1 Applicability to language</h3>
-<p>REWORD: The issues for C++ are well defined in TR 24772-1 clause 6.16 <em>Using Shift Operations for Multiplication and Division [PIK].</em> Also see clause <em>6.15 Arithmetic Wrap-around Error [FIF]</em>.</p>
-<p>In C++, shifts with too large an argument is defined as Undefined Behaviour. See 6.56 Undefined Behaviour and ISO/IEC 14882:2017 C++ reference manual</p>
-<blockquote>
-<p>From the C++ standard 14882:2017 clause 8.8 [expr.shift],<br />
-The shift operators &lt;&lt; and <code class="sourceCode cpp">\&gt;\&gt;</code> group left-to-right.<br />
-shift-expression:<br />
-<code class="sourceCode cpp">additive-expression\ shift-expression \&lt;\&lt; additive-expression\ shift-expression \&gt;\&gt; additive-expression</code><br />
-The operands shall be of integral or unscoped enumeration type and integral promotions are performed. The type of the result is that of the promoted left operand. The behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand.<br />
-<br />
-The value of <code class="sourceCode cpp">E1 \&lt;\&lt; E2</code> is <code class="sourceCode cpp">E1</code> left-shifted <code class="sourceCode cpp">E2</code> bit positions; vacated bits are zero-filled. If <code class="sourceCode cpp">E1</code> has an unsigned type, the value of the result is <code class="sourceCode cpp">E1 × <span class="fl">2E2</span></code>, reduced modulo one more than the maximum value representable in the result type. Otherwise, if <code class="sourceCode cpp">E1</code> has a signed type and non-negative value, and <code class="sourceCode cpp">E1 × <span class="fl">2E2</span></code> is representable in the corresponding unsigned type of the result type, then that value, converted to the result type, is the resulting value; otherwise, the behavior is undefined.<br />
-<br />
-The value of <code class="sourceCode cpp">E1 \&gt;\&gt; E2</code> is <code class="sourceCode cpp">E1</code> right-shifted <code class="sourceCode cpp">E2</code> bit positions. If <code class="sourceCode cpp">E1</code> has an unsigned type or if <code class="sourceCode cpp">E1</code> has a signed type and a non-negative value, the value of the result is the integral part of the quotient of <code class="sourceCode cpp">E1/<span class="fl">2E2</span></code>. If <code class="sourceCode cpp">E1</code> has a signed type and a negative value, the resulting value is implementation-defined.</p>
-<p>The expression <code class="sourceCode cpp">E1</code> is sequenced before the expression <code class="sourceCode cpp">E2</code>.</p>
-</blockquote>
+<pre><code>&lt;!--
+REWORD: The issues for C++ are well defined in TR 24772-1 clause 6.16
+*Using Shift Operations for Multiplication and Division \[PIK\].* Also
+see clause *6.15 Arithmetic Wrap-around Error \[FIF\]*.
+
+In C++, shifts with too large an argument is defined as Undefined
+Behaviour. See 6.56 Undefined Behaviour and ISO/IEC 14882:2017 C++
+reference manual
+
+&gt; From the C++ standard 14882:2017 clause 8.8 \[expr.shift\],\
+&gt;  The shift operators \&lt;\&lt; and `\&gt;\&gt;`{.cpp} group
+&gt; left-to-right.\
+&gt; shift-expression:\
+&gt; `additive-expression\
+&gt; shift-expression \&lt;\&lt; additive-expression\
+&gt; shift-expression \&gt;\&gt; additive-expression`{.cpp}\
+&gt; The operands shall be of integral or unscoped enumeration type and
+&gt; integral promotions are performed. The type of the result is that of
+&gt; the promoted left operand. The behavior is undefined if the right
+&gt; operand is negative, or greater than or equal to the length in bits of
+&gt; the promoted left operand.\
+&gt; \
+&gt; The value of `E1 \&lt;\&lt; E2`{.cpp} is
+&gt; `E1`{.cpp} left-shifted `E2`{.cpp} bit
+&gt; positions; vacated bits are zero-filled. If `E1`{.cpp}
+&gt; has an unsigned type, the value of the result is `E1 ×
+&gt; 2E2`{.cpp}, reduced modulo one more than the maximum
+&gt; value representable in the result type. Otherwise, if
+&gt; `E1`{.cpp} has a signed type and non-negative value,
+&gt; and `E1 × 2E2`{.cpp} is representable in the
+&gt; corresponding unsigned type of the result type, then that value,
+&gt; converted to the result type, is the resulting value; otherwise, the
+&gt; behavior is undefined.\
+&gt; \
+&gt;  The value of `E1 \&gt;\&gt; E2`{.cpp} is
+&gt; `E1`{.cpp} right-shifted `E2`{.cpp} bit
+&gt; positions. If `E1`{.cpp} has an unsigned type or if
+&gt; `E1`{.cpp} has a signed type and a non-negative value,
+&gt; the value of the result is the integral part of the quotient of
+&gt; `E1/2E2`{.cpp}. If `E1`{.cpp} has a
+&gt; signed type and a negative value, the resulting value is
+&gt; implementation-defined.
+&gt;
+&gt; The expression `E1`{.cpp} is sequenced before the
+&gt; expression `E2`{.cpp}.
+--&gt;</code></pre>
 <h3 id="guidance-to-language-users">6.16.2 Guidance to language users</h3>
+<pre><code>&lt;!--
+SGM June 28 2021 - Since the applicability to language is incomplete, this section is currently also incomplete
+--&gt;</code></pre>
 <p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.16 <em>Using Shift Operations for Multiplication and Division [PIK].</em> Also see, <em>6.15 Arithmetic Wrap-around Error [FIF].</em></p>
 <p>References:</p>
 </body>

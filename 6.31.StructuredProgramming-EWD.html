@@ -219,12 +219,19 @@
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.31 exists in C++.</p>
 <p>It is as easy to write structured programs in C++ as it is not to. C++ contains the goto statement, which can create unstructured code. Also, C has <code class="sourceCode cpp"><span class="cf">continue</span></code>, <code class="sourceCode cpp"><span class="cf">break</span></code>, and <code class="sourceCode cpp"><span class="cf">return</span></code> that can create a complicated control flow, when used in an undisciplined manner. Spaghetti code can be more difficult for static analyzers to analyze and is sometimes used on purpose to intentionally obfuscate the functionality of software. Code that has been modified multiple times by an assortment of programmers to add or remove functionality or to fix problems can be prone to become unstructured.</p>
 <p>Because unstructured code in can cause problems for analyzers, both automated and human, of code, problems with the code may not be detected as readily or at all as would be the case if the software was written in a structured manner.</p>
-<p><em>IMHO, a static analyzer worth its money would do any CFA DFA based on basic blocks and should not be bothered by gotos etc. Peter.</em></p>
+<pre><code>&lt;1--
+IMHO, a static analyzer worth its money would do any CFA DFA based on basic blocks and should not be bothered by gotos etc. Peter.
+--&gt;</code></pre>
 <h3 id="guidance-to-language-users">6.31.2 Guidance to language users</h3>
 <ul>
 <li><p>Write clear and concise structured code to make code as understandable as possible.</p></li>
 <li><p>Avoid the use of <code>longjmp</code></p></li>
-<li><p>Avoid the use of <code class="sourceCode cpp"><span class="cf">goto</span></code> except in the case of exiting a nested loop.</p></li>
+</ul>
+<pre><code>&lt;!--
+The guidance &quot;avoid the useof longjmp&quot; comes out of nowhere. It needs documentation in 6.31.1
+--&gt;</code></pre>
+<ul>
+<li>Avoid the use of <code class="sourceCode cpp"><span class="cf">goto</span></code> except in the case of exiting a nested loop.</li>
 </ul>
 <p>See also the C++ Core guidelines ES.76, ES.77, SL.C.1</p>
 </body>

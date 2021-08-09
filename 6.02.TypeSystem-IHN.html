@@ -216,207 +216,27 @@
 </header>
 <h2 id="type-system-ihn">6.2 Type System [IHN]</h2>
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
-<p>C++ is a strongly- and statically-typed language: all variables and expressions must have a type. C++ also permits implicit and explicit conversions between types.</p>
-<p>C++’s implicit conversions between types include C’s implicit conversions, for example, fundamental types smaller than an <code class="sourceCode cpp"><span class="dt">int</span></code> can be promoted to an <code class="sourceCode cpp"><span class="dt">int</span></code> when participating in an expression. The keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> applied to a constructor or a cast operator prevents implicit conversions. Implicit conversions involving user-defined types are enabled via constructors that can be called with a single-argument and/or cast operators of those types.</p>
-<p>ADVICE: Prefer to define <code class="sourceCode cpp"><span class="kw">explicit</span></code> constructors and cast operators except in cases where it would be safe and meaningful to permit implicit conversions.</p>
-<p>C++’s <code class="sourceCode cpp"><span class="kw">dynamic_cast</span>&lt;T&gt;(expr)</code> operator attempts to cast the expression, <code class="sourceCode cpp">expr</code>, to <code class="sourceCode cpp">type T</code> at run-time using internal type state information the compiler stored with expr’s type. All other casts (implicit or explicit) are computed using only compile-time –not run-time-- information.</p>
-<p>It is possible to use a single type to define two distinct sets of values, e.g., a double could be used to store the distance in kilometers or miles.:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> miles = <span class="fl">5.67</span>;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> km    = <span class="fl">13.88</span>;</span></code></pre></div>
-<p>If the same underlying type is used then one risks manipulating such without properly converting the units first, e.g.,</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> distance_travelled = miles + km; <span class="co">// =19.55 (what?)</span></span></code></pre></div>
-<p>which will produce an incorrect result. Instead one must define user-defined types with constructors and/or cast operator definitions that will use the type system to correctly convert units. For this example we will use temperatures in Celsius and Fahrenheit.</p>
-<!-- the following code is not C++ (confused, Peter) -->
-<pre><code>t1 : Celsius := -40.0;
-t2 : Fahrenheit := 32.0;</code></pre>
-<p>ASIDE: This code works but needs discussion and brevity.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> miles { <span class="dt">double</span> m; };</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> kilometer { <span class="dt">double</span> km; };</span></code></pre></div>
-<!-- code example to be reworked by Paul: -->
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> celsius;</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> fahrenheit;</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> celsius</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> val;</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  celsius() : val{} { }</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  celsius(celsius <span class="at">const</span>&amp;) = <span class="cf">default</span>;            </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  celsius&amp; <span class="kw">operator</span> =(celsius <span class="at">const</span>&amp;) = <span class="cf">default</span>;</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">explicit</span> celsius(<span class="dt">double</span> <span class="at">const</span>&amp; v) : val{v} { }</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="at">const</span>&amp; value() <span class="at">const</span> { <span class="cf">return</span> val; }</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  celsius(fahrenheit <span class="at">const</span>&amp; f);     <span class="co">// permits implicit casts</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> fahrenheit() <span class="at">const</span>;      <span class="co">// permits implicit casts</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> fahrenheit</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The code for fahrenheit is repeated from celsius with “fahrenheit” </span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// replacing “celsius”</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// and missing the last two declarations. </span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>celsius::celsius(fahrenheit <span class="at">const</span>&amp; f) :</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  val{ (f.value() - <span class="fl">32.0</span>) * <span class="fl">5.0</span> / <span class="fl">9.0</span> }         <span class="co">// constructor to celsuis</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>celsius::<span class="kw">operator</span> fahrenheit() <span class="at">const</span>    <span class="co">// cast operator to Fahrenheit!!</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> fahrenheit{ (<span class="kw">this</span>-&gt;val * <span class="fl">9.0</span>) / <span class="fl">5.0</span> + <span class="fl">32.0</span> };</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>celsius <span class="kw">operator</span> <span class="st">&quot;&quot;</span> _C(<span class="dt">long</span> <span class="dt">double</span> temp)</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  { <span class="cf">return</span> celsius(temp); }        <span class="co">// explicit construction w/double</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>fahrenheit <span class="kw">operator</span> <span class="st">&quot;&quot;</span> _F(<span class="dt">long</span> <span class="dt">double</span> temp)</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  { <span class="cf">return</span> fahrenheit(temp); }      <span class="co">// explicit construction w/double</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main()</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> <span class="kw">namespace</span> std;</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> fp = <span class="fl">0.0</span><span class="dv">_C</span>; <span class="co">// Celsius</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> bp = <span class="fl">212.0</span><span class="dv">_F</span>; <span class="co">// Fahrenheit</span></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  fahrenheit fp_F = fp; <span class="co">// implicit conversion</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  celsius bp_C = bp;    <span class="co">// implicit conversion</span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  bp = fp;  <span class="co">// prohibited  ??  See [over.match.best] in C++ standard</span></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  fp = bp;  <span class="co">// prohibited </span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fp == bp)…  <span class="co">// is this equality defined??</span></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>cout &lt;&lt; <span class="st">&quot;Freezing pt: &quot;</span> &lt;&lt; fp &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; fahrenheit{fp} &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; fp_F &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  cout &lt;&lt; <span class="st">&quot;Boiling pt: &quot;</span> &lt;&lt; celsius{bp} &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; bp_C &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; bp &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>C++ enumeration and class types distinguishes different types with identical structure. In contrast to C, where structural equivalence allows to cast a value from one type as another type with a compatible structure, C++ does have a few cases, (union types, reinterpret_cast) where structurally equivalent types play a role, but those situations come with their own set of vulnerabilities (note: needs section) and should be avoided. Other cases, where C-style casts can be used to reinterpret values as another type, are managed by the use of appropriate C++-style casts (static, const, dynamic, reinterpret), These named casts eliminate many of the issues associated with C-style casts. See clauses 6.6 and 6.37 for a discussion of C++ conversion capabilities and errors.</p>
-<p>Note that C++ aliasing mechanisms for types and templates (using, typedef) do not provide new types or templates and thus a type alias is considered identical to its original type.</p>
-<p>In addition to user-defined class types (<code class="sourceCode cpp"><span class="kw">struct</span></code>, <code class="sourceCode cpp"><span class="kw">union</span></code>, <code class="sourceCode cpp"><span class="kw">class</span></code>), C++ allows the definition of enumeration types and the construction of reference types, pointer types, array types and function types from other types.</p>
-<p>Templates and the use of the keyword <code class="sourceCode cpp"><span class="kw">auto</span></code> permits type-agnostic code that determines free type parameters to be deduced or, additionally in the case of templates, to be specified. C++20 concepts further allow easier formulation of syntactic restrictions on the parameters (see 6.39 Templates and generics).</p>
-<p>Forming class hierarchies with virtual member functions in the base class and corresponding overrides in derived classes introduce dynamic typing that can be employed and checked at run-time, when the corresponding object is passed by reference or pointer to one of its base classes (see section <em>(inheritance, polymorphism)</em>). Note, that in constructors and destructors the object pointed to <code class="sourceCode cpp"><span class="kw">this</span></code> is always statically typed.</p>
-<p>Since C++ inherits some of the type system of C (arithmetic types and pointers), it suffers similar vulnerabilities, such as those caused by integral promotion, implicit numeric conversion, pointer arithmetic and pointer casts. User-defined class types are vulnerable to unexpected conversions due to implicitly applied converting constructors and conversion operators (see “type conversions”).</p>
-<p>On the other hand, C++ provides mechanisms to define strong domain types (without runtime overhead) that allow appropriate operators through overloading, value range control through constructors and encapsulation of data, without implicit or surprising conversions.</p>
-<p>There exist a few holes in the type system, often for backward compatibility. See clause …</p>
-<blockquote>
-<p>AI – Peter, help by Paul – Write up the introduction to this clause following Erhard’s outline.</p>
-</blockquote>
-<p>C++-style casts eliminate many of the issues associated with C-style casts. See clauses 6.6 and 6.37 for a discussion of C++ conversion capabilities and errors.</p>
-<p><em>Material from Richard)</em></p>
-<p>Holes in the type system</p>
-<p>Shadow type system (explain) – Thoughts. – exception specification don’t participate in a functions types, until they are invoked. (Michael to provide some text in an email). This is only an issue before C++ 17. Fixed by using noexecpt and avoiding throw.</p>
-<p>Don't write exception specifications on your functions unless you're forced to (because other code you can't change has already introduced them and/or you are in pre C++17 when dynamic exception was banned or C++20 when empty throw specification was banned to be replaced by noexcept)</p>
-<p>A specific issue exists with exceptions in that exception specifications aren't part of a function's type, except when they are. They form a shadow type system whereby writing an exception specification can be:</p>
+<p>C++ is a statically typed language. In some ways, C++ is both strongly and weakly typed, as it requires all objects/expressions to have a type, but allows for some implicit conversions of values from one type to another type. The following cases require special consideration:</p>
 <ul>
-<li><p>Illegal: In a typedef for a pointer to function.</p></li>
-<li><p>Allowed: In the identical code without the typedef.</p></li>
-<li><p>Required: In the declaration of a virtual function that overrides a base class virtual function that has an exception specification.</p></li>
-<li><p>Implicit and automatic: In the declaration of the constructors, assignment operators, and destructors when they are implicitly generated by the compiler.</p></li>
+<li><p>Most notably are the implicit conversions between arithmetic types (including <code class="sourceCode cpp"><span class="dt">bool</span></code>) that silently might truncate values or have loss of precision (for details see 6.6 [FLC]). This shared vulnerability includes <em>integral promotion</em> from small (unsigned) integer types (e.g. <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code>) to the signed integer type <code class="sourceCode cpp"><span class="dt">int</span></code> that can lead to operations with undefined behavior, where unsigned arithmetic is defined with modulo semantics.</p></li>
+<li><p>C++ considers implicit conversions during function overload resolution, when there is not a direct match of argument type with parameter type. Sometimes such conversions lead to ambiguities, which result in a compile error. But there can also be a single best matching overload that does not correspond to developer’s expectation including conversion of argument types (see 6.20 [YOW])</p></li>
+<li><p>Values of an unscoped enumeration convert to their underlying integral type in arithmetic expressions (see 6.5 [CCB]).</p></li>
+<li><p>Built-in array types as well as function types will decay to a pointer type. For array types this is problematic, because the array’s extent is lost.</p></li>
+<li><p>Pointer and reference types referring a derived class object can implicitly convert to a pointer or reference to one of its public base classes respectively (see 6.44 [BKK]).</p></li>
+<li><p>User-defined class types can define converting constructors, that can be called with a single argument, or conversion operators. If these member functions are not declared with the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> they are eligible for use in implicit conversions.</p></li>
+<li><p>Boolean contexts are a special case, because in addition to arithmetic types all pointer types implicitly convert to <code>bool</code>. In such contexts even an <code class="sourceCode cpp"><span class="kw">explicit</span> <span class="kw">operator</span> <span class="dt">bool</span>()</code> conversion operator is used. The latter conversions (pointer and explicit conversion operator) are desirable, the conversions from an arithmetic type in boolean contexts often indicate a missing comparison.</p></li>
 </ul>
-<p>A common but incorrect belief is that exception specifications statically guarantee that functions will throw only listed exceptions (possibly none), and will enable compiler optimizations based on that knowledge. Instead, exceptions cause the compiler to inject additional run-time overhead in the form of implicit try/catch blocks around the function body to enforce via run-time checking that the function does in fact emit only listed exceptions (possibly none), unless the compiler can statically prove that the exception specification can never be violated in which case it is free to optimize the checking away. In addition, exception specifications can both enable and prevent further compiler optimizations (besides the inherent overhead already described); for example, some compilers refuse to inline functions that have exception specifications.</p>
-<p>When these rules are violated, by default they immediately terminate your program.<span data-custom-style="apple-converted-space"></span></p>
-<p>You generally can't write useful exception specifications for function templates anyway, because you generally can't tell what exceptions the types they operate on might throw.</p>
-<p>Exceptions : - see 6.36</p>
-<p>Incomplete types and operations on incomplete types – usually checked by the compiler but some holes exist, for example when a virtual function is invoked from within a class constructor or destructor.</p>
-<p>Mitigation, don’t overload unary <code>&amp;</code> or <code>,</code>, don’t delete an object of an incomplete class type,</p>
-<blockquote>
-<p>AI – Paul – explain.</p>
-</blockquote>
-<p>don’t invoke virtual functions in constructors and destructors</p>
-<p>High level issues</p>
-<p>Note: discuss the problems with unions.</p>
-<p><em>NOTE: Ensure that the above explicit text is put into the relevant sections and generalize or forward reference in this section.</em></p>
-<p>C++ overloading of operators can cause significant issues. See clause 6.23.</p>
-<p>C++ does not enforce consistent <code class="sourceCode cpp"><span class="at">const</span></code> along all access paths to an object. See clause 6.65.</p>
-<p><em>13 Feb 2020 - Issue moved here</em> <em>from 6.41(?) Templates and Generics- Templates take a hit because it is possible to invoke a template with a type that does not have all of the operations necessary to correctly execute the operations. For example, if an instantiation of a template type parameter does not implement “&lt;” (or is it “less”?) and the underlying code executes a “sort”, the sort will call whatever “&lt;” it can use. If a “&lt;” had been defined for a related type, then that “&lt;” will be called. The experts at meeting 67 say that this is not exclusive to templates, so the problem should be assigned here and referenced from templates.</em></p>
-<p><em>13 Feb 2020 – Another issue appears</em> <em>to be that some primitive types have operations that are inappropriate for the type. For example, the basic type for characters include operators “+”, “-”, “&lt;”, “*” which operate on the underlying integer representation. Passing such types into templates or into a class can result in the fundamental integer operation being called instead of a higher-level operation to perform, for example, comparison on a ISO 8859 character set. The only work-around appears to be to define classes with the fundamental type and legal operations as the only operators.</em></p>
-<p><em>Question – how does the “.” Operator interact with such types?(Maybe this comma operator?)</em></p>
-<p><em>A recommendation for future revisions of the language could be to provide a way to remove basic operations from types such as enumeration types or characters.</em></p>
-<p>References</p>
-<ul>
-<li><p>CERT section OOP (AI – Aaron to provide others), (note that some of these will likely migrate to other vulnerabilities)x</p>
-<ul>
-<li><pre><code>  DCL52-CPP. Never qualify a reference type with const or</code></pre>
-<p>volatile<br />
-(this one is odd because the language makes this an error, but some<br />
-compilers like MSVC only warn on it, but will still translate the<br />
-source somehow)</p></li>
-<li><pre><code>  EXP55-CPP. Do not access a cv-qualified object through a</code></pre>
-<p>cv-unqualified type</p></li>
-<li><pre><code>  EXP47-C. Do not call va_arg with an argument of the incorrect</code></pre>
-<p>type</p></li>
-<li><pre><code>  OOP51-CPP. Do not slice derived objects</code></pre></li>
-</ul></li>
-<li><p>AI – Lisa – look at C++ Core Guidelines for “casts” (-&gt; 6.6)</p>
-<ul>
-<li></li>
-</ul></li>
-<li><p>AUTOSAR (AI Peter to work with AUTOSAR to provide references)</p></li>
-</ul>
+<p>Note that type aliases (<code class="sourceCode cpp"><span class="kw">using</span></code>, <code class="sourceCode cpp"><span class="kw">typedef</span></code>) do not define a different type from their alias just a different name and thus do not incur any conversion between the alias and the aliased type.</p>
+<p>Instead of using the built-in arithmetic types or generic library types such as <code class="sourceCode cpp"><span class="bu">std::</span>string</code> for your domain values, C++ allows to wrap them in user-defined-class types as so-called <em>strong types</em>. <em>Strong types</em> provide only those operator overloads and conversions for each such type that make sense in the application domain. User-defined-literal operators help with providing constants of appropriate strong types.</p>
 <h3 id="guidance-to-language-users">6.2.2 Guidance to language users</h3>
-<p>For specific types discussed in this document, such as floating point types, see the respective clauses.</p>
 <ul>
-<li><p>Be aware of the rules for typing and conversions with fundamental types (i.e., built-in language types) and operators to avoid vulnerabilities.</p>
-<ul>
-<li><pre><code>  To help aid correctness of code, couple all scalar values (e.g.,</code></pre>
-<p><code>double</code>, <code>int</code>, etc.) that have units (e.g., metres, grams, litres, etc.) with suitable types representing those units. This will allow the compiler to generate errors with scalar-with-unit-type-values when they are used with operations that are incompatible.</p></li>
-<li><pre><code>  User-defined literals</code></pre>
-<p>(This lets you define 15_C and 15_F)</p>
-<ul>
-<li><pre><code>      *(AI -- Paul -- Write up)*</code></pre></li>
-</ul></li>
-</ul></li>
-<li><p>Make converting constructors and conversion functions <code class="sourceCode cpp"><span class="kw">explicit</span></code> to avoid them being used implicitly or in unexpected ways. (<em>Move to 6.6)</em></p></li>
-<li><p>Do not use union without an associated indicator as to which member it holds, alternatively wrap a union in a class with a type field or use C++:17 std::variant (see clause 23.7 of ISO/IEC 14882:2017)</p></li>
-<li><p>Use unsigned integer types when manipulating integral values' bits.</p></li>
-<li><p>Use one of (not both!) unsigned or signed integral types within expressions to help avoid programming mistakes, consistently</p></li>
-<li><p>Treat explicit casts as candidates for code refactoring, i.e., ideally explicit casts should not be required in the code.</p></li>
-<li><p>Avoid casting away <code class="sourceCode cpp"><span class="at">const</span></code>:. Doing so can result in undefined behaviour that may not be detectable by the compiler or other tools. Refactor code so that it handles <code class="sourceCode cpp"><span class="at">const</span></code> and non-<code class="sourceCode cpp"><span class="at">const</span></code> types properly. See clause 6.65.</p></li>
-<li><p>don’t overload unary ‘<code>&amp;</code>’ or “<code>,</code>”,</p></li>
-<li><p>don’t delete an incomplete class type,</p></li>
-<li><p>don’t invoke virtual functions in constructors and destructors. See clause 6.43.</p></li>
-</ul>
-<blockquote>
-<p>[+ the guidance already in the document as WG23 decides (or moves to another section or otherwise edits) --there are a lot of items listed]</p>
-</blockquote>
-<div data-custom-style="Normal (Web)">
-<p>From Part 1. The Part 1 guidelines were accepted but are left here for review.</p>
-</div>
-<ul>
-<li><p>Take advantage of any facility offered by the programming language to declare distinct types and use any mechanism provided by the language processor and related tools to check for or enforce type compatibility.</p></li>
-<li><p>Use available language and tools facilities to preclude or detect the occurrence of implicit type conversions, such as those in mixed type arithmetic. If it is not possible, use human review to assist in searching for implicit conversions.</p></li>
-<li><p>Avoid explicit type conversion of data values except when there is no alternative. Document such occurrences so that the justification is made available to maintainers.</p></li>
-<li><p>Use the most restricted data type that suffices to accomplish the job. For example, use an enumeration type to select from a limited set of choices (such as, a switch statement or the discriminant of a union type) rather than a more general type, such as integer. This will make it possible for tooling to check if all possible choices have been covered.</p></li>
-<li><p>Always respect the implied unit systems, when converting explicitly from one numeric type to another.</p></li>
-</ul>
-<p>(Explicit C++ guidance for unit-based types.</p>
-<ul>
-<li><p>Follow the guidance of TR 24772-1 clause 6.2.5.</p></li>
-<li><p>Use distinct C++ types for unit systems if available or define explicit unit-based types.)</p></li>
-</ul>
-<!-- -->
-<ul>
-<li><p>Treat every compiler, tool, or run-time diagnostic concerning type compatibility as a serious issue. Do not resolve the problem by modifying the code to include an explicit conversion, without further analysis; instead examine the underlying design to determine if the type error is a symptom of a deeper problem.</p></li>
-<li><p><em>Never ignore instances of implicit type conversion; if the conversion is necessary, change it to an explicit conversion and document the rationale for use by maintainers.</em> <em>– narrowing conversions and loss of precision</em></p></li>
-<li><p>Analyze the problem to be solved to learn the magnitudes and/or the precisions of the quantities needed as auxiliary variables, partial results and final results.</p></li>
-<li><p>Create types that more accurately model the problem domain, with corresponding safe operations and conversions in lieu of using primitive types.</p></li>
-<li><p>Minimize use of predefined numeric types whose ranges and precisions are implementation defined. Instead, use types whose ranges and precision are guaranteed.</p></li>
-<li><p><em>C++ Issue – Use syntax that forces the compiler to Issue diagnostics on narrowing – need example.</em></p></li>
-<li><p>Treat every explicit cast as a candidate for refactoring.</p></li>
-<li><p>Use C++ casts rather than C-style casts, as they provide more compile-time checking and are more restrictive in what they can change, - rationale – syntactic distinction – in C++ obvious.</p></li>
-<li><p><em>Make class member functions that can be static, ‘<code class="sourceCode cpp"><span class="at">static</span></code>’. Make class member functions that cannot be ‘<code class="sourceCode cpp"><span class="at">static</span></code>’, but can be ‘<code class="sourceCode cpp"><span class="at">const</span></code>’, ‘<code class="sourceCode cpp"><span class="at">const</span></code>’</em></p></li>
-<li><p><em>The ‘<code class="sourceCode cpp"><span class="at">mutable</span></code>’ keyword for class member variables should be used sparingly</em></p></li>
-<li><p>Don't mix signed and unsigned types in arithmetic</p></li>
-<li><p>Follow the advice provided in TR 24772-3 clause 6.2.2. when using C-style numeric types, and implicit conversions. *<br />
-</p>
-<ul>
-<li></li>
-</ul></li>
+<li><p>Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.2.5. and the guidance provided in the different related sections of this document.</p></li>
+<li><p>Be aware of the rules of the type system, overload resolution, and implicit conversions to avoid vulnerabilities.</p></li>
+<li><p>Enable compiler warnings regarding implicit conversions and/or use static analysis tools that provide such warnings.</p></li>
+<li><p>Define any constructor of a class that can be called with a single argument of a different type as <code class="sourceCode cpp"><span class="kw">explicit</span></code>.</p></li>
+<li><p>Define any conversion operator as <code class="sourceCode cpp"><span class="kw">explicit</span></code></p></li>
+<li><p>Use <em>strong types</em> for domain values instead of the built-in types except on system boundaries, e.g., output and input.</p></li>
+<li><p>When defining variables of arithmetic type, use a braced-initializer to prevent a potential narrowing conversion from the initial value’s type.</p></li>
 </ul>
 </body>
 </html>
