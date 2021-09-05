@@ -217,53 +217,28 @@
 <h2 id="loop-control-variables-tex">6.29 Loop Control Variables [TEX]</h2>
 <h3 id="applicability-to-language">6.29.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.29 exists in C++.</p>
-<p>C++ allows the modification of loop control variables within a loop. This is usually not considered good programming practice as it can cause unexpected problems. The flexibility of C++ expects the programmer to use this capability responsibly.</p>
-<p>Since the modification of a loop control variable within a loop is infrequently encountered, reviewers of C++ code may not expect it and hence miss noticing the modification. Modifying the loop control variable can cause unexpected results if not carefully done. In C++, the following is semantically correct, but is error-prone:</p>
+<p>C++ allows the modification of loop control variables within a loop. Though this is usually not considered good programming practice as it can cause unexpected problems, the flexibility of C++ expects the programmer to use this capability responsibly.</p>
+<p>Since the modification of a loop control variable within a loop is infrequently encountered, reviewers of C++ code may not expect it and hence miss noticing the modification. Modifying the loop control variable can cause unexpected results if not carefully done. In C++, the following is valid:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">1</span>; i &lt; <span class="dv">10</span>; i++){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>; i\&lt;<span class="dv">10</span>; i++){</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a &gt; <span class="dv">7</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a \&gt; <span class="dv">7</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        i = <span class="dv">10</span>;</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ...</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>TBD: Example of flaws with placing multiple variables in a loop control statement - Paul</p>
-<p>which would cause the for loop to exit once <code>a</code> is greater than <code>7</code> regardless of the number of iterations that have occurred.</p>
-<pre><code>for (int i : std::ranges::iota_view{1,10})
-{
-    if (a &gt; 7) {
-       i = 10;   // This changes the local variable for this loop iteration&#39;s execution
-                 // but subsequent iterations are not affected
-       }
-    }
-    
-    for (const int i : std::ranges::iota_view{1,10})
-{
-    if (a &gt; 7) {
-       i = 10;   // This is now illegal since the &#39;const int&#39; prevents assign
-       }
-    }</code></pre>
-<p>The range for example immediately above does not have the vulnerability of the C-like for loop above.</p>
-<pre><code>for (int i=1; i &lt; 10; ++i) ...</code></pre>
+<p>which would cause the for loop to exit once a is greater than 7 regardless of the number of iterations that have occurred.</p>
 <p>C++ also permits the use of multiple variable of the same type in the loop header</p>
-<pre><code>for (int i=1, j=2; ; i += 2, j +=10)
-{
-\\code
-}
-for (int i=1, j=2; ; (i += 2), (j +=10)) 
-{
-\\ code
-}</code></pre>
-<p>In the first example, <!--
+<pre><code>&lt;!--
 Mitigation -- range for statement -- document with an example (see
 ES.71) -- Gabriel
---></p>
-<p>``` ### 6.29.2 Guidance to language users</p>
+--&gt;</code></pre>
+<h3 id="guidance-to-language-users">6.29.2 Guidance to language users</h3>
 <ul>
 <li><p>Apply the guidance of ISO/IEC TR 24772-1:2019 clause 6.29.5.</p></li>
 <li><p>Do not modify a loop control variable within a loop. Even though the capability exists in C, it is still considered to be a poor programming practice.</p></li>
-<li><p>Use a range for loop in preference to general loops and use the <code>const ...</code> construct to prevent inadvertent attempts to assign to the range for loop control variable.</p></li>
+<li><p>Use a range for loop in preference to general loops</p></li>
 <li><p>Alternatively, use std library functions like <code>copy</code>, <code>accumulate</code>, <code>transform</code>, <code>for_each</code>, etc. in preference to general loops.</p></li>
-<li><p>TBD: Something about multiple loop control variables in the same loop?</p></li>
+<li><p>Something about multiple loop control variables in the same loop?</p></li>
 </ul>
 <blockquote>
 <p>See also the C++ Core Guidelines ES.71, ES.86,</p>
