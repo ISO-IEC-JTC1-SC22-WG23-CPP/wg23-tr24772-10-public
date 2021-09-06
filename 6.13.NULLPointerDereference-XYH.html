@@ -223,7 +223,13 @@
 <li><p>Smart pointer creation functions allocate heap memory and handle memory management.</p></li>
 <li><p>References provide similar functionality as pointers but cannot be null.</p></li>
 </ul>
-<p>The C++ mechanism new, by default, throws an exception if the allocated object cannot be created (i.e. if a null pointer would be returned). C++ does provide other allocation mechanism, including C malloc and a non-throwing new, that are not recommended for general use<span data-custom-style="annotation reference"></span>.<span data-custom-style="annotation reference"></span></p>
+<p>The C++ mechanism</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span></span></code></pre></div>
+<p>by default, throws an exception if the allocated object cannot be created (i.e. if a null pointer would be returned). C++ does provide other allocation mechanism, including C</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>malloc</span></code></pre></div>
+<p>and a non-throwing</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span></span></code></pre></div>
+<p>that are not recommended for general use<span data-custom-style="annotation reference"></span>.<span data-custom-style="annotation reference"></span></p>
 <p>See C++ Core Guidelines R: Resource Management, and CERT EXP34-C “Do not dereference null pointers”</p>
 <pre><code>&lt;!--
 Capture notion that std::make_shared does not guarantee* *atomaticity
@@ -238,8 +244,8 @@ std::span is more lightweight and permit resizing .
 <h3 id="guidance-to-language-users">6.13.2 Guidance to language users</h3>
 <ul>
 <li><p>When dereferencing objects of pointer-like types that may contain a null value, follow the guidance from TR 24772-3 clause 6.13.2.</p></li>
-<li><p>Avoid the use of direct memory allocation. Instead use containers such as <code>std::array</code>, <code>std::vector</code>, and <code>std::span</code>.</p></li>
-<li><p>Consider the use of library facilities of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code>std::shared_ptr</code> to manage the lifetime of the object being referenced.</p></li>
+<li><p>Avoid the use of direct memory allocation. Instead use containers such as <code>C++     std::array      std::vector     std::span</code>.</p></li>
+<li><p>Consider the use of library facilities of <code>C++     std::unique_ptr</code> and <code>C++     std::shared_ptr</code> to manage the lifetime of the object being referenced.</p></li>
 <li><p>Use references to reduce the number of places where pointers are dereferenced. <span data-custom-style="annotation reference"></span></p></li>
 <li><p>Do not suppress exceptions on memory allocation and handle any exceptions that arise. If exceptions are suppressed, follow the guidance of TR 24772-3:2020 clause 6.13.2.</p></li>
 </ul>
