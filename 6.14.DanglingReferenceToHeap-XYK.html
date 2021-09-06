@@ -222,22 +222,24 @@
 <li><p>References</p></li>
 <li><p>Pointers</p></li>
 <li><p>Iterators</p></li>
-<li><p><code class="sourceCode cpp"><span class="bu">std::</span>string_view</code></p></li>
-<li><p><code class="sourceCode cpp"><span class="bu">std::</span>span</code></p></li>
-<li><p><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code></p></li>
+<li><p><code>C++ std::string_view</code></p></li>
+<li><p><code>C++ std::span</code></p></li>
+<li><p><code>C++std::reference_wrapper</code></p></li>
 </ul>
 <p>We call these <em>potentially dangling types</em>.</p>
 <p>If the lifetime of a <em>potentially dangling</em> <em>object</em> ends before its referent’s lifetime ends, then the vulnerability does not apply to that potentially dangling object. This is the primary C++ strategy for avoiding vulnerabilities due to potentially dangling objects. For example, using a <em>potentially dangling type</em> as a function parameter and passing an argument that refers to an object (referent) in the scope of the function call, and the function does not take ownership of the referent (for example, by deleting the referent), then the language guarantees that the lifetime of the referent is longer than the lifetime of the parameter, even if the referent is a temporary object created within the function call expression. This lifetime guarantee does not apply to further copies made to potentially dangling objects that outlive the function call, or if the function is a coroutine.</p>
 <p>The language guarantees that a const-lvalue-reference or an rvalue-reference that are bound to a temporary object extend the lifetime of the temporary until the reference goes out of scope. Otherwise, the temporary object is destroyed at the end of the surrounding full expression. This lifetime extension is not transitive.</p>
 <p>A simple example is where the temporary object referring heap allocation is passed as a constructor argument:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad(<span class="st">&quot;a temporary string&quot;</span><span class="bu">s</span>); <span class="co">// \&quot;bad\&quot; holds a dangling pointer</span></span></code></pre></div>
-<p>Note: technically in this example the vulnerability exists in the conversion operator <code class="sourceCode cpp"><span class="bu">std::</span>string<span class="bu">::</span>operator string_view()</code>, that returns a potentially dangling type from a member function callable on a temporary object.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad(<span class="st">&quot;a temporary string&quot;</span><span class="bu">s</span>); <span class="co">// \&quot;bad\&quot; holds a dangling pointer</span></span></code></pre></div>
+<p>Note: technically in this example the vulnerability exists in the conversion operator</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string<span class="bu">::</span>operator string_view()</span></code></pre></div>
+<p>that returns a potentially dangling type from a member function callable on a temporary object.</p>
 <p>Functions returning <em>potentially dangling types</em> are vulnerable, when the caller is not copying the resulting referent, but just stores the <em>potentially dangling object</em>. For example, the <em>range-for statement</em> uses the above mentioned lifetime extension for the range object to be iterated upon. If that range object itself is given as a reference already, the loop will access the elements through dangling iterators.</p>
-<pre class="{cpp}"><code>extern std::vector&lt;std::string&gt; make(); // creates a vector
-
-for(char c: make().front()) { // attempt to iterate over first string in vector
-   // vector and thus contained string is already destroyed
-}</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="bu">std::</span>vector&lt;<span class="bu">std::</span>string&gt; make(); <span class="co">// creates a vector</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(<span class="dt">char</span> c: make().front()) { <span class="co">// attempt to iterate over first string in vector</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                              <span class="co">// vector and thus contained string is already destroyed</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>For objects directly allocated on the heap C++ provides smart pointers and corresponding factory functions that allow transferring ownership or shared ownership.</p>
 <h3 id="guidance-to-language-users">6.14.2 Guidance to language users</h3>
 <p>In addition to the guidance provided in TR 24772-1 clause 6.14.5:</p>
@@ -245,7 +247,7 @@ for(char c: make().front()) { // attempt to iterate over first string in vector
 <li><p>Do not rely on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
 <li><p>Prefer value types that manage heap memory, for example <code class="sourceCode cpp"><span class="bu">std::</span>string</code> instead of <code class="sourceCode cpp"><span class="at">const</span> <span class="dt">char</span> *</code> or <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, and pass by value/return by value over the use of <em>potentially dangling types</em>.</p></li>
 <li><p>If value types are not feasible, adopt a style that makes explicit the ownership and lifetime of heap resources, by using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> or <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> or similar RAII/SBRM types and allocate heap memory exclusively with their corresponding factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique/<span class="bu">std::</span>make_shared</code>.</p></li>
-<li><p>Adopt a style that ensures all copies of any potentially dangling objects are guaranteed to be cleaned up before the referent’s lifetime ends or never accessed afterwards. For example, do not store the raw pointers managed by smart pointers, e.g., by calling their <code class="sourceCode cpp">get()</code> member function.</p></li>
+<li><p>Adopt a style that ensures all copies of any potentially dangling objects are guaranteed to be cleaned up before the referent’s lifetime ends or never accessed afterwards. For example, do not store the raw pointers managed by smart pointers, e.g., by calling their <code>C++     get()</code> member function.</p></li>
 <li><p>Consider making member functions ref-qualified, that return potentially dangling types to members or heap allocated objects managed by the class,<br />
 to avoid being called on temporary objects. Note: An rvalue-ref-qualified overload should either return a copy by value, or be defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> to prevent calling it on a temporary that would lead to returning an immediately dangling object.</p></li>
 <li><p>Show that the <em>range-for</em> dangling vulnerability does not apply or take steps to avoid it, for example, use a variable representing the range and not an expression that might yield a reference to a temporary.</p></li>
