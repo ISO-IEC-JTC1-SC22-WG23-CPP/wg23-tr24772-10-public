@@ -160,7 +160,29 @@
 <li><p>Overriding, where clause 6.41 applies.</p></li>
 </ul>
 <p>In all other cases, C++ compilers are required to diagnose an ambiguity.</p>
-<p><em>Note: there might be corner cases with extern “C” functions declared in different namespaces (Peter)</em></p>
+<p><code>Note Start</code> Code examples: https://godbolt.org/z/erG5nPW19</p>
+<p>210906: During the discussion the meaning of the vulnerability became clear:</p>
+<blockquote>
+<p>Can a maintainer add an overload that results in a program that still compiles but that has different behavior?</p>
+</blockquote>
+<ul>
+<li><p>The answer is clearly yes. Overloads that are “better matches” can be added, and as long as they are found by lookup they will be selected. This is caused where the current best match also involves implicit conversions that are not present, or have a better rank, in the newly added function.</p></li>
+<li><p>The addition of using directives, or the addition of functions to scopes that are later referred to in a using declaration can result in this change happening “at a distance”.</p></li>
+<li><p>Argument Dependent Lookup (ADL), results in namespaces being searched, and should those namespaces have functions added to them they may be selected.</p></li>
+</ul>
+<p>The guideance is:</p>
+<ul>
+<li><p>fully qualify the names to remove any ambiguity of what function is being called if possible. An exception to this is user-defined literals (UDLs) which cannot be called with a fully qualified name.</p></li>
+<li><p>don’t use using directives (except for the UDL case)</p></li>
+<li><p>a namespace defining UDLs should only contain those definitions</p></li>
+<li><p>What about avoiding implicit conversions when calling overloaded functions? However, implicit conversions are not the only way the compiler chooses between overloads:</p>
+<ul>
+<li>template vs non template</li>
+<li>rvalue ref vs lvalue ref</li>
+<li>const vs non-const</li>
+</ul></li>
+</ul>
+<p><code>Note End</code></p>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p>

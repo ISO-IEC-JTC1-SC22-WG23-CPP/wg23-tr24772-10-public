@@ -157,9 +157,18 @@
 <p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.38 exists in C++.</p>
 <p>The vulnerability only arises in C++ when there is a mismatch between the object’s copy semantics and the programmer’s intent. (references to Core Guidelines C.22)</p>
 <p>C++ objects, by default, are copied member-wise. Each class type may define its own copy, move and assignment operations, allowing a class author to choose an appropriate depth for these operations. Class member types should be chosen to have copy and move semantics that support the semantics of the enclosing class.</p>
-<p>&lt;This may belong elsewhere – TBD&gt; C++ provides the “string view” mechanism as safer pointers to strings. Updates through string view are prohibited, but the initial non “view” value can be updated and this change will be seen by all viewers, even if they are dependent on fixed value.</p>
+<pre><code>&lt;!--
+This may belong elsewhere -- TBD\&gt; C++ provides the &quot;string view&quot;
+mechanism as safer pointers to strings. Updates through string view are
+prohibited, but the initial non &quot;view&quot; value can be updated and this
+change will be seen by all viewers, even if they are dependent on fixed
+value.
+--&gt;</code></pre>
 <p>Note: in C++, this is more commonly known as member-wise copying vs semantic copying, or owning vs observing rights.</p>
-<p>Note: Why CERT does not address this issue – involves programmer intent and not readily tool-checkable.</p>
+<pre><code>&lt;!--
+Note: Why CERT does not address this issue -- involves programmer intent
+and not readily tool-checkable.
+--&gt;</code></pre>
 <h3 id="guidance-to-language-users">6.38.2 Guidance to language users</h3>
 <ul>
 <li><p>Prefer the composition of most types from types that have either value semantics or semantics that support the intended copy and move semantics of the enclosing type.</p></li>

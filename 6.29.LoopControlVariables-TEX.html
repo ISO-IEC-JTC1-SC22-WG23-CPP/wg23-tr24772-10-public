@@ -217,18 +217,22 @@
 <h2 id="loop-control-variables-tex">6.29 Loop Control Variables [TEX]</h2>
 <h3 id="applicability-to-language">6.29.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.29 exists in C++.</p>
-<p>C++ allows the modification of loop control variables within a loop. Though this is usually not considered good programming practice as it can cause unexpected problems, the flexibility of C++ expects the programmer to use this capability responsibly.</p>
+<p>C++ allows the modification of loop control variables within non range-based loops. Though this is usually not considered good programming practice as it can cause unexpected problems, the flexibility of C++ expects the programmer to use this capability responsibly.</p>
 <p>Since the modification of a loop control variable within a loop is infrequently encountered, reviewers of C++ code may not expect it and hence miss noticing the modification. Modifying the loop control variable can cause unexpected results if not carefully done. In C++, the following is valid:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>; i\&lt;<span class="dv">10</span>; i++){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">1</span>; i &lt; <span class="dv">10</span>; i++){</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a \&gt; <span class="dv">7</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a &gt; <span class="dv">7</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        i = <span class="dv">10</span>;</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ...</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>which would cause the for loop to exit once a is greater than 7 regardless of the number of iterations that have occurred.</p>
 <p>C++ also permits the use of multiple variable of the same type in the loop header</p>
-<p>Mitigation – range for statement – document with an example (see ES.71) – Gabriel</p>
+<p>In a range-based for loop, the control variable is not available.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array a {<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">5</span>};</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (<span class="kw">auto</span> x : a) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>cout &lt;&lt; x &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.29.2 Guidance to language users</h3>
 <ul>
 <li><p>Apply the guidance of ISO/IEC TR 24772-1:2019 clause 6.29.5.</p></li>
@@ -237,8 +241,6 @@
 <li><p>Alternatively, use std library functions like <code>copy</code>, <code>accumulate</code>, <code>transform</code>, <code>for_each</code>, etc. in preference to general loops.</p></li>
 <li><p>Something about multiple loop control variables in the same loop?</p></li>
 </ul>
-<blockquote>
-<p>See also the C++ Core Guidelines ES.71, ES.86,</p>
-</blockquote>
+<p>Note: See also the C++ Core Guidelines ES.71, ES.86,</p>
 </body>
 </html>
