@@ -216,33 +216,38 @@
 </header>
 <h2 id="passing-parameters-and-return-values-csj">6.32 Passing Parameters and Return Values [CSJ]</h2>
 <h3 id="applicability-to-language">6.32.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.32 exists in C++.</p>
-<p>C++ provides both <em>call by value</em> and <em>call by reference</em> parameter passing. The argument is evaluated to initialize the formal parameter (in the first case) or bound to the formal parameter (in the second case) of the function that is being called. A formal parameter behaves like a local variable.</p>
-<p>An object can be modified in a function by passing the address to the object to the function, for example</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>      <span class="dt">void</span> swap(<span class="dt">int</span> *x, <span class="dt">int</span> *y) { <span class="co">// C-style</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>         <span class="dt">int</span> t = *x;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>         *x = *y;</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>         *y = t;</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      }</span></code></pre></div>
-<p>A call to this function is <code class="sourceCode cpp">swap( &amp;a, &amp;b);</code></p>
-<p>In a preferred style (below), an object may be passed to a function by reference, which eliminates many of the problems enumerated in TR 24772-1 clause 6.32.1 and 6.32.3.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c++"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> swap(<span class="dt">int</span> &amp; x, <span class="dt">int</span> &amp; y) { <span class="co">// C++-style which is like std::swap</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> t = x;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        x = y;</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        y = t;</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>     }</span></code></pre></div>
-<p>This function is called by <code class="sourceCode cpp">swap(a,b);</code></p>
-<p>Where x and y are integer pointer formal parameters, and *x and *y in the swap()function body dereference the pointers to access the integers.</p>
-<p>C macros use a <em>call by name</em> parameter passing; a call to the macro replaces the macro by the body of the macro. This is called <em>macro expansion</em>. Macro expansion is applied to the program source text and amounts to the substitution of the formal parameters with the actual parameter expressions. Formal parameters are often parenthesized to avoid syntax issues after the expansion. Call by name parameter passing reevaluates the actual parameter expression each time the formal parameter is read.<span data-custom-style="annotation reference"></span></p>
-<p><em>Paragraph about the violation of the keyword “restrict” in Part 3. – C++ does not have this keyword. Think about the issue.</em></p>
+<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.32 exists in C++. However, the language also provides appropriate mitigation.</p>
+<p>C++ provides both <em>call by copy</em> (aka <em>call by value</em>) and <em>call by reference</em> parameter passing. The argument is evaluated to initialize the formal parameter (in the first case) or bound to the formal parameter (in the second case) of the function that is being called. A formal parameter behaves like a local variable, however, changes to a non-const reference parameter affect the bound object.</p>
+<p>The rich type system of C++ allows types that when passed by value still have <em>call by reference</em> semantics, for example, pointer types, <code>std::reference_wrapper</code>, or class types with pointer or reference member variables.</p>
+<p>C++ assumes that pointer or reference parameters of different types never alias, even if the underlying object representations are identical, i.e., for a function declared as <code class="sourceCode cpp"><span class="dt">void</span> f(<span class="dt">int</span> *pi, <span class="dt">long</span> *pl)</code> the compiler will assume that <code>pi</code> and <code>pl</code> always refer to different objects, even if <code class="sourceCode cpp"><span class="kw">sizeof</span>(<span class="dt">int</span>) == <span class="kw">sizeof</span>(<span class="dt">long</span>)</code>. Two parameters may refer to the same object if they have pointer or reference type, and the target types are the same or related. This means, aliasing between reference parameters or with a reference result needs to be taken into account in user code. For example, in an assignment expression the left and right hand side can refer to the same object. This implies that user-defined assignment operators must take precautions against self-assignment or document that it is forbidden.</p>
+<p>Modern C++ ensures that in many cases the need for and overhead of copying value arguments or results is elided by the compiler, especially from temporary objects.</p>
+<p>The use of <code class="sourceCode cpp"><span class="at">const</span></code> lvalue-reference parameters combines the efficiency of <em>call by reference</em> with the guarantee that the underlying input parameter is not changed (marking it as an <em>in</em> parameter). A non-const reference parameter must be considered an <em>inout</em> parameter. Rvalue-reference parameters are <em>inout</em> parameters that allow <em>transfer-of-ownership</em> semantics. At their call site it is best to assume that the argument object is in an indeterminate state and has to be reassigned before subsequent use. There is no language mechanism for marking <em>out</em> parameters, one would use the return mechanism. Instead of multiple <em>out</em> parameters a <code class="sourceCode cpp"><span class="kw">struct</span></code>, <code class="sourceCode cpp"><span class="bu">std::</span>pair</code>, or <code class="sourceCode cpp"><span class="bu">std::</span>tuple</code> can be used as a return type and eventually decomposed at the call site to its constituents via a <em>structured binding</em>.</p>
+<p>Member functions take the <code class="sourceCode cpp">*<span class="kw">this</span></code> object as an implicit reference parameter. The kind of reference can be specified through qualification of the member function. However, in addition to lvalue-reference, const-lvalue-reference, and rvalue-reference qualification, there exists an oddity with respect to normal reference parameters:</p>
+<ul>
+<li>without a qualification a member function can be called on rvalues and non-const lvalues, and</li>
+<li>with a const-qualification a member function can be called on const lvalues and rvalues.</li>
+</ul>
+<p>This means, unqualified member functions are callable on temporaries (rvalues) and thus can have side effects, but also can return an lvalue-reference to said temporary by returning <code>*this</code> (or members of <code>*this</code>), which can lead to dangling if such a reference is used beyond the expression of the function call returning it. For example, the compiler-provided assignment operators of a class are unqualified member functions that return an lvalue-reference to <code class="sourceCode cpp">*<span class="kw">this</span></code>.</p>
+<p>Rvalue-reference parameters in a context where their actual type is deduced from the call site, are called <em>forwarding references</em>. A forwarding references will either be deduced to an lvalue-reference or an rvalue-reference depending on the argument at the call site.</p>
+<p>The C++ preprocessor macros use a <em>call by name</em> parameter passing; a call to the macro replaces the macro by the body of the macro. This is called <em>macro expansion</em>. Macro expansion is applied to the program source text and amounts to the substitution of the formal parameters with the actual parameter expressions. Formal parameters are often parenthesized to avoid syntax issues after the expansion. Call by name parameter passing reevaluates the actual parameter expression each time the formal parameter is read.</p>
 <h3 id="guidance-to-language-users">6.32.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the advice of ISO/IEC TR 24772-1:2019 clause 6.32.5.</p></li>
-<li><p>Use caution for reevaluation of function calls in parameters with macros.</p></li>
-<li><p>Use caution when passing the address of an object. The object passed could be an alias[^2]. Aliases can be avoided by following the respective guidelines of TR 24772-1 Clause 6.32.5.</p></li>
+<li><p>Prefer pass-by-value and pass-by-const-reference over other means of parameter declaration.</p></li>
+<li><p>Prefer reference parameters over corresponding pointer parameters.</p></li>
+<li><p>Use pass by non-const reference only when side-effects on the argument are intended (<em>inout</em>-parameter).</p></li>
+<li><p>Always reassign a variable passed by rvalue-reference before subsequent use after the call.</p></li>
+<li><p>Use forwarding reference parameters only, if perfect forwarding is needed in the body of a function template or generic lambda.</p></li>
+<li><p>Define member functions that have side effects on <code class="sourceCode cpp">*<span class="kw">this</span></code> or return a potentially dangling object referring to <code>*this</code> or its members with the appropriate lvalue-ref-qualification. Either delete the rvalue-ref-qualified overload if a const-ref-qualified overload exists to avoid calling the function on temporary objects, or define the rvalue-ref-qualified overload as returning by value.</p></li>
+<li><p>Document the referents of potentially dangling objects created by or modified by a function if any potentially dangling object outlives the invocation of that function.</p></li>
+<li><p>Document any allowable aliasing between the referents of function parameters of potentially dangling type. Absent such documentation, avoid passing aliased parameters. In particular, aliasing is expected and allowed in these classes of functions:</p>
+<ul>
+<li><p>Assignment and compound assignment operators: the right parameter may alias the left parameter. The function result always refers to the left parameter unless overloaded differently. In the case of self-assignment the stored value should not change.</p></li>
+<li><p>Functions named <code class="sourceCode cpp">swap</code>: The two parameters to be swapped may refer to the same object.</p></li>
+<li><p>Shift operators used for input and output: the result always refers to the left parameter.</p></li>
+<li><p>Prefix increment and decrement operators: the result always refers to the parameter.</p></li>
+</ul></li>
+<li><p>Do not use function-like macros. If used, surround all macro parameters in the replacement text with parenthesis.</p></li>
 </ul>
-<blockquote>
-<p>See also the C++ Core Guidelines F.7 through F.48.</p>
-</blockquote>
 </body>
 </html>
