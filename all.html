@@ -1770,12 +1770,12 @@ constitute &quot;use of an object&quot; .
 </ul>
 <h2 id="namespace-issues-bjl">6.21 Namespace Issues [BJL]</h2>
 <h3 id="applicability-to-language">6.21.1 Applicability to language</h3>
-<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.21 is restricted to the following cases:</p>
+<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.21 exists in C++. The situations where it exists are related to the following cases:</p>
 <ul>
 <li><p>Overloading, where clause 6.20 applies;</p></li>
 <li><p>Overriding, where clause 6.41 applies.</p></li>
 </ul>
-<p>In all other cases, C++ compilers are required to diagnose an ambiguity.</p>
+<p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists. However, overload resolution can have unintuitive results and depends on the preceding context. It may not be obvous which function is chosen by the overload resolution process, introducing this vulnerability.</p>
 <p><code>Note Start</code> Code examples: https://godbolt.org/z/erG5nPW19</p>
 <p>210906: During the discussion the meaning of the vulnerability became clear:</p>
 <blockquote>
