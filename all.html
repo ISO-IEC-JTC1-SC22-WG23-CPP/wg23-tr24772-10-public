@@ -1502,7 +1502,7 @@ std::span is more lightweight and permit resizing .
 <li><p>Use references to reduce the number of places where pointers are dereferenced. <span data-custom-style="annotation reference"></span></p></li>
 <li><p>Do not suppress exceptions on memory allocation and handle any exceptions that arise. If exceptions are suppressed, follow the guidance of TR 24772-3:2020 clause 6.13.2.</p></li>
 </ul>
-<h2 id="dangling-reference-to-heap-xyk-xyk">6.14 Dangling Reference to Heap [XYK] [XYK]</h2>
+<h2 id="XYK">6.14 Dangling Reference to Heap [XYK]</h2>
 <h3 id="applicability-to-language">6.14.1 Applicability to language</h3>
 <p>The vulnerability as expressed in ISO/IEC TR 24772-1:2019 and ISO/IEC TR 24772-3:2020 C exists in C++. C++, however, provides mechanisms to mitigate the vulnerability.</p>
 <p>C++ provides a rich set of types whose objects may dangle, e.g.</p>
@@ -3000,7 +3000,7 @@ execution boundaries</p></li>
 <li>Follow the guidelines of ISO/IEC TR 24772-1:2019 clause 6.54.5.</li>
 </ul>
 <p>$incldue 6.55.UnspecifiedBehaviour-BQF.md</p>
-<h2 id="undefined-behaviour-ewf-ewf">6.56 Undefined Behaviour [EWF] [EWF]</h2>
+<h2 id="EWF">6.56 Undefined Behaviour [EWF]</h2>
 <h3 id="applicability-to-language">6.56.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.56 applies to C++. In ISO/IEC 14882:2017, the terms “undefined behaviour” and “ill-formed, no diagnostic required” expose situations to be avoided.</p>
 <h3 id="guidance-to-language-users">6.56.2 Guidance to language users</h3>
