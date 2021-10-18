@@ -1797,6 +1797,7 @@ constitute &quot;use of an object&quot; .
 <li>rvalue ref vs lvalue ref</li>
 <li>const vs non-const</li>
 </ul></li>
+<li><p>Do not overload a name with one that has a different signature that can provide a closer match. (explanation needed in 6.21.1)</p></li>
 </ul>
 <p><code>Note End</code></p>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
@@ -1805,7 +1806,12 @@ constitute &quot;use of an object&quot; .
 <ul>
 <li><pre><code>  DCL60-CPP. Obey the one-definition rule (6.21)</code></pre></li>
 <li><pre><code>  DCL40-C. Do not create incompatible declarations of the same</code></pre>
-function or object (6.21)</li>
+function or object (6.21)
+<ul>
+<li>Fully qualify all calls.</li>
+<li>Avoid</li>
+<li>Within a single namespace,</li>
+</ul></li>
 </ul></li>
 </ul>
 <h2 id="initialization-of-variables-lav">6.22 Initialization of Variables [LAV]</h2>
