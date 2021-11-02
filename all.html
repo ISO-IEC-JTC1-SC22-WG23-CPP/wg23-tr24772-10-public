@@ -1778,45 +1778,62 @@ constitute &quot;use of an object&quot; .
 <li><p>Overloading, where clause 6.20 applies;</p></li>
 <li><p>Overriding, where clause 6.41 applies.</p></li>
 </ul>
-<p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists. However, overload resolution can have unintuitive results and depends on the preceding context. It may not be obvous which function is chosen by the overload resolution process, introducing this vulnerability.</p>
-<p><code>Note Start</code> Code examples: https://godbolt.org/z/erG5nPW19</p>
-<p>210906: During the discussion the meaning of the vulnerability became clear:</p>
-<blockquote>
-<p>Can a maintainer add an overload that results in a program that still compiles but that has different behavior?</p>
-</blockquote>
+<p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists.</p>
+<p>However, overload resolution applies preference rules in order to select among multiple matching functions as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question then changes its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability.</p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a><span class="co">// void foo (int);</span></span>
+<span id="cb121-4"><a href="#cb121-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb121-5"><a href="#cb121-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar ()</span>
+<span id="cb121-6"><a href="#cb121-6" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb121-7"><a href="#cb121-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="dv">0</span>);         <span class="co">// The call to &#39;foo(long)&#39; requires implicitly conversion</span></span>
+<span id="cb121-8"><a href="#cb121-8" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// from &#39;int&#39; to &#39;long&#39;.   The function &#39;foo(int)&#39; </span></span>
+<span id="cb121-9"><a href="#cb121-9" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// would be a &quot;better match&quot; and so would silently</span></span>
+<span id="cb121-10"><a href="#cb121-10" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// be chosen when subsequently introduced</span></span>
+<span id="cb121-11"><a href="#cb121-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>A new declaration may become visible in a number of situations involving the addition of:</p>
 <ul>
-<li><p>The answer is clearly yes. Overloads that are “better matches” can be added, and as long as they are found by lookup they will be selected. This is caused where the current best match also involves implicit conversions that are not present, or have a better rank, in the newly added function.</p></li>
-<li><p>The addition of using directives, or the addition of functions to scopes that are later referred to in a using declaration can result in this change happening “at a distance”.</p></li>
-<li><p>Argument Dependent Lookup (ADL), results in namespaces being searched, and should those namespaces have functions added to them they may be selected.</p></li>
+<li>a new overload,</li>
+<li>a using directive</li>
+<li>a declaration into a namespace that is searched as part of “Argument Dependent Lookup”</li>
+<li>a non-template function that is preferred to a function template</li>
 </ul>
-<p>The guideance is:</p>
-<ul>
-<li><p>fully qualify the names to remove any ambiguity of what function is being called if possible. An exception to this is user-defined literals (UDLs) which cannot be called with a fully qualified name.</p></li>
-<li><p>don’t use using directives (except for the UDL case)</p></li>
-<li><p>a namespace defining UDLs should only contain those definitions</p></li>
-<li><p>What about avoiding implicit conversions when calling overloaded functions? However, implicit conversions are not the only way the compiler chooses between overloads:</p>
-<ul>
-<li>template vs non template</li>
-<li>rvalue ref vs lvalue ref</li>
-<li>const vs non-const</li>
-</ul></li>
-<li><p>Do not overload a name with one that has a different signature that can provide a closer match. (explanation needed in 6.21.1)</p></li>
-</ul>
-<p><code>Note End</code></p>
+<p>A using directive broadens the possible scopes that will be examined for names during lookup. Where lookup searches a namespace referred to by a using directive, all names in that namespace will be visible some of which may be unwanted. A using declaration, on the other hand, declares only the specified name into the scope of the using declaration.</p>
+<div class="sourceCode" id="cb122"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS1</span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1 (<span class="dt">int</span>);</span>
+<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f2 (<span class="dt">int</span>);        <span class="co">// Added later</span></span>
+<span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS2</span>
+<span id="cb122-7"><a href="#cb122-7" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb122-8"><a href="#cb122-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> <span class="kw">namespace</span> NS1;  <span class="co">// &#39;f1&#39; needed</span></span>
+<span id="cb122-9"><a href="#cb122-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f2 (<span class="dt">long</span>);</span>
+<span id="cb122-10"><a href="#cb122-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> bar ()</span>
+<span id="cb122-11"><a href="#cb122-11" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb122-12"><a href="#cb122-12" aria-hidden="true" tabindex="-1"></a>    f1(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS1::f1&#39;</span></span>
+<span id="cb122-13"><a href="#cb122-13" aria-hidden="true" tabindex="-1"></a>    f2(<span class="dv">0</span>);              <span class="co">// Unintentionally calls &#39;NS1::f2&#39;</span></span>
+<span id="cb122-14"><a href="#cb122-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb122-15"><a href="#cb122-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb122-16"><a href="#cb122-16" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS3</span>
+<span id="cb122-17"><a href="#cb122-17" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb122-18"><a href="#cb122-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> NS1::f1;        <span class="co">// &#39;f1&#39; needed</span></span>
+<span id="cb122-19"><a href="#cb122-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f2 (<span class="dt">long</span>);</span>
+<span id="cb122-20"><a href="#cb122-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> bar ()</span>
+<span id="cb122-21"><a href="#cb122-21" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb122-22"><a href="#cb122-22" aria-hidden="true" tabindex="-1"></a>    f1(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS1::f1&#39;</span></span>
+<span id="cb122-23"><a href="#cb122-23" aria-hidden="true" tabindex="-1"></a>    f2(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS3::f2&#39; as expected</span></span>
+<span id="cb122-24"><a href="#cb122-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb122-25"><a href="#cb122-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p>
-<ul>
-<li><pre><code>  DCL60-CPP. Obey the one-definition rule (6.21)</code></pre></li>
-<li><pre><code>  DCL40-C. Do not create incompatible declarations of the same</code></pre>
-function or object (6.21)
-<ul>
-<li>Fully qualify all calls.</li>
-<li>Avoid</li>
-<li>Within a single namespace,</li>
-</ul></li>
-</ul></li>
+<li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p></li>
+<li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
+<li><p>Prefer using declarations to using directives.</p></li>
+<li><p>Do not overload templates and non-templates (???)</p></li>
 </ul>
+<p><code>Note Start</code> Do these really relate to this rule? - DCL60-CPP. Obey the one-definition rule (6.21) - DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
+<p>Is there other guidance that would help here? - Analyse called functions between API upgrades? - Remove implicit conversions for called functions? - Changes to APIs should rename funcsets that have additional overloads?</p>
+<p><code>Note End</code></p>
 <h2 id="initialization-of-variables-lav">6.22 Initialization of Variables [LAV]</h2>
 <h3 id="applicability-to-language">6.22.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 exists in C++.</p>
