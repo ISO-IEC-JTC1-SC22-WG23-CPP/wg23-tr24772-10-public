@@ -214,8 +214,8 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.40.TemplatesAndGenerics-SYM.md</h1>
 </header>
-<h2 id="templates-and-generics-sym">6.40 Templates and Generics [SYM]</h2>
-<h3 id="applicability-to-language">6.40.1 Applicability to language<span data-custom-style="annotation reference"></span></h3>
+<h2 id="SYM">6.40 Templates and Generics [SYM]</h2>
+<h3 id="applicability-to-language">6.40.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.40 exists in C++. C++ provides the facility <em>Templates</em> to support the generic programming methodology. C++ Templates can be variadic templates. C++ Templates can accept as arguments types, templates, and values, including addresses of global variables. <em>Concepts</em> improve template argument checking at compile time.</p>
 <p>Programming language compilers help programmers avoid run-time errors by performing static analysis on the code and generating diagnostics that prevent run-time errors. Therefore, the goal of the C++ language is to help transition code towards compile-time analysis instead of relying on runtime executions that result in run-time failures. Templates are one of the favourable mechanisms to achieve this goal of maximizing compile-time analysis to reduce or eliminate run-time analysis.</p>
 <p>When used appropriately, they are suitable for embedded and safety critical systems;</p>
@@ -280,7 +280,7 @@ Mitigation* *-- ensure complete coverage of Template code with unit tests
 <p><strong>Other issues</strong></p>
 <p>Overload resolution of templates differs from the overload resolution of non-template code. This can result in methods or operators being chosen that are unexpected by the developer.</p>
 <p>A template constructor is never a copy or move constructor and hence does not prevent the implicit definition of a copy or move constructor even if the constructor looks similar.</p>
-<p>There are cases, however, where the instantiation of a template with a parameter that matches syntactic but not semantic requirements, such as ++ for a pointer, will compile and execute but will be wrong and can result in undefined behaviour. Other examples relate to incomplete class types, see clause 6.2 <em>Type system.</em></p>
+<p>There are cases, however, where the instantiation of a template with a parameter that matches syntactic but not semantic requirements, such as ++ for a pointer, will compile and execute but will be wrong and can result in undefined behaviour. Other examples relate to incomplete class types, see subclause <a href="#IHN">Type system [IHN]</a>.</p>
 <pre><code>&lt;!--
 Another issue -- likely to be placed elsewhere and referenced here
 

@@ -214,9 +214,9 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.34.SupprogramSignatureMismatch-OTR.md</h1>
 </header>
-<h2 id="subprogram-signature-mismatch-otr">6.34 Subprogram Signature Mismatch [OTR]</h2>
+<h2 id="OTR">6.34 Subprogram Signature Mismatch [OTR]</h2>
 <h3 id="applicability-to-language">6.34.1 Applicability to language</h3>
-<p>In general, there must be a match between the number of parameters in a function call and the number of arguments in the function definition. For issues related to macro signatures, see 6.51 Pre-processor directives.</p>
+<p>In general, there must be a match between the number of parameters in a function call and the number of arguments in the function definition. For issues related to macro signatures, see subclause <a href="NMP">Pre-processor directives[NMP]</a>.</p>
 <p>The number of arguments can be different to the number of parameters in a function where: - a function template includes a <em>function parameter pack</em>, or - a function parameter includes a default argument, or - a function parameter-declaration-clause ends with an ellipsis, <code>f(\...)</code>.</p>
 <p>Calling a function template with a <em>function parameter pack</em> results in a specialization of the function with the parameter types matching the corresponding argument types.</p>
 <p>The compiler will ensure for variadic templates that the type and number of arguments is correct:</p>

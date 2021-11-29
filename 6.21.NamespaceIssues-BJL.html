@@ -142,68 +142,6 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -221,61 +159,38 @@
 <li><p>Overloading, where clause 6.20 applies;</p></li>
 <li><p>Overriding, where clause 6.41 applies.</p></li>
 </ul>
-<p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists.</p>
-<p>However, overload resolution applies preference rules in order to select among multiple matching functions as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question then changes its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// void foo (int);</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar ()</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="dv">0</span>);         <span class="co">// The call to &#39;foo(long)&#39; requires implicitly conversion</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// from &#39;int&#39; to &#39;long&#39;.   The function &#39;foo(int)&#39; </span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// would be a &quot;better match&quot; and so would silently</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// be chosen when subsequently introduced</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>A new declaration may become visible in a number of situations involving the addition of:</p>
+<p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists. However, overload resolution can have unintuitive results and depends on the preceding context. It may not be obvous which function is chosen by the overload resolution process, introducing this vulnerability.</p>
+<p><code>Note Start</code> Code examples: https://godbolt.org/z/erG5nPW19</p>
+<p>210906: During the discussion the meaning of the vulnerability became clear:</p>
+<blockquote>
+<p>Can a maintainer add an overload that results in a program that still compiles but that has different behavior?</p>
+</blockquote>
 <ul>
-<li>a new overload,</li>
-<li>a using directive</li>
-<li>a declaration into a namespace that is searched as part of “Argument Dependent Lookup”</li>
-<li>a non-template function that is preferred to a function template</li>
+<li><p>The answer is clearly yes. Overloads that are “better matches” can be added, and as long as they are found by lookup they will be selected. This is caused where the current best match also involves implicit conversions that are not present, or have a better rank, in the newly added function.</p></li>
+<li><p>The addition of using directives, or the addition of functions to scopes that are later referred to in a using declaration can result in this change happening “at a distance”.</p></li>
+<li><p>Argument Dependent Lookup (ADL), results in namespaces being searched, and should those namespaces have functions added to them they may be selected.</p></li>
 </ul>
-<p>A using directive broadens the possible scopes that will be examined for names during lookup. Where lookup searches a namespace referred to by a using directive, all names in that namespace will be visible some of which may be unwanted. A using declaration, on the other hand, declares only the specified name into the scope of the using declaration.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS1</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1 (<span class="dt">int</span>);</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f2 (<span class="dt">int</span>);        <span class="co">// Added later</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS2</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> <span class="kw">namespace</span> NS1;  <span class="co">// &#39;f1&#39; needed</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f2 (<span class="dt">long</span>);</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> bar ()</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    f1(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS1::f1&#39;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    f2(<span class="dv">0</span>);              <span class="co">// Unintentionally calls &#39;NS1::f2&#39;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS3</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> NS1::f1;        <span class="co">// &#39;f1&#39; needed</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f2 (<span class="dt">long</span>);</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> bar ()</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    f1(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS1::f1&#39;</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    f2(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS3::f2&#39; as expected</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The guideance is:</p>
+<ul>
+<li><p>fully qualify the names to remove any ambiguity of what function is being called if possible. An exception to this is user-defined literals (UDLs) which cannot be called with a fully qualified name.</p></li>
+<li><p>don’t use using directives (except for the UDL case)</p></li>
+<li><p>a namespace defining UDLs should only contain those definitions</p></li>
+<li><p>What about avoiding implicit conversions when calling overloaded functions? However, implicit conversions are not the only way the compiler chooses between overloads:</p>
+<ul>
+<li>template vs non template</li>
+<li>rvalue ref vs lvalue ref</li>
+<li>const vs non-const</li>
+</ul></li>
+</ul>
+<p><code>Note End</code></p>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p></li>
-<li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
-<li><p>Prefer using declarations to using directives.</p></li>
-<li><p>Do not overload templates and non-templates (???)</p></li>
+<li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p>
+<ul>
+<li><pre><code>  DCL60-CPP. Obey the one-definition rule (6.21)</code></pre></li>
+<li><pre><code>  DCL40-C. Do not create incompatible declarations of the same</code></pre>
+function or object (6.21)</li>
+</ul></li>
 </ul>
-<p><code>Note Start</code> Do these really relate to this rule? - DCL60-CPP. Obey the one-definition rule (6.21) - DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
-<p>Is there other guidance that would help here? - Analyse called functions between API upgrades? - Remove implicit conversions for called functions? - Changes to APIs should rename funcsets that have additional overloads?</p>
-<p><code>Note End</code></p>
 </body>
 </html>

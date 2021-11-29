@@ -214,16 +214,16 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.44.PolymorphicVariables-BKK.md</h1>
 </header>
-<h2 id="polymorphic-variables-bkk">6.44 Polymorphic variables [BKK]</h2>
+<h2 id="BKK">6.44 Polymorphic variables [BKK]</h2>
 <h3 id="applicability-to-language">6.44.1 Applicability to language</h3>
-<p>This vulnerability as described in ISO/IEC TR 24772-1:2019 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++.</p>
+<p>This vulnerability as described in ISO/IEC TR 24772-1:2019 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see <a href="#IHN">Type System[IHN]</a>.</p>
 <p>C++ provides language mitigations to help avoid the problems as follows:</p>
 <p>Since C++ supports multiple inheritance, up-casting, down-casting, and cross-casting operations can be used to switch to different (pointer/reference) types in the inheritance hierarchy of a specific object, i.e.,</p>
 <ul>
-<li><p>up-casting is casting an object to an ancestor type in the object's type inheritance hierarchy.</p></li>
-<li><p>down-casting is casting an object to a descendent type in the object's type inheritance hierarchy, and,</p></li>
-<li><p>cross-casting is casting an object to a sibling/cousin (possibly removed) type in the object's type inheritance hierarchy.</p></li>
-<li><p>Unsafe casts, which include C-style casts and <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, can cast to unrelated arbitrarily structured types. This allows reading and modifying arbitrary memory areas. See subclause <a href="#_6.11_Pointer_type_1"><span data-custom-style="Hyperlink">6.11 Pointer Casting and Pointer Type Changes</span></a> [HFC] for more details.</p></li>
+<li><p><em>up-casting</em> is casting an object to an ancestor type in the object's type inheritance hierarchy.</p></li>
+<li><p><em>down-casting</em> is casting an object to a descendent type in the object's type inheritance hierarchy, and,</p></li>
+<li><p><em>cross-casting</em> is casting an object to a sibling/cousin (possibly removed) type in the object's type inheritance hierarchy with multiple inheritance.</p></li>
+<li><p>Unsafe casts, which include C-style casts and <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, can cast to unrelated arbitrarily structured types. This allows reading and modifying arbitrary memory areas. See subclause [[6.11 Pointer Casting and Pointer Type Changes] [HFC](#HFC) for more details.</p></li>
 </ul>
 <blockquote>
 <p>Developers should be aware that virtual member functions can be overridden in derived classes, even if they are private.</p>
@@ -253,6 +253,7 @@
 <p>Upcasts:</p>
 <ul>
 <li><p>are the only ones that can be performed implicitly</p></li>
+<li><p>can cause object slicing when a copy of a base class object is created from a derived class object.</p></li>
 <li><p>can also be done with <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> or <code class="sourceCode cpp"><span class="kw">static_cast</span></code></p></li>
 </ul>
 <p>Downcasts</p>
@@ -268,32 +269,38 @@
 <li><p>can be done safely with a single call to <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> which requires appropriate portions of inheritance to be polymorphic (i.e. has <code class="sourceCode cpp"><span class="kw">virtual</span></code> members).</p></li>
 <li><p>can often be done with a chain of <code class="sourceCode cpp">static_casts</code> traversing the inheritance hierarchy, which is almost always unsafe.</p></li>
 </ul>
+<p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
 <h3 id="guidance-to-language-users">6.44.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the advice provided in ISO/IEC TR 24772-1 :2019clause 6.44.5.</p></li>
-<li><p>If an upcast is needed, prefer using implicit conversion, since an explicit upcast adds unnecessary complexity for the reader.</p></li>
+<li><p>Follow the advice provided in ISO/IEC TR 24772-1 clause 6.44.5.</p></li>
+<li><p>In base classes declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and prevent implicit object copying (Core Guidelines C.130).</p></li>
+<li><p>The need for downcasts or crosscasts indicates a design challenge, rely on proper virtual member functions in the base classes instead.</p></li>
+<li><p>If an upcast is needed, rely on implicit conversion, since an explicit upcast adds unnecessary complexity for the reader.</p></li>
 <li><p>If a downcast or a crosscast is needed, prefer using <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> since it is checked.</p></li>
 <li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes. If this cannot be ensured, make the base class private, or avoid inheritance.</p></li>
 <li><p>Do not attempt to navigate class hierarchies using C-style casts or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>.</p></li>
-<li><p>For any class that implements a virtual member function, consider marking that member function final in the definition of that class.</p></li>
+<li><p>For any class that implements a virtual member function, consider marking that member function <code>final</code> in the definition of that class.</p></li>
 </ul>
 <blockquote>
-<p>NOTE: This forbids any derived class from redefining the implementation and thereby precludes ambiguity, regardless of whether a call is qualified or not.</p>
+<p>NOTE: This forbids any derived class from redefining the implementation and thereby precludes ambiguity, regardless of whether a call is qualified or not. C.139 even talks about avoiding final for member functions. I (Peter) suggest to delete this guidance</p>
 </blockquote>
 <blockquote>
 <p>NOTE: Making instead the class final contradicts C++ Core Guideline C.139, so is not recommended here.</p>
 </blockquote>
+<blockquote>
+<p>NOTE: IMHO this recommendation does not address any vulnerability. (Peter)</p>
+</blockquote>
 <ul>
-<li>Consider declaring virtual methods with protected or private visibility to preclude code from outside of the class hierarchy calling any specific implementation directly.</li>
+<li>Consider declaring virtual member functions with protected or private visibility to preclude code from outside of the class hierarchy calling any specific implementation directly.</li>
 </ul>
 <blockquote>
 <p>NOTE: This assumes that within the class hierarchy any qualified call is intentional and is the pattern of a non-public virtual interface.</p>
 </blockquote>
 <ul>
-<li>OOP52-CPP. Do not delete a polymorphic object without a virtual destructor (-&gt;6.44)</li>
+<li>Do not delete a polymorphic object without a virtual destructor. This includes using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr&lt;base&gt;</code> from a unique pointer allocated with <code class="sourceCode cpp"><span class="bu">std::</span>make_unique&lt;derived&gt;()</code></li>
 </ul>
 <blockquote>
-<p>See also C++ Core Guidelines ES.48, ES.49, C.146, C.147, C.148 and C.153.</p>
+<p>See also C++ Core Guidelines ES.48, ES.49, C.146, C.147, C.148 and C.153. source: OOP52-CPP?</p>
 </blockquote>
 </body>
 </html>

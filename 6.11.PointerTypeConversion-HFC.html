@@ -214,7 +214,7 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.11.PointerTypeConversion-HFC.md</h1>
 </header>
-<h2 id="pointer-type-conversions-hfc">6.11 Pointer Type Conversions [HFC]</h2>
+<h2 id="HFC">6.11 Pointer Type Conversions [HFC]</h2>
 <h3 id="applicability-to-language">6.11.1 Applicability to language</h3>
 <pre><code>&lt;!--
 In this clause, all C++ references, in addition to pointers. The
@@ -234,11 +234,6 @@ C++ Dynamic cast and the use of it during construction and destruction needs fur
 --&gt;</code></pre>
 <pre><code>&lt;!--
 *AI* *--* *Paul, Richard to review* *-- Writeup about incomplete objects before or after their lifetime and related to translation units.[]{custom-style=&quot;annotation reference&quot;}*[]{custom-style=&quot;annotation reference&quot;}
-
-The following is a video from Jason Turner on why to avoid reinterpret_cast: https://youtu.be/L06nbZXD2D0
-
-The committee introduced &#39;bit_cast&#39; to replace incorrect usage of &#39;reinterpret_cast&#39;: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0476r2.html.
-
 --&gt;</code></pre>
 <p>Pointer casts to a more strictly aligned pointer type is undefined behaviour.</p>
 <p><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> for pointer-interconvertible on objects (see clause 6.9.2 of IS 14882)</p>

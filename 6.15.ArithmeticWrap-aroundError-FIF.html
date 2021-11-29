@@ -214,7 +214,7 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.15.ArithmeticWrap-aroundError-FIF.md</h1>
 </header>
-<h2 id="arithmetic-wrap-around-error-fif">6.15 Arithmetic Wrap-around Error [FIF]</h2>
+<h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
 <p>C++ shares the vulnerability with C as documented in ISO/IEC TR 24772-1:2019 clause 6.15 and TR 24772-3 clause 6.15.1. C++ specifies that signed integer overflow is undefined behaviour. Unsigned integer wraparound is well-defined in C++, but it can result in coding mistakes: Example: <code>4U - 5U</code> yields a large positive value. The smallest signed negative values might not have a positive counterpart (using the same signed integer type). <span data-custom-style="annotation reference"></span>Combined with implicit conversions or promotions for terms in mixed-type expressions, the semantics combine to produce results that can surprise the user.</p>
 <p>The mitigations for wrap-around errors in C++ are different than for C. C++ allows the definition of class types that embed integers together with the operations that provide the wrapping behaviour intended in an efficient way. The operations of the class can enforce safe value ranges and prevent implicit conversions.</p>

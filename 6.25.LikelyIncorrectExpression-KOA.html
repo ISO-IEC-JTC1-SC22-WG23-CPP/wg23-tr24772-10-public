@@ -252,7 +252,7 @@
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>This would clearly state what the programmer meant and that the assignment of y to x was intended.</p>
-<p>Additional confusion occurs in the use of the logical <code>&amp;&amp;</code>/<code>||</code> operators and the bitwise <code>&amp;</code>/<code>|</code> operators. The compiler will implicitly convert arithmetic expressions to <code>bool</code> for operands of the logical operators. Similarly, operands of <code>bool</code> type will be promoted to <code>int</code> for operands of the bitwise operators (see <span id="FLC">Conversion Errors</span>).<br />
+<p>Additional confusion occurs in the use of the logical <code>&amp;&amp;</code>/<code>||</code> operators and the bitwise <code>&amp;</code>/<code>|</code> operators. The compiler will implicitly convert arithmetic expressions to <code>bool</code> for operands of the logical operators. Similarly, operands of <code>bool</code> type will be promoted to <code>int</code> for operands of the bitwise operators (see <a href="#FLC">Conversion Errors [FLC]</a>).<br />
 It may not be clear whether the programmer intended to use the logical operator <code>&amp;&amp;</code> or bitwise operator <code>&amp;</code> instead:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>{</span>
