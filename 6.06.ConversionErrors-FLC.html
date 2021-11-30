@@ -227,7 +227,12 @@
 <li><p>If the declaration, <code class="sourceCode cpp">T t=e;</code>, is defined for some expression, <code>e</code>, and some invented variable, <code>t</code> [C++17, Clause 7 [conv], para 3];</p></li>
 <li><p>In expressions involving operands of operators (e.g., <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, etc.) subject to the requirements of each operators' operands [C++17, Clause 7 [conv], para 2.1];</p></li>
 <li><p>For example, the expression, <code>5 + 6.5</code>, has operands of type <code class="sourceCode cpp"><span class="dt">int</span></code> and <code class="sourceCode cpp"><span class="dt">double</span></code>. Per language rules, the integer operand will be implicitly converted to <code class="sourceCode cpp"><span class="dt">double</span></code>, i.e., the expression becomes <code class="sourceCode cpp"><span class="dt">double</span>(<span class="dv">5</span>) + <span class="fl">6.5</span></code>, i.e., <code>5.0 + 6.5</code>.</p></li>
-<li><p>In boolean contexts, i.e., operands of logical operators or conditions of conditional operator and if or loop statements, contextual conversion to bool implicitly happens from arithmetic types, pointers and classes with a <code>operator bool()</code> conversion operator, even if the latter is declared as explicit. [C++17, Clause 7 [conv], para 4];</p></li>
+<li><p>In boolean contexts, such as</p>
+<ul>
+<li>operands of logical operators,</li>
+<li>the condition of the conditional operator, and</li>
+<li>the condition of the if-statement or loop-statements, contextual conversion to bool implicitly happens from arithmetic types, pointers and classes with a <code>operator bool()</code> conversion operator, even if the latter is declared as explicit. [C++17, Clause 7 [conv], para 4];</li>
+</ul></li>
 <li><p>In the expression of a switch statement: the implicit conversion will be to an integral type [C++17, Clause 7 [conv], para 2.3];</p></li>
 <li><p>In an expression that initializes an object (e.g., an argument to a function call, the expression in a return statement) [C++17, Clause 7 [conv], para 2.4];</p></li>
 <li><p>When a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> class/struct/union constructor can be invoked on an object resulting in some desired type, <code>T</code>, from initial objects passed to the constructor; and</p></li>
