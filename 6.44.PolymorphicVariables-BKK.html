@@ -216,7 +216,7 @@
 </header>
 <h2 id="BKK">6.44 Polymorphic variables [BKK]</h2>
 <h3 id="applicability-to-language">6.44.1 Applicability to language</h3>
-<p>This vulnerability as described in ISO/IEC TR 24772-1:2019 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see <a href="#IHN">Type System[IHN]</a>.</p>
+<p>This vulnerability as described in ISO/IEC TR 24772-1:2019 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see subclause <a href="#IHN">Type System[IHN]</a>.</p>
 <p>C++ provides language mitigations to help avoid the problems as follows:</p>
 <p>Since C++ supports multiple inheritance, up-casting, down-casting, and cross-casting operations can be used to switch to different (pointer/reference) types in the inheritance hierarchy of a specific object, i.e.,</p>
 <ul>
@@ -272,8 +272,8 @@
 <p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
 <h3 id="guidance-to-language-users">6.44.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the advice provided in ISO/IEC TR 24772-1 clause 6.44.5.</p></li>
-<li><p>In base classes declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and prevent implicit object copying (Core Guidelines C.130).</p></li>
+<li><p>Follow the advice provided in ISO/IEC 24772-1 clause 6.44.5.</p></li>
+<li><p>In base classes declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>
 <li><p>The need for downcasts or crosscasts indicates a design challenge, rely on proper virtual member functions in the base classes instead.</p></li>
 <li><p>If an upcast is needed, rely on implicit conversion, since an explicit upcast adds unnecessary complexity for the reader.</p></li>
 <li><p>If a downcast or a crosscast is needed, prefer using <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> since it is checked.</p></li>
