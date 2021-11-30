@@ -216,7 +216,7 @@
 </header>
 <h2 id="KOA">6.25 Likely Incorrect Expression [KOA]</h2>
 <h3 id="applicability-to-language">6.25.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6,25 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.25 exists in C++.</p>
 <p>C++ has several instances of operators which are similar in structure, but different in meaning. The most common quoted example for C-based languages is the replacement of “<code>==</code>” with “<code>=</code>” in an expression, or confusion between:</p>
 <ul>
 <li><code>&amp;</code> and <code>&amp;&amp;</code>;</li>
@@ -239,9 +239,9 @@
 <p>C++ provides significant freedom in constructing statements. This freedom, if misused, can result in unexpected results and potential vulnerabilities.</p>
 <p>The flexibility of C++ can obscure the intent of a programmer. Consider:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* … */</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* ... */</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x = y){</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* … */</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>A fair amount of analysis may need to be done to determine whether the programmer intended to do an assignment as part of the if statement (valid in C++) or whether the programmer made the common mistake of using an <code class="sourceCode cpp">=</code> (assignment) instead of a <code class="sourceCode cpp">==</code> (equality). The major issue with assignment inside of a term of an expression is that it creates side effects that can cause the expression to evaluate in different orders and create different results on different compilers, or even in different executions with the same implementation.</p>
 <p>In order to prevent this confusion, move assignments in contexts that are easily misunderstood outside of Boolean expression. This would change the example code to:</p>
@@ -287,13 +287,12 @@ It may not be clear whether the programmer intended to use the logical operator 
 <!-- this seems not to belong here in expressions-->
 <ul>
 <li><p>Consider the adoption of a coding standard that limits the use of the assignment statement within an expression.</p></li>
-<li><p>From Core guidelines:</p></li>
+<li><p>Follow the following C++ Core guidelines:</p>
+<ul>
+<li>ES 40 Avoid complicated expressions</li>
+<li>ES 41 If in doubt about operator precedence, parenthesize</li>
+<li>ES 44 Do not depend on order of evaluation</li>
+</ul></li>
 </ul>
-<!--     -       ES 85 Make empty statements visible -->
-<pre><code>-       ES 40 Avoid complicated expressions
-
--       ES 41 If in doubt about operator precedence, parenthesize
-
--       ES 44 Do not depend on order of evaluation</code></pre>
 </body>
 </html>
