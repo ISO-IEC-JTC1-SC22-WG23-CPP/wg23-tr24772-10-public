@@ -231,7 +231,7 @@
 <ul>
 <li>operands of logical operators,</li>
 <li>the condition of the conditional operator, and</li>
-<li>the condition of the if-statement or loop-statements, contextual conversion to bool implicitly happens from arithmetic types, pointers and classes with a <code>operator bool()</code> conversion operator, even if the latter is declared as explicit. [C++17, Clause 7 [conv], para 4];</li>
+<li>the condition of the if-statement or loop-statements, contextual conversion to bool implicitly happens from arithmetic types, pointers and classes with a, possibly explicit. <code>operator bool()</code>. [C++17, Clause 7 [conv], para 4];</li>
 </ul></li>
 <li><p>In the expression of a switch statement: the implicit conversion will be to an integral type [C++17, Clause 7 [conv], para 2.3];</p></li>
 <li><p>In an expression that initializes an object (e.g., an argument to a function call, the expression in a return statement) [C++17, Clause 7 [conv], para 2.4];</p></li>
