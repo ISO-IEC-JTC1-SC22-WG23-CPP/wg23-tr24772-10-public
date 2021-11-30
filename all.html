@@ -2822,28 +2822,26 @@ interface to access them that preserves class invariants.</li>
 <h3 id="guidance-to-language-users">6.44.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the advice provided in ISO/IEC 24772-1 clause 6.44.5.</p></li>
-<li><p>In base classes declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>
-<li><p>The need for downcasts or crosscasts indicates a design challenge, rely on proper virtual member functions in the base classes instead.</p></li>
-<li><p>If an upcast is needed, rely on implicit conversion, since an explicit upcast adds unnecessary complexity for the reader.</p></li>
+<li><p>In a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>
+<li><p>Avoid designs relying on downcasts or crosscasts; rely on proper virtual member functions in the base classes instead.</p></li>
+<li><p>Avoid explicit upcast, rely on implicit conversion.</p></li>
 <li><p>If a downcast or a crosscast is needed, prefer using <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> since it is checked.</p></li>
 <li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes. If this cannot be ensured, make the base class private, or avoid inheritance.</p></li>
 <li><p>Do not attempt to navigate class hierarchies using C-style casts or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>.</p></li>
-<li><p>For any class that implements a virtual member function, consider marking that member function <code>final</code> in the definition of that class.</p></li>
+<li><p>For any class that implements a virtual member function, consider marking that member function <code class="sourceCode cpp"><span class="kw">final</span></code> in the definition of that class.</p></li>
 </ul>
 <blockquote>
-<p>NOTE: This forbids any derived class from redefining the implementation and thereby precludes ambiguity, regardless of whether a call is qualified or not. C.139 even talks about avoiding final for member functions. I (Peter) suggest to delete this guidance</p>
+<p>NOTE: This forbids any derived class from redefining the implementation and thereby precludes ambiguity, regardless of whether a call is qualified or not. C.139 even talks about avoiding final for member functions. We (Peter &amp; Paul) suggest to delete this guidance</p>
 </blockquote>
 <blockquote>
 <p>NOTE: Making instead the class final contradicts C++ Core Guideline C.139, so is not recommended here.</p>
-</blockquote>
-<blockquote>
-<p>NOTE: IMHO this recommendation does not address any vulnerability. (Peter)</p>
 </blockquote>
 <ul>
 <li>Consider declaring virtual member functions with protected or private visibility to preclude code from outside of the class hierarchy calling any specific implementation directly.</li>
 </ul>
 <blockquote>
-<p>NOTE: This assumes that within the class hierarchy any qualified call is intentional and is the pattern of a non-public virtual interface.</p>
+<p>NOTE: IMHO this recommendation does not address any vulnerability. (Peter) TBD with Erhard.<br />
+NOTE: This assumes that within the class hierarchy any qualified call is intentional and is the pattern of a non-public virtual interface.</p>
 </blockquote>
 <ul>
 <li>Do not delete a polymorphic object without a virtual destructor. This includes using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr&lt;base&gt;</code> from a unique pointer allocated with <code class="sourceCode cpp"><span class="bu">std::</span>make_unique&lt;derived&gt;()</code></li>
