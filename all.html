@@ -1224,27 +1224,27 @@ enumerations for safe and simple use"</li>
 <p>Note that this implicit conversion to a class object is the default behavior of constructors that can be called with a single parameter. To prevent this happening, the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> is used before the constructor, as in:</p>
 <div class="sourceCode" id="cb97"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="kw">explicit</span> C(<span class="dt">int</span> x=<span class="dv">10</span>, <span class="dt">float</span> y=<span class="dv">0</span>){...}</span></code></pre></div>
 <p>The call <code class="sourceCode cpp">foo(<span class="dv">21</span>)</code> would now not be legal.</p>
-<p>All other conversions are not necessarily "safe" as they can sometimes yield to data loss or erroneous values. This is an issue with implicit conversions since they are automatic: the programmer does not explicitly write code to do the conversion. For example, a common problem is mixing signed and unsigned integral types in arithmetic expressions. This can become a problem since the ranges of signed and unsigned integer types differ and the behavior of signed integer arithmetic on overflow is undefined whereas unsigned integer arithmetic wraps on overflow.</p>
-<p>Additional problems arise as a result of implicit conversions to and from <code>bool</code> of arithmetic types, thus hiding the fact when a wrong operator symbol is used accidentally:</p>
+<p>All other conversions are not necessarily "safe" as they can sometimes result in data loss or erroneous values. This is an issue with implicit conversions since they are automatic: the programmer does not explicitly write code to do the conversion. For example, a common problem is mixing signed and unsigned integral types in arithmetic expressions. This can become a problem since the ranges of signed and unsigned integer types differ and the behavior of signed integer arithmetic on overflow is undefined whereas unsigned integer arithmetic wraps on overflow.</p>
+<p>Additional problems arise as a result of implicit conversions to and from <code>bool</code> of arithmetic types, thus hiding the fact when a wrong operator is used accidentally:</p>
 <div class="sourceCode" id="cb98"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
 <span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==) ?</span></span>
 <span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In the example above, all combinations of the corresponding operators will compile with different resulting types and results.</p>
-<p>The implicit conversions and multitude of possible operations of integral types can be mitigated by using scoped enumeration types with the corresponding integer type as its underlying type. For example, <code class="sourceCode cpp"><span class="bu">std::</span>byte</code> is defined to address individual <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code> elements (bytes) in memory without participating in arithmetic or bitwise operations. User-defined scoped enumerations can define corresponding operator overloads to sidestep implicit conversion of the built-in integral types and eliminate the risks of unwanted mixing of signed and unsigned operands as well as avoiding unwanted conversions.</p>
+<p>In addition to the use of <em>strong types</em> (see <a href="#IHN">Type System [IHN]</a>), the implicit conversions and multitude of possible operations of integral types can be mitigated by using scoped enumeration types with the corresponding integer type as its underlying type. For example, <code class="sourceCode cpp"><span class="bu">std::</span>byte</code> is defined to address individual <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code> elements (bytes) in memory without participating in arithmetic or bitwise operations.</p>
 <h3 id="guidance-to-language-users">6.6.2 Guidance to language users</h3>
-<p>In addition to the general advice of TR 24772-1 clause 6.6.5:</p>
+<p>In addition to the general advice of ISO/IEC 24772-1 clause 6.6.5:</p>
 <ul>
 <li><p>Avoid casts (see C++ Core guidelines ES.48), treat every cast as a candidate for refactoring.</p></li>
 <li><p>Avoid narrowing conversions. (see C++ Core Guidelines ES.46)</p></li>
-<li><p>Prefer braces over parentheses for initialization or explicit conversions for numeric types to prevent narrowing. (see C++ Core Guidelines ES.23 and ES.64)</p></li>
-<li><p>Prefer C++ type conversion operators over C-style casts, as they document intent and disallow some unsafe conversions. (see C++ Core Guidelines ES.49)</p></li>
-<li><p>Declare constructors of a class that can be called with a single argument and conversion operators with the keyword ‘explicit’{.cpp}. (see C++ Core guidelines C.46 and C.164)</p></li>
-<li><p>Don’t cast away <code class="sourceCode cpp"><span class="at">const</span></code>. See section<a href="#UJO">Modifying Constants [UJO]</a><br />
+<li><p>Prefer braces over parentheses for initialization or explicit conversions from numeric types to prevent narrowing. (see C++ Core Guidelines ES.23 and ES.64)</p></li>
+<li><p>Avoid C-style casts. Use C++ type conversion operators instead, as they document intent and disallow some unsafe conversions. (see C++ Core Guidelines ES.49)</p></li>
+<li><p>Declare <code class="sourceCode cpp"><span class="kw">explicit</span></code> constructors callable with a single argument and conversion operators. (see C++ Core guidelines C.46 and C.164)</p></li>
+<li><p>Don’t cast away <code class="sourceCode cpp"><span class="at">const</span></code>. See subclause <a href="#UJO">Modifying Constants [UJO]</a><br />
 (see C++ Core Guidelines ES.50)</p></li>
 <li><p>Don’t mix signed and unsigned arithmetic (see C++ Core Guidelines ES100)</p></li>
 <li><p>Don’t rely on implicit conversions between arithmetic types and <code>bool</code>.</p></li>
-<li><p>Use <em>strong types</em> (see section <a href="#IHN">Type System [IHN]</a> and scoped enumerations with corresponding operator overloads to limit implicit conversions and unwanted operations.</p></li>
+<li><p>Use <em>strong types</em> (see section <a href="#IHN">Type System [IHN]</a> to limit implicit conversions and unwanted operations.</p></li>
 </ul>
 <h2 id="string-termination-cjm">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
