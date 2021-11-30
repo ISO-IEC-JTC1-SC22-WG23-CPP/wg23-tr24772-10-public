@@ -216,32 +216,30 @@
 </header>
 <h2 id="null-pointer-dereference-xyh">6.13 NULL Pointer Dereference [XYH]</h2>
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.13 exists in C++. C++ does, however, provide a number of mechanisms that allow the programmer to create, manipulate and destroy objects without the explicit use of raw pointers.</p>
+<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.13 exists in C++. Dereferencing a pointer with the value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is undefined behavior <a href="#EWF">[EWF]</a>.</p>
+<p>C++ does, however, provide references that cannot be null and can be used in most places instead of pointers. In addition the standard library type <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> can be used in place of pointers in many cases but requires similar diligence when it is empty.</p>
+<p>As a historical programming convention a return value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is used to denote tha absence of a result. This mechanism lead to a style where pointer returns are very common and magnify potential dereference problems. Instead of returning a pointer, std::optional can be used to denote the absence of a result an still return a result by value. In addition, passing pointers as function arguments places the burden of checking for a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value on the called function. Using pointers as return values and function parameters is inherently problematic, due to the following issues:</p>
 <ul>
-<li><p>Containers manage memory and separate memory management from the use of objects.</p></li>
-<li><p>The container interface throws an exception if a container cannot be allocated.</p></li>
-<li><p>Smart pointer creation functions allocate heap memory and handle memory management.</p></li>
-<li><p>References provide similar functionality as pointers but cannot be null.</p></li>
+<li>is a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value valid in context?</li>
+<li>is it a single object or an array of objects? (<code>T[]</code> as a function parameter type is identical to <code>T*</code>)</li>
+<li>what is the lifetime of the pointee?</li>
+<li>who has ownership of the pointee?</li>
+<li>is there protection against dereference of a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value?</li>
 </ul>
-<p>The C++ mechanism new, by default, throws an exception if the allocated object cannot be created (i.e. if a null pointer would be returned). C++ does provide other allocation mechanism, including C malloc and a non-throwing new, that are not recommended for general use<span data-custom-style="annotation reference"></span>.<span data-custom-style="annotation reference"></span></p>
-<p>See C++ Core Guidelines R: Resource Management, and CERT EXP34-C “Do not dereference null pointers”</p>
-<pre><code>&lt;!--
-Capture notion that std::make_shared does not guarantee* *atomaticity
-of the referenced object.
-[]{custom-style=&quot;annotation reference&quot;}
---.</code></pre>
-<pre><code>&lt;!--
-std::span, std.vector and std.array::provide ...
-
-std::span is more lightweight and permit resizing .
---&gt;</code></pre>
+<p>Using a reference as a function parameter instead of a pointer has none of these issues. Using a reference as function return type requires the caller to avoid accessing an object outisde of its lifetime (see <a href="#XYK">[XYK]</a>, <a href="#DCM">[DCM]</a>).</p>
+<p>Using a <code>std::optional</code> as a function parameter or function return value instead of a pointer addresses all of these issues, except for the last. Accessing the content of a std::optional requires a check for <code>has_value{}</code>, which happens implicitly when using <code class="sourceCode cpp"><span class="bu">std::</span>optional<span class="bu">::</span>value()</code> instead of its overloaded dereference-operator.</p>
+<p>Note: Be aware that <code>optional&lt;T&amp;&gt;</code> is not supported by the standard library. In that case either use <code class="sourceCode cpp"><span class="bu">std::</span>optional&lt;<span class="bu">std::</span>reference_wrapper&lt;T&gt;&gt;</code> or another implementation of <code>optional</code> supporting holding references.</p>
+<p>The language provided dynamic memory management functionionality might return a nullptr value in case of a failed allocation. Employing the smart pointer factories <code>make_unique</code> or <code>make_shared</code> will return a non-null smart pointer managing the lifetime of the underlying memory or throw <code>std::bad_alloc</code> on a failed allocation.</p>
+<p>See C++ Core Guidelines ES.65 and section R: Resource Management, and CERT EXP34-C “Do not dereference null pointers”</p>
 <h3 id="guidance-to-language-users">6.13.2 Guidance to language users</h3>
 <ul>
-<li><p>When dereferencing objects of pointer-like types that may contain a null value, follow the guidance from TR 24772-3 clause 6.13.2.</p></li>
-<li><p>Avoid the use of direct memory allocation. Instead use containers such as <code>std::array</code>, <code>std::vector</code>, and <code>std::span</code>.</p></li>
-<li><p>Consider the use of library facilities of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code>std::shared_ptr</code> to manage the lifetime of the object being referenced.</p></li>
-<li><p>Use references to reduce the number of places where pointers are dereferenced. <span data-custom-style="annotation reference"></span></p></li>
+<li><p>If using objects of pointer-like types that may contain a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, follow the guidance from TR 24772-3 clause 6.13.2.</p></li>
+<li><p>Use references to reduce the number of places where pointers are dereferenced.</p></li>
+<li><p>Use <code>std::optional</code> instead of a pointer to denote a potentially missing function argument or result.</p></li>
+<li><p>Use containers instaed of arrays such as <code>std::array</code>, <code>std::vector</code>, and <code>std::span</code>.</p></li>
+<li><p>Use <code>make_unique()</code> or <code>make_shared()</code> for allocating objects on the heap.</p></li>
 <li><p>Do not suppress exceptions on memory allocation and handle any exceptions that arise. If exceptions are suppressed, follow the guidance of TR 24772-3:2020 clause 6.13.2.</p></li>
+<li><p>Use static and dynamic analysis tools to detect potential violations of this guideline.</p></li>
 </ul>
 </body>
 </html>
