@@ -267,11 +267,21 @@
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    f2(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS3::f2&#39; as expected</span></span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Overload resolution the compiler only considers conversions for the explicitly specified arguments and does not take default parameters into account:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">short</span>, <span class="dt">int</span> = <span class="dv">0</span>);</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span>, <span class="dt">short</span> = <span class="dv">0</span>);</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// OK, calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">0</span>);    <span class="co">// Ambiguous</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p></li>
 <li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
 <li><p>Prefer using declarations to using directives.</p></li>
+<li><p>Do not overload and use default arguments for the same set of functions.</p></li>
 <li><p>Do not overload templates and non-templates (???)</p></li>
 </ul>
 <p><code>Note Start</code> Do these really relate to this rule? - DCL60-CPP. Obey the one-definition rule (6.21) - DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
