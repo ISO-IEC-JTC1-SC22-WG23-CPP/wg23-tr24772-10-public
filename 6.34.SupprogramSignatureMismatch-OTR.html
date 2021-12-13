@@ -227,24 +227,42 @@
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="ch">&#39;a&#39;</span>); <span class="co">// OK - calls f&lt;double, char&gt; (int, double, char);</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>A call to a function with default arguments can provide fewer arguments than parameters as long as the parameters for which no explicit argument is provided include a default argument:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span>, <span class="dt">int</span> = <span class="dv">0</span>);</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  f1 ();        <span class="co">// error, not enough arguments </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// OK, f1(1, 0)</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>);    <span class="co">// OK, f1(1, 2)</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Note: during overload resolution the compiler only considers conversions for the explicitly specified arguments.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">short</span>, <span class="dt">int</span> = <span class="dv">0</span>);</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span>, <span class="dt">short</span> = <span class="dv">0</span><span class="bu">L</span>);</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// OK, calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>A call to a function with default arguments can provide fewer arguments than parameters as long as the parameters for which no explicit argument is provided include a default argument.</p>
 <p>Where a function parameter-declaration-clause ends with an ellipsis, additional arguments can be accessed through the mechanisms provided by <code>&lt;cstdarg&gt;</code>. No information about the number or types of the parameters is supplied by the compiler. The use of this feature outside of special situations can be the basis for vulnerabilities.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = va_arg (ap, <span class="dt">int</span>);  <span class="co">// corresponds to parameter &#39;2&#39;, with value &#39;3&#39;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">3</span>);</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Undefined behavior can arise, for example:</p>
+<ul>
+<li>Arguments with integral or enumeration type that are passed to an ellipsis parameter will undergo integral promotions, and so the type of the parameter is <code>int</code> and not <code>short</code>. The use of <code>short</code> with <code>va_arg</code> is therefore invalid.</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> i = va_arg (ap, <span class="dt">short</span>);  <span class="co">// Invalid type</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<ul>
+<li>In the following case, <code>f1</code> assumes that there will be two parameters after the named parameter.</li>
+</ul>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
@@ -252,57 +270,22 @@
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = va_arg (ap, <span class="dt">int</span>);  <span class="co">// corresponds to parameter &#39;2&#39;, with value &#39;3&#39;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">3</span>);</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Unlike the other mechanisms for argument passing, undefined behavior can arise, for example:</p>
-<ul>
-<li>Arguments with integral or enumeration type that are passed to an ellipsis parameter will undergo integral promotions, and so the type of the parameter is <code>int</code> and not <code>short</code>. The use of <code>short</code> with <code>va_arg</code> is therefore invalid.</li>
-</ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> i = va_arg (ap, <span class="dt">short</span>);  <span class="co">// Invalid type</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<ul>
-<li>In the following case, <code>f1</code> assumes that there will be two parameters after the named parameter.</li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = va_arg (ap, <span class="dt">int</span>);</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> j = va_arg (ap, <span class="dt">int</span>);</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>);  <span class="co">// OK</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>);     <span class="co">// results in undefined behaviour</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = va_arg (ap, <span class="dt">int</span>);</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> j = va_arg (ap, <span class="dt">int</span>);</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>);  <span class="co">// OK</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>);     <span class="co">// results in undefined behaviour</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>These issues cannot occur where default arguments or variadic function templates are used.</p>
 <h3 id="guidance-to-language-users">6.34.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidelines of ISO/IEC TR 24772-1:2019 clause 6.34.5.</p></li>
-<li><p>Do not overload and use default arguments for the same set of functions</p></li>
-<li><p>Do not use functionality from <code>&lt;cstdarg&gt;</code></p></li>
+<li><p>Do not use functionality from <code>&lt;cstdarg&gt;</code>; use variadic function templates instead.</p></li>
 </ul>
 <p>Note: See also C++ Core Guidelines F.55.</p>
 </body>
