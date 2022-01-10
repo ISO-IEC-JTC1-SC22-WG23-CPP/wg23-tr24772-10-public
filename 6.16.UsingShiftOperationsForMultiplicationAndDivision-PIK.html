@@ -154,57 +154,12 @@
 </header>
 <h2 id="PIK">6.16 Using Shift Operations for Multiplication and Division [PIK]</h2>
 <h3 id="applicability-to-language">6.16.1 Applicability to language</h3>
-<pre><code>&lt;!--
-REWORD: The issues for C++ are well defined in TR 24772-1 clause 6.16
-*Using Shift Operations for Multiplication and Division \[PIK\].* Also
-see clause *6.15 [Arithmetic Wrap-around Error [FIF]](#FIF)*.
-
-In C++, shifts with too large an argument is defined as Undefined
-Behaviour. See 6.56 Undefined Behaviour and ISO/IEC 14882:2017 C++
-reference manual
-
-&gt; From the C++ standard 14882:2017 clause 8.8 \[expr.shift\],\
-&gt;  The shift operators \&lt;\&lt; and `\&gt;\&gt;`{.cpp} group
-&gt; left-to-right.\
-&gt; shift-expression:\
-&gt; `additive-expression\
-&gt; shift-expression \&lt;\&lt; additive-expression\
-&gt; shift-expression \&gt;\&gt; additive-expression`{.cpp}\
-&gt; The operands shall be of integral or unscoped enumeration type and
-&gt; integral promotions are performed. The type of the result is that of
-&gt; the promoted left operand. The behavior is undefined if the right
-&gt; operand is negative, or greater than or equal to the length in bits of
-&gt; the promoted left operand.\
-&gt; \
-&gt; The value of `E1 \&lt;\&lt; E2`{.cpp} is
-&gt; `E1`{.cpp} left-shifted `E2`{.cpp} bit
-&gt; positions; vacated bits are zero-filled. If `E1`{.cpp}
-&gt; has an unsigned type, the value of the result is `E1 ×
-&gt; 2E2`{.cpp}, reduced modulo one more than the maximum
-&gt; value representable in the result type. Otherwise, if
-&gt; `E1`{.cpp} has a signed type and non-negative value,
-&gt; and `E1 × 2E2`{.cpp} is representable in the
-&gt; corresponding unsigned type of the result type, then that value,
-&gt; converted to the result type, is the resulting value; otherwise, the
-&gt; behavior is undefined.\
-&gt; \
-&gt;  The value of `E1 \&gt;\&gt; E2`{.cpp} is
-&gt; `E1`{.cpp} right-shifted `E2`{.cpp} bit
-&gt; positions. If `E1`{.cpp} has an unsigned type or if
-&gt; `E1`{.cpp} has a signed type and a non-negative value,
-&gt; the value of the result is the integral part of the quotient of
-&gt; `E1/2E2`{.cpp}. If `E1`{.cpp} has a
-&gt; signed type and a negative value, the resulting value is
-&gt; implementation-defined.
-&gt;
-&gt; The expression `E1`{.cpp} is sequenced before the
-&gt; expression `E2`{.cpp}.
---&gt;</code></pre>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.16 exists in C++. C++ complicates the discussion in 24772-1 clause 6.16 as a result of the integral promotion (see clause 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
+<p>Not every use of a shift operator is a bit-shift due to operator overloading.</p>
 <h3 id="guidance-to-language-users">6.16.2 Guidance to language users</h3>
-<pre><code>&lt;!--
-SGM June 28 2021 - Since the applicability to language is incomplete, this section is currently also incomplete
---&gt;</code></pre>
-<p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.16 <em>Using Shift Operations for Multiplication and Division [PIK].</em> Also see, <em>6.15 Arithmetic Wrap-around Error [FIF].</em></p>
-<p>References:</p>
+<ul>
+<li>Follow the advice of ISO/IEC TR 24772-1:2019 clause 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
+<li>For promoted operands, consider converting the result of a shift operation back to the original type of the left hand operand (say using a static cast or an assignment to an object of that type) before using the result in further operations.</li>
+</ul>
 </body>
 </html>
