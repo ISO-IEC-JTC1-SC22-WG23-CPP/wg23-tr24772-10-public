@@ -1829,7 +1829,8 @@ constitute &quot;use of an object&quot; .
 <h2 id="initialization-of-variables-lav">6.22 Initialization of Variables [LAV]</h2>
 <h3 id="applicability-to-language">6.22.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 exists in C++.</p>
-<p>Within a single translation unit, reading the value of an object defined later and initialized dynamically is an access to an incompletely initialized variable. Across translation units, references to an object defined in a different translation unit and initialized dynamically can be an access to an incompletely initialized variable, depending on the order of those initializations.</p>
+<p>For local objects and dynamically allocated objects with trivial type defining/allocating the object without initialization leaves the object with an indeterminate value. A subsequent read of such a variable, before it has been written is undefined behavior. Defining local variables as <code class="sourceCode cpp"><span class="at">const</span></code>, enforces initialization by the compiler. If determining the initial value of a variable requires complex logic, putting that logic into an immediately-invoked lambda expression that provides the initial value, permits the variable to be initialized when defined. Furthermore, a class with a user-defined constructor can chose to leave non-static data members of trivial type uninitialized. If such a class does not prevent access to such a member with indeterminate value, using the class can cause undefined behavior. This even happens when an object of that class is a subobject of another class that does not define a constructor. In addition some of the rules of initialization in C++ are complicated. There exists, no initialization (see above), zero-initialization, value-initialization, default-initialization, list initialization, aggregate inialization, member initialization, base-class initialization, constant initialization (<code class="sourceCode cpp"><span class="kw">constexpr</span></code> and <code class="sourceCode cpp"><span class="kw">constinit</span></code>), static initialization, dynamic initialization, etc.</p>
+<p>Namespace-scope variables with dynamic initialization can cause undefined behavior if the initialization depends on other such variables. If the dependency is in the same translation unit the sequencing is defined in definition order, however, there is no sequencing across translation unit boundaries.</p>
 <p>Consider:</p>
 <div class="sourceCode" id="cb123"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
 <span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a>  A (<span class="dt">int</span> i ) : <span class="va">i_</span> { i }  {  }</span>
@@ -1845,7 +1846,7 @@ constitute &quot;use of an object&quot; .
 <span id="cb123-12"><a href="#cb123-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb123-13"><a href="#cb123-13" aria-hidden="true" tabindex="-1"></a>B b (a);     <span class="co">//  #1</span></span>
 <span id="cb123-14"><a href="#cb123-14" aria-hidden="true" tabindex="-1"></a>A a { <span class="dv">42</span> };  <span class="co">//  #2</span></span></code></pre></div>
-<p>If #1 and #2 are in the same translation unit, then <code>a</code> in #1 is incompletely initialized. If #1 and #2 are in different translation units, then the order of initialization of <code>a</code>(#2) relative to <code>b</code>(#1) is unspecified.</p>
+<p>If #1 and #2 are in the same translation unit, then <code>a</code> in #1 is incompletely initialized (zero initailized). If #1 and #2 are in different translation units, then the order of initialization of <code>a</code>(#2) relative to <code>b</code>(#1) is unspecified.</p>
 <p>Note, however, that the initialization order for function local statics is defined.</p>
 <p>Consider:</p>
 <div class="sourceCode" id="cb124"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a>A &amp; getA ();</span>
@@ -1854,15 +1855,17 @@ constitute &quot;use of an object&quot; .
 <span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a>A &amp; getA ()</span>
 <span id="cb124-6"><a href="#cb124-6" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">static</span> A a { <span class="dv">42</span> };</span>
-<span id="cb124-8"><a href="#cb124-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a;</span>
+<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">static</span> A a { <span class="dv">42</span> }; </span>
+<span id="cb124-8"><a href="#cb124-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a; <span class="co">// can cause data races</span></span>
 <span id="cb124-9"><a href="#cb124-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>See C++ Core Guidelines ES.20 and CERT C++ Coding Guidelines EXP53-CPP. Note that ES.20 and EXP53 are complementary. Both point out that you should always initialize before reading, but ES.20 uses the narrow sense of initialize while EXP53 includes assignment.</p>
 <h3 id="guidance-to-language-users">6.22.2 Guidance to language users</h3>
 <ul>
 <li>Follow the guidance provided in ISO IEC 24772-1 subclause 6.22.5</li>
-<li>Do not depend on the order of dynamic initialization of non-local variables, unless it is guaranteed by the language.</li>
-<li>Consider not using non-local variables.</li>
+<li>Initialize every object defined, including data members.</li>
+<li>Do not depend on the order of dynamic initialization of namespace-scope variables, unless the initialization order is guaranteed by the language.</li>
+<li>Consider not using namespace-scope variables (see <span id="CGA">6.61</span>).</li>
+<li>If the use of uninitialized variables is unavoidable, employ tools, including the compiler, that detect reads of variables with indeterminate values.</li>
 </ul>
 <h2 id="operator-precedence-and-associativity-jcw">6.23 Operator Precedence and Associativity [JCW]</h2>
 <h3 id="applicability-to-language">Applicability to language</h3>
