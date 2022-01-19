@@ -974,18 +974,8 @@ use and possible exhaustion).</code></pre></li>
 <span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>S1::S2 v2 <span class="co">// legal in C++ not C</span></span></code></pre></div>
 <p>Subsequently, the two languages have diverged, both adding features not present in the other. Not withstanding that, there is still a significant syntactic and semantic overlap between C and C++, so the starting point for this report has been the equivalent for C. However, in many cases, the additional features of C++ provide mechanisms for avoiding the vulnerabilities inherited from C, and these are reflected in the following sections.</p>
 <p><em>Include discussions of Object orientation, <strong>static</strong>, and <strong>const,</strong> scoped enumerations</em></p>
-<p>C++ includes concurrency within the language, expressed by <em>threads</em> and <em>tasks.</em> Threads are sequences of execution that can be executed concurrently with the entity (thread) that created them, and with each other. There are good reasons to use threads in a C++ program:</p>
-<ol type="a">
-<li><p>The running program, or a running thread, block for real-world events, such as awaiting input, awaiting completion of a system-level event, or communications with non-local systems.</p></li>
-<li><p>Threading permit other parts of the program to continue execution even while one or more parts are blocked, or lets a program to await and respond to sets of events in the order that they are received.</p></li>
-<li><p>Threading lets the program make effective use of multiple cores, proving significantly more computing power to a program.</p></li>
-</ol>
-<p>Threads are initiated by calling std::threads constructor. The thread is then initialized and begins execution on its sequence of instructions. A thread can be <em>joined</em>, i.e. the joining thread awaits the completion of the joined thread, or a thread can be <em>detached</em>.</p>
-<p>Threads share data and events via <em>atomic</em> variables, <em>condition_variables</em>, <em>futures</em>, and <em>mutexes</em>.</p>
-<p>Threads terminate when they complete the execution of the function that was named at thread initiation.</p>
-<p>C++ also has the notion of light weight concurrency in the form of <em>tasks</em>. These tasks are created by calling the std:packaged_task with a <em>function</em>, <em>lambda expression</em>, <em>bind expression</em> or another <em>function object</em>. It is expected that the results of a task execution is collected at the end of that execution by calling <em>get_future</em> (t) and waiting for that/those completion(s).</p>
-<p>In addition, C++ programs can interact with other programs executing in a system using operating system-level calls to initiate, schedule, communicate and destroy/terminate itself or others.</p>
-<p>There are a number of significant vulnerabilities associated with concurrency, which are described in clause 6.59 through 6.63 of this document.</p>
+<!-- parts added -->
+<p>$include parts/4.1.Lifetime.md $include parts/4.2.SymbolLookupResolution.md $include parts/4.3.Concurency.md</p>
 <h1 id="avoiding-programming-language-vulnerabilities-in-c">5. Avoiding programming language vulnerabilities in C++</h1>
 <blockquote>
 <p>In addition to the generic programming rules from ISO/IECTR 24772-1 clause 5.4, additional rules from this section apply specifically to the C++ programming language. The recommendations of this section are restatements of recommendations from clause 6, but represent ones stated frequently, or that are considered as particularly noteworthy by the authors. Clause 6 of this document contains the full set of recommendations, as well as explanations of the problems that led to the recommendations made.</p>
