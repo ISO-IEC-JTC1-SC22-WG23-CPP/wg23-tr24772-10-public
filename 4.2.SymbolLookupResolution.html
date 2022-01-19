@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -155,5 +217,33 @@
 <h2 id="symbol-lookup-and-overload-resolution">4.2 Symbol Lookup and Overload Resolution</h2>
 <p>to be written</p>
 <p>scopes, names, ADL, using</p>
+<!-- from issue https://github.com/ISO-IEC-JTC1-SC22-WG23-CPP/wg23-tr24772-10/issues/80 -->
+<p>Add to clause 4 “Language concepts” an issue on C++ symbol lookup issues considering the following: 1. Minimize the set of names that are available to avoid referring to an item that was not the intended target 2. hidden friends 3. ADL (argument dependent lookup) 4. Lack of this-&gt; in class templates 5. Minimizing lexical scope and visibility 6. Minimizing names in global scopes 7. Minimizing use of “using” directives</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">template</span> &lt;<span class="kw">typename</span> S, <span class="kw">typename</span> Q&gt; <span class="kw">friend</span> <span class="dt">void</span> add (S, Q);</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> B {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    B(<span class="dt">int</span>);</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    B (NS::A&lt;<span class="dt">int</span>&gt; <span class="at">const</span> &amp;);</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>B &amp; add(B <span class="at">const</span> &amp; lhs, B <span class="at">const</span> &amp; rhs);</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar (NS::A&lt;<span class="dt">int</span>&gt; &amp; a, B <span class="at">const</span> &amp; b)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    add(a, b);</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>C++ programs span a multitude of scopes, and when a function is called, the compiler may have many choices to select from to to resolve that name. C++ provides distinct methods when them is qualified or if it is unqualified. C++ name lookup - unqualified lookup and its mechanics - qualified lookup - “using” directives and “using” declarations - inline namespaces - hidden friends</p>
+<p>C++ provides the ability to lookup a name using “unqualified name lookup”. A qualified name lookup is one that explicitly names the item within the complete context (examples needed) or using the “this-&gt;” qualification. Minimize the set of names that are available to avoid referring to an item that was not the intended target - any variable declared is visible to the scope that directly contains it, plus other scopes that are imported buy a directed name, - i.e. what is found by unqualified lookup. - Mitigated by minimizing lexical scope and visibility, minimizing names in global scopes, and minimizing use of “using” directives</p>
+<p>ADL (argument dependent lookup) - mostly does what you want, but can include names that are unexpected. For example, includes the scope of template parameters. C++’s overload resolution will only consider viable candidates, i.e., those that have appropriate signatures. Occasionally this can result in an unexpected function being selected. (bit more explanation?) - ADL never finds member functions.</p>
+<p>Lack of this-&gt; in class templates - In C++, for unqualified name lookup, there are two phases for lookup in templates: - 1. When the template is initially parsed, names are looked up (excluding dependent bases) - 2. When instantiated, ADL is performed for for function names, but ADL does not find member functions. - - Unqualified lookup does not search dependent base classes. This can result in matching non-member names instead of member names, which may be unexpected. - The programmer can use this-&gt; or fully qualify the call to remove any ambiguity.</p>
+<p>hidden friends C++ also provides the ability to define a function as a friend within a class. The “friend” will only be visible through argument dependent lookup (ADL). foo(T1) may be found by normal lookup and by ADL. If foo() is declared as friend,</p>
+<p>(reference for article on hidden friends http://eel.is/c++draft/hidden.friends) (https://www.justsoftwaresolutions.co.uk/cplusplus/hidden-friends.html) https://godbolt.org/z/TT17hbeWs</p>
 </body>
 </html>
