@@ -216,7 +216,7 @@
 </header>
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
-<p>The vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.36 exist in C++.</p>
+<p>The vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.36 exist in C++, however, C++ provides a mitigation.</p>
 <p>By default, C++ has the C weakness of permitting the call to a function that returns an error code without capturing the return value in a variable. For example</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
@@ -243,7 +243,7 @@ Should we include a discussion about C++ error_code??? AI -- Michael Wong
 Discuss global error states, such as errno (which is thread-local) but still static.
 ---&gt;</code></pre>
 <p>Global state for error codes is hard to manage and it is easy to forget to check it (C++ Core Guidelines E.28).</p>
-<p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope.</p>
+<p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope. Whether or not the stack is unwound as a result of exception propogation is implementation defined. Exceptions that are never handled in the program result in abnormal termination of the application. An unhandled exception that occurs in a thread also results in the abnormal termination of the application. See 6.62 Concurrency - ??? for issues related to thread or process termination.</p>
 <h3 id="guidance-to-language-users">6.36.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the mitigation mechanisms of subclause 6.36.5 of ISO/IEC TR 24772-1:2019.</p></li>

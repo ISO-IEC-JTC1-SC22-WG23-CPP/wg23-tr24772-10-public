@@ -268,38 +268,6 @@ It may not be clear whether the programmer intended to use the logical operator 
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
 <p>Unary ‘<code>+</code>’ on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’. A unary ‘<code>-</code>’ on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2<sup>n</sup> where n is the number of bits in the unsigned type.</p>
-<p>C++ overloading of operators can cause significant issues. One hazard is that the overloaded comparison operators do not automatically connect the inverse operator, such as:</p>
-<ul>
-<li><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">!=</code>;</li>
-<li><code class="sourceCode cpp">\&lt;</code> and <code class="sourceCode cpp">\&gt;=</code>;</li>
-<li><code class="sourceCode cpp">\&gt;</code> and <code class="sourceCode cpp">\&lt;=;</code></li>
-<li>etc.</li>
-</ul>
-<p>Unless the all relevant operators are declared, unexpected results can occur:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;memory&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i;</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> APtr = <span class="bu">std::</span>shared_ptr&lt;A&gt;;</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> <span class="kw">operator</span>==(APtr <span class="at">const</span> &amp; lhs, APtr <span class="at">const</span> &amp; rhs)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> lhs == rhs</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    || (lhs != <span class="kw">nullptr</span> &amp;&amp; </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        rhs != <span class="kw">nullptr</span> &amp;&amp;</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        lhs-&gt;i == rhs-&gt;i);</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (APtr a)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    a == a;</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    a != a;   <span class="co">// Calls &#39;shared_ptr&#39; ==, which is not </span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>              <span class="co">// equivalent to ! (a == a)</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>From C++20, a user declared three-way comparison operator is used by the compiler to synthesize the other required operators, whose behavior will be consistent with algebraic expectations.</p>
 <h3 id="guidance-to-language-users">6.25.2 Guidance to language users</h3>
 <p>— Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.25.5.</p>
 <ul>
@@ -325,7 +293,6 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li>ES 41 If in doubt about operator precedence, parenthesize</li>
 <li>ES 44 Do not depend on order of evaluation</li>
 </ul></li>
-<li><p>Avoid declaring <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, instead prefer the declaration of a <code>&lt;=&gt;</code> operator.</p></li>
 </ul>
 </body>
 </html>
