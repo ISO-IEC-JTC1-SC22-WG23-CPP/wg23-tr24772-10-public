@@ -240,18 +240,7 @@
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">false</span> &amp;&amp; foo());  <span class="co">// &#39;foo()&#39; never evaluated</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Note that overloaded assignment falls into this category.</p>
-<p>C++ overloading of operators can cause significant issues. One hazard up-to the C++20 standard is that the overloaded comparison operators do not automatically connect the inverse operator, such as:</p>
-<ul>
-<li><p><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">!=</code>;</p></li>
-<li><p><code class="sourceCode cpp">\&lt;</code> and <code class="sourceCode cpp">\&gt;=</code>;</p></li>
-<li><p><code class="sourceCode cpp">\&gt;</code> and <code class="sourceCode cpp">\&lt;=;</code></p></li>
-<li><p>etc.</p></li>
-</ul>
-<p>Unless the declarer declares all relevant operators, unexpected results occur. In addition, overloaded operators <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">\|\|</code> do not have shortcut semantics and thus behave differently. This is problematic since the safety of evaluating a right-hand operand of a short circuit operator often depends on the result of the left-hand operand, e.g. an existence test before the value is read.</p>
-<p>The above issue still exists in C++20, but C++20 has added the spaceship operator (Peter - please document)</p>
-<pre><code>&lt;!--
-This needs to be adjusted to C++20 changes for comparison, should include combined assignment in examples instead. Peter
---&gt;</code></pre>
+<p>For issues related to the declaration of equality and relational operators see Clause 6.25 [KOA].</p>
 <h3 id="guidance-to-language-users">6.23.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.23.5 [JCW].</p></li>
