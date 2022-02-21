@@ -230,7 +230,16 @@
 <p><code class="sourceCode cpp">x &amp; <span class="dv">1</span> == <span class="dv">0</span></code></p>
 <p>intending to perform <code class="sourceCode cpp">(x &amp; <span class="dv">1</span>) == <span class="dv">0</span></code>, but precedence rules result in this evaluating <code class="sourceCode cpp">x &amp; (<span class="dv">1</span> == <span class="dv">0</span>)</code> instead. This would have been easily fixed by using parenthesis to ensure the proper evaluation of an expression.</p>
 <p>In addition to the aforementioned, C++ also permits operators to be overloaded when used with user-defined types. While it is not possible to change the precedence, associativity, and number of operands of overloaded operators [C++17, Clause 16.5 [over.oper], para. 6], overloaded operators can be executed differently than built-in operators. For example, overloaded operators lose any built-in operator short-circuiting properties and sequence order guarantees. Similarly overloaded operators and their arguments' evaluations behave as normal function calls, differing from built-in operator evaluation.</p>
-<p>Note: overloaded assignment falls into this category.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {  };</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> <span class="kw">operator</span>&amp;&amp;(A <span class="at">const</span> &amp;, <span class="dt">int</span>);</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> foo ();</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar (A <span class="at">const</span> &amp; a)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (a     &amp;&amp; foo());  <span class="co">// &#39;foo()&#39; always evaluated</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">false</span> &amp;&amp; foo());  <span class="co">// &#39;foo()&#39; never evaluated</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Note that overloaded assignment falls into this category.</p>
 <p>C++ overloading of operators can cause significant issues. One hazard up-to the C++20 standard is that the overloaded comparison operators do not automatically connect the inverse operator, such as:</p>
 <ul>
 <li><p><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">!=</code>;</p></li>
@@ -239,6 +248,7 @@
 <li><p>etc.</p></li>
 </ul>
 <p>Unless the declarer declares all relevant operators, unexpected results occur. In addition, overloaded operators <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">\|\|</code> do not have shortcut semantics and thus behave differently. This is problematic since the safety of evaluating a right-hand operand of a short circuit operator often depends on the result of the left-hand operand, e.g. an existence test before the value is read.</p>
+<p>The above issue still exists in C++20, but C++20 has added the spaceship operator (Peter - please document)</p>
 <pre><code>&lt;!--
 This needs to be adjusted to C++20 changes for comparison, should include combined assignment in examples instead. Peter
 --&gt;</code></pre>
