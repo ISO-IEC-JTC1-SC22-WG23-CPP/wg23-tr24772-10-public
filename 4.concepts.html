@@ -261,5 +261,25 @@ use and possible exhaustion).</code></pre></li>
 <!-- parts added -->
 <p>4.1 Overview 4.2 Type system implicit conversions templates? 4.3 Symbol Lookup and resolution special members templates? 4.4 Lifetime initialization 4.4 Error handling (includes exceptions and undefined behaviour(?)) abstract machine standard library 4.5 Concurrency</p>
 <p>$include parts/4.1.Lifetime.md $include parts/4.2.SymbolLookupResolution.md $include parts/4.3.Concurency.md</p>
+<p>4.2 Type system A particular area that is misunderstood is integral promotion. It can be confusing because promotion can result in changing the internal representation of an unsigned type to/from a signed type. For expressions formed with operands of unscoped enumeration type or integral types with a conversion rank smaller. than <code class="sourceCode cpp"><span class="dt">int</span></code>, <em>integral promotion</em> occurs before further implicit conversions happen. <em>Integral promotion</em> on unsigned types can convert these to the signed type <code class="sourceCode cpp"><span class="dt">int</span></code>. Undefined behavior can occur due to signed integer arithmetic overflow even when the operands are of an unsigned type. Assume for example, - signed and unsigned short occupies 16 bits - signed and unsigned int occupies 32 bits then the following code causes undefined behavior:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>   x * x;                           <span class="co">// signed integer overflow, result will not fit in signed 32 bit int</span></span></code></pre></div>
+<p>Note: C++ also uses the term promotion to apply to a subset of conversion that apply to intergral and floating point types.</p>
+<p>Implicit, i.e., automatic, conversions to a type <code>T</code> can be performed, for example, in the following situations:</p>
+<ol type="a">
+<li><p>If the declaration, <code class="sourceCode cpp">T t=e;</code>, is defined for some expression, <code>e</code>, and some invented variable, <code>t</code> [C++17, Clause 7 [conv], para 3];</p></li>
+<li><p>In expressions involving operands of operators (e.g., <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, etc.) subject to the requirements of each operators' operands [C++20, Clause 7.3 [conv], para 2.1];</p></li>
+<li><p>For example, the expression, <code>5 + 6.5</code>, has operands of type <code class="sourceCode cpp"><span class="dt">int</span></code> and <code class="sourceCode cpp"><span class="dt">double</span></code>. Per language rules, the integer operand will be implicitly converted to <code class="sourceCode cpp"><span class="dt">double</span></code>, i.e., the expression becomes <code class="sourceCode cpp"><span class="dt">double</span>(<span class="dv">5</span>) + <span class="fl">6.5</span></code>, i.e., <code>5.0 + 6.5</code>.</p></li>
+<li><p>In boolean contexts, such as</p>
+<ul>
+<li>operands of logical operators,</li>
+<li>the condition of the conditional operator, and</li>
+<li>the condition of the if-statement or loop-statements, contextual conversion to bool implicitly happens from arithmetic types, pointers, and classes with a possibly explicit <code>operator bool()</code>. [C++17, Clause 7 [conv], para 4];</li>
+</ul></li>
+<li><p>In the expression of a switch statement: the implicit conversion will be to an integral type [C++17, Clause 7 [conv], para 2.3];</p></li>
+<li><p>In an expression that initializes an object (e.g., an argument to a function call, the expression in a return statement) [C++17, Clause 7 [conv], para 2.4];</p></li>
+<li><p>When a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> class/struct/union constructor can be invoked on an object resulting in some desired type, <code>T</code>, from initial objects passed to the constructor; and</p></li>
+<li><p>When a conversion operator has not been declared <code class="sourceCode cpp"><span class="kw">explicit</span></code>, it can be implicitly invoked on an object resulting in some desired type, <code>T</code>, from an initial type.</p></li>
+</ol>
 </body>
 </html>
