@@ -216,12 +216,15 @@
 </header>
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
-<p>The vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.36 exist in C++, however, C++ provides a mitigation.</p>
-<p>By default, C++ has the C weakness of permitting the call to a function that returns an error code without capturing the return value in a variable. For example</p>
+<p>The vulnerabilities described in ISO/IEC 24772-1:2019 clause 6.36 exist in C++, however, C++ provides a mitigation.</p>
+<p>C++ includes the C library, especially the header <code>&lt;cerrno&gt;</code> and thus shares C’s issues with the global error-reporting variable <code>errno</code>. See ISO/IEC TR 24772-3:2020, clause 6.36 for details and guidance.</p>
+<p>In addition to <code>errno</code> some C++ library features expose error conditions indirectly via a side-effect on the object the operation failed with or via side-effect on a reference parameter. For example, input stream objects will go into a <code>fail</code> state, when formatted input cannot be performed. Without resetting that fail-state of a stream, further input will continue to fail, that can cause further failures when a failure is ignored. Streams provide a non-default mode to throw exceptions on failure. Another example of error reporting via a side-effect is the filesystem library that provides overloads that take a non-const reference of <code>std::error_code</code>.</p>
+<p>In general, reporting errors as side-effects, in the worst case via a global state, is too easy to accidentally ignore by developers, leading to further consistency problems in the continued execution of the program.</p>
+<p>By default, C++ has the C weakness of permitting the call to a function that returns an error code without capturing the return value in a variable.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>foo(x, y); <span class="co">// failure to capture the return error code.</span></span></code></pre></div>
-<p>C++ offers as a mitigating mechanism the [[nodiscard]] attribute. This attribute indicates that the function result must not be discarded.</p>
+<p>C++ offers as a mitigating mechanism the <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> attribute. This attribute indicates that the function result must not be discarded. Ignoring the result of a function marked <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> causes a compiler warning.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>[[<span class="at">nodiscard</span>]] errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>foo(x, y);  <span class="co">// compile error.</span></span>
@@ -232,32 +235,20 @@
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> {</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">// handle errors</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<pre><code>&lt;!--
-Should we include a discussion about C++ error_code??? AI -- Michael Wong
---&gt;</code></pre>
-<p>The header <code>&lt;system_error&gt;</code> defines types and functions used to report error conditions originating from the operating system, streams I/O, <a href="https://en.cppreference.com/w/cpp/thread/future"><code>std::future</code></a>, or other low-level APIs.</p>
-<p>Defined in header <code>&lt;system_error&gt;</code> since C++11.</p>
-<p>std::error_category serves as the base class for specific error category types, such as <a href="https://en.cppreference.com/w/cpp/error/system_category"><code class="sourceCode cpp"><span class="bu">std::</span>system_category</code></a>, <a href="http://en.cppreference.com/w/cpp/io/iostream_category"><code class="sourceCode cpp"><span class="bu">std::</span>iostream_category</code></a>, etc. Each specific category class defines the <code>error_code</code> - error_condition mapping and holds the explanatory strings for all error_conditions. The objects of error category classes are treated as singletons, passed by reference.</p>
-<p><code>std::error_code</code> is a platform-dependent error code. Each <code>std::error_code</code> object holds an error code originating from the operating system or some low-level interface and a pointer to an object of type <a href="https://en.cppreference.com/w/cpp/error/error_category"><code class="sourceCode cpp"><span class="bu">std::</span>error_category</code></a>, which corresponds to the said interface. The error code values may be not unique across different error categories.</p>
-<pre><code>&lt;!--
-Discuss global error states, such as errno (which is thread-local) but still static.
----&gt;</code></pre>
-<p>Global state for error codes is hard to manage and it is easy to forget to check it (C++ Core Guidelines E.28).</p>
-<p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope. Whether or not the stack is unwound as a result of exception propogation is implementation defined. Exceptions that are never handled in the program result in abnormal termination of the application. An unhandled exception that occurs in a thread also results in the abnormal termination of the application. See 6.62 Concurrency - ??? for issues related to thread or process termination.</p>
+<p>In addition, the C++ library provides mechanism to extend the return type of a function with extra values for denoting an error. The simplest case is <code class="sourceCode cpp"><span class="bu">std::</span>optional&lt;T&gt;</code> that extends <code class="sourceCode cpp">T</code> with an “empty” state. Callers must check the result of functions returning an <code class="sourceCode cpp">optional</code> for the empty state, before accessing its value. This increases the chances that a reported error is detected by the caller. If additional information of the error has to be returned to the caller <code class="sourceCode cpp"><span class="bu">std::</span>variant&lt;T,AnErrorCode&gt;</code> can be used instead.</p>
+<p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope. Exceptions that are never handled in the program result in abnormal termination of the application. In this case, it is implementation-defined whether the destruction of local objects (stack unwinding) occurs. An unhandled exception that occurs in a thread also results in the abnormal termination of the application. See 6.62 Concurrency - Premature Termination [CGS] for issues related to thread or process termination.</p>
 <h3 id="guidance-to-language-users">6.36.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the mitigation mechanisms of subclause 6.36.5 of ISO/IEC TR 24772-1:2019.</p></li>
-<li><p>Check the returned error status upon return from a function. The C standard library functions provide an error status as the return value and sometimes in an additional global error value.</p></li>
-<li><p>Use static analysis tools to detect and report missing or ineffective error detection or handling.</p></li>
+<li><p>With respect to <code>errno</code> follow the mitigation mechanisms of subclause 6.36.5 of ISO/IEC TR 24772-3:2020.</p></li>
 <li><p>Avoid error handling based on global state.</p></li>
-<li><p>Use <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> to prevent callers from ignoring error values.</p></li>
-<li><p>Prefer throwing exceptions to returning error values.</p></li>
-<li><p>Use destructors to manage the finalization of the current context upon exit, whether erroneous or not.</p></li>
-<li><p>Return error values from each enclosing function until an alternative strategy is available. Consider throwing an exception in lieu of returning an error value.</p></li>
-<li><p>Handle exceptions at each function where an alternative strategy is available. In functions where no alternative strategy is available, do not catch the exception.</p></li>
-<li><p>Consider termination as a last resort strategy for main or for noexcept functions.</p></li>
-<li><p>Notify higher level constructs before a thread is allowed to terminate.</p></li>
-<li><p>Consider the use of an <code>exception_ptr</code> object to transport an exception from the terminating thread to another thread for further processing.</p></li>
+<li><p>Use static analysis tools to detect and report missing or ineffective error detection or handling.</p></li>
+<li><p>Use <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> to prevent callers from ignoring error values and configure your compiler to report violations as errors (<code>-Werror</code>).</p></li>
+<li><p>Consider <code>std::optional</code> or <code>std::variant</code> or similar mechanisms to extend a return type with an error status.</p></li>
+<li><p>Handle errors at each function where an alternative strategy for mitigations of the error is available. In functions where no local mitigation strategy is available, pass on the error indication or ignore the exception, respectively, so that the error will be handled up the call chain.</p></li>
+<li><p>Use a <code>try-catch</code> function body for <code>main</code> or any thread-entry function with a <code>catch(...)</code> handler to guarantee stack unwinding, that guarantees the destruction of all local objects.</p></li>
+<li><p>Consider controlled termination as a last resort strategy for main or for <code class="sourceCode cpp"><span class="kw">noexcept</span></code> functions.</p></li>
+<li><p>Consider the use of <code class="sourceCode cpp"><span class="bu">std::</span>exception_ptr</code> or an object encapsulating its mechanics like <code class="sourceCode cpp"><span class="bu">std::</span>future</code> to transport an exception from one thread to another thread for further processing.</p></li>
 </ul>
 <p>See also C++ Core Guidelines E.1, E.2, E.5, E.6, E.13, E.17, E.19, E.25, and E.28.</p>
 </body>
