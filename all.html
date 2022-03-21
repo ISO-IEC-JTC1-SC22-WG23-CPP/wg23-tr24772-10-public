@@ -1181,7 +1181,7 @@ enumerations for safe and simple use"</li>
 </ul>
 <h2 id="FLC">6.6 Conversion Errors [FLC]</h2>
 <h3 id="applicability-to-language">6.6.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO IEC 24772-1 clause 6.6 applies to C++. C++ includes some of the conversion mechanisms of C documented in TR 24772-3 clause 6.6.1, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ eliminates potential vulnerabilities found in C.</p>
+<p>The vulnerability as documented in ISO IEC 24772-1 clause 6.6 applies to C++. C++ includes some of the conversion mechanisms of C documented in TR 24772-3 clause 6.6.1, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
 <p>In C++, some conversions are explicit while others are implicit. Conversions can change the size of a type, whether or not the type is signed, and possibly other properties of the type. A narrowing conversion is when the target type cannot represent all the values of the original type. Many errors are associated with implicit conversions. For a comprehensive overview see clause 7.3 [conv] of [C++20]</p>
 <p>Explicit conversions use one of the mechanisms provided by C++ through a</p>
 <ul>
@@ -1214,41 +1214,25 @@ enumerations for safe and simple use"</li>
 <div class="sourceCode" id="cb97"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="kw">explicit</span> C(<span class="dt">int</span> x=<span class="dv">10</span>, <span class="dt">float</span> y=<span class="dv">0</span>){...}</span></code></pre></div>
 <p>The call <code class="sourceCode cpp">foo(b)</code> would now not be legal.</p>
 <p>Implications of casting away <code class="sourceCode cpp"><span class="at">const</span></code> using <code>const_cast</code> are described in section <a href="#UJO">Modifying Constants [UJO]</a>.</p>
-<p>Other implicit conversions can sometimes result in data loss or erroneous values. This is an issue with implicit conversions since they are automatic: the programmer does not explicitly write code to do the conversion. For example, a common problem is mixing signed and unsigned integral types in arithmetic expressions. This can become a problem since the ranges of signed and unsigned integer types differ and the behavior of signed integer arithmetic on overflow is undefined whereas unsigned integer arithmetic wraps on overflow.</p>
+<p>Other implicit conversions can sometimes result in data loss or erroneous values. This is an issue with implicit conversions since they are automatic: the programmer does not explicitly write code to do the conversion. For example, a common problem is mixing signed and unsigned integral types in arithmetic expressions. This can become a problem since the ranges of signed and unsigned integer types differ and the behavior of signed integer arithmetic on overflow is undefined whereas unsigned integer arithmetic wraps on overflow. See subclause 4.2 for a discussion of integral promotions in C++.</p>
+<p>The issue is not restricted to narrowing conversions, as shown below:</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">long</span> l_64 = i_32 + i_32; <span class="co">// &#39;+&#39; operation preformed in 32 bits</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co">// widened after the operation completes (and potentially overflows). </span></span></code></pre></div>
+<p>This can be avoided by converting at least one operand to the wider type as part of the operation.</p>
 <p>Additional problems arise as a result of implicit conversions between <code>bool</code> and other types, thus hiding the fact when a wrong operator is used accidentally:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==) ?</span></span>
-<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==) ?</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In the example above, all combinations of the corresponding operators will compile with different resulting types and results.</p>
 <p>Similar issues arise in conversions between character types (char, char8_t, …) and other types. Character types are provided to represent text in whatever character representation is needed.</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f(<span class="dt">char</span> c)</span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (c &lt; <span class="dv">0</span>) <span class="co">// may be always false on some platforms.</span></span>
-<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>    {}</span>
-<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f(<span class="dt">char</span> c)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (c &lt; <span class="dv">0</span>) <span class="co">// may be always false on some platforms.</span></span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>    {}</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In addition to the use of <em>strong types</em> (see <a href="#IHN">Type System [IHN]</a>), the implicit conversions and multitude of possible operations of integral types can be mitigated by using scoped enumeration types with the corresponding integer type as its underlying type. For example, <code class="sourceCode cpp"><span class="bu">std::</span>byte</code> is defined to address individual <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code> elements (bytes) in memory without participating in arithmetic or bitwise operations.</p>
 <p>Because C++ allows function and operator overloading, the effect of implicit conversions provides an additional mechanism of failure, by selecting an unwanted overload during overload resolution due to implicit conversions. This can influence failure modes with lookup as described in section <a href="#BJL">Namespace Issues [BJL]</a>. // Add overload resolution reference!!</p>
-<p>A particular area that is misunderstood is integral promotion. It can be confusing because promotion can result in changing the internal representation of an unsigned type to/from a signed type. For expressions formed with operands of unscoped enumeration type or integral types with a conversion rank smaller. than <code class="sourceCode cpp"><span class="dt">int</span></code>, <em>integral promotion</em> occurs before further implicit conversions happen. <em>Integral promotion</em> on unsigned types can convert these to the signed type <code class="sourceCode cpp"><span class="dt">int</span></code>. Undefined behavior can occur due to signed integer arithmetic overflow even when the operands are of an unsigned type. Assume for example, - signed and unsigned short occupies 16 bits - signed and unsigned int occupies 32 bits then the following code causes undefined behavior:</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
-<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>   x * x;                           <span class="co">// signed integer overflow, result will not fit in signed 32 bit int</span></span></code></pre></div>
-<p>Note: C++ also uses the term promotion to apply to a subset of conversion that apply to intergral and floating point types.</p>
-<p>Implicit, i.e., automatic, conversions to a type <code>T</code> can be performed, for example, in the following situations:</p>
-<ol type="a">
-<li><p>If the declaration, <code class="sourceCode cpp">T t=e;</code>, is defined for some expression, <code>e</code>, and some invented variable, <code>t</code> [C++17, Clause 7 [conv], para 3];</p></li>
-<li><p>In expressions involving operands of operators (e.g., <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, etc.) subject to the requirements of each operators' operands [C++20, Clause 7.3 [conv], para 2.1];</p></li>
-<li><p>For example, the expression, <code>5 + 6.5</code>, has operands of type <code class="sourceCode cpp"><span class="dt">int</span></code> and <code class="sourceCode cpp"><span class="dt">double</span></code>. Per language rules, the integer operand will be implicitly converted to <code class="sourceCode cpp"><span class="dt">double</span></code>, i.e., the expression becomes <code class="sourceCode cpp"><span class="dt">double</span>(<span class="dv">5</span>) + <span class="fl">6.5</span></code>, i.e., <code>5.0 + 6.5</code>.</p></li>
-<li><p>In boolean contexts, such as</p>
-<ul>
-<li>operands of logical operators,</li>
-<li>the condition of the conditional operator, and</li>
-<li>the condition of the if-statement or loop-statements, contextual conversion to bool implicitly happens from arithmetic types, pointers, and classes with a possibly explicit <code>operator bool()</code>. [C++17, Clause 7 [conv], para 4];</li>
-</ul></li>
-<li><p>In the expression of a switch statement: the implicit conversion will be to an integral type [C++17, Clause 7 [conv], para 2.3];</p></li>
-<li><p>In an expression that initializes an object (e.g., an argument to a function call, the expression in a return statement) [C++17, Clause 7 [conv], para 2.4];</p></li>
-<li><p>When a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> class/struct/union constructor can be invoked on an object resulting in some desired type, <code>T</code>, from initial objects passed to the constructor; and</p></li>
-<li><p>When a conversion operator has not been declared <code class="sourceCode cpp"><span class="kw">explicit</span></code>, it can be implicitly invoked on an object resulting in some desired type, <code>T</code>, from an initial type.</p></li>
-</ol>
 <h3 id="guidance-to-language-users">6.6.2 Guidance to language users</h3>
 <p>In addition to the general advice of ISO/IEC 24772-1 clause 6.6.5:</p>
 <ul>
@@ -1263,7 +1247,8 @@ enumerations for safe and simple use"</li>
 </ul></li>
 <li><p>Don’t cast away <code class="sourceCode cpp"><span class="at">const</span></code>. See subclause <a href="#UJO">Modifying Constants [UJO]</a><br />
 (see C++ Core Guidelines ES.50)</p></li>
-<li><p>Be aware of the size of the type(s) in which arithmetic for promoted types will be performed</p></li>
+<li><p>Do not perform arithmetic operations on operands that can be promoted. In partcular, be aware of the arithmetic operators that promote their operands, and the types are subject to promotion.</p></li>
+<li><p>Avoid widening the result of an arithmetic operation; prefer instead to widen the type of one or more of the operands</p></li>
 <li><p>Don’t mix signed and unsigned arithmetic (see C++ Core Guidelines ES100)</p></li>
 <li><p>Don’t rely on implicit conversions between <code>bool</code> and other types.</p></li>
 <li><p>Don’t rely on implicit conversions between character types and other types.</p></li>
