@@ -221,10 +221,10 @@
 <ul>
 <li><p><code class="sourceCode cpp">::</code> ;</p></li>
 <li><p><code class="sourceCode cpp">.</code> ;</p></li>
-<li><p><code class="sourceCode cpp">.\*</code> ; and</p></li>
+<li><p><code class="sourceCode cpp">.*</code> ; and</p></li>
 <li><p><code class="sourceCode cpp">?:</code> .</p></li>
 </ul>
-<p>Due to the large number of operators, one is recommended to consult an operator precedence table when needed, e.g., <a href="https://en.cppreference.com/w/cpp/language/operator_precedence"><span data-custom-style="Hyperlink">https://en.cppreference.com/w/cpp/language/operator_precedence</span></a>. For example, in C++, the bitwise logical and shift operators are sometimes incorrectly treated as having the same precedence as arithmetic operations even though the bitwise operators have lower precedence. For example, the following (correct) expression subtracts one from <code class="sourceCode cpp">x</code> and then checks if the result is zero:</p>
+<p>Due to the large number of operators, one is recommended to consult an operator precedence table when needed, e.g., <a href="https://en.cppreference.com/w/cpp/language/operator_precedence">[https://en.cppreference.com/w/cpp/language/operator_precedence]</a>. For example, in C++, the bitwise logical and shift operators are sometimes incorrectly treated as having the same precedence as arithmetic operations even though the bitwise operators have lower precedence. For example, the following (correct) expression subtracts one from <code class="sourceCode cpp">x</code> and then checks if the result is zero:</p>
 <p><code class="sourceCode cpp">x - <span class="dv">1</span> == <span class="dv">0</span></code></p>
 <p>which is equivalent to <code class="sourceCode cpp">(x - <span class="dv">1</span>) == <span class="dv">0</span></code>,i.e., <code class="sourceCode cpp">x - <span class="dv">1</span></code> is done first, then that result is compared to <code class="sourceCode cpp"><span class="dv">0</span></code>. Programmers mistakenly thinking the bitwise operations have the same precedence as arithmetic ones might write:</p>
 <p><code class="sourceCode cpp">x &amp; <span class="dv">1</span> == <span class="dv">0</span></code></p>
@@ -244,14 +244,9 @@
 <h3 id="guidance-to-language-users">6.23.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.23.5 [JCW].</p></li>
-<li><p>Enable all C++ compiler/tool warnings and static analysis tool diagnostics concerning possible issues with precedence and associativity to help avoid and detect mistakes.</p></li>
+<li><p>Enable all C++ compiler/tool warnings and static analysis tool diagnostics concerning possible issues with precedence and associativity to help detect and avoid mistakes.</p></li>
 <li><p>Even if technically unnecessary, use parentheses around operator (sub)expressions that are known to be or felt likely to be sources of error.</p></li>
-<li><p>Avoid overloading the following operators:</p>
-<ul>
-<li><pre><code>  `&amp;&amp;` ;</code></pre></li>
-<li><pre><code>  `||` ;</code></pre></li>
-<li><pre><code>  `,` ;</code></pre></li>
-</ul></li>
+<li><p>Avoid overloading the following operators <code class="sourceCode cpp">&amp;&amp;</code>, <code class="sourceCode cpp">||</code>, <code class="sourceCode cpp">,</code> and their alternative spellings.</p></li>
 <li><p>Break up complex expressions and use temporary variables to make complex expressions easier to understand and maintain.</p></li>
 </ul>
 </body>
