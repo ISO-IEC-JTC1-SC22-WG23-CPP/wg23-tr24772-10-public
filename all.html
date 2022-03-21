@@ -1973,7 +1973,7 @@ decrement; a single simple assignment; or a single compound assignment.</li>
 <span id="cb139-4"><a href="#cb139-4" aria-hidden="true" tabindex="-1"></a>i =+ <span class="dv">22</span>; <span class="co">// i becomes 22</span></span>
 <span id="cb139-5"><a href="#cb139-5" aria-hidden="true" tabindex="-1"></a>i =- <span class="dv">22</span>; <span class="co">// i becomes -22</span></span></code></pre></div>
 <p>C++ provides significant freedom in constructing statements. This freedom, if misused, can result in unexpected results and potential vulnerabilities.</p>
-<p>Since the order of evaluation within expressions is only partially defined, subexpressions with side effects on variables used within the overall expression can result in undefined behaviour.</p>
+<p>Since the order of evaluation within expressions is only partially defined, sub-expressions with side effects on variables used within the overall expression can result in undefined behaviour.</p>
 <p>The flexibility of C++ can obscure the intent of a programmer. Consider:</p>
 <div class="sourceCode" id="cb140"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
 <span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* ... */</span></span>
@@ -2006,7 +2006,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
 <p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2<sup>n</sup> where n is the number of bits in the unsigned type.</p>
 <p>C++ overloading of operators can cause significant issues. When overloaded, related operators like the compound assignment with their base operator, or comparison operators are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all. Similarly, for <code class="sourceCode cpp">a == b</code> (before C++20), there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code>.</p>
-<p>Unless the all relational operators are defined either explicitly or implicitly, unexpected results can occur. From C++20, a user declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the other required operators, whose behavior will be consistent with algebraic expectations.</p>
+<p>Unless the all relational operators are defined either explicitly or implicitly, unexpected results can occur. From C++20 onwards, a user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operator consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as =default, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
 <h3 id="guidance-to-language-users">6.25.2 Guidance to language users</h3>
 <p>— Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.25.5.</p>
 <ul>
@@ -2017,22 +2017,16 @@ It may not be clear whether the programmer intended to use the logical operator 
 </ul></li>
 <li><p>Avoid assignments embedded within other statements and expressions, as these can be problematic.</p></li>
 <li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators. In addition avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
-<li><p>Use alternative tokens for the logical operators.</p></li>
-</ul>
-<!---   Give null statements a source line of their own. This, combined with
-    enforcement by static analysis, would make clearer the intention
-    that the statement was meant to be a null statement.
--->
-<!-- this seems not to belong here in expressions-->
-<ul>
-<li><p>Consider the adoption of a coding standard that limits the use of the assignment statement within an expression.</p></li>
+<li><p>Consider using alternative tokens for the logical operators.</p></li>
+<li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
+<li><p>Do not have conflicting side-effects in sub-expressions.</p></li>
 <li><p>Follow the following C++ Core guidelines:</p>
 <ul>
 <li>ES 40 Avoid complicated expressions</li>
 <li>ES 41 If in doubt about operator precedence, parenthesize</li>
 <li>ES 44 Do not depend on order of evaluation</li>
 </ul></li>
-<li><p>Avoid declaring <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, instead prefer the declaration of a <code>&lt;=&gt;</code> operator.</p></li>
+<li><p>Rely on C++20’s automatism to get the compiler provide consistent comparison operators, or define all of them in a consistent manner.</p></li>
 </ul>
 <h2 id="dead-and-deactivated-code-xyq">6.26 Dead and Deactivated Code [XYQ]</h2>
 <h3 id="applicability-to-language">6.26.1 Applicability to language</h3>
