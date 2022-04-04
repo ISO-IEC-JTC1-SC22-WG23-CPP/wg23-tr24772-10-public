@@ -1329,9 +1329,11 @@ enumerations for safe and simple use"</li>
 <li><p>When performing random access by indexing, follow the guidance of clause 6.9.2 [#XYZ]. When performing other forms of random access, follow the guidance of clause 6.12.2 [#RVG].</p></li>
 <li><p>Use static analysis tools to detect buffer boundary violations.</p></li>
 </ul>
-<h2 id="unchecked-array-indexing-xyz">6.9 Unchecked Array Indexing [XYZ]</h2>
+<h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
 <h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 exists in C++ when C-style arrays are used, when access to some containers is performed using <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>, or when accessing elements in containers by pointer arithmetic.</p>
+<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 exists in C++ when an access is performed using <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
+<p>Like a C-style pointer, random-access iterators allow element access via <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
+<p>//TODO</p>
 <p>Like a C-style array, some STL containers, such as <code>std::vector</code>, can be indexed using [], and as in C such an access is unchecked. However, these containers also provide an access function <code>at()</code> that behaves like [], but performs a check that the access is within the bounds of the container.</p>
 <p>Placing C-types (such as arrays) in containers let the implementer create access operators that check bounds.</p>
 <p>The following example compares C and C++ performing equivalent array operations:</p>
