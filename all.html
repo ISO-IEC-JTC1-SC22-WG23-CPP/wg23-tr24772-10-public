@@ -1333,47 +1333,16 @@ enumerations for safe and simple use"</li>
 </ul>
 <h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
 <h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 exists in C++ when an access is performed using <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
-<p>Like a C-style pointer, random-access iterators allow element access via <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
-<p>//TODO</p>
-<p>Like a C-style array, some STL containers, such as <code>std::vector</code>, can be indexed using [], and as in C such an access is unchecked. However, these containers also provide an access function <code>at()</code> that behaves like [], but performs a check that the access is within the bounds of the container.</p>
-<p>Placing C-types (such as arrays) in containers let the implementer create access operators that check bounds.</p>
-<p>The following example compares C and C++ performing equivalent array operations:</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;"><strong>C</strong></th>
-<th style="text-align: left;"><strong>C++</strong></th>
-<th style="text-align: left;"><strong>Comment</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&lt;array&gt;</span></code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code class="sourceCode cpp"><span class="dt">int</span> arr [<span class="dv">10</span>];</code></td>
-<td style="text-align: left;"><code class="sourceCode cpp"><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">10</span>&gt;arr;</code></td>
-<td style="text-align: left;">Both arrays are of 10 elements</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code class="sourceCode cpp">arr[<span class="dv">10</span>] = <span class="dv">0</span>;</code></td>
-<td style="text-align: left;"><code class="sourceCode cpp">arr[<span class="dv">10</span>] = <span class="dv">0</span>;</code></td>
-<td style="text-align: left;">Both accesses silently violate array’s bounds</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code class="sourceCode cpp">arr[<span class="dv">10</span>] = <span class="dv">0</span>;</code></td>
-<td style="text-align: left;"><code class="sourceCode cpp">arr.at(<span class="dv">10</span>) = <span class="dv">0</span>;</code></td>
-<td style="text-align: left;">The C++ access fails with an error exception</td>
-</tr>
-</tbody>
-</table>
+<p>The vulnerability as documented in ISO/IEC TR 24772-1:2022 6.9 exists in C++ when an access is performed using <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
+<p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise. For issues associated with exception handling and error handling, see clause <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
+<p>The parameter type for contiguous sequences <code class="sourceCode cpp"><span class="bu">std::</span>span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API.</p>
 <h3 id="guidance-to-language-users">6.9.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the guidance from clause 6.8.2.</p></li>
-<li><p>Use static analysis or explicit checks to establish that bounds violations do not occur. Otherwise use the <code class="sourceCode cpp">at()</code> member function of the standard library containers and handle the bounds violation exceptions. For issues associated with exception handling and error handling, see clause 6.36 Ignored error status and unhandled exceptions.</p></li>
+<li><p>Follow the advice provided in ISO/IEC 24772-1:2022 clause 6.9.5.</p></li>
+<li><p>Follow the advice from clause <a href="#HCB">6.8.2</a>.</p></li>
+<li><p>Implement your own indexable containers with an overload of <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> that actually does a bounds check.</p></li>
+<li><p>Prefer the <code class="sourceCode cpp">at()</code> member function of the standard library containers over <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> and handle the bounds violation exceptions.</p></li>
+<li><p>If indexing cannot be avoided, use static analysis or explicit checks to establish that bounds violations do not occur.</p></li>
 </ul>
 <h2 id="unchecked-array-copying-xyw">6.10 Unchecked Array Copying [XYW]</h2>
 <h3 id="applicability-to-language">6.10.1 Applicability to language</h3>
