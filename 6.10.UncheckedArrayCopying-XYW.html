@@ -214,30 +214,23 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.10.UncheckedArrayCopying-XYW.md</h1>
 </header>
-<h2 id="unchecked-array-copying-xyw">6.10 Unchecked Array Copying [XYW]</h2>
+<h2 id="XYW">6.10 Unchecked Array Copying [XYW]</h2>
 <h3 id="applicability-to-language">6.10.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 exists in C++, but can be mitigated using features provided by the language.</p>
-<p>A buffer overflow occurs when some number of bytes (or other units of storage) is copied from one buffer to another and the amount being copied is greater than is allocated for the destination buffer. This is a special case of Buffer Boundary Violation [HCB].</p>
-<p>As with clause 6.8 [HCB], in most cases the vulnerability can be avoided by using library classes, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, which provides a copy assignment operator that adjusts the size of the target to fit the object being copied.</p>
-<p>If for some reason this is not acceptable, C++ has access to the C library functions <code class="sourceCode cpp">memcpy()</code> and <code class="sourceCode cpp">memmove()</code>. Both simply copy memory and no checks are made as to whether the destination area is large enough to accommodate the amount of data being copied. It is assumed that the calling routine or programmer has ensured that adequate space has been provided in the destination. Problems can arise when the destination buffer is too small to receive the amount of data being copied.</p>
-<p>In general, placing C-types (such as arrays) in containers lets the implementer create whole array operations that can eliminate the errors discussed in Part 1, clause 6.10.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2022 exists in C++, but can be mitigated using features provided by the language.</p>
+<p>A buffer overflow occurs when some number of elements is copied from one buffer to another and the amount being copied is greater than is allocated for the destination buffer. This is a special case of <span id="HCB">6.8 Buffer Boundary Violation [HCB]</span>. The C library functions or hand-written loops for copying bytes or C-style strings are especially prone to this vulnerability.</p>
+<p>As with clause 6.8 [HCB], in most cases the vulnerability can be avoided by using library classes, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which provide a copy operations operator that adjust the size of the target to fit the object being copied.</p>
+<p>The standard library algorithms that copy into a target range can suffer from this vulnerability. In the case of potential overflow, the programmer must either ensure automatic extension of the underlying container, such as by using <code class="sourceCode cpp"><span class="bu">std::</span>back_inserter(container)</code> as the output iterator, or ensure that the output range has sufficient space available. In the case of overlapping input and output ranges, the suitable copying algorithm must be selected, depending on the relative ordering of the ranges. In general, this situation can be avoided by using a more appropriate algorithm, for example, <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p>
+<p>For arrays with fixed sizes the assignment operator or copy-constructor of <code class="sourceCode cpp"><span class="bu">std::</span>array</code> is the means of safe array copying.</p>
+<p>If a system requires its own container types with dynamic size, a naïve implementation might attempt to keep the copying external, like with C-style arrays. Such external copying should be avoided.</p>
 <h3 id="guidance-to-language-users">6.10.2 Guidance to language users</h3>
 <ul>
-<li><p>Use standard library containers, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
-<li><p>When copying C-style arrays, statically shown that an access outside of the array cannot occur, or alternatively perform range checking before copying the array.</p></li>
-</ul>
-<pre><code>&lt;!--
-Deleted text
--   ~~For copies of fixed-sized arrays, perform range checking to
-    prevent out-of-bounds access on the target and the source arrays. In
-    the interest of speed and efficiency, range checking only needs to
-    be done when it cannot be statically shown that an access outside of
-    the arrays cannot occur.~~
---&gt;</code></pre>
-<ul>
-<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> to represent immutable string literals<span data-custom-style="annotation reference"></span>.</p></li>
-<li><p>Use <code class="sourceCode cpp">std:string</code> to represent mutable strings<span data-custom-style="annotation reference"></span>.</p></li>
-<li><p>Place arrays in containers with whole-array and bounds-checking operations. <span data-custom-style="annotation reference"></span></p></li>
+<li><p>Follow the advice provided in ISO/IEC 24772-1:2022 clause 6.10.5.</p></li>
+<li><p>Use standard library containers instead of C-style arrays, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
+<li><p>When using standard library algorithms that copy into an output range, ensure that either the output range is extended automatically or has sufficient space available.</p></li>
+<li><p>Sidestep the need to use a copy algorithm on overlapping ranges, by selecting a more appropriate algorithm, such as <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p></li>
+<li><p>If a system requires its own container types with dynamic size, ensure that their copy operations are correct and do not require loops or algorithms for copying their content.</p></li>
+<li><p>If copying C-style arrays is unavoidable, statically show that an access outside of the array cannot occur, or alternatively perform range checking before copying the array.</p></li>
+<li><p>Avoid using the copying functions from the headers <cstring></p></li>
 </ul>
 </body>
 </html>
