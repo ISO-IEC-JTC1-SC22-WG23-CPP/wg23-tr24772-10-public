@@ -1291,21 +1291,22 @@ enumerations for safe and simple use"</li>
 <span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string result{<span class="ch">&#39;</span><span class="sc">\0</span><span class="ch">&#39;</span>, <span class="dv">31</span>};</span>
 <span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>    transform(</span>
 <span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>        begin(s), end(s), </span>
-<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>        begin(result), <span class="co">// error only space for 31 characters </span></span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>        begin(result), <span class="co">// error, only space for 31 characters </span></span>
 <span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>        [](<span class="dt">char</span> c){ <span class="cf">return</span> <span class="bu">std::</span>tolower(c);});</span>
 <span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result; <span class="co">// size(result) == 31</span></span>
 <span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>An additional problem occurs when performing an operation that invalidates an in-use iterator:</p>
+<p>An additional problem occurs when performing an operation that invalidates an in-use iterator, such as the iterator internally used by the range-for statement below:</p>
 <div class="sourceCode" id="cb103"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string to_lowercase(<span class="bu">std::</span>string s){</span>
 <span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">auto</span> &amp;c:s){</span>
-<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>       s.append(<span class="bu">std::</span>tolower(c)); <span class="co">// error, can invalidate iterator</span></span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>       s.append(<span class="bu">std::</span>tolower(c)); <span class="co">// error, invalidates in-use iterator</span></span>
 <span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s;</span>
 <span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Another way that overflows can occur is through the use of C-style strings, which can be treated as arrays of characters, but the <code>nul</code> termination can make overflows possible. See clause [6.7 String Termination[CJM]]{CJM}.</p>
+<p>Another way that overflows can occur is through the use of C-style strings, which can be treated as arrays of characters, but mishandling of the <code>nul</code> termination can make overflows possible. See clause <span id="CJM">6.7 String Termination[CJM]</span>.</p>
 <p>Since plain (C-style) arrays when passed as function arguments decay to pointers the array dimension is lost. C++ provides several means of keeping the array dimension available to the called function:</p>
 <ul>
 <li>use <code>std::array</code> as parameter type,</li>
+<li>use <code>std::views::counted</code> or another view as parameter type,</li>
 <li>use <code>std::span</code> as parameter type for plain arrays,</li>
 <li>use <code>std::string_view</code> as parameter type in favour of <code>char const*</code>, or</li>
 <li>pass plain arrays by reference to a function template and deduce the dimension.</li>
@@ -1319,10 +1320,11 @@ enumerations for safe and simple use"</li>
 </ul>
 <h3 id="guidance-to-language-users">6.8.2 Guidance to language users</h3>
 <ul>
+<li><p>Follow the advice provided in ISO/IEC 24772-1:2022 clause 6.8.5.</p></li>
 <li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p></li>
 <li><p>To model a fixed-size array, use a library class such as <code>std::array</code>.</p></li>
 <li><p>To model arrays with dynamically changing size, use containers of the standard library, such as <code>std::vector</code> or <code>std::deque</code>.</p></li>
-<li><p>Avoid using a pointer paramter or a pointer-and-size parameter pair for representing a contiguous buffer. Prefer the library classes <code>std::span</code> or <code>std::string_view</code> for such parameters.</p></li>
+<li><p>Avoid using a pointer paramter or a pointer-and-size parameter pair for representing a contiguous buffer. Prefer the library classes <code>std::views::counted</code>, <code>std::span</code> or <code>std::string_view</code> for such parameters.</p></li>
 <li><p>Prefer using range-based or iterator-based algorithms, such as those of the standard library, over pointer-manipulating or indexing loops.</p></li>
 <li><p>Use the range-based for loop construct to iterate within the defined bounds of a range.</p></li>
 <li><p>Ensure that ranges and iterators used by range-for or passed to algorithms are and remain valid.</p></li>
