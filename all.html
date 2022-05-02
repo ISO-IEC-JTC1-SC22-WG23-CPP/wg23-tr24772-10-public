@@ -1719,7 +1719,7 @@ To Do *(Paul)*
 <li>a declaration into a namespace that is searched as part of “Argument Dependent Lookup”</li>
 <li>a non-template function that is preferred to a function template</li>
 </ul>
-<p>A using directive broadens the possible scopes that will be examined for names during lookup. Where lookup searches a namespace referred to by a using directive, all names in that namespace will be visible some of which may be unwanted. A using declaration, on the other hand, declares only the specified name into the scope of the using declaration.</p>
+<p>A <code class="sourceCode cpp"><span class="kw">using</span></code> directive broadens the possible scopes that will be examined for names during lookup. Where lookup searches a namespace referred to by a <code class="sourceCode cpp"><span class="kw">using</span></code> directive, all names in that namespace will be visible some of which may be unwanted. A using declaration, on the other hand, declares only the specified name into the scope of the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration.</p>
 <div class="sourceCode" id="cb121"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS1</span>
 <span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1 (<span class="dt">int</span>);</span>
