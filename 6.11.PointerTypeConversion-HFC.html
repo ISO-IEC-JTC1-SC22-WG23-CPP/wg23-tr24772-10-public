@@ -260,7 +260,7 @@ The committee introduced &#39;bit_cast&#39; to replace incorrect usage of &#39;r
 
 --&gt;</code></pre>
 <p>Pointer casts to a more strictly aligned pointer type is undefined behaviour.</p>
-<p><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> for pointer-interconvertible on objects (see clause 6.9.2 of IS 14882)</p>
+<p><code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> for pointer-interconvertible on objects (see clause 6.9.2 of IS 14882) - is_pointer_interconvertible_base_of C++20 20.15.7 [meta.rel] - is_pointer_interconvertible_with_class C++20 20.15.10 - is_corresponding_member C++20 20.15.10</p>
 <p>C++ permits <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> to be used to convert a pointer to an object, a, to a pointer to another object, b, only in specific restricted circumstances, i.e., when</p>
 <ul>
 <li><p>a and b are the same object,</p></li>
@@ -285,27 +285,30 @@ The committee introduced &#39;bit_cast&#39; to replace incorrect usage of &#39;r
 <li><p>Prefer C++ <code class="sourceCode cpp">T&amp;</code> references to <code class="sourceCode cpp">T*</code> pointers</p></li>
 <li><p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p></li>
 <li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause 6.65.</p></li>
-<li><p>When downcasting, prefer <code>dynamic_cast</code> and explicitly handle the possible failure cases. <em>What about</em> <em>references???</em></p>
+<li><p>When downcasting or crosscasting, prefer <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> and explicitly handle the possible failure cases.</p>
 <ul>
 <li><pre><code>  *C++ Core guidelines C.146, 1.47 and 1.48*</code></pre></li>
 </ul></li>
-<li><p>Only be made using <code>dynamic_cast</code> for casts between two bases in a multiple inheritance hierarchy shall o. <em>What about references???</em></p>
-<ul>
-<li><pre><code>  *C++ Core guidelines C.146*</code></pre></li>
-</ul></li>
-<li><p>Heed compiler warnings that are issued for pointer conversion instances. The decision may be made to avoid all conversions so any warnings must be addressed. Note that casting into and out of <code>void *</code> pointers will most likely not generate a compiler warning as this is valid in C++</p></li>
-<li><p>Use <code>new</code> and <code>delete</code> to allocate/deallocate memory, rather than <code>malloc()</code>/<code>free()</code>.</p>
-<ul>
-<li><pre><code>  EXP51-CPP. Do not delete an array through a pointer of the</code></pre>
-<p>incorrect type (implied by 6.11)</p></li>
-<li><pre><code>  EXP57-CPP. Do not cast or delete pointers to incomplete classes</code></pre>
-<p>(-&gt; 6.11)</p></li>
-<li><pre><code>  EXP36-C. Do not cast pointers into more strictly aligned pointer</code></pre>
-<p>types (-&gt; 6.11)</p></li>
-<li></li>
-<li><pre><code>  MISRA C++ 10-1-1 - Classes should not be derived from virtual</code></pre>
-<p>bases.</p></li>
-</ul></li>
+<li><p>Heed compiler warnings that are issued for pointer conversion instances. The decision may be made to avoid all conversions so any warnings must be addressed.</p></li>
 </ul>
+<pre><code>&lt;!--
+-   Use `new` and `delete` to allocate/deallocate memory, rather than
+    `malloc()`/`free()`.
+
+    -       EXP51-CPP. Do not delete an array through a pointer of the
+        incorrect type (implied by 6.11)
+    
+    -       EXP57-CPP. Do not cast or delete pointers to incomplete classes
+        (-\&gt; 6.11)
+    
+    -       EXP36-C. Do not cast pointers into more strictly aligned pointer
+        types (-\&gt; 6.11)
+    
+    -   
+
+    -       MISRA C++ 10-1-1 - Classes should not be derived from virtual
+        bases.
+    
+--&gt;</code></pre>
 </body>
 </html>
