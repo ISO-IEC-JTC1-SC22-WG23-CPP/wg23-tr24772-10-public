@@ -221,13 +221,38 @@
 <li><p>Most notably are the implicit conversions between arithmetic types (including <code class="sourceCode cpp"><span class="dt">bool</span></code>) that silently might truncate values or have loss of precision (for details see <a href="#FLC">Conversion Errors [FLC]</a>). This shared vulnerability includes <em>integral promotion</em> from small (unsigned) integer types (e.g. <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code>) to the signed integer type <code class="sourceCode cpp"><span class="dt">int</span></code> that can lead to operations with undefined behavior, where unsigned arithmetic is defined with modulo semantics.</p></li>
 <li><p>C++ considers implicit conversions during function overload resolution, when there is not a direct match of argument type with parameter type. Sometimes such conversions lead to ambiguities, which result in a compile error. But there can also be a single best matching overload that does not correspond to developer’s expectation including conversion of argument types (see <a href="#YOW">Identifier Name Reuse [YOW]</a>)</p></li>
 <li><p>Values of an unscoped enumeration convert to their underlying integral type in arithmetic expressions (see <a href="#CCB">Enumerator Issues [CCB]</a>).</p></li>
-<li><p>Built-in array types as well as function types will decay to a pointer type. For array types this is problematic, because the array’s extent is lost.</p></li>
+<li><p>Built-in array types as well as function types will decay to a pointer type. For array types this is problematic, because the array’s extent is lost (see <a href="#XYZ">Unchecked Array Indexing [XYZ]</a> and <a href="#RVG">Pointer Arithmetic [RVG]</a>)</p></li>
+<li><p>Pointer types implicitly convert to pointer-to-void (see <a href="#HFC">Pointer Type Conversions[HFC]</a>).</p></li>
 <li><p>Pointer and reference types referring a derived class object can implicitly convert to a pointer or reference to one of its public base classes respectively (see <a href="#BKK">Polymorphic Variables [BKK]</a>).</p></li>
 <li><p>User-defined class types can define converting constructors, that can be called with a single argument, or conversion operators. If these member functions are not declared with the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> they are eligible for use in implicit conversions.</p></li>
-<li><p>Boolean contexts are a special case, because in addition to arithmetic types all pointer types implicitly convert to <code>bool</code>. In such contexts even an <code class="sourceCode cpp"><span class="kw">explicit</span> <span class="kw">operator</span> <span class="dt">bool</span>()</code> conversion operator is used. The latter conversions (pointer and explicit conversion operator) are desirable, the conversions from an arithmetic type in boolean contexts often indicate a missing comparison.</p></li>
+<li><p>Implicit conversions from an arithmetic type to <code>bool</code> often indicate a missing comparison. Conversions from bool in arithmetic expression can obfuscate code. For example, the following code relies on <code>false</code> converting to/from zero and <code>true</code> to one and from non-zero:</p></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> fluxcompensation(<span class="dt">double</span> flux, <span class="dt">bool</span> compensate){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (flux) { <span class="co">// double to bool conversion</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> delta = compute_delta();</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> <span class="at">const</span> compensate_v = <span class="fl">1.4</span>;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> flux + delta * compensate; <span class="co">// bool to double conversion</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  } </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fl">1.</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<ul>
+<li>Boolean contexts are a special case, because in addition to arithmetic types all pointer types implicitly convert to <code>bool</code>. In such contexts even an <code class="sourceCode cpp"><span class="kw">explicit</span> <span class="kw">operator</span> <span class="dt">bool</span>()</code> conversion operator is used. The latter conversions (pointer and explicit conversion operator) in boolean contexts are idiomatic C++, however, some prefer explicit tests to show intent. For example, <code class="sourceCode cpp"><span class="cf">if</span> (p) *p = <span class="dv">42</span>;</code> vs. <code class="sourceCode cpp"><span class="cf">if</span> (p != <span class="kw">nullptr</span>) *p = <span class="dv">42</span>;</code>.</li>
 </ul>
 <p>Note that type aliases (<code class="sourceCode cpp"><span class="kw">using</span></code>, <code class="sourceCode cpp"><span class="kw">typedef</span></code>) do not define a different type from their alias just a different name and thus do not incur any conversion between the alias and the aliased type.</p>
 <p>Instead of using the built-in arithmetic types or generic library types such as <code class="sourceCode cpp"><span class="bu">std::</span>string</code> for your domain values, C++ allows to wrap them in user-defined-class types as so-called <em>strong types</em>. <em>Strong types</em> provide only those operator overloads and conversions for each such type that make sense in the application domain. User-defined-literal operators help with providing constants of appropriate <em>strong types</em>. Such <em>strong types</em> provide full control of conversions and operations available, avoiding semantically unsound operations that the built-in or other generic types might provide.</p>
+<p>For example, a very simple strong type representation of temperature values can be implemented like the following:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Celsius {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> value;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Fahrenheit {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> value;</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Fahrenheit convert_to_fahrenheit(Celsius c){</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> { <span class="dv">9</span>*c.value/<span class="dv">5</span>+<span class="dv">32</span>};</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">//...</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>Celsius wrong = convert_to_fahrenheit({<span class="fl">20.</span>}); <span class="co">// doesn&#39;t compile</span></span></code></pre></div>
+<p>In a realistic scenario using a library for strong type support eases the definition and use of strong types. In addition to preventing implicit conversions, such strong type libraries also prevent unexpected operations. For integral values, <code class="sourceCode cpp"><span class="kw">enum</span> <span class="kw">class</span></code> types can also be used to implement strong types.</p>
 <h3 id="guidance-to-language-users">6.2.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.2.5. and the guidance provided in the different related sections of this document.</p></li>
@@ -235,7 +260,7 @@
 <li><p>Enable compiler warnings regarding implicit conversions and/or use static analysis tools that provide such warnings.</p></li>
 <li><p>Define any constructor of a class that can be called with a single argument of a different type as <code class="sourceCode cpp"><span class="kw">explicit</span></code>.</p></li>
 <li><p>Define any conversion operator as <code class="sourceCode cpp"><span class="kw">explicit</span></code></p></li>
-<li><p>Use <em>strong types</em> for domain values instead of the built-in types except on system boundaries, e.g., output and input.</p></li>
+<li><p>Use <em>strong types</em> for domain values instead of the built-in types. On system boundaries, e.g., for input, convert a read value immediately to the appropriate strong type.</p></li>
 <li><p>When defining variables of arithmetic type, use a braced-initializer to prevent a potential narrowing conversion from the initial value’s type.</p></li>
 </ul>
 </body>
