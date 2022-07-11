@@ -216,35 +216,29 @@
 </header>
 <h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
-<p>C++ shares the vulnerability with C as documented in ISO/IEC TR 24772-1:2019 clause 6.15 and TR 24772-3 clause 6.15.1. C++ specifies that signed integer overflow is undefined behaviour. Unsigned integer wraparound is well-defined in C++, but it can result in coding mistakes: Example: <code>4U - 5U</code> yields a large positive value. The smallest signed negative values might not have a positive counterpart (using the same signed integer type). <span data-custom-style="annotation reference"></span>Combined with implicit conversions or promotions for terms in mixed-type expressions, the semantics combine to produce results that can surprise the user.</p>
-<p>The mitigations for wrap-around errors in C++ are different than for C. C++ allows the definition of class types that embed integers together with the operations that provide the wrapping behaviour intended in an efficient way. The operations of the class can enforce safe value ranges and prevent implicit conversions.</p>
-<pre><code>&lt;!--
-Note: Integral promotion -- the addition of 2 `unsigned char`{.cpp} objects or
-`unsigned short int`{.cpp} objects _in C++ versions before 2020 (?? I doubt it changed Peter)_ will promote to
-(signed) `int`{.cpp} _and then cast back (?? Peter)_. Depending upon the relative sizes of
-`int` `short int` and `unsigned char`, this can result in
-implementation-defined behaviour.
---&gt;</code></pre>
-<p>Avoid implicit conversions on assignment, function calls, and mathematical operations.</p>
-<p>Avoid mixed types, signed, unsigned in the same expression. (explain the problem).</p>
-<p>Handle (Make?) all conversions explicitly to prevent promotions due to implicit conversions <em>(promotions are impossible to suppress - Peter)</em></p>
-<p>Ensure that the results of any mathematical operations fits within the constraints of the type of the target.</p>
-<p>If mixed types are used for parameters, then implicit conversions may be required to perform the mathematical expressions. (hence – guidance - Use the same type for all parameters to mathematical operations, even if this means promotions.)</p>
-<p>The “<code class="sourceCode cpp"><span class="kw">auto</span></code>” capability lets the compiler select the type of the target, but it permits type mismatches when multiple “<code class="sourceCode cpp"><span class="kw">auto</span></code>” types are later combined in functions, such as signed and unsigned parameters.</p>
-<p>Ensure that you know the type of the result when using “<code>auto</code>” to (what?)</p>
-<p>Use the <code class="sourceCode cpp"><span class="kw">explicit</span></code> keyword on single parameter functions and constructors to prevent the compiler from implicitly converting parameter types.</p>
+<p>C++ has the vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.15. C++ specifies that * signed integers are defined to be represented as two’s complement, still signed integer overflow is undefined behaviour, * unsigned integer overflow is well-defined in C++ to wrap-around, * integral promotion can change values of unsigned types to a signed type before arithmetic takes place, * mixing signed and unsigned values or integral types of different conversion rank in an expression is subject to the implicit “usual arithmetic conversions” that can be confusing, * integral values implicitly convert among all integral types, even when passed as a function argument, * using brace-initialization prevents implicit narrowing conversions.</p>
+<p>Even the unsigned wrap around can be confusing, such as <code>4U - 5U</code> yields a large positive value. Multiplying two <code>unsigned short</code> variables with a large value each, can result in undefined behavior when <code>std::numeric_limits&lt;int&gt;::max()==0x7fff'ffff</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>uint16_t x{<span class="dv">40&#39;000</span>},y{<span class="dv">50&#39;000</span>};</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x * y; <span class="co">// UB due to overflow, returns int</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Calling a function taking a parameter of integral type with an argument of mismatched integral type works due to implicit conversion. If a different overload with a better match becomes visible the called function can change when re-compiled (see <a href="#BJL">6.21 Namespace Issues[BJL]</a>)</p>
+<p>The mitigations for wrap-around errors in C++ are different than for C. The type system of C++ allows user-defined class and enum types with corresponding overloaded operators. Such user-defined types can individually control which implicit conversions or mixed type arithmetic they support, if any. For example, one can force arithmetic to be done with unsigned types:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> uint16: <span class="bu">std::</span>uint16_t{};</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>uint16 <span class="kw">operator</span>*(uint16 a, uint16 b){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">static_cast</span>&lt;uint16&gt;(<span class="kw">static_cast</span>&lt;<span class="dt">unsigned</span>&gt;(a) * <span class="kw">static_cast</span>&lt;<span class="dt">unsigned</span>&gt;(b));</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>} <span class="co">// guarantee wrap around</span></span></code></pre></div>
+<p>High-integrity software using the built-in integral types should refrain from relying on integral promotion and implicit conversions and use integral types with a well-known range, or guarantee that allowed variation in the range of representable values do not influence computed results.</p>
 <h3 id="guidance-to-language-users">6.15.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.15.5.</p></li>
-<li><p>Write signed arithmetic expressions to avoid overflow (including overflow negatively) .</p></li>
-<li><p>If you intend arithmetic to wrap, use an unsigned type and ensure that it never promotes to <code>int</code>.</p></li>
-<li><p>Avoid mixed types, signed, unsigned in the same expression.</p></li>
-<li><p>Consider the use of <code>numeric_limits&lt;T&gt;::modulo</code> to determine whether or not an integer type <code class="sourceCode cpp">T</code> wraps for the target system.</p></li>
-<li><p>Document where wraparound is expected for a type.</p></li>
-<li><p>Consider creating classes that encapsulate integers and that detect or avoid wraparound errors.</p></li>
-<li><p>~Consider creating classes that explicitly allow wrap around behaviour.~</p></li>
-<li><p>Ensure that you know the type that <code class="sourceCode cpp"><span class="kw">auto</span></code> will generate, and resist using it for the predefined types.</p></li>
-<li><p>Document code that appears convoluted but has been created to avoid wrapping.</p></li>
+<li><p>Use appropriate user-defined types in place of built-in integral types, that mitigate against implicit conversions and undefined behaviour.</p></li>
+<li><p>Avoid implicit integral promotions and integral conversions, especially on function arguments.</p></li>
+<li><p>Avoid mixing integral types in the same expression.</p></li>
+<li><p>Ensure that the result of any mathematical operation fits within the constraints of the types involved within the expression.</p></li>
+<li><p>If you intend arithmetic to wrap, use an unsigned type that won’t promote to <code>int</code>.</p></li>
+<li><p>Consider the use of <code>numeric_limits&lt;T&gt;::is_modulo</code> to determine whether or not an integer type <code class="sourceCode cpp">T</code> wraps for the target system.</p></li>
+<li><p>Document where wrap-around is expected for a type.</p></li>
 </ul>
 <p>References:</p>
 <blockquote>
