@@ -1506,18 +1506,15 @@ issues.. TBD!!!
 Think about discussing reserved names. Maybe also in Part 1.
 --></p>
 <pre><code>
-C is somewhat susceptible to errors resulting from the use of similarly
-appearing names. C does require the declaration of variables before they
-are used. However, C allows scoping so that a variable that is not
-declared locally may be resolved to some outer block and a human
-reviewer may not notice that resolution. Variable name length is
-implementation specific and so one implementation may resolve names to
-one length whereas another implementation may resolve names to another
-length resulting in unintended behaviour.
+C++ is susceptible to errors resulting from the use of similarly
+appearing names. C++ does require the declaration of variables before they
+are used, however, C++ allows scoping so that a variable that is not
+declared locally may be resolved to some outer block or namespace or included file and a human
+reviewer may not notice that resolution. Variable name length is effectively unlimited and all characters are significant.
 
 As with the general case, calls to the wrong subprogram or references to
 the wrong data element (when missed by human review) can result in
-unintended behaviour.ISO/IEC 14882:2017 C++ clause 20.5.4
+unintended behaviour. ISO/IEC 14882:2017 C++ clause 20.5.4
 \[constraints\] -- reserved names, from C++, also from C, deprecated
 names
 
