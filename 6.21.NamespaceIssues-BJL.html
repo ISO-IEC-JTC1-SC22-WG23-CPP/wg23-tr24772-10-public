@@ -222,7 +222,7 @@
 <li><p>Overriding, where clause 6.41 applies.</p></li>
 </ul>
 <p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists.</p>
-<p>However, overload resolution applies preference rules in order to select among multiple matching functions as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question then changes its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability.</p>
+<p>However, overload resolution applies preference rules in order to select among multiple matching functions or function templates as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question then changes its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability. Function template specializations are not considered during overload resolution, only the base template is considered.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// void foo (int);</span></span>
@@ -282,7 +282,7 @@
 <li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
 <li><p>Prefer using declarations to using directives.</p></li>
 <li><p>Do not overload and use default arguments for the same set of functions.</p></li>
-<li><p>Do not overload templates and non-templates (???)</p></li>
+<li><p>Do not specialize function templates.</p></li>
 </ul>
 <p><code>Note Start</code> Do these really relate to this rule? - DCL60-CPP. Obey the one-definition rule (6.21) - DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
 <p>Is there other guidance that would help here? - Analyse called functions between API upgrades? - Remove implicit conversions for called functions? - Changes to APIs should rename funcsets that have additional overloads?</p>
