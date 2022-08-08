@@ -216,206 +216,100 @@
 </header>
 <h2 id="SYM">6.40 Templates and Generics [SYM]</h2>
 <h3 id="applicability-to-language">6.40.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.40 exists in C++. C++ provides the facility <em>Templates</em> to support the generic programming methodology. C++ Templates can be variadic templates. C++ Templates can accept as arguments types, templates, and values, including addresses of global variables. <em>Concepts</em> improve template argument checking at compile time.</p>
-<p>Programming language compilers help programmers avoid run-time errors by performing static analysis on the code and generating diagnostics that prevent run-time errors. Therefore, the goal of the C++ language is to help transition code towards compile-time analysis instead of relying on runtime executions that result in run-time failures. Templates are one of the favourable mechanisms to achieve this goal of maximizing compile-time analysis to reduce or eliminate run-time analysis.</p>
-<p>When used appropriately, they are suitable for embedded and safety critical systems;</p>
+<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.40 exists in C++. C++ provides the facility <em>Templates</em> to support the generic programming methodology. C++ provides templates for functions, classes(types), and variables (constants). In addition one can form alias templates for class templates. Template parameters can be types, values (including addresses of global variables), and templates. C++ Templates can have variadic template parameters, that mean any number of arguments of a given kind can be used. Concepts are templates that describe constraints on template arguments and can be used to define template parameters or other deduced contexts. In the case of value template parameters using the keyword <code class="sourceCode cpp"><span class="kw">auto</span></code> allows deducing the parameter’s type from the argument given at instantiation time.</p>
+<p>At compile-time, templates are instantiated with concrete template arguments. Function templates as well as class template constructors can deduce the concrete template argument from the types of the function arguments used in a call. For class templates in addition to the implicit deduction guides provided by its constructors, explicit deduction guides can be specified. This mechanism of template-argument deduction allows one to use templates without explicitly mentioning a template argument for each template parameter. For class templates, only those member functions get instantiated that are actually used. Each template instantiation is checked for syntax, concept and type errors.</p>
+<p>Similar to function overloads, in the case of multiple possible instantiations from a template usage, templates are ordered. In case a “better matching” template fails its instantiation check, another alternative is chosen along the ordering of possible template specializations or overloads (SFINAE - substitution failure is not an error). This can be the source of programmer confusion but also provides a lot of power to the feature.</p>
+<p>In case of a function overload set that includes function templates, overload resolution happens before template specialization. This means, any desired behaviour through explicit function template specialization is not considered during overload resolution, only the primary template is used there.</p>
+<p>Class template and variable template specializations can provide specific code for a given set of template arguments. Such specializations must be defined in the namespace of the primary template. To prevent confusion and different compilation of identical looking template instantiations, a specialization should either be defined in the same file as the generic template, or in case of a specialization for a specific template argument type, in the file of the definition of that type.</p>
+<p>Functions and lambdas that define parameters with the use of <code class="sourceCode cpp"><span class="kw">auto</span></code> are implicitly templates without using the <code class="sourceCode cpp"><span class="kw">template</span></code> keyword.</p>
+<p>Variables defined with the use of <code>auto</code> keyword get their concrete type deduced from their initializer, as if they were function template parameters.</p>
+<p>A constructor template or assignment operator template is never a copy or move operation and hence does not prevent the implicit definition of a copy or move operations even if it looks similar.</p>
+<p>Due to the two phase compilation model of templates, name lookup can be surprising in class templates with dependent base classes. A name used in the derived class that is defined in the base might be found in an outer namespace instead.</p>
+<pre><code>double foo{0};
+template &lt;typename T&gt; 
+struct base {
+    int foo;
+};
+template &lt;typename T&gt; 
+struct d : base&lt;T&gt;{
+auto bar() {
+return foo; // matches global foo not base&lt;T&gt;::foo
+}
+};</code></pre>
+<p>In the above example using either <code class="sourceCode cpp"><span class="kw">this</span>-&gt;foo</code> or <code class="sourceCode cpp">d::foo</code> the member of the base class will be used.</p>
+<p>When used appropriately, templates are suitable for embedded and safety critical systems;</p>
 <ul>
-<li><p>They provide type safe generic in contrast to legacy void*-based or macro-based genericity;</p></li>
-<li><p>They have no runtime overhead for inline operations; and</p></li>
-<li><p>They have no memory used or code generated for unused operations which are both critical in limited resource systems.</p></li>
+<li>They provide type-safe generics in contrast to legacy <code class="sourceCode cpp"><span class="dt">void</span> *</code>-based or macro-based genericity;</li>
+<li>They have no runtime overhead;</li>
+<li>They do not have any implicit run-time memory usage; and</li>
+<li>They do not generate code for unused operations.</li>
 </ul>
-<p>Excessive use of templates can lead to cognitive overload in terms of learning, understanding and the maintainability of the code. This clause provides explanation and guidance to mitigate problems that can arise.</p>
-<p>From ISO/IEC TR 24772-1:2019 clause 6.40.1 (or .3) "Confusion, and hence potential vulnerability, can arise where the instantiated code is apparently invalid, but does not result in a compiler error. For example, a generic class defines a set of members, a subset of which rely on a particular property of the instantiation type (such as a generic container class with a sort member function, only the sort function relies on the instantiating type having a defined relational operator). In some languages, such as C++, if the generic is instantiated with a type that does not meet all the requirements but the program never subsequently makes use of the subset of members that rely on the property of the instantiating type, the code will compile and execute (for example, the generic container is instantiated with a user defined class that does not define a relational operator, but the program never calls the sort member of this instantiation). When the code is reviewed the generic class will appear to reference a member of the instantiating type that does not exist."</p>
-<p>The above paragraph does not correctly characterise the issue. In an implicit instantiation of a class template, only those functions that are ODR (one definition rule)-used are instantiated. Therefore, a template argument need not provide all of the operations used by all possible member functions of the class template. This case is exhibited in the standard library. std::vector&lt;T&gt;::emplace requires an accessible constructor of T. The Factory pattern makes constructors of a class C inaccessible to anyone but the factory functions. Still it is desirable to use std::vector with objects of type C. In this case, emplace cannot be used, which is clearly the intended behaviour of the class because objects of type C should only be constructed by the factory functions.</p>
-<p>It is the nature of templates that every method that is not called is not compiled. If the program is changed such that a function is later ODR-used and the program recompiled, Three possible outcomes are:</p>
-<ul>
-<li><p>The program compiles and executes safely;</p></li>
-<li><p>The program fails to compile; or</p></li>
-<li><p>The program executes erroneously.</p></li>
-</ul>
-<p>Vulnerabilities that arise from the third case are covered elsewhere in the document(list), however, in the case of templates, the fact that code is written and may not be instantiated for a long time since code that invokes it has not been written, errors may not appear until later.</p>
-<p>Features such as concepts and <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can be used to mitigate the issue.</p>
-<pre><code>&lt;!--
-Mitigation* *-- ensure complete coverage of Template code with unit tests
---&gt;</code></pre>
-<p>The third case is not specific to templates, except that the problem may be hidden is addressed in 6.2.</p>
-<p>In the above paragraph, cases can arise where the programmer has not provided a type with all of the operations needed to function correctly in the template. For example,</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; <span class="kw">typename</span> ForwardIterator , <span class="kw">typename</span> Value &gt;</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   ForwardIterator find (ForwardIterator first, ForwardIterator last, <span class="at">const</span> Value &amp; val)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>       ++ first ;</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> first</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>   }</span></code></pre></div>
-<p>The standard says that</p>
-<ul>
-<li><p>the first template argument must be a forward iterator.</p></li>
-<li><p>the second template argument type must be comparable to the value type of that iterator using <code class="sourceCode cpp">==</code>.</p></li>
-</ul>
-<p>These requirements are implicit and all the compiler has to go by is their use in the function body. The result is great flexibility, splendid generated code for correct calls, and spectacularly bad error messages for incorrect calls. The obvious solution is to specify the first two requirements as part of the template’s interface:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; forward_iterator Iter , <span class="kw">typename</span> Value &gt;</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>          <span class="kw">requires</span> equality_comparable &lt;Value, Iter :: <span class="dt">value_type</span> &gt;</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find ( Iter first, Iter last, <span class="at">const</span> Value &amp; val );</span></code></pre></div>
-<p>This is roughly what C++20 offers. Note the equality_comparable concept. It captures the required relationship between the two template arguments.</p>
-<p>The general C++11 <code class="sourceCode cpp"><span class="kw">static_assert</span></code> can also be used:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span> ( Equality_comparable &lt;<span class="dt">int</span> &gt;);       <span class="co">// succeeds</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> &lt; Eeqality_comparable &lt;<span class="dt">int</span> ,<span class="dt">long</span> &gt;); <span class="co">// succeeds</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> S { <span class="dt">int</span> a; };</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span> ( Equality_comparable &lt;S&gt;);         <span class="co">// fails because structs don&#39;t</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                                       <span class="co">// automatically get == &amp; !=</span></span></code></pre></div>
-<p><code class="sourceCode cpp"><span class="kw">static_assert</span> ( Equality_comparable \&lt;<span class="dt">int</span> \&gt;);</code></p>
-<p><strong><u>Discussion of “ranges”</u></strong></p>
-<p>Using the example above, the first two function arguments must denote a sequence. To express this requirement (that [first:last) is a sequence), requires a library extension. C++20 offers that in the Ranges standard-library component (§9.3.5). Hence in the example below we replace iterators with ranges:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; range R, <span class="kw">typename</span> Value &gt;</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">requires</span> equality_comparable &lt;Value , Range :: <span class="dt">value_type</span> &gt;</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>forward_iterator find (R r, <span class="at">const</span> Value &amp; val )</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> first = begin (r);</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">auto</span> last = end (r);</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>   <span class="cf">while</span> ( first != last &amp;&amp; * first == val )</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>   ++ first ;</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> first</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p><span data-custom-style="annotation reference"></span></p>
-<hr />
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span><span class="pp">                                                             </span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                                                                                </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;                                                           </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Base                                                                     </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>{                                                                               </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  T number = <span class="dv">2</span>;                                                                 </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>};                                                                              </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                                                                                </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> number = <span class="dv">5</span>;                                                                 </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                                                                                </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;                                                           </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Derived : <span class="kw">public</span> Base&lt;T&gt;                                                 </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>{                                                                               </span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span>&amp; value()                                                              </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  {                                                                             </span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> number;                                                              </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  }                                                                             </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>};                                                                              </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                                                                                </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main()                                                                      </span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>{                                                                               </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  Derived&lt;<span class="dt">int</span>&gt; d;                                                               </span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; d.value() &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;                                               </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>** Issue regarding specialization and templates**</p>
-<p>The following example demonstrates a situation where the late addition of a more specialized template causes a silent change in the semantics of an existing program.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  };</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">template</span> &lt; <span class="kw">typename</span> T &gt; T foo ( T t )</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t;</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS2 <span class="co">// separately developed and included from a header file</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>   <span class="kw">struct</span> B</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>   {</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>   };</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">// This code will be added later</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">//  template &lt; typename T &gt; T * foo ( T * t )</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">//  {</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">//    return t;</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">//  }</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> NS2;</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> NS;</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar()</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  A * a;</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  B * b;</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// After the commented-out code is added to NS2, the binding of foo changes silently from NS::foo to NS2::foo</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>This issue can be avoided by avoidng <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>;</p>
-<p><strong>Other issues</strong></p>
-<p>Overload resolution of templates differs from the overload resolution of non-template code. This can result in methods or operators being chosen that are unexpected by the developer.</p>
-<p>A template constructor is never a copy or move constructor and hence does not prevent the implicit definition of a copy or move constructor even if the constructor looks similar.</p>
-<p>There are cases, however, where the instantiation of a template with a parameter that matches syntactic but not semantic requirements, such as ++ for a pointer, will compile and execute but will be wrong and can result in undefined behaviour. Other examples relate to incomplete class types, see subclause <a href="#IHN">Type system [IHN]</a>.</p>
-<pre><code>&lt;!--
-Another issue -- likely to be placed elsewhere and referenced here
+<p>While using template greatly increases type safety, there can be requirements on template arguments that can neither be specified by concepts nor checked by a compiler. For example, sorting elements requires the comparison function to provide a <em>strict weak ordering</em> which is a property of the values of the type to be sorted by which are impossible to check at compile time for all possible value combinations.</p>
+<p>C++ provides means to restrict template arguments. One is to use concepts, that can prevent instantiating a template, but allow for substituting it with an alternative. A second means is to use <code class="sourceCode cpp"><span class="kw">static_assert</span></code> in a template’s definition to prevent certain instantiations.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> wrapper {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>T x;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span>(<span class="kw">not</span> (<span class="bu">std::</span>is_pointer_v&lt;T&gt; || <span class="bu">std::</span>is_reference_v&lt;T&gt;));</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>wrapper(T )-&gt;wrapper&lt;T&gt;;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&gt; w{<span class="dv">42</span>};</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>wrapper x{&amp;w}; <span class="co">// compile error due to static_assert</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&amp;&gt;{}; <span class="co">// compile error due to static_assert</span></span></code></pre></div>
+<p>The generic nature of templates require a more elaborate approach to unit tests. Such tests should provide instantiations of the base template and all provided explicit template specializations to ensure that each code path is actually tested. Tests for non-compilability of suppressed instantiations, i.e., through concepts or static_assert, are also beneficial.</p>
+<p>Templates allow to reduce the amount of boilerplate code to write, e.g., by providing consistent definitions of operators. However, defining operator function templates in namespace scope can greatly influence compile times due to potential participation in the overload set, whenever the operator is used in code. In addition such generic operator functions might be picked up in inappropriate places causing programmer confusion. Implementing them as hidden friends in a CRTP base class instead makes using operator function templates feasible (see <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>).</p>
+<pre><code>template &lt;typename T&gt;
+struct Plus {
+friend constexpr auto operator+(T l, T const &amp;r) {
+  return l += r;
+}
+};
+struct Int: Plus&lt;Int&gt; {
+constexpr auto operator+=(Int const &amp;r) {
+  val += r.val;
+  return *this;
+}
+constexpr Int(int v):val{v}{}
+int val;
+};
+struct Short: Plus&lt;Short&gt; {
+constexpr auto operator+=(Short const &amp;r) {
+  val += r.val;
+  return *this;
+}
+constexpr Short(short v):val{v}{}
+short val;
+};
+auto x = Int{4} + Int{38};
+auto y = Short{4} + Short{2};
 
-Standard vector construction issue where braces are replaced with curly
-braces. (Paul)
 
-Guidance -- use braces initially and only use other format if the
-compiler fails ???
---&gt;</code></pre>
-<pre><code>&lt;!--
-(Examples needed)
---&gt;</code></pre>
-<pre><code>&lt;!--
+
+
+</code></pre>
+<!--
 Core guidelines (fill in references)
 
 I.9 T.10, T.11, 12, 13, T.20, T.21, T.22, T.23, T.24, T.25, T.26, T.30,
 T.31 -- forward to Clive.
 
 (*We may wish to summarize)*
---&gt;</code></pre>
-<h3 id="guidance-to-language-users">6.40.2 Guidance to language users</h3>
+-->
+<p>``` ### 6.40.2 Guidance to language users</p>
 <ul>
-<li>Use static analysis tools to diagnose the use of inappropriate types in a template interface</li>
-</ul>
-<pre><code>&lt;!--
--   *Cyclic dependencies and ODR (one definition rule) use ...*
---&gt;</code></pre>
-<ul>
-<li><p>Consider using <em>concepts</em> for each template type parameter</p></li>
-<li><pre><code>  Create and use concepts that specify &quot;meaningful&quot; semantics</code></pre></li>
-<li><p>Write templates that check if a specific template argument fulfills the minimal syntactic requirements for the template, for example by using static_assert with type_traits.</p></li>
-<li><p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions</p></li>
-<li><p>For generic operator functions, consider providing them as hidden friends through<span data-custom-style="annotation reference"></span> mix-in class templates.</p></li>
-</ul>
-<blockquote>
-<p>As an example, the following class template defines equality operators for single-element structs (Template parameter U):</p>
-</blockquote>
-<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> U&gt;</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Eq{</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>==(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vl]=l;</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> &amp;[vr]=r;</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vl == vr;</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">friend</span> <span class="kw">constexpr</span> <span class="dt">bool</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span>!=(U <span class="at">const</span> &amp;l, U <span class="at">const</span>&amp; r) <span class="kw">noexcept</span> {</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> !(l==r);</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">// usage of the above, check that type X obtains operator== and operator!=</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X: Eq&lt;X&gt;{</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> val;</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constexpr</span> <span class="kw">explicit</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    X(<span class="dt">int</span> v):val{v}{}</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">static_assert</span>(X{<span class="dv">42</span>} != X{<span class="dv">43</span>} &amp;&amp; X{<span class="dv">42</span>} == X{<span class="dv">42</span>} );</span></code></pre></div>
-<p>The advantage in using the above mechanism is that these overloads are only visible comparing objects of type X, and not for other types. Implementing them as free functions increases likelihood that implicit conversions will result in the wrong function being called.</p>
-<ul>
-<li>Use qualified-id or this-&gt; to refer to names that may be found in a dependent base</li>
-</ul>
-<blockquote>
-<p><em>Needs an example and explanation in 6.40.1 (AI Paul)</em></p>
-</blockquote>
-<ul>
+<li><p>Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.40.5. and the guidance provided in the different related sections of this document.</p></li>
+<li><p>Use <code>static_assert</code> to prevent the use of inappropriate template arguments.</p></li>
+<li><p>Consider using <em>concepts</em> to constrain template parameters.</p></li>
+<li><p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions.</p></li>
+<li><p>For generic operator functions, consider providing them as hidden friends through mix-in class templates.</p></li>
+<li><p>Use qualified-id or this-&gt; to refer to names that may be found in a dependent base class.</p></li>
 <li><p>For template specialization, declare the specialization:</p>
 <ol type="1">
 <li><p>In the same file as the primary template; or</p></li>
 <li><p>In the same file as the user-defined type for which the specialization is declared.</p></li>
 </ol></li>
-<li><p>Do not specialize function templates, except when specialization is on a non-deduceable template parameter</p></li>
+<li><p>Do not specialize function templates.</p></li>
 </ul>
 </body>
 </html>
