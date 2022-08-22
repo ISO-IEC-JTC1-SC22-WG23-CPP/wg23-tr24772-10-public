@@ -217,7 +217,7 @@
 <h2 id="operator-precedence-and-associativity-jcw">6.23 Operator Precedence and Associativity [JCW]</h2>
 <h3 id="applicability-to-language">Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.23 is applicable to C++.</p>
-<p>Operator precedence and associativity in C++ are determined by the C++ grammar. There are four operators that cannot be overloaded (user-defined)</p>
+<p>Operator precedence and associativity in C++ are determined by the C++ grammar. There are four operators that cannot be overloaded (user-defined):</p>
 <ul>
 <li><p><code class="sourceCode cpp">::</code> ;</p></li>
 <li><p><code class="sourceCode cpp">.</code> ;</p></li>
@@ -238,7 +238,8 @@
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (a     &amp;&amp; foo());  <span class="co">// &#39;foo()&#39; always evaluated</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">false</span> &amp;&amp; foo());  <span class="co">// &#39;foo()&#39; never evaluated</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (a.<span class="kw">operator</span>&amp;&amp; (<span class="kw">false</span>,foo())); <span class="co">// &#39;foo()&#39; always evaluated</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Note that overloaded assignment falls into this category.</p>
 <p>For issues related to the declaration of equality and relational operators see Clause 6.25 [KOA].</p>
 <h3 id="guidance-to-language-users">6.23.2 Guidance to language users</h3>
