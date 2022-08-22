@@ -214,14 +214,16 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.21.NamespaceIssues-BJL.md</h1>
 </header>
-<h2 id="namespace-issues-bjl">6.21 Namespace Issues [BJL]</h2>
+<h2 id="BJL">6.21 Namespace Issues [BJL]</h2>
 <h3 id="applicability-to-language">6.21.1 Applicability to language</h3>
-<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.21 exists in C++. The situations where it exists are related to the following cases:</p>
+<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.21 exists in C++. It can occur in particular when a used library changes its API. The situations where it exists are related to the following cases:</p>
 <ul>
-<li><p>Overloading, where clause 6.20 applies;</p></li>
-<li><p>Overriding, where clause 6.41 applies.</p></li>
+<li>Template specialization, where clause 6.40 [#SYM] applies;</li>
+<li>Overloading, where clause 6.20 [#YOW] applies;</li>
+<li>Overriding, where clause 6.41 [#RIP] applies.</li>
 </ul>
-<p>In those cases, C++ compilers are required to diagnose an ambiguity if it exists.</p>
+<p>In the case of template specialization or non-identical definitions of the same entity in different translation units (ODR-violation), ill-formed code might be the result, however, a C++ compiler is not obliged to diagnose that situation, leading to undefined behaviour.</p>
+<p>In the case of overloading and overriding cases, C++ compilers are required to diagnose an ambiguity if it exists.</p>
 <p>However, overload resolution applies preference rules in order to select among multiple matching functions or function templates as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question then changes its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability. Function template specializations are not considered during overload resolution, only the base template is considered.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -234,12 +236,13 @@
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// would be a &quot;better match&quot; and so would silently</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// be chosen when subsequently introduced</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>A new declaration may become visible in a number of situations involving the addition of:</p>
+<p>A new declaration can impact existing code in a number of situations involving the addition of:</p>
 <ul>
-<li>a new overload,</li>
-<li>a using directive</li>
-<li>a declaration into a namespace that is searched as part of “Argument Dependent Lookup”</li>
-<li>a non-template function that is preferred to a function template</li>
+<li>an overload,</li>
+<li>a using directive,</li>
+<li>a declaration into a namespace that is searched as part of “Argument-Dependent Lookup”,</li>
+<li>a non-template function that is preferred to a function template,</li>
+<li>a template specialization.</li>
 </ul>
 <p>A <code class="sourceCode cpp"><span class="kw">using</span></code> directive broadens the possible scopes that will be examined for names during lookup. Where lookup searches a namespace referred to by a <code class="sourceCode cpp"><span class="kw">using</span></code> directive, all names in that namespace will be visible some of which may be unwanted. A using declaration, on the other hand, declares only the specified name into the scope of the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS1</span>
@@ -268,16 +271,16 @@
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <!-- from 6.40: -->
-<p>Overload resolution the compiler only considers conversions for the explicitly specified arguments and does not take default parameters into account:</p>
+<p>Overload resolution only considers conversions for the explicitly specified arguments and does not take default parameters into account:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">short</span>, <span class="dt">int</span> = <span class="dv">0</span>);</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span>, <span class="dt">short</span> = <span class="dv">0</span>);</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// OK, calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">0</span>);    <span class="co">// Ambiguous</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">0</span>);    <span class="co">// ambiguous, ill-formed, won&#39;t compile</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>The following example demonstrates a situation where the late addition of a more specialized template causes a silent change in the semantics of an existing program.</p>
+<p>The following example demonstrates a situation where the late addition of a better matching overload causes a silent change in the semantics of an existing program.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
@@ -311,18 +314,22 @@
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  B * b;</span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// After the commented-out code is added to NS2, the binding of foo changes silently from NS::foo to NS2::foo</span></span>
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>This issue can be avoided by avoidng <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>;</p>
-<!-- note: consolidate examples -->
+<p>This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>;</p>
 <h3 id="guidance-to-language-users">6.21.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the guidance of clauses 6.20.2 and 6.41.2 as applicable.</p></li>
+<li><p>Follow the guidance of clauses 6.20.2, 6.40.2, and 6.41.2 as applicable.</p></li>
 <li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
+<li><p>Arguments to called functions should not be subject to implicit conversions.</p></li>
 <li><p>Prefer using declarations to using directives.</p></li>
 <li><p>Do not overload and use default arguments for the same set of functions.</p></li>
 <li><p>Do not specialize function templates.</p></li>
+<li><p>For template specialization, ensure that specializations are declared as follows:</p>
+<ol type="1">
+<li><p>In the same file as the primary template; or</p></li>
+<li><p>In the same file as the user-defined type for which the specialization is declared.</p></li>
+</ol></li>
+<li><p>Define an entity in only one file to prevent ODR-violations.</p></li>
+<li><p>Ensure that no ODR-violations occur, i.e., through a static analysis tool.</p></li>
 </ul>
-<p><code>Note Start</code> Do these really relate to this rule? - DCL60-CPP. Obey the one-definition rule (6.21) - DCL40-C. Do not create incompatible declarations of the same function or object (6.21)</p>
-<p>Is there other guidance that would help here? - Analyse called functions between API upgrades? - Remove implicit conversions for called functions? - Changes to APIs should rename funcsets that have additional overloads?</p>
-<p><code>Note End</code></p>
 </body>
 </html>
