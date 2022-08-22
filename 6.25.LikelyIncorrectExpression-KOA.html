@@ -217,59 +217,66 @@
 <h2 id="KOA">6.25 Likely Incorrect Expression [KOA]</h2>
 <h3 id="applicability-to-language">6.25.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.25 exists in C++.</p>
-<p>C++ has several instances of operators which are similar in structure, but different in meaning. The most common quoted example for C-based languages is the replacement of “<code>==</code>” with “<code>=</code>” in an expression, or confusion between:</p>
+<p>C++ has several instances of operators which are similar in structure, but different in meaning. Examples of operators in C-based languages that can cause confusion are:</p>
 <ul>
-<li><code class="sourceCode cpp">&amp;</code> and <code class="sourceCode cpp">&amp;&amp;</code>;</li>
-<li><code class="sourceCode cpp">|</code> and <code class="sourceCode cpp">||</code>;</li>
+<li><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">=</code>;</li>
+<li><code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">&amp;</code>;</li>
+<li><code class="sourceCode cpp">||</code> and <code class="sourceCode cpp">|</code>;</li>
 <li><code class="sourceCode cpp">&lt;</code>, <code class="sourceCode cpp">&lt;&lt;</code>, and <code class="sourceCode cpp">&lt;&lt;=</code>; and</li>
 <li><code class="sourceCode cpp">&gt;</code>, <code class="sourceCode cpp">&gt;&gt;</code>, and <code class="sourceCode cpp">&gt;&gt;=</code>.</li>
 </ul>
-<p>The typographical similarity can lead to code like the following, where it is unclear, if the expression as spelled is actually intended, or if the author has typos in it, meaning a different operator instead:</p>
+<p>The typographical similarity can lead to code like the following, where it is unclear if the expression as spelled is actually intended, or if the author has typos in it, meaning a different operator instead:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==) ?</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The following code in a production phone OS caused the “bricking” of many users phones:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="va">key_data_</span>.has_value() &amp; !<span class="va">key_data_</span>-&gt;label().empty())</span></code></pre></div>
+<p>instead of</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="va">key_data_</span>.has_value() &amp;&amp; !<span class="va">key_data_</span>-&gt;label().empty())</span></code></pre></div>
+<p>or the even clearer using the alternative operator representation <code class="sourceCode cpp"><span class="kw">and</span></code> for <code class="sourceCode cpp">&amp;&amp;</code></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="va">key_data_</span>.has_value() <span class="kw">and</span> !<span class="va">key_data_</span>-&gt;label().empty())</span></code></pre></div>
 <p>As a general rule, the use of <code>=</code>, <code>+=</code>, <code>-=</code> in an expression when the operator is not the final assignment to a variable is unsafe since the assignment operator creates side-effects within the expression which are difficult to analyze by a human reader and can be have different results depending upon the order of evaluation of terms within the expression.</p>
 <p>But even in assignment expression flipping the assignment symbol with the operator can itself lead to valid code that was not intended:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i{<span class="dv">42</span>};</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>i += <span class="dv">22</span>; <span class="co">// i becomes 64</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>i =+ <span class="dv">22</span>; <span class="co">// i becomes 22</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>i =- <span class="dv">22</span>; <span class="co">// i becomes -22</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i{<span class="dv">42</span>};</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>i += <span class="dv">22</span>; <span class="co">// i becomes 64</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>i =+ <span class="dv">22</span>; <span class="co">// i becomes 22</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>i =- <span class="dv">22</span>; <span class="co">// i becomes -22</span></span></code></pre></div>
 <p>C++ provides significant freedom in constructing statements. This freedom, if misused, can result in unexpected results and potential vulnerabilities.</p>
 <p>Since the order of evaluation within expressions is only partially defined, sub-expressions with side effects on variables used within the overall expression can result in undefined behaviour.</p>
 <p>The flexibility of C++ can obscure the intent of a programmer. Consider:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* ... */</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x = y){</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* ... */</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x = y){</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>A fair amount of analysis may need to be done to determine whether the programmer intended to do an assignment as part of the <code class="sourceCode cpp"><span class="cf">if</span></code> statement (valid in C++) or whether the programmer made the common mistake of using an <code class="sourceCode cpp">=</code> (assignment) instead of a <code class="sourceCode cpp">==</code> (equality).</p>
-<p>In order to prevent this confusion, move assignments into contexts that are easily misunderstood outside of Boolean expression. This would change the example code to:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* … */</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>x = y;</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x == <span class="dv">0</span>) {</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<p>This confusion can be corrected by moving assignments outside of Boolean contexts. This would change the example code to:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* … */</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x = y;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x == <span class="dv">0</span>) {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>This would clearly state what the programmer meant and that the assignment of y to x was intended.</p>
 <p>Additional confusion occurs in the use of the logical <code class="sourceCode cpp">&amp;&amp;</code> or <code class="sourceCode cpp">||</code> operators and the bitwise <code class="sourceCode cpp">&amp;</code> or <code class="sourceCode cpp">|</code> operators. The compiler will implicitly convert arithmetic expressions to <code class="sourceCode cpp"><span class="dt">bool</span></code> for operands of the logical operators. Similarly, operands of <code class="sourceCode cpp"><span class="dt">bool</span></code> type will be promoted to <code class="sourceCode cpp"><span class="dt">int</span></code> for operands of the bitwise operators (see <a href="#FLC">Conversion Errors [FLC]</a>).<br />
 It may not be clear whether the programmer intended to use the logical operator <code class="sourceCode cpp">&amp;&amp;</code> or bitwise operator <code class="sourceCode cpp">&amp;</code> instead:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">0</span>) &amp; j;</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">0</span>) &amp; j;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Using the alternative tokens <code class="sourceCode cpp"><span class="kw">and</span></code> / <code class="sourceCode cpp"><span class="kw">or</span></code> in lieu of <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">||</code> reduces the possibility of confusion.</p>
 <p>Programmers can easily get in the habit of inserting the <code class="sourceCode cpp">;</code> statement terminator at the end of statements. However, inadvertently doing this can drastically alter the meaning of code, even though the code is valid as in the following example:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b;</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* … */</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a == b);  <span class="co">// the semi-colon will make this a null statement</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b;</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* … */</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a == b);  <span class="co">// the semi-colon will make the following code always execute</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    {             </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
-<p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2<sup>n</sup> where n is the number of bits in the unsigned type.</p>
-<p>C++ overloading of operators can cause significant issues. When overloaded, related operators like the compound assignment with their base operator, or comparison operators are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all. Similarly, for <code class="sourceCode cpp">a == b</code> (before C++20), there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code>.</p>
+<p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2^n where n is the number of bits in the unsigned type.</p>
+<p>C++ overloading of operators can also cause confusion. When overloaded, related operators like the compound assignment with their base operator, or comparison operators are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all. Similarly, for <code class="sourceCode cpp">a == b</code> (before C++20), there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code>.</p>
 <p>Unless the all relational operators are defined either explicitly or implicitly, unexpected results can occur. From C++20 onwards, a user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operator consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as =default, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
 <h3 id="guidance-to-language-users">6.25.2 Guidance to language users</h3>
 <p>— Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.25.5.</p>
@@ -279,7 +286,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li>by extracting intermediate results into const variables with a meaningful name, or</li>
 <li>by extracting a subexpression into a function with a meaningful name.</li>
 </ul></li>
-<li><p>Avoid assignments embedded within other statements and expressions, as these can be problematic.</p></li>
+<li><p>Avoid assignments embedded within other statements and expressions.</p></li>
 <li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators. In addition avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
 <li><p>Consider using alternative tokens for the logical operators.</p></li>
 <li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
@@ -290,7 +297,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li>ES 41 If in doubt about operator precedence, parenthesize</li>
 <li>ES 44 Do not depend on order of evaluation</li>
 </ul></li>
-<li><p>Rely on C++20’s automatism to get the compiler provide consistent comparison operators, or define all of them in a consistent manner.</p></li>
+<li><p>Rely on C++20’s synthesized or rewritten comparison operators to ensure that all of the related comparison operators behave consistently.</p></li>
 </ul>
 </body>
 </html>
