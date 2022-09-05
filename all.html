@@ -1246,8 +1246,7 @@ enumerations for safe and simple use"</li>
 <p>The issue is not restricted to narrowing conversions, as shown below:</p>
 <div class="sourceCode" id="cb100"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">long</span> l_64 = i_32 + i_32; <span class="co">// &#39;+&#39; operation preformed in 32 bits</span></span>
 <span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co">// widened after the operation completes (and potentially overflows). </span></span></code></pre></div>
-<p>This can be avoided by converting at least one operand to the wider type as part of the operation.</p>
-<p>Additional problems arise as a result of implicit conversions between <code>bool</code> and other types, thus hiding the fact when a wrong operator is used accidentally:</p>
+<p>This can be avoided by converting at least one operand to the wider type as part of the operation. Note that <code class="sourceCode cpp"><span class="kw">auto</span></code> directs the compiler to use the appropriate type based on the initializer expression. Subsequent use of the auto object (such as in standard mathematical operations) can lead to implicit conversions that are not obvious in the context local to the expression. Additional problems arise as a result of implicit conversions between <code>bool</code> and other types, thus hiding the fact when a wrong operator is used accidentally:</p>
 <div class="sourceCode" id="cb101"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
 <span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==) ?</span></span>
@@ -1282,6 +1281,7 @@ enumerations for safe and simple use"</li>
 <li><p>Don’t rely on implicit conversions between <code>bool</code> and other types.</p></li>
 <li><p>Don’t rely on implicit conversions between character types and other types.</p></li>
 <li><p>Use <em>strong types</em> (see subclause <a href="#IHN">Type System [IHN]</a>) to limit implicit conversions and unwanted operations.</p></li>
+<li><p>When using <code class="sourceCode cpp"><span class="kw">auto</span></code> ensure that you know the type that <code class="sourceCode cpp"><span class="kw">auto</span></code> deduces type and resist using <code class="sourceCode cpp"><span class="kw">auto</span></code> for the predefined types it for the predefined types.</p></li>
 </ul>
 <h2 id="CJM">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
