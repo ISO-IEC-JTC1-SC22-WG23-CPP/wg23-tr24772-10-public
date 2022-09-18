@@ -1605,9 +1605,9 @@ To Do *(Paul)*
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
 <h3 id="applicability-to-language">6.20.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant.</p>
-<p>C++ provides the scope resolution operator <code>::{.cpp}</code> to access identifier from non-local scopes.</p>
+<p>C++ provides the scope resolution operator <code>::{.cpp}</code> to access identifiers from non-local scopes.</p>
 <p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See clause 6.41 for inheritance issues associated with name reuse.</p>
-<p>Overloaded function names and operators considered in an expression are not restricted to a simple scope hierarchy, because of argument-dependent lookup (ADL). In generic code the unqualified function or operator selected can come from a scope based on the type of the arguments and not from the current scope hierarchy. The rules for which namespaces are eligible for lookup unqualified functions and operators are intricate, but required to make overloaded operators work.</p>
+<p>Overloaded function names and operators considered in an expression are not restricted to a simple scope hierarchy, because of argument-dependent lookup (ADL). In generic code the unqualified function or operator selected can come from a scope based on the type of the arguments and not from the current scope hierarchy. The rules for which namespaces are eligible for lookup of unqualified functions and operators are intricate, but required to make overloaded operators work.</p>
 <p>In addition, if implicit conversions can happen on arguments, the overload selected by ADL can be different from programmer expectation even in non-generic code, especially when an argument is of a type that can be implicitly converted to another type where a corresponding overload is defined. Visibility on a namespace-level of such an operator overload may make it eligible, even if neither argument matches the parameter types directly. In the best case this leads to a compile error due to ambiguities, but it can also result in perfectly compiling code executing an unexcepted overload.</p>
 <p>The following example demonstrates part of the problem:</p>
 <div class="sourceCode" id="cb109"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
@@ -1651,7 +1651,7 @@ To Do *(Paul)*
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
 <li><p>Limit the visibility of overloaded operators or functions for class types by defining them as member functions or <em>hidden friends</em>.</p></li>
-<li><p>Place overloaded operators that are not class members and cannot be provided as <em>hidden friends</em> together with their argument type in a namespace that is not the global namespace, so that they are picked up by ADL.</p></li>
+<li><p>Place overloaded operators that are not class members and cannot be provided as <em>hidden friends</em> together with their argument type in a namespace that is not the global namespace,so that they are picked up by ADL.</p></li>
 <li><p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p></li>
 <li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p>
 <ul>
