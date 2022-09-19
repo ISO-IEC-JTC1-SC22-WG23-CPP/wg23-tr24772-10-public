@@ -3253,7 +3253,7 @@ Members declared <code class="sourceCode cpp"><span class="at">mutable</span></c
 <li><p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p></li>
 <li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p></li>
 <li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1; and</p></li>
-<li><p>Consider the use of “constexpr” wherever possible to move the detection</p></li>
+<li><p>Consider the use of <code class="sourceCode cpp"><span class="kw">constexpr</span></code> wherever possible to move the detection to compile time</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">mutable</span></code> only to member variables that do not influence the external behavior of an object.</p></li>
 </ul>
 <!-- -->
