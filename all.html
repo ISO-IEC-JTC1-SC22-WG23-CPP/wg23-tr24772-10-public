@@ -2223,18 +2223,16 @@ if (i == 10){
 <h2 id="structured-programming-ewd">6.31 Structured Programming [EWD]</h2>
 <h3 id="applicability-to-language">6.31.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.31 exists in C++.</p>
-<p>It is as easy to write structured programs in C++ as it is not to. C++ contains the goto statement, which can create unstructured code. Also, C has <code class="sourceCode cpp"><span class="cf">continue</span></code>, <code class="sourceCode cpp"><span class="cf">break</span></code>, and <code class="sourceCode cpp"><span class="cf">return</span></code> that can create a complicated control flow, when used in an undisciplined manner. Spaghetti code can be more difficult for static analyzers to analyze and is sometimes used on purpose to intentionally obfuscate the functionality of software. Code that has been modified multiple times by an assortment of programmers to add or remove functionality or to fix problems can be prone to become unstructured.</p>
+<p>It is as easy to write structured programs in C++ as it is not to. C++ contains the <code class="sourceCode cpp"><span class="cf">goto</span></code> statement, which can create unstructured code. It also has <code class="sourceCode cpp"><span class="cf">continue</span></code>, <code class="sourceCode cpp"><span class="cf">break</span></code>, and <code class="sourceCode cpp"><span class="cf">return</span></code> that can create a complicated control flow, when used in an undisciplined manner. Spaghetti code can be more difficult for static analyzers to analyze and is sometimes used on purpose to intentionally obfuscate the functionality of software. Code that has been modified multiple times by an assortment of programmers to add or remove functionality or to fix problems can be prone to become unstructured.</p>
 <p>Because unstructured code in can cause problems for analyzers, both automated and human, of code, problems with the code may not be detected as readily or at all as would be the case if the software was written in a structured manner.</p>
-<pre><code>&lt;1--
-IMHO, a static analyzer worth its money would do any CFA DFA based on basic blocks and should not be bothered by gotos etc. Peter.
---&gt;</code></pre>
+<p>In C++, the <code class="sourceCode cpp"><span class="cf">break</span></code> and <code class="sourceCode cpp"><span class="cf">continue</span></code> operations only act on the innermost loop. At times, escape from nested loops is required. In such cases, the use of <code class="sourceCode cpp"><span class="cf">goto</span></code> may be simpler and easier to verify than a series of tests with <code class="sourceCode cpp"><span class="cf">break</span></code> and/or <code class="sourceCode cpp"><span class="cf">continue</span></code> operations.</p>
 <p>The <code class="sourceCode cpp">setjmp</code> macro sets the current execution context into a variable, which can be use later to return to that current context using <code class="sourceCode cpp">longjmp</code> call. These calls originated from the C standard library to mimic <code class="sourceCode cpp"><span class="cf">goto</span></code> across the call stack. They do not support the relevant additions to C++ such as destructors for automatic objects, exceptions, and concurrency, and hence are incompatible with modern C++ programming.</p>
 <p>A coroutine is a function that can suspend execution for later resumption (optional).</p>
 <h3 id="guidance-to-language-users">6.31.2 Guidance to language users</h3>
 <ul>
+<li><p>Follow the guidance of ISO/IEC 24772-1 clause 6.31.5.</p></li>
 <li><p>Write clear and concise structured code to make code as understandable as possible.</p></li>
 <li><p>Avoid the use of <code class="sourceCode cpp">setjmp</code> and <code class="sourceCode cpp">longjmp</code></p></li>
-<li><p>Avoid the use of <code class="sourceCode cpp"><span class="cf">goto</span></code> except in the case of exiting a nested loop.</p></li>
 <li><p>Consider the use of coroutines as an alternative to <code class="sourceCode cpp"><span class="cf">goto</span></code> and <code class="sourceCode cpp">setjmp/longjmp</code></p></li>
 </ul>
 <p>See also the C++ Core guidelines ES.76, ES.77, SL.C.1</p>
@@ -2277,34 +2275,34 @@ IMHO, a static analyzer worth its money would do any CFA DFA based on basic bloc
 <h3 id="applicability-to-language">6.33.1 Applicability to language</h3>
 <p>C++ allows one variable to refer to another variable. For example, a pointer variable can contain the address of another variable; a reference can be bound to a variable; and an iterator can point to a portion of a variable (in this case a container). Should the referencing variable outlive the referenced variable, the subsequent operations through the referencing variable will have undefined behavior.</p>
 <p>For example</p>
-<div class="sourceCode" id="cb152"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb152-1"><a href="#cb152-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> *bad_pointer() {</span>
-<span id="cb152-2"><a href="#cb152-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
-<span id="cb152-3"><a href="#cb152-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> &amp;a;      <span class="co">// Error. Returning the address of a local variable - Undefined Behaviour.</span></span>
-<span id="cb152-4"><a href="#cb152-4" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb152-5"><a href="#cb152-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb152-6"><a href="#cb152-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb152-7"><a href="#cb152-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; bad_reference() {</span>
-<span id="cb152-8"><a href="#cb152-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
-<span id="cb152-9"><a href="#cb152-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a;      <span class="co">// Error, returning a reference to a local variable.</span></span>
-<span id="cb152-10"><a href="#cb152-10" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb152-11"><a href="#cb152-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb152-12"><a href="#cb152-12" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt;::iterator bad_iterator()</span>
-<span id="cb152-13"><a href="#cb152-13" aria-hidden="true" tabindex="-1"></a> {</span>
-<span id="cb152-14"><a href="#cb152-14" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt; a = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> };</span>
-<span id="cb152-15"><a href="#cb152-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a.begin();  <span class="co">// Error, returning an iterator object that contains a pointer to first element of the local array &quot;a&quot;.</span></span>
-<span id="cb152-16"><a href="#cb152-16" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb152-17"><a href="#cb152-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb152-18"><a href="#cb152-18" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
-<span id="cb152-19"><a href="#cb152-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
-<span id="cb152-20"><a href="#cb152-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { x = <span class="dv">1</span>; };   <span class="co">// Error, &#39;&amp;&#39; causes x to be captured by reference</span></span>
-<span id="cb152-21"><a href="#cb152-21" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb152-22"><a href="#cb152-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb152-23"><a href="#cb152-23" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> erroneous_use() {</span>
-<span id="cb152-24"><a href="#cb152-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_pointer();</span>
-<span id="cb152-25"><a href="#cb152-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_reference();</span>
-<span id="cb152-26"><a href="#cb152-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_iterator();</span>
-<span id="cb152-27"><a href="#cb152-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_lambda()();</span>
-<span id="cb152-28"><a href="#cb152-28" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> *bad_pointer() {</span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
+<span id="cb151-3"><a href="#cb151-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> &amp;a;      <span class="co">// Error. Returning the address of a local variable - Undefined Behaviour.</span></span>
+<span id="cb151-4"><a href="#cb151-4" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb151-5"><a href="#cb151-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-6"><a href="#cb151-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-7"><a href="#cb151-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; bad_reference() {</span>
+<span id="cb151-8"><a href="#cb151-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
+<span id="cb151-9"><a href="#cb151-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a;      <span class="co">// Error, returning a reference to a local variable.</span></span>
+<span id="cb151-10"><a href="#cb151-10" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb151-11"><a href="#cb151-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-12"><a href="#cb151-12" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt;::iterator bad_iterator()</span>
+<span id="cb151-13"><a href="#cb151-13" aria-hidden="true" tabindex="-1"></a> {</span>
+<span id="cb151-14"><a href="#cb151-14" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt; a = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> };</span>
+<span id="cb151-15"><a href="#cb151-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a.begin();  <span class="co">// Error, returning an iterator object that contains a pointer to first element of the local array &quot;a&quot;.</span></span>
+<span id="cb151-16"><a href="#cb151-16" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb151-17"><a href="#cb151-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-18"><a href="#cb151-18" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
+<span id="cb151-19"><a href="#cb151-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
+<span id="cb151-20"><a href="#cb151-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { x = <span class="dv">1</span>; };   <span class="co">// Error, &#39;&amp;&#39; causes x to be captured by reference</span></span>
+<span id="cb151-21"><a href="#cb151-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb151-22"><a href="#cb151-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-23"><a href="#cb151-23" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> erroneous_use() {</span>
+<span id="cb151-24"><a href="#cb151-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_pointer();</span>
+<span id="cb151-25"><a href="#cb151-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_reference();</span>
+<span id="cb151-26"><a href="#cb151-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_iterator();</span>
+<span id="cb151-27"><a href="#cb151-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_lambda()();</span>
+<span id="cb151-28"><a href="#cb151-28" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
 <p>C++ provides the ability to extend the lifetime of a temporary. Issues are below.</p>
 <pre><code>#include &lt;array&gt;
 struct A
@@ -2365,55 +2363,55 @@ void foo3 ()
 <ul>
 <li>Arguments with integral or enumeration type that are passed to an ellipsis parameter will undergo integral promotions, and so the type of the parameter is <code>int</code> and not <code>short</code>. The use of <code>short</code> with <code>va_arg</code> is therefore invalid.</li>
 </ul>
-<div class="sourceCode" id="cb154"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb154-1"><a href="#cb154-1" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
+<div class="sourceCode" id="cb153"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
+<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb153-3"><a href="#cb153-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
+<span id="cb153-4"><a href="#cb153-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb153-5"><a href="#cb153-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
+<span id="cb153-6"><a href="#cb153-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
+<span id="cb153-7"><a href="#cb153-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb153-8"><a href="#cb153-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> i = va_arg (ap, <span class="dt">short</span>);  <span class="co">// Invalid type</span></span>
+<span id="cb153-9"><a href="#cb153-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb153-10"><a href="#cb153-10" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
+<span id="cb153-11"><a href="#cb153-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<ul>
+<li>In the following case, <code>f1</code> assumes that there will be two parameters after the named parameter.</li>
+</ul>
+<div class="sourceCode" id="cb154"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb154-1"><a href="#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
 <span id="cb154-2"><a href="#cb154-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb154-3"><a href="#cb154-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
 <span id="cb154-4"><a href="#cb154-4" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb154-5"><a href="#cb154-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
 <span id="cb154-6"><a href="#cb154-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
 <span id="cb154-7"><a href="#cb154-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb154-8"><a href="#cb154-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> i = va_arg (ap, <span class="dt">short</span>);  <span class="co">// Invalid type</span></span>
-<span id="cb154-9"><a href="#cb154-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb154-10"><a href="#cb154-10" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
-<span id="cb154-11"><a href="#cb154-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<ul>
-<li>In the following case, <code>f1</code> assumes that there will be two parameters after the named parameter.</li>
-</ul>
-<div class="sourceCode" id="cb155"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cstdarg&gt;</span></span>
-<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb155-3"><a href="#cb155-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span> cnt, ...)</span>
-<span id="cb155-4"><a href="#cb155-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb155-5"><a href="#cb155-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">va_list</span> ap;</span>
-<span id="cb155-6"><a href="#cb155-6" aria-hidden="true" tabindex="-1"></a>  va_start (ap, cnt);</span>
-<span id="cb155-7"><a href="#cb155-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb155-8"><a href="#cb155-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = va_arg (ap, <span class="dt">int</span>);</span>
-<span id="cb155-9"><a href="#cb155-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> j = va_arg (ap, <span class="dt">int</span>);</span>
-<span id="cb155-10"><a href="#cb155-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb155-11"><a href="#cb155-11" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
-<span id="cb155-12"><a href="#cb155-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb155-13"><a href="#cb155-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb155-14"><a href="#cb155-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
-<span id="cb155-15"><a href="#cb155-15" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb155-16"><a href="#cb155-16" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>);  <span class="co">// OK</span></span>
-<span id="cb155-17"><a href="#cb155-17" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>);     <span class="co">// results in undefined behaviour</span></span>
-<span id="cb155-18"><a href="#cb155-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb154-8"><a href="#cb154-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = va_arg (ap, <span class="dt">int</span>);</span>
+<span id="cb154-9"><a href="#cb154-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> j = va_arg (ap, <span class="dt">int</span>);</span>
+<span id="cb154-10"><a href="#cb154-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb154-11"><a href="#cb154-11" aria-hidden="true" tabindex="-1"></a>  va_end(ap);</span>
+<span id="cb154-12"><a href="#cb154-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb154-13"><a href="#cb154-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb154-14"><a href="#cb154-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
+<span id="cb154-15"><a href="#cb154-15" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb154-16"><a href="#cb154-16" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>);  <span class="co">// OK</span></span>
+<span id="cb154-17"><a href="#cb154-17" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">2</span>);     <span class="co">// results in undefined behaviour</span></span>
+<span id="cb154-18"><a href="#cb154-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>These issues cannot occur where default arguments or variadic function templates are used.</p>
 <p>The C++ Name mangling ensures that function signatures match accross translation units.</p>
 <p>This does not apply to other mangling schemes. For example, parameters do not form part of the mangled name for functions declared with the <code>extern "C"</code> linkage specification. Thus such a function can be invoked with incorrect parameter types due to an incorrect redeclaration of the function:</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb156-1"><a href="#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="co">// library.cc</span></span>
-<span id="cb156-2"><a href="#cb156-2" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">void</span> foo (<span class="dt">unsigned</span>, <span class="dt">unsigned</span>)</span>
-<span id="cb156-3"><a href="#cb156-3" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb156-4"><a href="#cb156-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
-<span id="cb156-5"><a href="#cb156-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb157"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="co">// main.cc</span></span>
-<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb157-3"><a href="#cb157-3" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">void</span> foo (<span class="dt">unsigned</span>);</span>
-<span id="cb157-4"><a href="#cb157-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb157-5"><a href="#cb157-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main ()</span>
-<span id="cb157-6"><a href="#cb157-6" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb157-7"><a href="#cb157-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="bn">0xffffffff</span>);  <span class="co">// Calling function that is</span></span>
-<span id="cb157-8"><a href="#cb157-8" aria-hidden="true" tabindex="-1"></a>                     <span class="co">// defined to take 2 parameters</span></span>
-<span id="cb157-9"><a href="#cb157-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="co">// library.cc</span></span>
+<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">void</span> foo (<span class="dt">unsigned</span>, <span class="dt">unsigned</span>)</span>
+<span id="cb155-3"><a href="#cb155-3" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb155-4"><a href="#cb155-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb155-5"><a href="#cb155-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb156-1"><a href="#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="co">// main.cc</span></span>
+<span id="cb156-2"><a href="#cb156-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb156-3"><a href="#cb156-3" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">void</span> foo (<span class="dt">unsigned</span>);</span>
+<span id="cb156-4"><a href="#cb156-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb156-5"><a href="#cb156-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main ()</span>
+<span id="cb156-6"><a href="#cb156-6" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb156-7"><a href="#cb156-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="bn">0xffffffff</span>);  <span class="co">// Calling function that is</span></span>
+<span id="cb156-8"><a href="#cb156-8" aria-hidden="true" tabindex="-1"></a>                     <span class="co">// defined to take 2 parameters</span></span>
+<span id="cb156-9"><a href="#cb156-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.34.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the guidelines of ISO/IEC TR 24772-1:2019 clause 6.34.5.</p></li>
@@ -2435,20 +2433,20 @@ void foo3 ()
 <p>In addition to <code>errno</code> some C++ library features expose error conditions indirectly via a side-effect on the object the operation failed with or via side-effect on a reference parameter. For example, input stream objects will go into a <code>fail</code> state, when formatted input cannot be performed. Without resetting that fail-state of a stream, further input will continue to fail, that can cause further failures when a failure is ignored. Streams provide a non-default mode to throw exceptions on failure. Another example of error reporting via a side-effect is the filesystem library that provides overloads that take a non-const reference of <code>std::error_code</code>.</p>
 <p>In general, reporting errors as side-effects, in the worst case via a global state, is too easy to accidentally ignore by developers, leading to further consistency problems in the continued execution of the program.</p>
 <p>By default, C++ has the C weakness of permitting the call to a function that returns an error code without capturing the return value in a variable.</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb158-1"><a href="#cb158-1" aria-hidden="true" tabindex="-1"></a>errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
-<span id="cb158-2"><a href="#cb158-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
-<span id="cb158-3"><a href="#cb158-3" aria-hidden="true" tabindex="-1"></a>foo(x, y); <span class="co">// failure to capture the return error code.</span></span></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a>errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
+<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
+<span id="cb157-3"><a href="#cb157-3" aria-hidden="true" tabindex="-1"></a>foo(x, y); <span class="co">// failure to capture the return error code.</span></span></code></pre></div>
 <p>C++ offers as a mitigating mechanism the <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> attribute. This attribute indicates that the function result must not be discarded. Ignoring the result of a function marked <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> causes a compiler warning.</p>
-<div class="sourceCode" id="cb159"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb159-1"><a href="#cb159-1" aria-hidden="true" tabindex="-1"></a>[[<span class="at">nodiscard</span>]] errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
-<span id="cb159-2"><a href="#cb159-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
-<span id="cb159-3"><a href="#cb159-3" aria-hidden="true" tabindex="-1"></a>foo(x, y);  <span class="co">// compile error.</span></span>
-<span id="cb159-4"><a href="#cb159-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb159-5"><a href="#cb159-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>( <span class="kw">auto</span> e = foo(a,b); e == <span class="dv">0</span>) { <span class="co">// no compile error</span></span>
-<span id="cb159-6"><a href="#cb159-6" aria-hidden="true" tabindex="-1"></a><span class="co">// success</span></span>
-<span id="cb159-7"><a href="#cb159-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb159-8"><a href="#cb159-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> {</span>
-<span id="cb159-9"><a href="#cb159-9" aria-hidden="true" tabindex="-1"></a><span class="co">// handle errors</span></span>
-<span id="cb159-10"><a href="#cb159-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb158-1"><a href="#cb158-1" aria-hidden="true" tabindex="-1"></a>[[<span class="at">nodiscard</span>]] errnum foo( <span class="dt">int</span> a, <span class="dt">int</span> b);</span>
+<span id="cb158-2"><a href="#cb158-2" aria-hidden="true" tabindex="-1"></a>. . .</span>
+<span id="cb158-3"><a href="#cb158-3" aria-hidden="true" tabindex="-1"></a>foo(x, y);  <span class="co">// compile error.</span></span>
+<span id="cb158-4"><a href="#cb158-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb158-5"><a href="#cb158-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>( <span class="kw">auto</span> e = foo(a,b); e == <span class="dv">0</span>) { <span class="co">// no compile error</span></span>
+<span id="cb158-6"><a href="#cb158-6" aria-hidden="true" tabindex="-1"></a><span class="co">// success</span></span>
+<span id="cb158-7"><a href="#cb158-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb158-8"><a href="#cb158-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> {</span>
+<span id="cb158-9"><a href="#cb158-9" aria-hidden="true" tabindex="-1"></a><span class="co">// handle errors</span></span>
+<span id="cb158-10"><a href="#cb158-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In addition, the C++ library provides mechanism to extend the return type of a function with extra values for denoting an error. The simplest case is <code class="sourceCode cpp"><span class="bu">std::</span>optional&lt;T&gt;</code> that extends <code class="sourceCode cpp">T</code> with an “empty” state. Callers must check the result of functions returning an <code class="sourceCode cpp">optional</code> for the empty state, before accessing its value. This increases the chances that a reported error is detected by the caller. If additional information of the error has to be returned to the caller <code class="sourceCode cpp"><span class="bu">std::</span>variant&lt;T,AnErrorCode&gt;</code> can be used instead.</p>
 <p>C++ offers a set of library-defined exceptions for error conditions that may be detected by checks that are performed by the standard library. In addition, the programmer may define exceptions that are appropriate for their application. These exceptions are handled using an exception handler. Exceptions may be handled in the environment where the exception occurs or may be propagated out to an enclosing scope. Exceptions that are never handled in the program result in abnormal termination of the application. In this case, it is implementation-defined whether the destruction of local objects (stack unwinding) occurs. An unhandled exception that occurs in a thread also results in the abnormal termination of the application. See 6.62 Concurrency - Premature Termination [CGS] for issues related to thread or process termination.</p>
 <h3 id="guidance-to-language-users">6.36.2 Guidance to language users</h3>
@@ -2560,17 +2558,17 @@ return foo; // matches global foo not base&lt;T&gt;::foo
 </ul>
 <p>While using template greatly increases type safety, there can be requirements on template arguments that can neither be specified by concepts nor checked by a compiler. For example, sorting elements requires the comparison function to provide a <em>strict weak ordering</em> which is a property of the values of the type to be sorted by which are impossible to check at compile time for all possible value combinations.</p>
 <p>C++ provides means to restrict template arguments. One is to use concepts, that can prevent instantiating a template, but allow for substituting it with an alternative. A second means is to use <code class="sourceCode cpp"><span class="kw">static_assert</span></code> in a template’s definition to prevent certain instantiations.</p>
-<div class="sourceCode" id="cb164"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb164-1"><a href="#cb164-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
-<span id="cb164-2"><a href="#cb164-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> wrapper {</span>
-<span id="cb164-3"><a href="#cb164-3" aria-hidden="true" tabindex="-1"></a>T x;</span>
-<span id="cb164-4"><a href="#cb164-4" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span>(<span class="kw">not</span> (<span class="bu">std::</span>is_pointer_v&lt;T&gt; || <span class="bu">std::</span>is_reference_v&lt;T&gt;));</span>
-<span id="cb164-5"><a href="#cb164-5" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb164-6"><a href="#cb164-6" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
-<span id="cb164-7"><a href="#cb164-7" aria-hidden="true" tabindex="-1"></a>wrapper(T )-&gt;wrapper&lt;T&gt;;</span>
-<span id="cb164-8"><a href="#cb164-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb164-9"><a href="#cb164-9" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&gt; w{<span class="dv">42</span>};</span>
-<span id="cb164-10"><a href="#cb164-10" aria-hidden="true" tabindex="-1"></a>wrapper x{&amp;w}; <span class="co">// compile error due to static_assert</span></span>
-<span id="cb164-11"><a href="#cb164-11" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&amp;&gt;{}; <span class="co">// compile error due to static_assert</span></span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> wrapper {</span>
+<span id="cb163-3"><a href="#cb163-3" aria-hidden="true" tabindex="-1"></a>T x;</span>
+<span id="cb163-4"><a href="#cb163-4" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span>(<span class="kw">not</span> (<span class="bu">std::</span>is_pointer_v&lt;T&gt; || <span class="bu">std::</span>is_reference_v&lt;T&gt;));</span>
+<span id="cb163-5"><a href="#cb163-5" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb163-6"><a href="#cb163-6" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb163-7"><a href="#cb163-7" aria-hidden="true" tabindex="-1"></a>wrapper(T )-&gt;wrapper&lt;T&gt;;</span>
+<span id="cb163-8"><a href="#cb163-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-9"><a href="#cb163-9" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&gt; w{<span class="dv">42</span>};</span>
+<span id="cb163-10"><a href="#cb163-10" aria-hidden="true" tabindex="-1"></a>wrapper x{&amp;w}; <span class="co">// compile error due to static_assert</span></span>
+<span id="cb163-11"><a href="#cb163-11" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&amp;&gt;{}; <span class="co">// compile error due to static_assert</span></span></code></pre></div>
 <p>The generic nature of templates require a more elaborate approach to unit tests. Such tests should provide instantiations of the base template and all provided explicit template specializations to ensure that each code path is actually tested. Tests for non-compilability of suppressed instantiations, i.e., through concepts or static_assert, are also beneficial.</p>
 <p>Templates allow to reduce the amount of boilerplate code to write, e.g., by providing consistent definitions of operators. However, defining operator function templates in namespace scope can greatly influence compile times due to potential participation in the overload set, whenever the operator is used in code. In addition such generic operator functions might be picked up in inappropriate places causing programmer confusion. Implementing them as hidden friends in a CRTP base class instead makes using operator function templates feasible (see <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>).</p>
 <pre><code>template &lt;typename T&gt;
@@ -2685,21 +2683,21 @@ interface to access them that preserves class invariants.</li>
 <h2 id="BLP">6.42 Violations of the Liskov Substitution Principle or the Contract Model [BLP]</h2>
 <h3 id="applicability-to-language">6.42.1 Applicability to language</h3>
 <p>This vulnerability applies to C++ . It can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning. An example is provided below.</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb173-1"><a href="#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Base  {</span>
-<span id="cb173-2"><a href="#cb173-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span>:</span>
-<span id="cb173-3"><a href="#cb173-3" aria-hidden="true" tabindex="-1"></a>     <span class="kw">virtual</span> <span class="dt">int</span> function_to_override( <span class="dt">int</span> x ) = <span class="dv">0</span>;</span>
-<span id="cb173-4"><a href="#cb173-4" aria-hidden="true" tabindex="-1"></a>     <span class="co">// ...</span></span>
-<span id="cb173-5"><a href="#cb173-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb173-6"><a href="#cb173-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span>:</span>
-<span id="cb173-7"><a href="#cb173-7" aria-hidden="true" tabindex="-1"></a>     <span class="dt">int</span> interface_to_overridden_function( <span class="dt">int</span> x ) {</span>
-<span id="cb173-8"><a href="#cb173-8" aria-hidden="true" tabindex="-1"></a>           check_preconditions( x );</span>
-<span id="cb173-9"><a href="#cb173-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">const</span> <span class="kw">auto</span> saved = data_saved_for_postcondition( x );</span>
-<span id="cb173-10"><a href="#cb173-10" aria-hidden="true" tabindex="-1"></a>           <span class="kw">auto</span> result = function_to_override( x );</span>
-<span id="cb173-11"><a href="#cb173-11" aria-hidden="true" tabindex="-1"></a>           check_postconditions( x, saved, result );</span>
-<span id="cb173-12"><a href="#cb173-12" aria-hidden="true" tabindex="-1"></a>           <span class="cf">return</span> result;</span>
-<span id="cb173-13"><a href="#cb173-13" aria-hidden="true" tabindex="-1"></a>         }</span>
-<span id="cb173-14"><a href="#cb173-14" aria-hidden="true" tabindex="-1"></a>     <span class="co">// ...      </span></span>
-<span id="cb173-15"><a href="#cb173-15" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb172-1"><a href="#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Base  {</span>
+<span id="cb172-2"><a href="#cb172-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span>:</span>
+<span id="cb172-3"><a href="#cb172-3" aria-hidden="true" tabindex="-1"></a>     <span class="kw">virtual</span> <span class="dt">int</span> function_to_override( <span class="dt">int</span> x ) = <span class="dv">0</span>;</span>
+<span id="cb172-4"><a href="#cb172-4" aria-hidden="true" tabindex="-1"></a>     <span class="co">// ...</span></span>
+<span id="cb172-5"><a href="#cb172-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-6"><a href="#cb172-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span>:</span>
+<span id="cb172-7"><a href="#cb172-7" aria-hidden="true" tabindex="-1"></a>     <span class="dt">int</span> interface_to_overridden_function( <span class="dt">int</span> x ) {</span>
+<span id="cb172-8"><a href="#cb172-8" aria-hidden="true" tabindex="-1"></a>           check_preconditions( x );</span>
+<span id="cb172-9"><a href="#cb172-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">const</span> <span class="kw">auto</span> saved = data_saved_for_postcondition( x );</span>
+<span id="cb172-10"><a href="#cb172-10" aria-hidden="true" tabindex="-1"></a>           <span class="kw">auto</span> result = function_to_override( x );</span>
+<span id="cb172-11"><a href="#cb172-11" aria-hidden="true" tabindex="-1"></a>           check_postconditions( x, saved, result );</span>
+<span id="cb172-12"><a href="#cb172-12" aria-hidden="true" tabindex="-1"></a>           <span class="cf">return</span> result;</span>
+<span id="cb172-13"><a href="#cb172-13" aria-hidden="true" tabindex="-1"></a>         }</span>
+<span id="cb172-14"><a href="#cb172-14" aria-hidden="true" tabindex="-1"></a>     <span class="co">// ...      </span></span>
+<span id="cb172-15"><a href="#cb172-15" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.42.2 Guidance to language users</h3>
 <ul>
 <li><p>Obey all preconditions and postconditions of each member function, whether they are specified in the language or not.</p></li>
@@ -2715,30 +2713,30 @@ interface to access them that preserves class invariants.</li>
 <h2 id="redispatching-pph">6.43 Redispatching [PPH]</h2>
 <h3 id="applicability-to-language">6.43.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.43 exists in C++ for virtual functions, except for constructors and destructors which are not dispatching. An example of the infinite recursion is:</p>
-<div class="sourceCode" id="cb174"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb174-1"><a href="#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb174-2"><a href="#cb174-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb174-3"><a href="#cb174-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A {</span>
-<span id="cb174-4"><a href="#cb174-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
-<span id="cb174-5"><a href="#cb174-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> f() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::f()</span><span class="sc">\n</span><span class="st">&quot;</span>; }</span>
-<span id="cb174-6"><a href="#cb174-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> g() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::g()</span><span class="sc">\n</span><span class="st">&quot;</span>; A::f(); }  <span class="co">//call to f() will not dispatch.</span></span>
-<span id="cb174-7"><a href="#cb174-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> h() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::h()</span><span class="sc">\n</span><span class="st">&quot;</span>; }</span>
-<span id="cb174-8"><a href="#cb174-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> i() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::i()</span><span class="sc">\n</span><span class="st">&quot;</span>; h(); } <span class="co">//call to h() will dispatch</span></span>
-<span id="cb174-9"><a href="#cb174-9" aria-hidden="true" tabindex="-1"></a>                                                      <span class="co">//showing the vulnerability</span></span>
-<span id="cb174-10"><a href="#cb174-10" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb174-11"><a href="#cb174-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb174-12"><a href="#cb174-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B : <span class="kw">public</span> A {</span>
-<span id="cb174-13"><a href="#cb174-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
-<span id="cb174-14"><a href="#cb174-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> f() <span class="kw">override</span> { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;B::f()</span><span class="sc">\n</span><span class="st">&quot;</span>; g(); }</span>
-<span id="cb174-15"><a href="#cb174-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> h() <span class="kw">override</span> { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;B::h()</span><span class="sc">\n</span><span class="st">&quot;</span>; i(); }</span>
-<span id="cb174-16"><a href="#cb174-16" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb174-17"><a href="#cb174-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb174-18"><a href="#cb174-18" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
-<span id="cb174-19"><a href="#cb174-19" aria-hidden="true" tabindex="-1"></a>    B b;</span>
-<span id="cb174-20"><a href="#cb174-20" aria-hidden="true" tabindex="-1"></a>    A * pA = &amp;b;</span>
-<span id="cb174-21"><a href="#cb174-21" aria-hidden="true" tabindex="-1"></a>    pA-&gt;f(); <span class="co">// no problem</span></span>
-<span id="cb174-22"><a href="#cb174-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;---</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
-<span id="cb174-23"><a href="#cb174-23" aria-hidden="true" tabindex="-1"></a>    pA-&gt;h(); <span class="co">// infinite recursion</span></span>
-<span id="cb174-24"><a href="#cb174-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb173-1"><a href="#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb173-2"><a href="#cb173-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb173-3"><a href="#cb173-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A {</span>
+<span id="cb173-4"><a href="#cb173-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
+<span id="cb173-5"><a href="#cb173-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> f() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::f()</span><span class="sc">\n</span><span class="st">&quot;</span>; }</span>
+<span id="cb173-6"><a href="#cb173-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> g() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::g()</span><span class="sc">\n</span><span class="st">&quot;</span>; A::f(); }  <span class="co">//call to f() will not dispatch.</span></span>
+<span id="cb173-7"><a href="#cb173-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> h() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::h()</span><span class="sc">\n</span><span class="st">&quot;</span>; }</span>
+<span id="cb173-8"><a href="#cb173-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> i() { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;A::i()</span><span class="sc">\n</span><span class="st">&quot;</span>; h(); } <span class="co">//call to h() will dispatch</span></span>
+<span id="cb173-9"><a href="#cb173-9" aria-hidden="true" tabindex="-1"></a>                                                      <span class="co">//showing the vulnerability</span></span>
+<span id="cb173-10"><a href="#cb173-10" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb173-11"><a href="#cb173-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb173-12"><a href="#cb173-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B : <span class="kw">public</span> A {</span>
+<span id="cb173-13"><a href="#cb173-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
+<span id="cb173-14"><a href="#cb173-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> f() <span class="kw">override</span> { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;B::f()</span><span class="sc">\n</span><span class="st">&quot;</span>; g(); }</span>
+<span id="cb173-15"><a href="#cb173-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> h() <span class="kw">override</span> { <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;B::h()</span><span class="sc">\n</span><span class="st">&quot;</span>; i(); }</span>
+<span id="cb173-16"><a href="#cb173-16" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb173-17"><a href="#cb173-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb173-18"><a href="#cb173-18" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
+<span id="cb173-19"><a href="#cb173-19" aria-hidden="true" tabindex="-1"></a>    B b;</span>
+<span id="cb173-20"><a href="#cb173-20" aria-hidden="true" tabindex="-1"></a>    A * pA = &amp;b;</span>
+<span id="cb173-21"><a href="#cb173-21" aria-hidden="true" tabindex="-1"></a>    pA-&gt;f(); <span class="co">// no problem</span></span>
+<span id="cb173-22"><a href="#cb173-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;---</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
+<span id="cb173-23"><a href="#cb173-23" aria-hidden="true" tabindex="-1"></a>    pA-&gt;h(); <span class="co">// infinite recursion</span></span>
+<span id="cb173-24"><a href="#cb173-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In C++, the call to a member function can be qualified, as shown in the above example, and avoids the vulnerability.</p>
 <h3 id="guidance-to-language-users">6.43.2 Guidance to language users</h3>
 <ul>
@@ -2760,26 +2758,26 @@ interface to access them that preserves class invariants.</li>
 <p>Developers should be aware that virtual member functions can be overridden in derived classes, even if they are private.</p>
 </blockquote>
 <p>Given the following:</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Z { <span class="dt">int</span> z; <span class="kw">virtual</span> ~Z() { } };</span>
-<span id="cb175-2"><a href="#cb175-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Y { <span class="dt">int</span> y; <span class="kw">virtual</span> ~Y() { } };</span>
-<span id="cb175-3"><a href="#cb175-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A : Z { <span class="dt">int</span> a; };</span>
-<span id="cb175-4"><a href="#cb175-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> B : <span class="kw">virtual</span> A { <span class="dt">int</span> b; };</span>
-<span id="cb175-5"><a href="#cb175-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> C : <span class="kw">virtual</span> A, Y { <span class="dt">int</span> c; };</span>
-<span id="cb175-6"><a href="#cb175-6" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> D : B, C { <span class="dt">int</span> d; };</span>
-<span id="cb175-7"><a href="#cb175-7" aria-hidden="true" tabindex="-1"></a>D d_inst;</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb174-1"><a href="#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Z { <span class="dt">int</span> z; <span class="kw">virtual</span> ~Z() { } };</span>
+<span id="cb174-2"><a href="#cb174-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Y { <span class="dt">int</span> y; <span class="kw">virtual</span> ~Y() { } };</span>
+<span id="cb174-3"><a href="#cb174-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A : Z { <span class="dt">int</span> a; };</span>
+<span id="cb174-4"><a href="#cb174-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> B : <span class="kw">virtual</span> A { <span class="dt">int</span> b; };</span>
+<span id="cb174-5"><a href="#cb174-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> C : <span class="kw">virtual</span> A, Y { <span class="dt">int</span> c; };</span>
+<span id="cb174-6"><a href="#cb174-6" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> D : B, C { <span class="dt">int</span> d; };</span>
+<span id="cb174-7"><a href="#cb174-7" aria-hidden="true" tabindex="-1"></a>D d_inst;</span></code></pre></div>
 <p>then these examples demonstrate upcasts, downcasts, and crosscasts:</p>
 <p><strong>Upcasts:</strong></p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb176-1"><a href="#cb176-1" aria-hidden="true" tabindex="-1"></a>B* b_ptr = &amp;d_inst; <span class="co">// implicit</span></span>
-<span id="cb176-2"><a href="#cb176-2" aria-hidden="true" tabindex="-1"></a>C&amp; c_ref = d_inst; <span class="co">// implicit</span></span>
-<span id="cb176-3"><a href="#cb176-3" aria-hidden="true" tabindex="-1"></a>Z* z_ptr = <span class="kw">static_cast</span>&lt;Z*&gt;(&amp;d_inst);</span>
-<span id="cb176-4"><a href="#cb176-4" aria-hidden="true" tabindex="-1"></a>Y* y_ptr = <span class="kw">dynamic_cast</span>&lt;Y*&gt;(&amp;d_inst);</span></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a>B* b_ptr = &amp;d_inst; <span class="co">// implicit</span></span>
+<span id="cb175-2"><a href="#cb175-2" aria-hidden="true" tabindex="-1"></a>C&amp; c_ref = d_inst; <span class="co">// implicit</span></span>
+<span id="cb175-3"><a href="#cb175-3" aria-hidden="true" tabindex="-1"></a>Z* z_ptr = <span class="kw">static_cast</span>&lt;Z*&gt;(&amp;d_inst);</span>
+<span id="cb175-4"><a href="#cb175-4" aria-hidden="true" tabindex="-1"></a>Y* y_ptr = <span class="kw">dynamic_cast</span>&lt;Y*&gt;(&amp;d_inst);</span></code></pre></div>
 <p><strong>Downcasts:</strong></p>
-<div class="sourceCode" id="cb177"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a>D&amp; d_ref = <span class="kw">dynamic_cast</span>&lt;D&amp;&gt;(*y_ptr);</span>
-<span id="cb177-2"><a href="#cb177-2" aria-hidden="true" tabindex="-1"></a>D* d_ptr = <span class="kw">static_cast</span>&lt;D*&gt;(b_ptr);</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb176-1"><a href="#cb176-1" aria-hidden="true" tabindex="-1"></a>D&amp; d_ref = <span class="kw">dynamic_cast</span>&lt;D&amp;&gt;(*y_ptr);</span>
+<span id="cb176-2"><a href="#cb176-2" aria-hidden="true" tabindex="-1"></a>D* d_ptr = <span class="kw">static_cast</span>&lt;D*&gt;(b_ptr);</span></code></pre></div>
 <p><strong>Crosscasts:</strong></p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb178-1"><a href="#cb178-1" aria-hidden="true" tabindex="-1"></a>C* c_ptr = <span class="kw">dynamic_cast</span>&lt;C*&gt;(b_ptr);</span>
-<span id="cb178-2"><a href="#cb178-2" aria-hidden="true" tabindex="-1"></a>Y* y_ptr2 = <span class="kw">dynamic_cast</span>&lt;Y*&gt;(b_ptr);</span>
-<span id="cb178-3"><a href="#cb178-3" aria-hidden="true" tabindex="-1"></a>C* c_ptr = <span class="kw">static_cast</span>&lt;C*&gt; (<span class="kw">static_cast</span>&lt;D*&gt;(b_ptr));</span></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a>C* c_ptr = <span class="kw">dynamic_cast</span>&lt;C*&gt;(b_ptr);</span>
+<span id="cb177-2"><a href="#cb177-2" aria-hidden="true" tabindex="-1"></a>Y* y_ptr2 = <span class="kw">dynamic_cast</span>&lt;Y*&gt;(b_ptr);</span>
+<span id="cb177-3"><a href="#cb177-3" aria-hidden="true" tabindex="-1"></a>C* c_ptr = <span class="kw">static_cast</span>&lt;C*&gt; (<span class="kw">static_cast</span>&lt;D*&gt;(b_ptr));</span></code></pre></div>
 <p>and notes the following about such:</p>
 <p>Upcasts:</p>
 <ul>
@@ -2878,17 +2876,17 @@ execution boundaries</p></li>
 <h3 id="applicability-to-language">6.50.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.50 exists for C++. In particular the issue of the failing dynamic initialization of namespace-scope objects exists in C++.</p>
 <p>When dynamic initialization of a namespace-scope object fails with an exception, the exception cannot be caught and the program is terminated. Function-scope static objects, in contrast, are initialized the first time execution passes through the declaration. Using function-scope static objects in preference to dynamic initialization ensures that there is always an enclosing function that could catch the exception.</p>
-<div class="sourceCode" id="cb182"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb182-1"><a href="#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="dt">exception_prone_type</span> troubling_object;</span>
-<span id="cb182-2"><a href="#cb182-2" aria-hidden="true" tabindex="-1"></a><span class="co">// An exception from the constructor could cause termination.</span></span>
-<span id="cb182-3"><a href="#cb182-3" aria-hidden="true" tabindex="-1"></a><span class="co">// The following function always returns a reference to the same object,</span></span>
-<span id="cb182-4"><a href="#cb182-4" aria-hidden="true" tabindex="-1"></a><span class="co">// which is initialized the first time this function is called.</span></span>
-<span id="cb182-5"><a href="#cb182-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb182-6"><a href="#cb182-6" aria-hidden="true" tabindex="-1"></a><span class="co">// If initialization fails, it will be retried on the next call.</span></span>
-<span id="cb182-7"><a href="#cb182-7" aria-hidden="true" tabindex="-1"></a><span class="dt">exception_prone_type</span>&amp; safer_object()</span>
-<span id="cb182-8"><a href="#cb182-8" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb182-9"><a href="#cb182-9" aria-hidden="true" tabindex="-1"></a>   <span class="at">static</span> <span class="dt">exception_prone_type</span> the_safer_object;</span>
-<span id="cb182-10"><a href="#cb182-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
-<span id="cb182-11"><a href="#cb182-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb181-1"><a href="#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="dt">exception_prone_type</span> troubling_object;</span>
+<span id="cb181-2"><a href="#cb181-2" aria-hidden="true" tabindex="-1"></a><span class="co">// An exception from the constructor could cause termination.</span></span>
+<span id="cb181-3"><a href="#cb181-3" aria-hidden="true" tabindex="-1"></a><span class="co">// The following function always returns a reference to the same object,</span></span>
+<span id="cb181-4"><a href="#cb181-4" aria-hidden="true" tabindex="-1"></a><span class="co">// which is initialized the first time this function is called.</span></span>
+<span id="cb181-5"><a href="#cb181-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb181-6"><a href="#cb181-6" aria-hidden="true" tabindex="-1"></a><span class="co">// If initialization fails, it will be retried on the next call.</span></span>
+<span id="cb181-7"><a href="#cb181-7" aria-hidden="true" tabindex="-1"></a><span class="dt">exception_prone_type</span>&amp; safer_object()</span>
+<span id="cb181-8"><a href="#cb181-8" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb181-9"><a href="#cb181-9" aria-hidden="true" tabindex="-1"></a>   <span class="at">static</span> <span class="dt">exception_prone_type</span> the_safer_object;</span>
+<span id="cb181-10"><a href="#cb181-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
+<span id="cb181-11"><a href="#cb181-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.50.2 Guidance to language users</h3>
 <ul>
 <li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type. Note that all destructors are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
@@ -2901,19 +2899,19 @@ execution boundaries</p></li>
 <p>The C++ pre-processor allows the use of macros that are text-replaced before compilation.</p>
 <p>Function-like macros look similar to functions but have different semantics. Because the arguments are text-replaced, expressions passed to a function-like macro may be evaluated multiple times. This can result in unintended and undefined behaviour if the arguments have side effects or are pre-processor directives. Additionally, the arguments and body of function-like macros should be fully parenthesized to avoid unintended and undefined behaviour.</p>
 <p>The following code example demonstrates undefined behaviour when a function-like macro is called with arguments that have side-effects (in this case, the increment operator) .</p>
-<div class="sourceCode" id="cb183"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define CUBE</span>(X)<span class="pp"> </span>((X)<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>(X)<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>(X))</span>
-<span id="cb183-2"><a href="#cb183-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
-<span id="cb183-3"><a href="#cb183-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = <span class="dv">2</span>;</span>
-<span id="cb183-4"><a href="#cb183-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">81</span> / CUBE(++i);</span></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb182-1"><a href="#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define CUBE</span>(X)<span class="pp"> </span>((X)<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>(X)<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>(X))</span>
+<span id="cb182-2"><a href="#cb182-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
+<span id="cb182-3"><a href="#cb182-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i = <span class="dv">2</span>;</span>
+<span id="cb182-4"><a href="#cb182-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">81</span> / CUBE(++i);</span></code></pre></div>
 <p>The above example could expand to:</p>
-<div class="sourceCode" id="cb184"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">81</span> / ((++i) * (++i) * (++i));</span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">81</span> / ((++i) * (++i) * (++i));</span></code></pre></div>
 <p>which has undefined behaviour so this macro expansion is difficult to predict.</p>
 <p>Another mechanism of failure can occur when the arguments within the body of a function-like macro are not fully parenthesized. The following example shows the CUBE macro without parenthesized arguments.</p>
-<div class="sourceCode" id="cb185"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb185-1"><a href="#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define CUBE</span>(X)<span class="pp"> </span>(X<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>X<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>X)</span>
-<span id="cb185-2"><a href="#cb185-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
-<span id="cb185-3"><a href="#cb185-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = CUBE(<span class="dv">2</span> + <span class="dv">1</span>);</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define CUBE</span>(X)<span class="pp"> </span>(X<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>X<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>X)</span>
+<span id="cb184-2"><a href="#cb184-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
+<span id="cb184-3"><a href="#cb184-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = CUBE(<span class="dv">2</span> + <span class="dv">1</span>);</span></code></pre></div>
 <p>This example expands to:</p>
-<div class="sourceCode" id="cb186"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb186-1"><a href="#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb185-1"><a href="#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
 <h3 id="guidance-to-language-users">6.51.2 Guidance to language users</h3>
 <ul>
@@ -3119,18 +3117,18 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <h3 id="applicability-to-language">6.64.1 Applicability to language</h3>
 <p>C++ inherits the C libraries which provide a large family of input and output functions that use a control string to interpret the data read or format the output. These strings include all the feature described in ISO/IEC TR 24772-1:2019 clause 6.64.1.</p>
 <p>C++ provides type-safe alternatives for input/output, which do not use format strings and which should be used in preference, such as</p>
-<div class="sourceCode" id="cb189"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> aNumber{};</span>
-<span id="cb189-2"><a href="#cb189-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="bu">std::</span>cin){ <span class="co">// is input still available</span></span>
-<span id="cb189-3"><a href="#cb189-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;Enter a whole number, please:&quot;</span>;</span>
-<span id="cb189-4"><a href="#cb189-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="bu">std::</span>cin &gt;&gt; aNumber) { <span class="co">// no format string needed</span></span>
-<span id="cb189-5"><a href="#cb189-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &gt;&gt; <span class="st">&quot;Thank you, the number can be represented as &quot;</span></span>
-<span id="cb189-6"><a href="#cb189-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="bu">std::</span>format(<span class="st">&quot;0b</span><span class="sc">{0:b}</span><span class="st"> </span><span class="sc">{0:d}</span><span class="st"> 0</span><span class="sc">{0:o}</span><span class="st"> 0x</span><span class="sc">{0:x}</span><span class="st">&quot;</span>, aNumber);</span>
-<span id="cb189-7"><a href="#cb189-7" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> { <span class="co">// input failed</span></span>
-<span id="cb189-8"><a href="#cb189-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cin.clear();  <span class="co">// re-enable input</span></span>
-<span id="cb189-9"><a href="#cb189-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string line;</span>
-<span id="cb189-10"><a href="#cb189-10" aria-hidden="true" tabindex="-1"></a>    getline(<span class="bu">std::</span>cin,line); <span class="co">// skip to eol</span></span>
-<span id="cb189-11"><a href="#cb189-11" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb189-12"><a href="#cb189-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb188-1"><a href="#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> aNumber{};</span>
+<span id="cb188-2"><a href="#cb188-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="bu">std::</span>cin){ <span class="co">// is input still available</span></span>
+<span id="cb188-3"><a href="#cb188-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;Enter a whole number, please:&quot;</span>;</span>
+<span id="cb188-4"><a href="#cb188-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="bu">std::</span>cin &gt;&gt; aNumber) { <span class="co">// no format string needed</span></span>
+<span id="cb188-5"><a href="#cb188-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &gt;&gt; <span class="st">&quot;Thank you, the number can be represented as &quot;</span></span>
+<span id="cb188-6"><a href="#cb188-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="bu">std::</span>format(<span class="st">&quot;0b</span><span class="sc">{0:b}</span><span class="st"> </span><span class="sc">{0:d}</span><span class="st"> 0</span><span class="sc">{0:o}</span><span class="st"> 0x</span><span class="sc">{0:x}</span><span class="st">&quot;</span>, aNumber);</span>
+<span id="cb188-7"><a href="#cb188-7" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> { <span class="co">// input failed</span></span>
+<span id="cb188-8"><a href="#cb188-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cin.clear();  <span class="co">// re-enable input</span></span>
+<span id="cb188-9"><a href="#cb188-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string line;</span>
+<span id="cb188-10"><a href="#cb188-10" aria-hidden="true" tabindex="-1"></a>    getline(<span class="bu">std::</span>cin,line); <span class="co">// skip to eol</span></span>
+<span id="cb188-11"><a href="#cb188-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb188-12"><a href="#cb188-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In addition, operator overloading of output operators allows to extend formatting abilities to user-defined types.</p>
 <h3 id="guidance-to-language-users">6.64.2 Guidance to language users</h3>
 <p>Avoid the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p>
@@ -3142,127 +3140,127 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime:</p>
 <p><code class="sourceCode cpp"><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;</code></p>
 <p>A object that is not <code class="sourceCode cpp"><span class="at">const</span></code>-qualified can be accessed through a path that is <code class="sourceCode cpp"><span class="at">const</span></code>-qualified:</p>
-<div class="sourceCode" id="cb190"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb190-1"><a href="#cb190-1" aria-hidden="true" tabindex="-1"></a>  T k = <span class="dv">0</span>;</span>
-<span id="cb190-2"><a href="#cb190-2" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span> &amp; j = k;                <span class="co">// &#39;j&#39; is a const reference to &#39;k&#39;</span></span>
-<span id="cb190-3"><a href="#cb190-3" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span> * p = &amp;k;               <span class="co">// &#39;p&#39; is a pointer to const &#39;k&#39;</span></span>
-<span id="cb190-4"><a href="#cb190-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const_cast</span>&lt;T <span class="at">const</span> &amp;&gt;(k);       <span class="co">// The type of the expression is const</span></span></code></pre></div>
+<div class="sourceCode" id="cb189"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a>  T k = <span class="dv">0</span>;</span>
+<span id="cb189-2"><a href="#cb189-2" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span> &amp; j = k;                <span class="co">// &#39;j&#39; is a const reference to &#39;k&#39;</span></span>
+<span id="cb189-3"><a href="#cb189-3" aria-hidden="true" tabindex="-1"></a>  T <span class="at">const</span> * p = &amp;k;               <span class="co">// &#39;p&#39; is a pointer to const &#39;k&#39;</span></span>
+<span id="cb189-4"><a href="#cb189-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const_cast</span>&lt;T <span class="at">const</span> &amp;&gt;(k);       <span class="co">// The type of the expression is const</span></span></code></pre></div>
 <p>The checking for the correctness of <code class="sourceCode cpp"><span class="at">const</span></code> is enforced based on the access-path and not the type of the target object. For example, the following are ill-formed as the access path of the left-hand expression is <code class="sourceCode cpp"><span class="at">const</span></code>-qualified:</p>
-<div class="sourceCode" id="cb191"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb191-1"><a href="#cb191-1" aria-hidden="true" tabindex="-1"></a>  i = <span class="dv">0</span>; <span class="co">// T const i;</span></span>
-<span id="cb191-2"><a href="#cb191-2" aria-hidden="true" tabindex="-1"></a>  j = <span class="dv">0</span>; <span class="co">// T const &amp;j</span></span>
-<span id="cb191-3"><a href="#cb191-3" aria-hidden="true" tabindex="-1"></a>  *p = <span class="dv">0</span>; <span class="co">// T const *p</span></span>
-<span id="cb191-4"><a href="#cb191-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const_cast</span>&lt;T <span class="at">const</span> &amp;&gt;(k) = <span class="dv">0</span>; <span class="co">// T k i.e. not const</span></span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb190-1"><a href="#cb190-1" aria-hidden="true" tabindex="-1"></a>  i = <span class="dv">0</span>; <span class="co">// T const i;</span></span>
+<span id="cb190-2"><a href="#cb190-2" aria-hidden="true" tabindex="-1"></a>  j = <span class="dv">0</span>; <span class="co">// T const &amp;j</span></span>
+<span id="cb190-3"><a href="#cb190-3" aria-hidden="true" tabindex="-1"></a>  *p = <span class="dv">0</span>; <span class="co">// T const *p</span></span>
+<span id="cb190-4"><a href="#cb190-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const_cast</span>&lt;T <span class="at">const</span> &amp;&gt;(k) = <span class="dv">0</span>; <span class="co">// T k i.e. not const</span></span></code></pre></div>
 <p>Note that the object <code class="sourceCode cpp">k</code> referred to by <code class="sourceCode cpp">j</code>, <code class="sourceCode cpp">*p</code> and the <code class="sourceCode cpp"><span class="kw">const_cast</span>,</code> is not constant. In each case the access path could be changed to remove <code class="sourceCode cpp"><span class="at">const</span></code> making the program well-formed: <code class="sourceCode cpp"><span class="kw">const_cast</span>&lt;T&amp;&gt; (j) = <span class="dv">0</span>; <span class="co">// well-formed</span></code></p>
 <p>While it is possible to remove the const-qualification for an access path, attempting to modify a const object this way is undefined-behavior(see <span id="EWF">Undefined Behavior [EWF]</span>) : <code class="sourceCode cpp"><span class="kw">const_cast</span>&lt;T&amp;&gt; (i) = <span class="dv">0</span>; <span class="co">// undefined behavior</span></code></p>
 <p>We distinguish between qualifications on the pointer’s type (pointer type) and qualifications on the type being referenced (pointer type).</p>
 <p>A pointer type can be qualified as <code class="sourceCode cpp"><span class="at">const</span></code>, however the qualification only applies to the pointer type and not the pointee’s type. A reference type is implicitly immutable, only the referred type can be <code class="sourceCode cpp"><span class="at">const</span></code> qualified.</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb192-1"><a href="#cb192-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T = <span class="dt">int</span>;</span>
-<span id="cb192-2"><a href="#cb192-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T1 = T &amp;;</span>
-<span id="cb192-3"><a href="#cb192-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T2 = T *;</span>
-<span id="cb192-4"><a href="#cb192-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> S1 = T1 <span class="at">const</span>;  <span class="co">// The const is ignored, S1 has type &#39;T &amp;&#39;</span></span>
-<span id="cb192-5"><a href="#cb192-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> S2 = T2 <span class="at">const</span>;  <span class="co">// The const applies to the pointer type,</span></span>
-<span id="cb192-6"><a href="#cb192-6" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// S2 has type &#39;T * const&#39;</span></span>
-<span id="cb192-7"><a href="#cb192-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-8"><a href="#cb192-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> foo (S1 s1, S2 s2)</span>
-<span id="cb192-9"><a href="#cb192-9" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb192-10"><a href="#cb192-10" aria-hidden="true" tabindex="-1"></a>    s1 = <span class="dv">0</span>;            <span class="co">// well-formed</span></span>
-<span id="cb192-11"><a href="#cb192-11" aria-hidden="true" tabindex="-1"></a>    *s2 = <span class="dv">0</span>;           <span class="co">// well-formed</span></span>
-<span id="cb192-12"><a href="#cb192-12" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="sourceCode" id="cb191"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb191-1"><a href="#cb191-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T = <span class="dt">int</span>;</span>
+<span id="cb191-2"><a href="#cb191-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T1 = T &amp;;</span>
+<span id="cb191-3"><a href="#cb191-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> T2 = T *;</span>
+<span id="cb191-4"><a href="#cb191-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> S1 = T1 <span class="at">const</span>;  <span class="co">// The const is ignored, S1 has type &#39;T &amp;&#39;</span></span>
+<span id="cb191-5"><a href="#cb191-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> S2 = T2 <span class="at">const</span>;  <span class="co">// The const applies to the pointer type,</span></span>
+<span id="cb191-6"><a href="#cb191-6" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// S2 has type &#39;T * const&#39;</span></span>
+<span id="cb191-7"><a href="#cb191-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-8"><a href="#cb191-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> foo (S1 s1, S2 s2)</span>
+<span id="cb191-9"><a href="#cb191-9" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb191-10"><a href="#cb191-10" aria-hidden="true" tabindex="-1"></a>    s1 = <span class="dv">0</span>;            <span class="co">// well-formed</span></span>
+<span id="cb191-11"><a href="#cb191-11" aria-hidden="true" tabindex="-1"></a>    *s2 = <span class="dv">0</span>;           <span class="co">// well-formed</span></span>
+<span id="cb191-12"><a href="#cb191-12" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <p>A common misconception is that a member function qualified with <code class="sourceCode cpp"><span class="at">const</span></code> cannot modify any of its members. The following badly defined class introduces a non-<code class="sourceCode cpp"><span class="at">const</span></code> access path to a potentially const object:</p>
-<div class="sourceCode" id="cb193"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
-<span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb193-3"><a href="#cb193-3" aria-hidden="true" tabindex="-1"></a>    A * pA;                <span class="co">// Pointer to non-const A</span></span>
-<span id="cb193-4"><a href="#cb193-4" aria-hidden="true" tabindex="-1"></a>    T array[<span class="dv">2</span>];            <span class="co">// Array of type T</span></span>
-<span id="cb193-5"><a href="#cb193-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-6"><a href="#cb193-6" aria-hidden="true" tabindex="-1"></a>    A () : pA{<span class="kw">this</span>}{}      <span class="co">// pA provides access path to non-const</span></span>
-<span id="cb193-7"><a href="#cb193-7" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// this.</span></span>
-<span id="cb193-8"><a href="#cb193-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-9"><a href="#cb193-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> f () <span class="at">const</span></span>
-<span id="cb193-10"><a href="#cb193-10" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb193-11"><a href="#cb193-11" aria-hidden="true" tabindex="-1"></a>      <span class="co">// pA = nullptr;     // ill-formed</span></span>
-<span id="cb193-12"><a href="#cb193-12" aria-hidden="true" tabindex="-1"></a>      <span class="co">// array[0] = 0;     // ill-formed</span></span>
-<span id="cb193-13"><a href="#cb193-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-14"><a href="#cb193-14" aria-hidden="true" tabindex="-1"></a>      pA-&gt;array[<span class="dv">0</span>] = <span class="dv">0</span>;    <span class="co">// compiles, but undefined behavior</span></span>
-<span id="cb193-15"><a href="#cb193-15" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// if executed on a const object</span></span>
-<span id="cb193-16"><a href="#cb193-16" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb193-17"><a href="#cb193-17" aria-hidden="true" tabindex="-1"></a>  };</span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb192-1"><a href="#cb192-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
+<span id="cb192-2"><a href="#cb192-2" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb192-3"><a href="#cb192-3" aria-hidden="true" tabindex="-1"></a>    A * pA;                <span class="co">// Pointer to non-const A</span></span>
+<span id="cb192-4"><a href="#cb192-4" aria-hidden="true" tabindex="-1"></a>    T array[<span class="dv">2</span>];            <span class="co">// Array of type T</span></span>
+<span id="cb192-5"><a href="#cb192-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-6"><a href="#cb192-6" aria-hidden="true" tabindex="-1"></a>    A () : pA{<span class="kw">this</span>}{}      <span class="co">// pA provides access path to non-const</span></span>
+<span id="cb192-7"><a href="#cb192-7" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// this.</span></span>
+<span id="cb192-8"><a href="#cb192-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-9"><a href="#cb192-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> f () <span class="at">const</span></span>
+<span id="cb192-10"><a href="#cb192-10" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb192-11"><a href="#cb192-11" aria-hidden="true" tabindex="-1"></a>      <span class="co">// pA = nullptr;     // ill-formed</span></span>
+<span id="cb192-12"><a href="#cb192-12" aria-hidden="true" tabindex="-1"></a>      <span class="co">// array[0] = 0;     // ill-formed</span></span>
+<span id="cb192-13"><a href="#cb192-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-14"><a href="#cb192-14" aria-hidden="true" tabindex="-1"></a>      pA-&gt;array[<span class="dv">0</span>] = <span class="dv">0</span>;    <span class="co">// compiles, but undefined behavior</span></span>
+<span id="cb192-15"><a href="#cb192-15" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// if executed on a const object</span></span>
+<span id="cb192-16"><a href="#cb192-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb192-17"><a href="#cb192-17" aria-hidden="true" tabindex="-1"></a>  };</span></code></pre></div>
 <p>In the const member function f, naming array directly results in a const-qualified access path and so an attempt to modify it is ill-formed. However, the type of pA is <code class="sourceCode cpp">A * <span class="at">const</span></code>, that is a <code class="sourceCode cpp"><span class="at">const</span></code> pointer to a non-const <code class="sourceCode cpp">A</code>. An attempt to modify <code class="sourceCode cpp">pA</code> is ill-formed, however, modification of the value pointed to by <code class="sourceCode cpp">pA</code> is not a const-qualified access path and so is not ill-formed.</p>
 <p>It is undefined behavior to attempt to modify a const object. The programmer can incorrectly assume that a call to a const member function will not modify the object. However, as has been shown above, there is no guarantee that this is the case. The following example, therefore, will compile but has undefined behavior as a result of the modification of the const object:</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb194-1"><a href="#cb194-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> foo ()</span>
-<span id="cb194-2"><a href="#cb194-2" aria-hidden="true" tabindex="-1"></a>  { </span>
-<span id="cb194-3"><a href="#cb194-3" aria-hidden="true" tabindex="-1"></a>     A a1 {} ;</span>
-<span id="cb194-4"><a href="#cb194-4" aria-hidden="true" tabindex="-1"></a>     A <span class="at">const</span> a2 {} ;</span>
-<span id="cb194-5"><a href="#cb194-5" aria-hidden="true" tabindex="-1"></a>     a1.f();           <span class="co">// OK - &#39;a1&#39; is not const</span></span>
-<span id="cb194-6"><a href="#cb194-6" aria-hidden="true" tabindex="-1"></a>     a2.f();           <span class="co">// compiles but has undefined behavior</span></span>
-<span id="cb194-7"><a href="#cb194-7" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> foo ()</span>
+<span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a>  { </span>
+<span id="cb193-3"><a href="#cb193-3" aria-hidden="true" tabindex="-1"></a>     A a1 {} ;</span>
+<span id="cb193-4"><a href="#cb193-4" aria-hidden="true" tabindex="-1"></a>     A <span class="at">const</span> a2 {} ;</span>
+<span id="cb193-5"><a href="#cb193-5" aria-hidden="true" tabindex="-1"></a>     a1.f();           <span class="co">// OK - &#39;a1&#39; is not const</span></span>
+<span id="cb193-6"><a href="#cb193-6" aria-hidden="true" tabindex="-1"></a>     a2.f();           <span class="co">// compiles but has undefined behavior</span></span>
+<span id="cb193-7"><a href="#cb193-7" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <p>C++ classes wrapping pointer or reference members can be used to provide transitivity of <code class="sourceCode cpp"><span class="at">const</span></code> within <code class="sourceCode cpp"><span class="at">const</span></code> member functions. This is shown by the <code class="sourceCode cpp">MyRef</code> type in the following example:</p>
-<div class="sourceCode" id="cb195"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt; </span>
-<span id="cb195-2"><a href="#cb195-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> MyRef</span>
-<span id="cb195-3"><a href="#cb195-3" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb195-4"><a href="#cb195-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
-<span id="cb195-5"><a href="#cb195-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> T&amp;() &amp;;</span>
-<span id="cb195-6"><a href="#cb195-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> T <span class="at">const</span> &amp;() <span class="at">const</span> &amp;;</span>
-<span id="cb195-7"><a href="#cb195-7" aria-hidden="true" tabindex="-1"></a>  MyRef &amp; <span class="kw">operator</span>=(T <span class="at">const</span> &amp;) &amp;;</span>
-<span id="cb195-8"><a href="#cb195-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-9"><a href="#cb195-9" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span>:</span>
-<span id="cb195-10"><a href="#cb195-10" aria-hidden="true" tabindex="-1"></a>  T &amp; <span class="va">m_t</span>;</span>
-<span id="cb195-11"><a href="#cb195-11" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb195-12"><a href="#cb195-12" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb195-13"><a href="#cb195-13" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
-<span id="cb195-14"><a href="#cb195-14" aria-hidden="true" tabindex="-1"></a>  A();</span>
-<span id="cb195-15"><a href="#cb195-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-16"><a href="#cb195-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1() {</span>
-<span id="cb195-17"><a href="#cb195-17" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_i</span> = <span class="dv">0</span>;</span>
-<span id="cb195-18"><a href="#cb195-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_j</span> = <span class="dv">0</span>;</span>
-<span id="cb195-19"><a href="#cb195-19" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_j</span> ++;</span>
-<span id="cb195-20"><a href="#cb195-20" aria-hidden="true" tabindex="-1"></a>    ++<span class="va">m_j</span>;</span>
-<span id="cb195-21"><a href="#cb195-21" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb195-22"><a href="#cb195-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-23"><a href="#cb195-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f() <span class="at">const</span> {</span>
-<span id="cb195-24"><a href="#cb195-24" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_i</span> = <span class="dv">0</span>;     <span class="co">// compiles, but undefined behavior</span></span>
-<span id="cb195-25"><a href="#cb195-25" aria-hidden="true" tabindex="-1"></a>                 <span class="co">// if &#39;m_i&#39; refers to a const object</span></span>
-<span id="cb195-26"><a href="#cb195-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-27"><a href="#cb195-27" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_j</span> = <span class="dv">0</span>;     <span class="co">// ill-formed</span></span>
-<span id="cb195-28"><a href="#cb195-28" aria-hidden="true" tabindex="-1"></a>    ++ <span class="va">m_j</span>;      <span class="co">// ill-formed</span></span>
-<span id="cb195-29"><a href="#cb195-29" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb195-30"><a href="#cb195-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-31"><a href="#cb195-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> &amp; <span class="va">m_i</span>;</span>
-<span id="cb195-32"><a href="#cb195-32" aria-hidden="true" tabindex="-1"></a>  MyRef&lt;<span class="dt">int</span>&gt; <span class="va">m_j</span>;</span>
-<span id="cb195-33"><a href="#cb195-33" aria-hidden="true" tabindex="-1"></a>};<span class="er">```</span></span>
-<span id="cb195-34"><a href="#cb195-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-35"><a href="#cb195-35" aria-hidden="true" tabindex="-1"></a>Attempts to modify the object referenced by <span class="er">`</span><span class="va">m_j</span><span class="er">`</span>{.cpp} are ill-formed</span>
-<span id="cb195-36"><a href="#cb195-36" aria-hidden="true" tabindex="-1"></a>when they occur in the <span class="at">const</span> member function <span class="er">`</span>f2<span class="er">`</span>{.cpp}.</span>
-<span id="cb195-37"><a href="#cb195-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-38"><a href="#cb195-38" aria-hidden="true" tabindex="-1"></a>C++ container iterator types, <span class="er">`</span>iterator<span class="er">`</span>{.cpp} <span class="kw">and</span> <span class="er">`</span>const_iterator<span class="er">`</span>{.cpp},</span>
-<span id="cb195-39"><a href="#cb195-39" aria-hidden="true" tabindex="-1"></a>are examples of use of <span class="kw">this</span> pattern.</span>
-<span id="cb195-40"><a href="#cb195-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-41"><a href="#cb195-41" aria-hidden="true" tabindex="-1"></a>If a member variable is declared with the <span class="er">`</span>mutable<span class="er">`</span>{.cpp} keyword,</span>
-<span id="cb195-42"><a href="#cb195-42" aria-hidden="true" tabindex="-1"></a>then it can still be modified, even <span class="cf">if</span> the containing object is</span>
-<span id="cb195-43"><a href="#cb195-43" aria-hidden="true" tabindex="-1"></a><span class="er">`</span>const<span class="er">`</span>{.cpp}.  This is preferable to use <span class="er">`</span>mutable<span class="er">`</span>{.cpp} rather than</span>
-<span id="cb195-44"><a href="#cb195-44" aria-hidden="true" tabindex="-1"></a>removing the constness of the containing object </span>
-<span id="cb195-45"><a href="#cb195-45" aria-hidden="true" tabindex="-1"></a>(see [Conversion Errors [FLC] ]{<span class="er">#FLC}).  </span></span>
-<span id="cb195-46"><a href="#cb195-46" aria-hidden="true" tabindex="-1"></a>Members declared <span class="er">`</span>mutable<span class="er">`</span>{.cpp} typically should <span class="kw">not</span></span>
-<span id="cb195-47"><a href="#cb195-47" aria-hidden="true" tabindex="-1"></a>contribute to the value of the object.  The following is a common</span>
-<span id="cb195-48"><a href="#cb195-48" aria-hidden="true" tabindex="-1"></a>example where a mutex member is declared <span class="er">`</span>mutable<span class="er">`</span>{.cpp} to allow</span>
-<span id="cb195-49"><a href="#cb195-49" aria-hidden="true" tabindex="-1"></a>locking in a <span class="er">`</span>const<span class="er">`</span>{.cpp} member function:</span>
-<span id="cb195-50"><a href="#cb195-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-51"><a href="#cb195-51" aria-hidden="true" tabindex="-1"></a><span class="er">```</span>{.cpp}</span>
-<span id="cb195-52"><a href="#cb195-52" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;mutex&gt;</span></span>
-<span id="cb195-53"><a href="#cb195-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-54"><a href="#cb195-54" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MyQueue</span>
-<span id="cb195-55"><a href="#cb195-55" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb195-56"><a href="#cb195-56" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
-<span id="cb195-57"><a href="#cb195-57" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bool</span> empty () <span class="at">const</span> </span>
-<span id="cb195-58"><a href="#cb195-58" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb195-59"><a href="#cb195-59" aria-hidden="true" tabindex="-1"></a>      <span class="bu">std::</span>lock_guard sg (<span class="va">m_mutex</span>); <span class="co">// lock the mutex, which requires m_mutex to be writable</span></span>
-<span id="cb195-60"><a href="#cb195-60" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="va">m_head</span> != <span class="kw">nullptr</span>;</span>
-<span id="cb195-61"><a href="#cb195-61" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb195-62"><a href="#cb195-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-63"><a href="#cb195-63" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
-<span id="cb195-64"><a href="#cb195-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-65"><a href="#cb195-65" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span>:</span>
-<span id="cb195-66"><a href="#cb195-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutable</span> <span class="bu">std::</span>mutex <span class="va">m_mutex</span>;</span>
-<span id="cb195-67"><a href="#cb195-67" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> * <span class="va">m_head</span> { <span class="kw">nullptr</span> };</span>
-<span id="cb195-68"><a href="#cb195-68" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb194-1"><a href="#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt; </span>
+<span id="cb194-2"><a href="#cb194-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> MyRef</span>
+<span id="cb194-3"><a href="#cb194-3" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb194-4"><a href="#cb194-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb194-5"><a href="#cb194-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> T&amp;() &amp;;</span>
+<span id="cb194-6"><a href="#cb194-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">operator</span> T <span class="at">const</span> &amp;() <span class="at">const</span> &amp;;</span>
+<span id="cb194-7"><a href="#cb194-7" aria-hidden="true" tabindex="-1"></a>  MyRef &amp; <span class="kw">operator</span>=(T <span class="at">const</span> &amp;) &amp;;</span>
+<span id="cb194-8"><a href="#cb194-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-9"><a href="#cb194-9" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span>:</span>
+<span id="cb194-10"><a href="#cb194-10" aria-hidden="true" tabindex="-1"></a>  T &amp; <span class="va">m_t</span>;</span>
+<span id="cb194-11"><a href="#cb194-11" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb194-12"><a href="#cb194-12" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb194-13"><a href="#cb194-13" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
+<span id="cb194-14"><a href="#cb194-14" aria-hidden="true" tabindex="-1"></a>  A();</span>
+<span id="cb194-15"><a href="#cb194-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-16"><a href="#cb194-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1() {</span>
+<span id="cb194-17"><a href="#cb194-17" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_i</span> = <span class="dv">0</span>;</span>
+<span id="cb194-18"><a href="#cb194-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_j</span> = <span class="dv">0</span>;</span>
+<span id="cb194-19"><a href="#cb194-19" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_j</span> ++;</span>
+<span id="cb194-20"><a href="#cb194-20" aria-hidden="true" tabindex="-1"></a>    ++<span class="va">m_j</span>;</span>
+<span id="cb194-21"><a href="#cb194-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb194-22"><a href="#cb194-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-23"><a href="#cb194-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f() <span class="at">const</span> {</span>
+<span id="cb194-24"><a href="#cb194-24" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_i</span> = <span class="dv">0</span>;     <span class="co">// compiles, but undefined behavior</span></span>
+<span id="cb194-25"><a href="#cb194-25" aria-hidden="true" tabindex="-1"></a>                 <span class="co">// if &#39;m_i&#39; refers to a const object</span></span>
+<span id="cb194-26"><a href="#cb194-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-27"><a href="#cb194-27" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_j</span> = <span class="dv">0</span>;     <span class="co">// ill-formed</span></span>
+<span id="cb194-28"><a href="#cb194-28" aria-hidden="true" tabindex="-1"></a>    ++ <span class="va">m_j</span>;      <span class="co">// ill-formed</span></span>
+<span id="cb194-29"><a href="#cb194-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb194-30"><a href="#cb194-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-31"><a href="#cb194-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> &amp; <span class="va">m_i</span>;</span>
+<span id="cb194-32"><a href="#cb194-32" aria-hidden="true" tabindex="-1"></a>  MyRef&lt;<span class="dt">int</span>&gt; <span class="va">m_j</span>;</span>
+<span id="cb194-33"><a href="#cb194-33" aria-hidden="true" tabindex="-1"></a>};<span class="er">```</span></span>
+<span id="cb194-34"><a href="#cb194-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-35"><a href="#cb194-35" aria-hidden="true" tabindex="-1"></a>Attempts to modify the object referenced by <span class="er">`</span><span class="va">m_j</span><span class="er">`</span>{.cpp} are ill-formed</span>
+<span id="cb194-36"><a href="#cb194-36" aria-hidden="true" tabindex="-1"></a>when they occur in the <span class="at">const</span> member function <span class="er">`</span>f2<span class="er">`</span>{.cpp}.</span>
+<span id="cb194-37"><a href="#cb194-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-38"><a href="#cb194-38" aria-hidden="true" tabindex="-1"></a>C++ container iterator types, <span class="er">`</span>iterator<span class="er">`</span>{.cpp} <span class="kw">and</span> <span class="er">`</span>const_iterator<span class="er">`</span>{.cpp},</span>
+<span id="cb194-39"><a href="#cb194-39" aria-hidden="true" tabindex="-1"></a>are examples of use of <span class="kw">this</span> pattern.</span>
+<span id="cb194-40"><a href="#cb194-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-41"><a href="#cb194-41" aria-hidden="true" tabindex="-1"></a>If a member variable is declared with the <span class="er">`</span>mutable<span class="er">`</span>{.cpp} keyword,</span>
+<span id="cb194-42"><a href="#cb194-42" aria-hidden="true" tabindex="-1"></a>then it can still be modified, even <span class="cf">if</span> the containing object is</span>
+<span id="cb194-43"><a href="#cb194-43" aria-hidden="true" tabindex="-1"></a><span class="er">`</span>const<span class="er">`</span>{.cpp}.  This is preferable to use <span class="er">`</span>mutable<span class="er">`</span>{.cpp} rather than</span>
+<span id="cb194-44"><a href="#cb194-44" aria-hidden="true" tabindex="-1"></a>removing the constness of the containing object </span>
+<span id="cb194-45"><a href="#cb194-45" aria-hidden="true" tabindex="-1"></a>(see [Conversion Errors [FLC] ]{<span class="er">#FLC}).  </span></span>
+<span id="cb194-46"><a href="#cb194-46" aria-hidden="true" tabindex="-1"></a>Members declared <span class="er">`</span>mutable<span class="er">`</span>{.cpp} typically should <span class="kw">not</span></span>
+<span id="cb194-47"><a href="#cb194-47" aria-hidden="true" tabindex="-1"></a>contribute to the value of the object.  The following is a common</span>
+<span id="cb194-48"><a href="#cb194-48" aria-hidden="true" tabindex="-1"></a>example where a mutex member is declared <span class="er">`</span>mutable<span class="er">`</span>{.cpp} to allow</span>
+<span id="cb194-49"><a href="#cb194-49" aria-hidden="true" tabindex="-1"></a>locking in a <span class="er">`</span>const<span class="er">`</span>{.cpp} member function:</span>
+<span id="cb194-50"><a href="#cb194-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-51"><a href="#cb194-51" aria-hidden="true" tabindex="-1"></a><span class="er">```</span>{.cpp}</span>
+<span id="cb194-52"><a href="#cb194-52" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;mutex&gt;</span></span>
+<span id="cb194-53"><a href="#cb194-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-54"><a href="#cb194-54" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MyQueue</span>
+<span id="cb194-55"><a href="#cb194-55" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb194-56"><a href="#cb194-56" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
+<span id="cb194-57"><a href="#cb194-57" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bool</span> empty () <span class="at">const</span> </span>
+<span id="cb194-58"><a href="#cb194-58" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb194-59"><a href="#cb194-59" aria-hidden="true" tabindex="-1"></a>      <span class="bu">std::</span>lock_guard sg (<span class="va">m_mutex</span>); <span class="co">// lock the mutex, which requires m_mutex to be writable</span></span>
+<span id="cb194-60"><a href="#cb194-60" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="va">m_head</span> != <span class="kw">nullptr</span>;</span>
+<span id="cb194-61"><a href="#cb194-61" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb194-62"><a href="#cb194-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-63"><a href="#cb194-63" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb194-64"><a href="#cb194-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-65"><a href="#cb194-65" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span>:</span>
+<span id="cb194-66"><a href="#cb194-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutable</span> <span class="bu">std::</span>mutex <span class="va">m_mutex</span>;</span>
+<span id="cb194-67"><a href="#cb194-67" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> * <span class="va">m_head</span> { <span class="kw">nullptr</span> };</span>
+<span id="cb194-68"><a href="#cb194-68" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
 <h3 id="guidance-to-language-users">6.65.2 Guidance to language users</h3>
 <p>In addition to the general advice of TR 24772-1 clause 6.65:</p>
 <ul>
