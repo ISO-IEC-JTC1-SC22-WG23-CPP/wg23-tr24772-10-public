@@ -233,7 +233,7 @@
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            c = c + b[i];</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            x+= c; </span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
-<p>At first it may appear that, after the first loop, <code class="sourceCode cpp">a</code> will be a sum of the numbers <span data-custom-style="Code">b[0]</span> to <span data-custom-style="Code">b[9]</span>. However, even though the code is laid out so that the <span data-custom-style="Code">a = a + b[i]</span> code appears to be within the for loop, the “<code class="sourceCode cpp">;</code>” at the end of the for statement causes the loop to be on a null statement (the “<code class="sourceCode cpp">;</code>”) and the</p>
+<p>At first it may appear that, after the first loop, <code class="sourceCode cpp">a</code> will be a sum of the numbers <code class="sourceCode cpp">b[<span class="dv">0</span>]</code> to <code class="sourceCode cpp">b[<span class="dv">9</span>]</code>. However, even though the code is laid out so that the <code class="sourceCode cpp">a = a + b[i]</code> code appears to be within the for loop, the “<code class="sourceCode cpp">;</code>” at the end of the for statement causes the loop to be on a null statement (the “<code class="sourceCode cpp">;</code>”) and the</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a = a + b[i];</span></code></pre></div>
 <p>statement to only be executed once. Similarly, the indentation leads us to believe that that assignment to x is part of the second loop, but it is not. These mistakes may be readily apparent during development or testing. More subtle cases may not be as readily apparent leading to unexpected results.</p>
 <blockquote>
@@ -256,12 +256,8 @@ if (i == 10){
 </blockquote>
 <h3 id="guidance-to-language-users">6.28.2 Guidance to language users</h3>
 <ul>
-<li>Follow the rules provided in ISO/IEC TR 24772-1:2019 clause 6.28.5.</li>
-</ul>
-<blockquote>
-<p>Enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software.</p>
-</blockquote>
-<ul>
+<li><p>Follow the rules provided in ISO/IEC TR 24772-1:2019 clause 6.28.5.</p></li>
+<li><p>Enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software.</p></li>
 <li><p>Declare loop variables in the initializer of the loop statement</p></li>
 <li><p>Prefer the standard library algorithms over hand-crafted loops.</p></li>
 </ul>
