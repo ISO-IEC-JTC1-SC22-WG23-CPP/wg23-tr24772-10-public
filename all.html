@@ -2678,7 +2678,8 @@ interface to access them that preserves class invariants.</li>
 </ul>
 <h2 id="BLP">6.42 Violations of the Liskov Substitution Principle or the Contract Model [BLP]</h2>
 <h3 id="applicability-to-language">6.42.1 Applicability to language</h3>
-<p>This vulnerability applies to C++ . It can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning. An example is provided below.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.42 applies to C++. C++ leaves verification of the correctness of an overridden call to the programmer.</p>
+<p>The vulnerability can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning. An example is provided below.</p>
 <div class="sourceCode" id="cb172"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb172-1"><a href="#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Base  {</span>
 <span id="cb172-2"><a href="#cb172-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span>:</span>
 <span id="cb172-3"><a href="#cb172-3" aria-hidden="true" tabindex="-1"></a>     <span class="kw">virtual</span> <span class="dt">int</span> function_to_override( <span class="dt">int</span> x ) = <span class="dv">0</span>;</span>
