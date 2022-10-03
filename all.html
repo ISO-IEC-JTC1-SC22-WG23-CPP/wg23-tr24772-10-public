@@ -2103,23 +2103,21 @@ switch (i) {
 <span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> i=<span class="dv">0</span>;</span>
 <span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// . . .</span></span>
 <span id="cb143-4"><a href="#cb143-4" aria-hidden="true" tabindex="-1"></a>        a = <span class="dv">0</span>;</span>
-<span id="cb143-5"><a href="#cb143-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i=<span class="dv">0</span>; i&lt;<span class="dv">10</span>; i++);</span>
+<span id="cb143-5"><a href="#cb143-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i=<span class="dv">0</span>; i&lt;<span class="dv">10</span>; i++); <span class="co">// notice the &#39;;&#39; !!</span></span>
 <span id="cb143-6"><a href="#cb143-6" aria-hidden="true" tabindex="-1"></a>        {</span>
 <span id="cb143-7"><a href="#cb143-7" aria-hidden="true" tabindex="-1"></a>            a = a + b[i];</span>
 <span id="cb143-8"><a href="#cb143-8" aria-hidden="true" tabindex="-1"></a>        }</span>
 <span id="cb143-9"><a href="#cb143-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> c = <span class="dv">0</span>;</span>
 <span id="cb143-10"><a href="#cb143-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> x = <span class="dv">0</span>;</span>
-<span id="cb143-11"><a href="#cb143-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;<span class="dv">10</span>; i++)</span>
-<span id="cb143-12"><a href="#cb143-12" aria-hidden="true" tabindex="-1"></a>            c = c + b[i];</span>
-<span id="cb143-13"><a href="#cb143-13" aria-hidden="true" tabindex="-1"></a>            x+= c; </span>
+<span id="cb143-11"><a href="#cb143-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="dt">int</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; j++)</span>
+<span id="cb143-12"><a href="#cb143-12" aria-hidden="true" tabindex="-1"></a>            c = c + b[j];</span>
+<span id="cb143-13"><a href="#cb143-13" aria-hidden="true" tabindex="-1"></a>            x += c; </span>
 <span id="cb143-14"><a href="#cb143-14" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>At first it may appear that, after the first loop, <code class="sourceCode cpp">a</code> will be a sum of the numbers <code class="sourceCode cpp">b[<span class="dv">0</span>]</code> to <code class="sourceCode cpp">b[<span class="dv">9</span>]</code>. However, even though the code is laid out so that the <code class="sourceCode cpp">a = a + b[i]</code> code appears to be within the for loop, the “<code class="sourceCode cpp">;</code>” at the end of the for statement causes the loop to be on a null statement (the “<code class="sourceCode cpp">;</code>”) and the</p>
 <div class="sourceCode" id="cb144"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb144-1"><a href="#cb144-1" aria-hidden="true" tabindex="-1"></a>a = a + b[i];</span></code></pre></div>
 <p>statement to only be executed once. Similarly, the indentation leads us to believe that that assignment to x is part of the second loop, but it is not. These mistakes may be readily apparent during development or testing. More subtle cases may not be as readily apparent leading to unexpected results.</p>
-<blockquote>
 <p><code class="sourceCode cpp"><span class="cf">if</span></code> statements in C++ are also susceptible to control flow problems since there isn’t a requirement in C++ for there to be an else statement for every if statement. An <code class="sourceCode cpp"><span class="cf">else</span></code> statement in C++ always belong to the most recent <code class="sourceCode cpp"><span class="cf">if</span></code> statement without an <code class="sourceCode cpp"><span class="cf">else</span></code>. However, the situation could occur where it is not readily apparent to which <code class="sourceCode cpp"><span class="cf">if</span></code> statement an <code class="sourceCode cpp"><span class="cf">else</span></code> belongs due to the way the code is indented or aligned.</p>
 <p>Similar issues arise for <code class="sourceCode cpp"><span class="cf">if</span></code>-statements, particularly during maintenance, for example:</p>
-</blockquote>
 <pre><code>```{.cpp}
 int a,b,i;
 // . . . 
@@ -2129,17 +2127,17 @@ if (i == 10){
       }
       else 
           a = 10;   
-          b = 5;    // added later, intended to be part of the else clause
+          b = 5;    // added later, intended to be part 
+                        // of the else clause
 ```</code></pre>
-<blockquote>
 <p>If the assignments to b were added later and were expected to be part of each <code class="sourceCode cpp"><span class="cf">if</span></code> and <code class="sourceCode cpp"><span class="cf">else</span></code> clause (they are indented as such), the above code is incorrect: the assignment to <code class="sourceCode cpp">b</code> that was intended to be in the <code class="sourceCode cpp"><span class="cf">else</span></code> clause is unconditionally executed.</p>
-</blockquote>
 <h3 id="guidance-to-language-users">6.28.2 Guidance to language users</h3>
 <ul>
 <li><p>Follow the rules provided in ISO/IEC TR 24772-1:2019 clause 6.28.5.</p></li>
 <li><p>Enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software.</p></li>
 <li><p>Declare loop variables in the initializer of the loop statement</p></li>
 <li><p>Prefer the standard library algorithms over hand-crafted loops.</p></li>
+<li><p>Consider the use of source code auto-formatters before code reviews.</p></li>
 </ul>
 <blockquote>
 <p>See also the C++ Core Guidelines ES.85, ES.71, ES.74, ES.1 and ES.2</p>
