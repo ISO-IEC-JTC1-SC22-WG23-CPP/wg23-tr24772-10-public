@@ -152,11 +152,11 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.45.ExtraInstrinsics-LRM.md</h1>
 </header>
-<h2 id="extra-intrinsics-lrm">6.45 Extra Intrinsics [LRM]</h2>
-<p>This vulnerability does not apply to C++ for the following reasons:</p>
-<ul>
-<li>When adding intrinsics, implementors are required to follow a specific name pattern that users are not allowed to use in definitions. See C++ standard clause 5.10 [Lex.name].</li>
-</ul>
-<p>Operations for swap, sin, cos, conversions float &lt;-&gt; double, saturation,</p>
+<h2 id="LRM">6.45 Extra Intrinsics [LRM]</h2>
+<h3 id="applicability-to-the-language">6.45.1 Applicability to the language</h3>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.45 applies to C++ to some extent, as explained below.</p>
+<p>C++ implementations are allowed to provide built-in functionality but are restricted to a specific naming schema reserved by the standard. For example, names containing a double underscore or that begin with an underscore and a capital letter are reserved for that purpose. See ISO/IEC 14882:2020 clause 5.10 [Lex.name]. The use of such names by the programmer is forbidden by the language. Language processors are not required to prohibit such usage, hence the vulnerability exists.</p>
+<h3 id="avoiding-the-vulnerability-or-mitigating-its-effects">6.45.2 Avoiding the vulnerability or mitigating its effects</h3>
+<p>Avoid the use of any name that is not allowed by the standard.</p>
 </body>
 </html>
