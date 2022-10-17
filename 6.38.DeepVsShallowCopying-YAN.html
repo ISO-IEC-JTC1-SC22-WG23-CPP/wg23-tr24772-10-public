@@ -222,10 +222,10 @@
 <p>Class types that use members with reference semantics will become <em>relationship types</em> themselves, unless they manages the referred objects. Such <em>relationship types</em> and <em>manager types</em> will refer to their referred/managed resources via a data member with reference semantics, even when the underlying language type is neither a pointer or reference. For example, a resources may be referred to by an operating system handle of integral type.</p>
 <p>Examples of a <em>manger types</em> are the standard library container types such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> that use pointers to the allocated space of their elements, but copying a vector will also copy all contained elements. This management is achieved by replacing the compiler-provided copy-constructor and copy-assignment operator with appropriate implementations that perform the deep copy.</p>
 <p>An alternative to potentially expensive deep copies for class types with relationship members is the prevention of copying, either by defining move operations that transfer the ownership of a managed resources, like <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> does (unique manager), or by preventing both copy and move operations, e.g., by defining the move-assignment operator as deleted (scoped manager).</p>
-<p>Without such replacement of copy and move operations a class type with relationship members suffers from the potential confusion due to shallow copies. For example, the standard library types <code class="sourceCode cpp"><span class="bu">std::</span>span</code>, <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code>, and the views of the standard ranges library are relationship types. Care must be taken to not only understand implications of their shallow copy semantics, but also about their validity depending on the lifetime of the referred ranges.</p>
+<p>Without such replacement of copy and move operations a class type with relationship members suffers from the potential confusion due to shallow copies. For example, the standard library types <code class="sourceCode cpp"><span class="bu">std::</span>span</code>, <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code>, iterators and the views of the standard ranges library are relationship types. Care must be taken to not only understand implications of their shallow copy semantics, but also about their validity depending on the lifetime of the referred ranges.</p>
 <p>Using relationship types as function parameter types is usually save, because language semantics guarantee the lifetime of parameter objects. Exceptions exists for thred functions and coroutines, where the initial calling context is not guaranteed to exist, when parameters of relationship types are accessed.</p>
 <p>Returning a relationship type from a function can be problematic, unless the lifetime of the referred object is clear. For example, returning a reference to a temporary object or a local variable risks or guarantees immediate dangling (see <a href="#XYK">[XYK]</a> and <a href="#XYH">[XYH]</a>).</p>
-<p>references to Core Guidelines C.22)</p>
+<p>references to Core Guidelines C.20, C.22, C.32, C.67)</p>
 <h3 id="guidance-to-language-users">6.38.2 Guidance to language users</h3>
 <ul>
 <li><p>Prefer to use and create types with value semantics over relationship types.</p></li>
@@ -234,8 +234,6 @@
 <li><p>When the above is not achievable, ensure that the copy assignment operator, copy constructor, move assignment operator, move constructor and destructor provide the desired semantics.</p></li>
 <li><p>Avoid the use of raw pointers with the copy operation and (finish or delete)</p></li>
 <li><p>Prefer value parameters to thread functions and coroutines.</p></li>
-<li><p>Follow the guidance of C++ core guidelines C.20, C.22, C.32, C.67</p></li>
-<li><p><em>&lt;This may belong elsewhere – TBD&gt;</em> Avoid updating the value of a string while there are valid string views in existence.</p></li>
 </ul>
 </body>
 </html>
