@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -154,26 +216,24 @@
 </header>
 <h2 id="deep-vs.-shallow-copying-yan">6.38 Deep vs. Shallow Copying [YAN]</h2>
 <h3 id="applicability-to-language">6.38.1 Applicability to Language</h3>
-<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.38 exists in C++.</p>
-<p>The vulnerability only arises in C++ when there is a mismatch between the object’s copy semantics and the programmer’s intent. (references to Core Guidelines C.22)</p>
-<p>C++ objects, by default, are copied member-wise. Each class type may define its own copy, move and assignment operations, allowing a class author to choose an appropriate depth for these operations. Class member types should be chosen to have copy and move semantics that support the semantics of the enclosing class.</p>
-<pre><code>&lt;!--
-This may belong elsewhere -- TBD\&gt; C++ provides the &quot;string view&quot;
-mechanism as safer pointers to strings. Updates through string view are
-prohibited, but the initial non &quot;view&quot; value can be updated and this
-change will be seen by all viewers, even if they are dependent on fixed
-value.
---&gt;</code></pre>
-<p>Note: in C++, this is more commonly known as member-wise copying vs semantic copying, or owning vs observing rights.</p>
-<pre><code>&lt;!--
-Note: Why CERT does not address this issue -- involves programmer intent
-and not readily tool-checkable.
---&gt;</code></pre>
+<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.38 exists in C++. However, all language defaults support value semantics and will therefore perform deep copies. The vulnerability only arises in C++ when there is a mismatch between the type’s copy semantics and the programmer’s intent.</p>
+<p>On the language level, reference semantics, that can lead to shallow copies, requires the use of pointer or reference types.</p>
+<p>Such types with reference semantics are also called <em>relationship types</em> and they will suffer from the aliasing problematic of this vulnerability and additionally with potential dangling due to expired lifetime of referred objects (see <a href="#XYK">[XYK]</a>).</p>
+<p>Class types that use members with reference semantics will become <em>relationship types</em> themselves, unless they manages the referred objects. Such <em>relationship types</em> and <em>manager types</em> will refer to their referred/managed resources via a data member with reference semantics, even when the underlying language type is neither a pointer or reference. For example, a resources may be referred to by an operating system handle of integral type.</p>
+<p>Examples of a <em>manger types</em> are the standard library container types such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> that use pointers to the allocated space of their elements, but copying a vector will also copy all contained elements. This management is achieved by replacing the compiler-provided copy-constructor and copy-assignment operator with appropriate implementations that perform the deep copy.</p>
+<p>An alternative to potentially expensive deep copies for class types with relationship members is the prevention of copying, either by defining move operations that transfer the ownership of a managed resources, like <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> does (unique manager), or by preventing both copy and move operations, e.g., by defining the move-assignment operator as deleted (scoped manager).</p>
+<p>Without such replacement of copy and move operations a class type with relationship members suffers from the potential confusion due to shallow copies. For example, the standard library types <code class="sourceCode cpp"><span class="bu">std::</span>span</code>, <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code>, and the views of the standard ranges library are relationship types. Care must be taken to not only understand implications of their shallow copy semantics, but also about their validity depending on the lifetime of the referred ranges.</p>
+<p>Using relationship types as function parameter types is usually save, because language semantics guarantee the lifetime of parameter objects. Exceptions exists for thred functions and coroutines, where the initial calling context is not guaranteed to exist, when parameters of relationship types are accessed.</p>
+<p>Returning a relationship type from a function can be problematic, unless the lifetime of the referred object is clear. For example, returning a reference to a temporary object or a local variable risks or guarantees immediate dangling (see <a href="#XYK">[XYK]</a> and <a href="#XYH">[XYH]</a>).</p>
+<p>references to Core Guidelines C.22)</p>
 <h3 id="guidance-to-language-users">6.38.2 Guidance to language users</h3>
 <ul>
-<li><p>Prefer the composition of most types from types that have either value semantics or semantics that support the intended copy and move semantics of the enclosing type.</p></li>
+<li><p>Prefer to use and create types with value semantics over relationship types.</p></li>
+<li><p>Avoid the use of relatioship types, except for function paramters, when copying turns out to be prohibitively expensive.</p></li>
+<li><p>Be awre of relationship types and document the reference semantics of own such class types.</p></li>
 <li><p>When the above is not achievable, ensure that the copy assignment operator, copy constructor, move assignment operator, move constructor and destructor provide the desired semantics.</p></li>
 <li><p>Avoid the use of raw pointers with the copy operation and (finish or delete)</p></li>
+<li><p>Prefer value parameters to thread functions and coroutines.</p></li>
 <li><p>Follow the guidance of C++ core guidelines C.20, C.22, C.32, C.67</p></li>
 <li><p><em>&lt;This may belong elsewhere – TBD&gt;</em> Avoid updating the value of a string while there are valid string views in existence.</p></li>
 </ul>
