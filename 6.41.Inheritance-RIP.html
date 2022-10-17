@@ -223,41 +223,15 @@
 <p>Multiple inheritance adds additional complexities to the resolution of method invocations.</p>
 <p>The use of inheritance can lead to an exploitable application vulnerability or negatively impact system safety in several ways:</p>
 <ul>
-<li><p>Execution of malicious redefinitions, which can occur through the insertion of a class into the class hierarchy that overrides commonly called methods in the parent classes.</p>
-<ul>
-<li><pre><code>  mitigation -- make member functions</code></pre>
-<p><code class="sourceCode cpp"><span class="kw">final</span></code>,</p></li>
-<li><pre><code>  reduce the use of inheritance</code></pre></li>
-</ul></li>
-<li><p>Accidental override, where a member function is defined that inadvertently overrides a member function that has already been defined in a parent class.</p>
-<ul>
-<li><pre><code>  Mitigation -- use `override`{.cpp} and</code></pre>
-<code class="sourceCode cpp"><span class="kw">final</span></code> keywords on member functions to generate compiler diagnostics when overriding is accidental</li>
-</ul></li>
-<li><p>Accidental failure to override, when a method is incorrectly named or the parameters are not defined properly, and thus does not override a member function in a parent class.</p>
-<ul>
-<li><pre><code>  Mitigation -- use `override`{.cpp} and</code></pre>
-<code class="sourceCode cpp"><span class="kw">final</span></code> keywords on member functions to generate compiler diagnostics when overriding is accidental</li>
-</ul></li>
-<li><p>Breaking of class invariants, which can be caused by redefining methods that assign, move, or validate class data without including the assigning, moving or validating in the overriding member function. This applies particularly to class invariants involving data of the parent class not visible in methods of the subclass. Inherited methods of the parent that have access to these “private” components will likely fail, if the components are set inappropriately.</p>
-<ul>
-<li><pre><code>  Mitigation -- if any class invariant depends upon a value of a</code></pre>
-data member, then make that member private</li>
-</ul></li>
-<li><p>Direct reading and writing of visible class members when matching getting and setting member functions include additional functionality.</p>
-<ul>
-<li><pre><code>  Guidance: make data members private and provide a public</code></pre>
-interface to access them that preserves class invariants.</li>
-</ul></li>
+<li><p>Execution of malicious redefinitions, which can occur through the insertion of a class into the class hierarchy that overrides commonly called methods in the parent classes. This can be prevented by use of <code class="sourceCode cpp"><span class="kw">final</span></code> on each member function to generate compiler diagnostics when overriding is not permitted.</p></li>
+<li><p>Accidental override, where a member function is defined that inadvertently overrides a member function that has already been defined in a parent class. A project mandate to use the <code class="sourceCode cpp"><span class="kw">override</span></code> or <code class="sourceCode cpp"><span class="kw">final</span></code> special identifiers when overriding a virtual functions eases detection of accidental overrides.</p></li>
+<li><p>Accidental failure to override, when a method is incorrectly named or the parameters are not defined properly, and thus does not override a member function in a parent class. This can be prevented by use of <code class="sourceCode cpp"><span class="kw">override</span></code> on each member function to generate compiler diagnostics when overriding does not apply.</p></li>
+<li><p>Breaking of class invariants, which can be caused by redefining methods that assign, move, or validate class data without including the assigning, moving or validating in the overriding member function. This applies particularly to class invariants involving data of the parent class not visible in methods of the subclass. Inherited methods of the parent that have access to these “private” components will likely fail, if the components are set inappropriately. This can be avoided by making a member private if any class invariant depends on the member.</p></li>
+<li><p>Direct reading and writing of visible class members when matching getting and setting member functions include additional functionality. This can be avoided by making data members private and providing a public interface to access them that preserves class invariants.</p></li>
 </ul>
-<p>These vulnerabilities can increase dramatically as the complexity of the hierarchy increases, especially in the use of multiple inheritance.</p>
+<p>These vulnerabilities can increase as the complexity of the hierarchy increases, especially when multiple inheritance is used.</p>
 <p>As member functions are inherited from multiple chains of ancestors, the determination of which member function implementations exist and are being called, becomes increasingly more difficult for the programmer. Understanding which member functions and data members apply to a given (sub)class becomes exceedingly difficult if these methods or components are inherited homographs (i.e., data components with identical names or member functions with identical signatures). Misunderstandings lead to inadvertent coding errors. The complexity increases even more when multiple inheritance is used to model “has-a” relationships (see subclause <a href="#BLP">Violations of the Liskov substitution principle[BLP]</a>: member functions never intended to be applicable to instances of a subclass are inherited nevertheless. For example, an instance of class aircraftCarrier may be “turn”ed merely because it obtained its propulsion screw by a “has-a”-inheritance with “turn” being an obviously meaningful method for the class of propulsionScrew. Meanwhile the user has a quite different expectation of what it means to turn an aircraft carrier. The complications increase if the carrier inherits twice from the class propulsionScrew because it has two propulsion screws.</p>
 <p>Changes in the execution of methods can be introduced by adding an unrelated but homographic member function (with signatures involving implicitly convertible types) anywhere is the hierarchies of ancestor classes during maintenance of the code. Malicious implementations can thus be added with each release of an object-oriented library and affect the behaviour of previously verified code. (see subclause <a href="#BLP">Violations of the Liskov substitution principle [BLP]</a></p>
-<ul>
-<li><p>Guidance: Keep inheritance hierarchies short</p></li>
-<li><p>Guidance: Qualify the program to invoke member functions in explicit parent classes.</p></li>
-<li><p>Mitigation: use the ‘= delete’ construct to prevent a member function from being called due to an inheritance.</p></li>
-</ul>
 <h2 id="guidance-to-language-users">6.41.2 Guidance to language users</h2>
 <ul>
 <li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 41.5.</p></li>
@@ -265,13 +239,14 @@ interface to access them that preserves class invariants.</li>
 <li><p>Avoid access to data components when getting and setting functions are available for them.</p></li>
 <li><p>Keep inheritance hierarchies short and narrow</p></li>
 <li><p>Prefer non-virtual functions to virtual functions</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="kw">override</span></code> and <code class="sourceCode cpp"><span class="kw">final</span></code> keywords on member functions to generate compiler diagnostics when overriding is accidental</p></li>
-<li><p>Use the ‘= delete’ construct to prevent a member function from being called due to an inheritance.</p></li>
-<li><p>If any class invariant depends upon a value of a data member, then make that member private</p></li>
-<li><p>Make data members private and provide a public interface to access them that preserves class invariants</p></li>
+<li><p>Use at least one of <code class="sourceCode cpp"><span class="kw">override</span></code>, <code class="sourceCode cpp"><span class="kw">final</span></code> or <code class="sourceCode cpp"><span class="kw">virtual</span></code> when declaring or overriding a virtual function.</p></li>
+<li><p>Use <code class="sourceCode cpp"><span class="kw">override</span></code> on member functions to generate compiler diagnostics for failures to override.</p></li>
+<li><p>Use <code class="sourceCode cpp"><span class="kw">final</span></code> on member functions to generate compiler diagnostics for malicious overrides.</p></li>
+<li><p>If any class invariant depends upon a value of a data member, then make that member private.</p></li>
 <li><p>Provide complete documentation of all encapsulated data, and how each method affects that data for each object in the hierarchy.</p></li>
-<li><p>Inherit only from trusted sources, and, whenever possible, check the version of the parent classes during compilation and/or initialization.</p></li>
+<li><p>Whenever possible, check the version of the parent classes during compilation and/or initialization.</p></li>
 <li><p>Provide a member function that provides versioning information for each class.</p></li>
+<li><p>Use fully-qualified names to call member functions in a parent class.</p></li>
 <li><p>Prohibit the use of public inheritance for “has-a” relationships. Use composition instead for “has-a”-relationships.</p></li>
 <li><p>Delegate assigning and moving of the parent’s data components by calling the corresponding operation of the parent type. You must delegate in particular when the parent has data components not visible to methods of the subclass. Alternatively, prohibit assignment and motion for classes intended to be base types. <em>(clarify – this has 2 possible meanings)</em></p></li>
 <li><p>Avoid the creation of base classes that are both virtual and non-virtual in the same hierarchy.</p></li>
