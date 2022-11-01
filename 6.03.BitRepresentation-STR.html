@@ -216,31 +216,24 @@
 </header>
 <h2 id="bit-representations-str">6.3 Bit Representations [STR]</h2>
 <h3 id="applicability-to-language">6.3.1 Applicability to language</h3>
-<p>This vulnerabilities described in TR24772-1 clause 6.3 is applicable to C++.</p>
-<pre><code>&lt;!--
-Document the C++ behaviours- handling bit-fields, - hitting enclosing
-word, concurrent access, hardware implications,
---&gt;</code></pre>
-<p>Able to use non-integer types (such as enumerations) in accessing bit fields.</p>
-<p>A C++ memory location is either an object is or a contiguous collection of bit-fields.</p>
-<p>C++ bit fields are not separated from adjacent bit-fields for purposes of thread synchronization or volatility. Bit-fields are very difficult to use correctly in these contexts.</p>
-<pre><code>&lt;!--
-TO-DO -- Bit_Cast - Applies a bit representation to an object of a new
-type, for example copy a 64 bit IEEE 654 number to a 64 bit integer to
-perform bit operations and then cast back.
---&gt;</code></pre>
-<pre><code>&lt;!--
-Needs documentation.
---&gt;</code></pre>
-<pre><code>&lt;!--
-Issue was raised about padding bits between object/struct/union members
-can leak information. Where to put this? Mitigation -- use member copy
-instead of byte-wise copy.
---&gt;</code></pre>
-<p>When a struct, union or class is embedded within an array, implementations will typically add padding to provide efficient alignment and access. Therefore, the compiler will add padding bytes in case it is used in arrays. The padding bytes can be used as a <em>secret channel</em> to hide information and extract it later.</p>
+<p>This vulnerabilities described in TR24772-1 clause 6.3 is applicable to C++. The “endianness” and packing of bit fields are implementation-defined properties and not portable.</p>
+<p>The standard library type <code class="sourceCode cpp"><span class="bu">std::</span>endian</code> allows to portably check the endianness of a platform and code can use this information to operate on individual bytes of a machine word in the correct order.</p>
+<p>There is no portable mapping from bitfields in a struct to individual bits in a machine word. Therefore, C++ bitfields should not be used to directly map to bits in hardware, even so the compiler provides suitable mapping and manipulation operations. A further complication is that accessing a bitfield can not easily performed atomically, because the non-participating bits of a memory location need to be read before the relevant bits can be mutated through masking and the whole word written again. It is possible to simulate bitfields with a defined layout through library class types that implement the required masking operations. For individual bits <code class="sourceCode cpp"><span class="bu">std::</span>bitset&lt;N&gt;</code> and <code class="sourceCode cpp"><span class="bu">std::</span>vector&lt;<span class="dt">bool</span>&gt;</code> can provide suitable representations at run time, but no direct mapping to machine words. However, be aware that <code class="sourceCode cpp"><span class="bu">std::</span>vector&lt;<span class="dt">bool</span>&gt;</code> does not in general behave like a <code>std::vector</code> which can cause generic code to misbehave.</p>
+<p>C++ provides a rich set of bitwise operators that can be used to address the issues of bit manipulation in a portable way.. However, the shift operation can result in undefined behavior when shifting by a negative or too large value, or when shifting a signed operand. It is advisable to use bit operations only on appropriate unsigend integral types with a known width while being careful of potential integral promotion that might change a small unsigned operand type to be promoted to a signed integer type. When bitwise memory operations are needed, it is good practice to encapsulate such operations in a class type’s member functions.</p>
+<p>For representing individual bitmaks values employed in bit operations, it is advisable to put the corresponding named constants in an enumeration type with the appropriate underlying type for easier recall.</p>
+<p>While technically a bit shift of an integral value can be viewed as a multiplication or division by a power of two, it should not be used in arithmetic expression to implement such a multiplication. Compiler’s will automatically implement such a multiplication in the most efficient way, there is no need to obfuscate multiplication and division as shift operations.</p>
+<p>Except for specific situations (trivial types), objects of class type can not be assumed to have a layout appropriate to be manipulated on a byte or bitwise level. <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> can be used to reinterpret suitably sized types on a bitwise level, i.e., for accessing the binary representation of a floating point value. However, for types with padding bits that do do not participate in an object’s value representation, the corresponding bits in a <code>bit_cast</code> result have indeterminate values. Padding bits or bytes can be used as a <em>secret channel</em> to hide information and extract it later with a <code>bit_cast</code> mechanism.</p>
+<p>See C++ Core Guidelines ES101 use unsigned types for bit manipulation.</p>
 <h3 id="guidance-to-language-users">6.3.2 Guidance to language users</h3>
 <p>In addition to the advice of ISO/IEC TR 24772-3:2020 clause 6.3.2:</p>
-<p>See C++ Core Guidelines ES101 use unsigned types for bit manipulation.</p>
+<ul>
+<li><p>Avoid mixing bitwise operations with arithmetic operations in the same expression.</p></li>
+<li><p>Avoid the use of shift operations to implement multiplications or division by powers of two.</p></li>
+<li><p>Use bitwise operations only with operands of unsigned integral types with known width or enums with such an underlying type.</p></li>
+<li><p>When performing bitwise operations on operands of unsigned type that gets promoted to a signed integral type, cast the result to the corresponding unsigned type immediately.</p></li>
+<li><p>Take extra care when computing the right-hand operand of a shift operation, so that its value is not greater than the number of bits the left-hand operand has. Use static analysis tools or other means to prove that the right hand operand of the shift is not out of bounds.</p></li>
+<li><p>Prefer <code>bit_cast</code> over <code>reinterpret_cast</code> or other means to access the binary representation of an object.</p></li>
+</ul>
 <p>CERT INT34-C</p>
 <ul>
 <li><p>Do not use <code class="sourceCode cpp"><span class="bu">std::</span>vector&lt;<span class="dt">bool</span>&gt;</code></p></li>
