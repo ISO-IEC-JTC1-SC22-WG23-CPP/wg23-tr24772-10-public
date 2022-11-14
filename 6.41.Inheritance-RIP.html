@@ -240,19 +240,20 @@
 <li><p><em>Execution of malicious redefinitions</em> can be prevented by use of <code class="sourceCode cpp"><span class="kw">final</span></code> on each member function to generate compiler diagnostics when overriding is not permitted.</p></li>
 <li><p><em>Accidental redefinition</em> can be mitigated by a project mandate to use the <code class="sourceCode cpp"><span class="kw">override</span></code> or <code class="sourceCode cpp"><span class="kw">final</span></code> special identifiers when overriding a virtual member functions.</p></li>
 <li><p><em>Accidental failure of redefinition</em> can be prevented by using <code class="sourceCode cpp"><span class="kw">override</span></code> on each member function intended to be redefined to generate compiler diagnostics when overriding does not apply.</p></li>
-<li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them.</p></li>
+<li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them. If copy and move operations are user-defined in a derived class they must ensure to call the corresponding base class operations.</p></li>
+<li><p><em>Direct reading and writing of visible class members</em> of a base class can be avoided by declaring the data members private and only allowing the class-invariant-preserving member functions in the derived classes. If those member functions are not part of the public API, they can be declared as <code class="sourceCode cpp"><span class="kw">protected</span></code>.</p></li>
 </ul>
 <h2 id="guidance-to-language-users">6.41.2 Guidance to language users</h2>
 <ul>
 <li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 41.5.</p></li>
-<li><p>Avoid the use of multiple inheritance with virtual member functions whenever possible. Multiple <em>mix-in empty bases</em> are typically fine.</p></li>
-<li><p>Define members to be used only by derived classes as protected.</p></li>
-<li><p>Define as private base-class’ data-members that must not be used directly by derived classes.</p></li>
-<li><p>Keep inheritance hierarchies flat.</p></li>
+<li><p>Except for <em>mix-in empty bases</em> avoid multiple inheritance.</p></li>
+<li><p>Don’t define copy or move operations (see clause 6.38 Deep vs. Shallow Copying [YAN]). If you must implement copy- or move-operations in a derived class then always call the corresponding base classes’ operations.</p></li>
+<li><p>Prefer composition over inheritance, in general keep inheritance hierarchies shallow.</p></li>
 <li><p>Restrict the use of virtual member functions to situations where unbounded run-time polymorphism is beneficial.</p></li>
 <li><p>Use <code class="sourceCode cpp"><span class="kw">override</span></code> when overriding a virtual member function to generate compiler diagnostics for failures to override.</p></li>
 <li><p>Ensure re-compilation of all derived classes when a base class changes.</p></li>
 <li><p>Consider using fully-qualified names to address members of a base class.</p></li>
+<li><p>When defining a potentially hiding overload in a derived class, consider adding a <em>using declaration</em> of the base class name.</p></li>
 <li><p>Prohibit the use of public inheritance for “has-a” relationships. Prefer composition or private/protected inheritance instead for “has-a”-relationships.</p></li>
 <li><p>Don’t mix virtual and non-virtual inheritance of the same base class in a hierarchy.</p></li>
 </ul>
