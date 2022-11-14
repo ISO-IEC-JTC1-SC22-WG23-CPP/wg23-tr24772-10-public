@@ -240,7 +240,7 @@
 <li><p><em>Execution of malicious redefinitions</em> can be prevented by use of <code class="sourceCode cpp"><span class="kw">final</span></code> on each member function to generate compiler diagnostics when overriding is not permitted.</p></li>
 <li><p><em>Accidental redefinition</em> can be mitigated by a project mandate to use the <code class="sourceCode cpp"><span class="kw">override</span></code> or <code class="sourceCode cpp"><span class="kw">final</span></code> special identifiers when overriding a virtual member functions.</p></li>
 <li><p><em>Accidental failure of redefinition</em> can be prevented by using <code class="sourceCode cpp"><span class="kw">override</span></code> on each member function intended to be redefined to generate compiler diagnostics when overriding does not apply.</p></li>
-<li><p><em>Breaking of class invariants</em> should be ensured by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them.</p></li>
+<li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them.</p></li>
 </ul>
 <h2 id="guidance-to-language-users">6.41.2 Guidance to language users</h2>
 <ul>
