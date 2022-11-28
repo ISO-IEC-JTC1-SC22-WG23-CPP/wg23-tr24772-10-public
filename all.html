@@ -2035,12 +2035,16 @@ It may not be clear whether the programmer intended to use the logical operator 
 </ul></li>
 <li><p>Rely on C++20’s synthesized or rewritten comparison operators to ensure that all of the related comparison operators behave consistently.</p></li>
 </ul>
-<h2 id="dead-and-deactivated-code-xyq">6.26 Dead and Deactivated Code [XYQ]</h2>
+<h2 id="XYQ">6.26 Dead and Deactivated Code [XYQ]</h2>
 <h3 id="applicability-to-language">6.26.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.26 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.26 exists in C++.</p>
+<p>The language mechanisms around templates and overload resolution can require definitions to exist that are not part of the executable program. But the mechanisms at compile time guarantee that the corresponding code never becomes part of the executable program. However, a programmer might be unaware of all details with respect to the language mechnisms and thus make subtle errors leading to code selected for the executable program that was unintended.</p>
+<p>If there is code that was once needed or might be needed in the future, programmers might opt to comment or use preprocessor conditional compilation to exclude such parts. The latter might even be confusing, because an intentionally undefined macro might be defined for a specific compilation outside of the program source text. Modern version control systems are better places to keep unused code in a revision or branch and ressurect it if needed through a merge.</p>
 <h3 id="guidance-to-language-users">6.26.2 Guidance to language users</h3>
 <ul>
-<li>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.26.5.</li>
+<li><p>Follow the guidance of ISO/IEC 24772-1 clause 6.26.5.</p></li>
+<li><p>Use IDEs or similar tools that visualize the code that gets selected for the executable program.</p></li>
+<li><p>Use modern version control to manage unused code.</p></li>
 </ul>
 <h2 id="switch-statements-and-static-analysis-cll">6.27 Switch Statements and Static Analysis [CLL]</h2>
 <h3 id="applicability-to-language">6.27.1 Applicability to language</h3>
