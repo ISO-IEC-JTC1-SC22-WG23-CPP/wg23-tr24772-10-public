@@ -2415,12 +2415,13 @@ void foo3 ()
 <li><p>When using functions declared with <code>extern "C"</code> linkage specifications, use static analysis tools to ensure that all such declarations of equally named functions have identical signatures.</p></li>
 </ul>
 <p>Note: See also C++ Core Guidelines F.55.</p>
-<h2 id="recursion-gdl">6.35 Recursion [GDL]</h2>
+<h2 id="GDL">6.35 Recursion [GDL]</h2>
 <h3 id="applicability-to-language">6.35.1 Applicability to language</h3>
-<p>C++ permits recursion, hence is subject to the problems described in ISO/IEC TR 24772-1:2019 clause 6.35.</p>
+<p>C++ permits recursion, hence is subject to the problems described in ISO/IEC 24772-1 clause 6.35.</p>
+<p>C++ allows recursive <code class="sourceCode cpp"><span class="kw">constexpr</span></code> functions and <code class="sourceCode cpp"><span class="kw">consteval</span></code> functions that are evaluated at compile time where such calls don’t contribute to the vulnerability.</p>
 <h3 id="guidance-to-language-users">6.35.2 Guidance to language users</h3>
 <ul>
-<li>Apply the guidance described in TR 24772-1 clause 6.35.5.</li>
+<li>Apply the guidance described in ISO/IEC 24772-1 clause 6.35.5.</li>
 </ul>
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
