@@ -152,13 +152,14 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.19.UnusedVariable-YZS.md</h1>
 </header>
-<h2 id="unused-variable-yzs">6.19 Unused Variable [YZS]</h2>
+<h2 id="YZS">6.19 Unused Variable [YZS]</h2>
 <h3 id="applicability-to-language">6.19.1 Applicability to language</h3>
-<p>The vulnerability as documented in TR 24772-1 clause 6.19 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.19 exists in C++.</p>
+<p>A common practice for resource management in C++ relies on what is called “RAII” or “SBRM” (scope-based resource management): employing a class’ destructor to release resources managed by the object. This can lead to code without visible use of a variable being present in the source code, because all work is done by the variable’s constructor and/or destructor.</p>
 <h3 id="guidance-to-language-users">6.19.2 Guidance to language users</h3>
 <ul>
-<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.19.5.</p></li>
-<li><p>Resolve all compiler warnings for unused variables.</p></li>
+<li><p>Follow the guidance of ISO/IEC 24772-1 clause 6.19.5.</p></li>
+<li><p>Use compiler warnings and/or static analysis tools to indicate and eliminate unused variables.</p></li>
 </ul>
 </body>
 </html>
