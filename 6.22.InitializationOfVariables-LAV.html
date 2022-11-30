@@ -253,9 +253,9 @@
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a; <span class="co">// can cause data races</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>See C++ Core Guidelines ES.20 and CERT C++ Coding Guidelines EXP53-CPP. Note that ES.20 and EXP53 are complementary. Both point out that you should always initialize before reading, but ES.20 uses the narrow sense of initialize while EXP53 includes assignment.</p>
-<h3 id="guidance-to-language-users">6.22.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.22.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li>Follow the guidance provided in ISO IEC 24772-1 subclause 6.22.5</li>
+<li>Use the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.22.5</li>
 <li>Initialize every object defined, including data members.</li>
 <li>Do not depend on the order of dynamic initialization of namespace-scope variables, unless the initialization order is guaranteed by the language.</li>
 <li>Consider not using namespace-scope variables (see <span id="CGA">6.61</span>).</li>
