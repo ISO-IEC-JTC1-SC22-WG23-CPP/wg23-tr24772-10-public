@@ -226,9 +226,9 @@
 <p>Except for specific situations (trivial types), objects of class type can not be assumed to have a layout appropriate to be manipulated on a byte or bitwise level. Depending on the size and alignment of its data members a class type might have padding bytes between members. The absence of padding in a trivially copyable type <code>T</code> can be checked with a <code>static_assert(std::has_unique_object_representations_v&lt;T&gt;)</code>.</p>
 <p><code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> can be used to reinterpret suitably sized trivial types on a bitwise level, i.e., for accessing the binary representation of a floating point value. However, for types with padding bits that do do not participate in an object’s value representation, the corresponding bits in a <code>bit_cast</code> result have indeterminate values. Malicious code could use such padding bits as a <em>secret channel</em>.</p>
 <p>See C++ Core Guidelines ES101 use unsigned types for bit manipulation.</p>
-<h3 id="guidance-to-language-users">6.3.2 Guidance to language users</h3>
-<p>In addition to the advice of ISO/IEC TR 24772-3:2020 clause 6.3.2:</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.3.2 Avoidance mechanisms for language users</h3>
 <ul>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.3.2</p></li>
 <li><p>Avoid the use of shift operations to implement multiplications or division by powers of two.</p></li>
 <li><p>Use built-in bitwise operations only with operands of unsigned integral types or enums with an unsigned underlying type.</p></li>
 <li><p>When performing bitwise operations on operands of an unsigned type that gets promoted to a signed integral type, cast the result to the corresponding unsigned type immediately.</p></li>
