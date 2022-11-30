@@ -222,9 +222,9 @@
 <p>The standard library algorithms that copy into a target range can suffer from this vulnerability. In the case of potential overflow, the programmer must either ensure automatic extension of the underlying container, such as by using <code class="sourceCode cpp"><span class="bu">std::</span>back_inserter(container)</code> as the output iterator, or ensure that the output range has sufficient space available. In the case of overlapping input and output ranges, the suitable copying algorithm must be selected, depending on the relative ordering of the ranges. In general, this situation can be avoided by using a more appropriate algorithm, for example, <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p>
 <p>For arrays with fixed sizes the assignment operator or copy-constructor of <code class="sourceCode cpp"><span class="bu">std::</span>array</code> is the means of safe array copying.</p>
 <p>If a system requires its own container types with dynamic size, a naïve implementation might attempt to keep the copying external, like with C-style arrays. Such external copying should be avoided.</p>
-<h3 id="guidance-to-language-users">6.10.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.10.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the advice provided in ISO/IEC 24772-1:2022 clause 6.10.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.10.5.</p></li>
 <li><p>Use standard library containers instead of C-style arrays, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
 <li><p>When using standard library algorithms that copy into an output range, ensure that either the output range is extended automatically or has sufficient space available.</p></li>
 <li><p>Sidestep the need to use a copy algorithm on overlapping ranges, by selecting a more appropriate algorithm, such as <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p></li>
