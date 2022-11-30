@@ -251,9 +251,9 @@ if (i == 10){
                         // of the else clause
 ```</code></pre>
 <p>If the assignments to b were added later and were expected to be part of each <code class="sourceCode cpp"><span class="cf">if</span></code> and <code class="sourceCode cpp"><span class="cf">else</span></code> clause (they are indented as such), the above code is incorrect: the assignment to <code class="sourceCode cpp">b</code> that was intended to be in the <code class="sourceCode cpp"><span class="cf">else</span></code> clause is unconditionally executed.</p>
-<h3 id="guidance-to-language-users">6.28.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.28.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the rules provided in ISO/IEC TR 24772-1:2019 clause 6.28.5.</p></li>
+<li><p>Use theavoidance mechanisms of ISO/IEC 24772-1 clause 6.28.5.</p></li>
 <li><p>Enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software.</p></li>
 <li><p>Declare loop variables in the initializer of the loop statement</p></li>
 <li><p>Prefer the standard library algorithms over hand-crafted loops.</p></li>
