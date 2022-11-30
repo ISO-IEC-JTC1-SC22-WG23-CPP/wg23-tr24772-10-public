@@ -1585,9 +1585,9 @@ To Do *(Paul)*
 <h3 id="applicability-to-language">6.19.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.19 exists in C++.</p>
 <p>A common practice for resource management in C++ relies on what is called “RAII” or “SBRM” (scope-based resource management): employing a class’ destructor to release resources managed by the object. This can lead to code without visible use of a variable being present in the source code, because all work is done by the variable’s constructor and/or destructor.</p>
-<h3 id="guidance-to-language-users">6.19.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.19.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance of ISO/IEC 24772-1 clause 6.19.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.19.5.</p></li>
 <li><p>Use compiler warnings and/or static analysis tools to indicate and eliminate unused variables.</p></li>
 </ul>
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
@@ -1633,9 +1633,9 @@ To Do *(Paul)*
 <span id="cb105-33"><a href="#cb105-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The above code calls the overload <code>print(A)</code> from println since it is pulled in by ADL. On the other hand, ADL is required to work to allow the output operator for type <code>X::A</code> to work.</p>
 <p>The consideration of implicit conversions together with ADL can be suppressed by defining operator overloads as class members or as <em>hidden friends</em>. The latter is achieved by declaring all corresponding overloads as <code class="sourceCode cpp"><span class="kw">friend</span></code> functions in the class that take the class’ objects as arguments. Generic base classes can provide mix-in facilities for <em>hidden friends</em> by taking the argument type that is the derived class as template parameter.</p>
-<h3 id="guidance-to-language-users">6.20.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanismsfor-language-users">6.20.2 Avoidance mechanismsfor language users</h3>
 <ul>
-<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.20, with the exclusion of guidance related to truncated identifiers.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
 <li><p>Limit the visibility of overloaded operators or functions for class types by defining them as member functions or <em>hidden friends</em>.</p></li>
