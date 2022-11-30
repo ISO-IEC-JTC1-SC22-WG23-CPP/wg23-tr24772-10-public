@@ -1461,9 +1461,9 @@ for(char c: make().front()) { // attempt to iterate over first string in vector
    // vector and thus contained string is already destroyed
 }</code></pre>
 <p>For objects directly allocated on the heap C++ provides smart pointers and corresponding factory functions (e.g., <code class="sourceCode cpp">make_unique()</code>) that allow transferring ownership or shared ownership to reduce the risk for dangling.</p>
-<h3 id="guidance-to-language-users">6.14.2 Guidance to language users</h3>
-<p>In addition to the guidance provided in TR 24772-1 clause 6.14.5:</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
 <ul>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.14.5:</p></li>
 <li><p>Do not rely on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
 <li><p>Prefer value types that manage heap memory, for example, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, and pass by value/return by value over the use of <em>potentially dangling types</em>.</p></li>
 <li><p>If value types are not feasible, adopt a style that makes explicit the ownership and lifetime of heap resources, by using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> or <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> or similar RAII/SBRM types and allocate heap memory exclusively with their corresponding factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique/<span class="bu">std::</span>make_shared</code>.</p></li>
