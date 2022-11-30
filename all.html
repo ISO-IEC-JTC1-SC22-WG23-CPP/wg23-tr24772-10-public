@@ -1401,9 +1401,9 @@ enumerations for safe and simple use"</li>
 <p>It is defined behavior to reinterpret cast to a pointer from the integral types std::uintptr_t/std::intptr_t, but only if the value of the integer value was previously obtained by converting a valid pointer to said integral type. Casting an arbitrary integral value to a pointer is undefined behavior.</p>
 <p>Pointers to functions and pointers to members and pointerst to void do not allow pointer arithmetic.</p>
 <p>Pointers to objects can implicitly convert to <code class="sourceCode cpp"><span class="dt">void</span> *</code> (cv-qualified accordingly), it is only defined to reinterpret cast the obtained pointer back to the original type. It is implementation-defined if that bidirectional <code class="sourceCode cpp"><span class="dt">void</span> *</code> conversion also works for function pointers.</p>
-<h3 id="guidance-to-language-users">6.12.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
+<li><p>Use the avoidance mechanisms of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
 <li><p>Avoid using reinterpret_cast&lt;&gt;() or pointer conversions to or from <code class="sourceCode cpp"><span class="dt">void</span> *</code>. Do not use C-style casts to achieve reinterpret_cast functionality.</p></li>
 <li><p>Compare pointers of unknown realm with the standard library comparison function objects instead of relational operators.</p></li>
 <li><p>Consider an outright ban on pointer arithmetic due to the error-prone nature of pointer arithmetic.</p></li>
