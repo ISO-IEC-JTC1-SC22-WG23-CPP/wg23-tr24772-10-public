@@ -216,7 +216,7 @@
 </header>
 <h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
-<p>C++ has the vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.15. C++ specifies that * signed integers are defined to be represented as two’s complement, still signed integer overflow is undefined behaviour, * unsigned integer overflow is well-defined in C++ to wrap-around, * integral promotion can change values of unsigned types to a signed type before arithmetic takes place, * mixing signed and unsigned values or integral types of different conversion rank in an expression is subject to the implicit “usual arithmetic conversions” that can be confusing, * integral values implicitly convert among all integral types, even when passed as a function argument, * using brace-initialization prevents implicit narrowing conversions.</p>
+<p>C++ has the vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.15. C++ specifies that * signed integers are defined to be represented as two’s complement, still signed integer overflow * is undefined behaviour, * unsigned integer overflow is well-defined in C++ to wrap-around, * integral promotion can change values of unsigned types to a signed type before arithmetic takes * place, mixing signed and unsigned values or integral types of different conversion rank in an * expression is subject to the implicit “usual arithmetic conversions” that can be confusing, * integral values implicitly convert among all integral types, even when passed as a function argument, * using brace-initialization prevents implicit narrowing conversions.</p>
 <p>Even the unsigned wrap around can be confusing, such as <code>4U - 5U</code> yields a large positive value. Multiplying two <code>unsigned short</code> variables with a large value each, can result in undefined behavior when <code>std::numeric_limits&lt;int&gt;::max()==0x7fff'ffff</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(){</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>uint16_t x{<span class="dv">40&#39;000</span>},y{<span class="dv">50&#39;000</span>};</span>
@@ -229,9 +229,9 @@
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">static_cast</span>&lt;uint16&gt;(<span class="kw">static_cast</span>&lt;<span class="dt">unsigned</span>&gt;(a) * <span class="kw">static_cast</span>&lt;<span class="dt">unsigned</span>&gt;(b));</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>} <span class="co">// guarantee wrap around</span></span></code></pre></div>
 <p>High-integrity software using the built-in integral types should refrain from relying on integral promotion and implicit conversions and use integral types with a well-known range, or guarantee that allowed variation in the range of representable values do not influence computed results.</p>
-<h3 id="guidance-to-language-users">6.15.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.15.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.15.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.15.5.</p></li>
 <li><p>Use appropriate user-defined types in place of built-in integral types, that mitigate against implicit conversions and undefined behaviour.</p></li>
 <li><p>Avoid implicit integral promotions and integral conversions, especially on function arguments.</p></li>
 <li><p>Avoid mixing integral types in the same expression.</p></li>
