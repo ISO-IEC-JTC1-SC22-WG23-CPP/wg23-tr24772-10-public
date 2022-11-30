@@ -2185,9 +2185,9 @@ if (i == 10){
 <span id="cb146-2"><a href="#cb146-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="kw">auto</span> <span class="at">const</span> x : a) {</span>
 <span id="cb146-3"><a href="#cb146-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; x &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
 <span id="cb146-4"><a href="#cb146-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="guidance-to-language-users">6.29.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.29.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Apply the guidance of ISO/IEC TR 24772-1:2019 clause 6.29.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.29.5.</p></li>
 <li><p>Do not modify a loop control variable within a loop.</p></li>
 <li><p>Use a range-for loop in preference to general loops.</p></li>
 <li><p>Alternatively, use standard library generic algorithm functions like <code>copy</code>, <code>reduce</code>, <code>transform</code>, <code>inner_product</code>, etc. in preference to general loops.</p></li>
@@ -2204,7 +2204,7 @@ if (i == 10){
 <span id="cb147-5"><a href="#cb147-5" aria-hidden="true" tabindex="-1"></a>      ...</span>
 <span id="cb147-6"><a href="#cb147-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">0</span>);</span>
 <span id="cb147-7"><a href="#cb147-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>C++ mitigates the issue of sentinel values in strings document in TR 24772-1 by providing the <code class="sourceCode cpp">string</code> class and the <code class="sourceCode cpp">string_view</code> class.</p>
+<p>C++ mitigates the issue of sentinel values in strings document in ISO/IEC 24772-1 clause 6.30 by providing the <code class="sourceCode cpp">string</code> class and the <code class="sourceCode cpp">string_view</code> class.</p>
 <p>C++ does not flag accesses outside of array bounds, so an off by one error may not be as detectable in C++ as in some other languages. Several good and freely available tools can be used to help detect accesses beyond the bounds of arrays that are caused by an off by one error. However, such tools will not help in the case where only a portion of the array is used, and the access is still within the bounds of the array.</p>
 <p>C++ mitigates these issues by providing</p>
 <ul>
@@ -2214,9 +2214,9 @@ if (i == 10){
 <li><p>Container classes</p></li>
 <li><p><code class="sourceCode cpp">gsl::span</code> (soon to be <code class="sourceCode cpp"><span class="bu">std::</span>span</code>)</p></li>
 </ul>
-<h3 id="guidance-to-language-users">6.30.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.30.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.30.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.30.5.</p></li>
 <li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++.</p></li>
 <li><p>Use range-based for loops, std algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p></li>
 </ul>
