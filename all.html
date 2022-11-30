@@ -1244,9 +1244,9 @@ enumerations for safe and simple use"</li>
 <p>In addition to the use of <em>strong types</em> (see <a href="#IHN">Type System [IHN]</a>), the implicit conversions and multitude of possible operations of integral types can be mitigated by using scoped enumeration types with the corresponding integer type as its underlying type. For example, <code class="sourceCode cpp"><span class="bu">std::</span>byte</code> is defined to address individual <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code> elements (bytes) in memory without participating in arithmetic or bitwise operations.</p>
 <p>Because C++ allows function and operator overloading, the effect of implicit conversions provides an additional mechanism of failure, by selecting an unwanted overload during overload resolution due to implicit conversions. This can influence failure modes with lookup as described in section <a href="#BJL">Namespace Issues [BJL]</a>. // Add overload resolution reference!!</p>
 <p>C++ also provides a library function <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>. This function provides the ability to preserve the bit representation when converting between unrelated types. If such is meaningful, then <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> reduces the risk of some undefined behaviours compared with other type punning approaches such as casts or unions.</p>
-<h3 id="guidance-to-language-users">6.6.2 Guidance to language users</h3>
-<p>In addition to the general advice of ISO/IEC 24772-1 clause 6.6.5:</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.6.2 Avoidance mechanisms for language users</h3>
 <ul>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.6.5:</p></li>
 <li><p>Avoid casts and type punning (see C++ Core guidelines ES.48), treat every cast as a candidate for refactoring.</p></li>
 <li><p>Avoid narrowing conversions. (see C++ Core Guidelines ES.46)</p></li>
 <li><p>Prefer braces over parentheses for initialization or explicit conversions from numeric types to prevent narrowing. (see C++ Core Guidelines ES.23 and ES.64)</p></li>
@@ -1264,7 +1264,7 @@ enumerations for safe and simple use"</li>
 <li><p>Don’t rely on implicit conversions between <code>bool</code> and other types.</p></li>
 <li><p>Don’t rely on implicit conversions between character types and other types.</p></li>
 <li><p>Use <em>strong types</em> (see subclause <a href="#IHN">Type System [IHN]</a>) to limit implicit conversions and unwanted operations.</p></li>
-<li><p>When using <code class="sourceCode cpp"><span class="kw">auto</span></code> ensure that you know the type that <code class="sourceCode cpp"><span class="kw">auto</span></code> deduces type and resist using <code class="sourceCode cpp"><span class="kw">auto</span></code> for the predefined types it for the predefined types.</p></li>
+<li><p>When using <code class="sourceCode cpp"><span class="kw">auto</span></code> ensure that you know the type that <code class="sourceCode cpp"><span class="kw">auto</span></code> deduces type and resist using <code class="sourceCode cpp"><span class="kw">auto</span></code> for the predefined types</p></li>
 </ul>
 <h2 id="CJM">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
