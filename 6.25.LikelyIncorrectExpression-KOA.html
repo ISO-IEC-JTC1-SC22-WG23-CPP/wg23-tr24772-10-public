@@ -278,8 +278,8 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2^n where n is the number of bits in the unsigned type.</p>
 <p>C++ overloading of operators can also cause confusion. When overloaded, related operators like the compound assignment with their base operator, or comparison operators are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all. Similarly, for <code class="sourceCode cpp">a == b</code> (before C++20), there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code>.</p>
 <p>Unless the all relational operators are defined either explicitly or implicitly, unexpected results can occur. From C++20 onwards, a user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operator consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as =default, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
-<h3 id="guidance-to-language-users">6.25.2 Guidance to language users</h3>
-<p>— Follow the guidance contained in ISO/IEC TR 24772-1:2019, 6.25.5.</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
+<p>— Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
 <ul>
 <li><p>Simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example,</p>
 <ul>
@@ -287,7 +287,8 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li>by extracting a subexpression into a function with a meaningful name.</li>
 </ul></li>
 <li><p>Avoid assignments embedded within other statements and expressions.</p></li>
-<li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators. In addition avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
+<li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators.</p></li>
+<li><p>Avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
 <li><p>Consider using alternative tokens for the logical operators.</p></li>
 <li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
 <li><p>Do not have conflicting side-effects in sub-expressions.</p></li>
