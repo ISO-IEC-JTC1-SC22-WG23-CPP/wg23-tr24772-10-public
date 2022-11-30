@@ -1912,7 +1912,9 @@ To Do *(Paul)*
 <p>In addition, it is important to note that overloading an operator disables short-circuiting behaviours (e.g., built-in boolean operators): those operators' operands are all evaluated before the operator itself.</p>
 <p>The C++ built-in (two-argument) Boolean operators (e.g., <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">\|\|</code>)as well as <code>&lt;type_traits&gt;</code>’s <code class="sourceCode cpp"><span class="bu">std::</span>conjunction</code> and <code class="sourceCode cpp"><span class="bu">std::</span>disjunction</code> operations are all short-circuiting, i.e., if the value of an earlier (from left-to-right) operand of an operation determines the result of the operation, then all remaining arguments are not evaluated.</p>
 <pre><code>&lt;!--
-Conjunction and disjunction operate at compile time and the short-circuiting is about template instantiations that might lead to compile errors otherwiese. This is not a runtime safety issue. I suggest dropping that (Peter)_
+Conjunction and disjunction operate at compile time and the short-circuiting is about template 
+instantiations that might lead to compile errors otherwiese. This is not a runtime safety issue. I 
+suggest dropping that (Peter)_
 --&gt;</code></pre>
 <p>Typically this allows one to write code like this, e.g.,</p>
 <div class="sourceCode" id="cb123"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> *p;</span>
@@ -1938,9 +1940,9 @@ of the same operator are considered to have the same name so one can
 hide another from an enclosing scope. Thus, this is also another
 possible vulnerability.\]
 --&gt;</code></pre>
-<h3 id="guidance-to-language-users">6.24.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.24.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance provided in ISO/IEC TR 24772-1:2019 Clause 6.24.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.24.5.</p></li>
 <li><p>Write expressions so that the same effects will occur under any order of evaluation that C++ permits since side effects can be dependent on an implementation specific order of evaluation.</p></li>
 <li><p>Avoid overloading logical operators (&amp;&amp; and ||), as these overloaded versions will not short-circuit.</p></li>
 <li><p><em>Ensure that</em> ++, --, @= <em>are used as solitary items in a statement.</em></p></li>
