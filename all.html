@@ -1572,12 +1572,12 @@ To Do *(Paul)*
 <h2 id="WXQ">6.18 Dead Store [WXQ]</h2>
 <h3 id="applicability-to-language">6.18.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.18 exists in C++.</p>
-<p>The language definition permits the compiler to eliminate effects of the abstract machine that are not observable, in particular, dead stores. For example, the often-attempted write operations to non-volatile member variables in a destructor that are not subsequently used can be elided by the compiler.</p>
+<p>The language definition permits the compiler to eliminate effects of the abstract machine that are not observable, in particular, dead stores. For example, the often-attempted write operations to non- volatile member variables in a destructor that are not subsequently used can be elided by the compiler.</p>
 <p>C++ compilers and static analysis tools do exist that detect and generate warnings for dead stores.</p>
 <p>The error in ISO/IEC 24772-1:2019 subclause 6.18.3 that the planned reader misspells the name of the store is possible but unlikely in C++ since the language specifies that all objects shall be declared and typed, and the existence of two objects with almost identical names and compatible types (for assignment) in the same scope would be readily detectable. See 6.17 [NAI] Choice of clear names, 6.20 Identifier name reuse [YOW], and 6.21 Namespace issues [BJL]</p>
-<h3 id="guidance-to-language-users">6.18.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.18.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the advice of ISO/IEC 24772-1 clause 6.18.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.18.5.</p></li>
 <li><p>Use compilers and static analysis tools to identify dead stores in the program.</p></li>
 <li><p>Provide sufficient synchronization to non-const variables that are accessed by multiple execution agents. See clause 6.61 Concurrent data access [CGX]</p></li>
 </ul>
