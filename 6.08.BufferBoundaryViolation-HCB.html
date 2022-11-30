@@ -265,13 +265,14 @@
 <li><a href="https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR55-CPP.+Do+not+use+an+additive+operator+on+an+iterator+if+the+result+would+overflow">SEI CTR55-CPP</a></li>
 <li><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i13-do-not-pass-an-array-as-a-single-pointer">C++ core guidelines I.13</a></li>
 </ul>
-<h3 id="guidance-to-language-users">6.8.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.8.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the advice provided in ISO/IEC 24772-1:2022 clause 6.8.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.8.5.</p></li>
 <li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p></li>
 <li><p>To model a fixed-size array, use a library class such as <code>std::array</code>.</p></li>
 <li><p>To model arrays with dynamically changing size, use containers of the standard library, such as <code>std::vector</code> or <code>std::deque</code>.</p></li>
-<li><p>Avoid using a pointer paramter or a pointer-and-size parameter pair for representing a contiguous buffer. Prefer the library classes <code>std::views::counted</code>, <code>std::span</code> or <code>std::string_view</code> for such parameters.</p></li>
+<li><p>Avoid using a pointer paramter or a pointer-and-size parameter pair for representing a contiguous buffer.</p></li>
+<li><p>Prefer the library classes <code>std::views::counted</code>, <code>std::span</code> or <code>std::string_view</code> for such parameters.</p></li>
 <li><p>Prefer using range-based or iterator-based algorithms, such as those of the standard library, over pointer-manipulating or indexing loops.</p></li>
 <li><p>Use the range-based for loop construct to iterate within the defined bounds of a range.</p></li>
 <li><p>Ensure that ranges and iterators used by range-for or passed to algorithms are and remain valid.</p></li>
