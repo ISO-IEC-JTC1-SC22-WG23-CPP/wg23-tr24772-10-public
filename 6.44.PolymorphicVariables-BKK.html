@@ -270,9 +270,9 @@
 <li><p>can often be done with a chain of <code class="sourceCode cpp">static_casts</code> traversing the inheritance hierarchy, which is almost always unsafe.</p></li>
 </ul>
 <p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
-<h3 id="guidance-to-language-users">6.44.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the advice provided in ISO/IEC 24772-1 clause 6.44.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.44.5.</p></li>
 <li><p>In a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>
 <li><p>Avoid designs relying on downcasts or crosscasts; rely on proper virtual member functions in the base classes instead.</p></li>
 <li><p>Avoid explicit upcast, rely on implicit conversion.</p></li>

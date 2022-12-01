@@ -242,7 +242,7 @@
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    pA-&gt;h(); <span class="co">// infinite recursion</span></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In C++, the call to a member function can be qualified, as shown in the above example, and avoids the vulnerability.</p>
-<h3 id="guidance-to-language-users">6.43.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.43.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>At a call site, consider whether virtual dispatch is desired. If not, construct the call using the qualified name.</p></li>
 <li><p>Be suspicious of any call from a virtual member function of the derived class to any member function of any of its base classes.</p></li>
