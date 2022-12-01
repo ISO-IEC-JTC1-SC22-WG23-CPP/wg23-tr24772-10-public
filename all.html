@@ -2415,9 +2415,9 @@ void foo3 ()
 <span id="cb153-7"><a href="#cb153-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="bn">0xffffffff</span>);  <span class="co">// Calling function that is</span></span>
 <span id="cb153-8"><a href="#cb153-8" aria-hidden="true" tabindex="-1"></a>                     <span class="co">// defined to take 2 parameters</span></span>
 <span id="cb153-9"><a href="#cb153-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="guidance-to-language-users">6.34.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.34.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidelines of ISO/IEC TR 24772-1:2019 clause 6.34.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC TR 24772-1:2019 clause 6.34.5.</p></li>
 <li><p>Do not use functionality from <code>&lt;cstdarg&gt;</code>; use variadic function templates instead.</p></li>
 <li><p>When using functions declared with <code>extern "C"</code> linkage specifications, use static analysis tools to ensure that all such declarations of equally named functions have identical signatures.</p></li>
 </ul>
@@ -2426,9 +2426,9 @@ void foo3 ()
 <h3 id="applicability-to-language">6.35.1 Applicability to language</h3>
 <p>C++ permits recursion, hence is subject to the problems described in ISO/IEC 24772-1 clause 6.35.</p>
 <p>C++ allows recursive <code class="sourceCode cpp"><span class="kw">constexpr</span></code> functions and <code class="sourceCode cpp"><span class="kw">consteval</span></code> functions that are evaluated at compile time where such calls don’t contribute to the vulnerability.</p>
-<h3 id="guidance-to-language-users">6.35.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.35.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li>Apply the guidance described in ISO/IEC 24772-1 clause 6.35.5.</li>
+<li>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.35.5.</li>
 </ul>
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
