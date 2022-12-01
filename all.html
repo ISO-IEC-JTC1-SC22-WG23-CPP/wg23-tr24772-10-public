@@ -2231,9 +2231,9 @@ if (i == 10){
 <p>In C++, the <code class="sourceCode cpp"><span class="cf">break</span></code> and <code class="sourceCode cpp"><span class="cf">continue</span></code> operations only act on the innermost loop. At times, escape from nested loops is required. In such cases, the use of <code class="sourceCode cpp"><span class="cf">goto</span></code> may be simpler and easier to verify than a series of tests with <code class="sourceCode cpp"><span class="cf">break</span></code> and/or <code class="sourceCode cpp"><span class="cf">continue</span></code> operations.</p>
 <p>The <code class="sourceCode cpp">setjmp</code> macro sets the current execution context into a variable, which can be use later to return to that current context using <code class="sourceCode cpp">longjmp</code> call. These calls originated from the C standard library to mimic <code class="sourceCode cpp"><span class="cf">goto</span></code> across the call stack. They do not support the relevant additions to C++ such as destructors for automatic objects, exceptions, and concurrency, and hence are incompatible with modern C++ programming.</p>
 <p>A coroutine is a function that can suspend execution for later resumption (optional).</p>
-<h3 id="guidance-to-language-users">6.31.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.31.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance of ISO/IEC 24772-1 clause 6.31.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.31.5.</p></li>
 <li><p>Write clear and concise structured code to make code as understandable as possible.</p></li>
 <li><p>Avoid the use of <code class="sourceCode cpp">setjmp</code> and <code class="sourceCode cpp">longjmp</code></p></li>
 <li><p>Consider the use of coroutines as an alternative to <code class="sourceCode cpp"><span class="cf">goto</span></code> and <code class="sourceCode cpp">setjmp/longjmp</code></p></li>
