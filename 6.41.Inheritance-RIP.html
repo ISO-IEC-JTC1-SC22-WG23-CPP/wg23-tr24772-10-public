@@ -243,9 +243,9 @@
 <li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them. If copy and move operations are user-defined in a derived class they must ensure to call the corresponding base class operations.</p></li>
 <li><p><em>Direct reading and writing of visible class members</em> of a base class can be avoided by declaring the data members private and only allowing the class-invariant-preserving member functions in the derived classes. If those member functions are not part of the public API, they can be declared as <code class="sourceCode cpp"><span class="kw">protected</span></code>.</p></li>
 </ul>
-<h2 id="guidance-to-language-users">6.41.2 Guidance to language users</h2>
+<h2 id="avoidance-mechanisms-for-language-users">6.41.2 Avoidance mechanisms for language users</h2>
 <ul>
-<li><p>Follow the guidance of ISO/IEC TR 24772-1:2019 clause 41.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</p></li>
 <li><p>Except for <em>mix-in empty bases</em> avoid multiple inheritance.</p></li>
 <li><p>Don’t define copy or move operations (see clause 6.38 Deep vs. Shallow Copying [YAN]). If you must implement copy- or move-operations in a derived class then always call the corresponding base classes’ operations.</p></li>
 <li><p>Prefer composition over inheritance, in general keep inheritance hierarchies shallow.</p></li>
