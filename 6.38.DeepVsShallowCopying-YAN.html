@@ -227,9 +227,9 @@
 <p>Using <em>relationship types</em> as function parameter types is usually safe, because language semantics guarantee the lifetime of parameter objects. Exceptions exists for thread functions and coroutines, where the initial calling context is not guaranteed to exist when parameters of relationship type are accessed.</p>
 <p>Returning a relationship type from a function can be problematic, unless the lifetime of the referred object is clear. For example, returning a reference to a local variable will return a dangling reference (see <a href="#XYK">[XYK]</a> and <a href="#XYH">[XYH]</a>).</p>
 <p>See also Core Guidelines C.20, C.22, C.32, C.67.</p>
-<h3 id="guidance-to-language-users">6.38.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.38.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidance given in ISO/IEC 24772-1 clause 6.38.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.38.5.</p></li>
 <li><p>Prefer to use and create value types.</p></li>
 <li><p>Consider relationship types only when the lifetime of the referent can be ensured, and</p>
 <ul>

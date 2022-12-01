@@ -228,11 +228,11 @@
 <pre><code>&lt;!--
 need to clarify to rely on memory managing types, containers, and unique ptr, shared ptr is often bad , Peter
 --&gt;</code></pre>
-<h3 id="guidance-to-language-users">6.39.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.39.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Use containers and smart pointers in preference to direct (manual) memory management.</p></li>
 <li><p>Follow C++ Core guidelines section R and CERT MEM51.</p></li>
-<li><p>For heap fragmentation issues, follow the guidance of ISO/IEC TR 24772-1:2019 clause 6.39.5. In particular, create pools of fixed size with user-defined operators new and operators delete.</p></li>
+<li><p>For heap fragmentation issues, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.39.5. In particular, create pools of fixed size with user-defined operators new and operators delete.</p></li>
 <li><p>Use dynamic analysis tools to detect cycles.</p></li>
 <li><p>Break cycles, for example by using <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code> or appropriate weak pointers.</p></li>
 <li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>abort()</code> or <code class="sourceCode cpp"><span class="bu">std::</span>terminate()</code> and related functions only in extreme situations. See CERT ERR50-CPP for list of cases.</p></li>
