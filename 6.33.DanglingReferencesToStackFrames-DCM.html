@@ -286,7 +286,7 @@ void foo3 ()
 <p>_Remaining scenarios on lifetime extension: The lifetime of a temporary object created when evaluating the default arguments of a default or copy constructor used to initialize an element of an array ends before the next element of the array begins initialization. (Candidate for deletion unless we can create a scenario.)</p>
 <p>Subtle text from [class.temporary] para 5 in C++17 or C++20</p>
 <p>The temporary object to which the reference is bound or the temporary object that is the complete object of a subobject to which the reference is bound persists for the lifetime of the reference [Needs addressing with an example]</p>
-<h3 id="guidance-to-language-users">6.33.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.33.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist, in order to avoid the possibility of a dangling reference.</p></li>
 <li><p>Do not returning the address or reference of a local variable as the result of a function call.</p></li>

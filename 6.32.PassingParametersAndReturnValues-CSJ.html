@@ -230,9 +230,9 @@
 <p>This means, unqualified member functions are callable on temporaries (rvalues) and thus can have side effects, but also can return an lvalue-reference to said temporary by returning <code>*this</code> (or members of <code>*this</code>), which can lead to dangling if such a reference is used beyond the expression of the function call returning it. For example, the compiler-provided assignment operators of a class are unqualified member functions that return an lvalue-reference to <code class="sourceCode cpp">*<span class="kw">this</span></code>.</p>
 <p>Rvalue-reference parameters in a context where their actual type is deduced from the call site, are called <em>forwarding references</em>. A forwarding references will either be deduced to an lvalue-reference or an rvalue-reference depending on the argument at the call site.</p>
 <p>The C++ preprocessor macros use a <em>call by name</em> parameter passing; a call to the macro replaces the macro by the body of the macro. This is called <em>macro expansion</em>. Macro expansion is applied to the program source text and amounts to the substitution of the formal parameters with the actual parameter expressions. Formal parameters are often parenthesized to avoid syntax issues after the expansion. Call by name parameter passing reevaluates the actual parameter expression each time the formal parameter is read.</p>
-<h3 id="guidance-to-language-users">6.32.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.32.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the advice of ISO/IEC TR 24772-1:2019 clause 6.32.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.32.5.</p></li>
 <li><p>Prefer pass-by-value and pass-by-const-reference over other means of parameter declaration.</p></li>
 <li><p>Prefer reference parameters over corresponding pointer parameters.</p></li>
 <li><p>Use pass by non-const reference only when side-effects on the argument are intended (<em>inout</em>-parameter).</p></li>

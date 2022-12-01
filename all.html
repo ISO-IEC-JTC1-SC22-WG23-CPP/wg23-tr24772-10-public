@@ -2255,9 +2255,9 @@ if (i == 10){
 <p>This means, unqualified member functions are callable on temporaries (rvalues) and thus can have side effects, but also can return an lvalue-reference to said temporary by returning <code>*this</code> (or members of <code>*this</code>), which can lead to dangling if such a reference is used beyond the expression of the function call returning it. For example, the compiler-provided assignment operators of a class are unqualified member functions that return an lvalue-reference to <code class="sourceCode cpp">*<span class="kw">this</span></code>.</p>
 <p>Rvalue-reference parameters in a context where their actual type is deduced from the call site, are called <em>forwarding references</em>. A forwarding references will either be deduced to an lvalue-reference or an rvalue-reference depending on the argument at the call site.</p>
 <p>The C++ preprocessor macros use a <em>call by name</em> parameter passing; a call to the macro replaces the macro by the body of the macro. This is called <em>macro expansion</em>. Macro expansion is applied to the program source text and amounts to the substitution of the formal parameters with the actual parameter expressions. Formal parameters are often parenthesized to avoid syntax issues after the expansion. Call by name parameter passing reevaluates the actual parameter expression each time the formal parameter is read.</p>
-<h3 id="guidance-to-language-users">6.32.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.32.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the advice of ISO/IEC TR 24772-1:2019 clause 6.32.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.32.5.</p></li>
 <li><p>Prefer pass-by-value and pass-by-const-reference over other means of parameter declaration.</p></li>
 <li><p>Prefer reference parameters over corresponding pointer parameters.</p></li>
 <li><p>Use pass by non-const reference only when side-effects on the argument are intended (<em>inout</em>-parameter).</p></li>
@@ -2346,7 +2346,7 @@ void foo3 ()
 <p>_Remaining scenarios on lifetime extension: The lifetime of a temporary object created when evaluating the default arguments of a default or copy constructor used to initialize an element of an array ends before the next element of the array begins initialization. (Candidate for deletion unless we can create a scenario.)</p>
 <p>Subtle text from [class.temporary] para 5 in C++17 or C++20</p>
 <p>The temporary object to which the reference is bound or the temporary object that is the complete object of a subobject to which the reference is bound persists for the lifetime of the reference [Needs addressing with an example]</p>
-<h3 id="guidance-to-language-users">6.33.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.33.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist, in order to avoid the possibility of a dangling reference.</p></li>
 <li><p>Do not returning the address or reference of a local variable as the result of a function call.</p></li>
