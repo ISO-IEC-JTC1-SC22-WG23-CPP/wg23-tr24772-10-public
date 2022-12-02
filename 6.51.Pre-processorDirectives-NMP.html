@@ -234,7 +234,7 @@
 <p>This example expands to:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
-<h3 id="guidance-to-language-users">6.51.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.51.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
 <li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
@@ -244,8 +244,8 @@
 <li><p>If a function-like macro must be used, ensure that its parameters and body are parenthesized.</p></li>
 <li><p>In a function-like macro, ensure that each argument is evaluated at most once.</p></li>
 <li><p>Do not embed pre-processor directives or side-effects such as an assignment, increment/decrement, volatile access, or function call in a function-like macro.</p></li>
-<li><p>Macros should only be used for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments.</p></li>
-<li><p>Macro paramters that are used as argument for <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> or <code class="sourceCode cpp"><span class="er">#</span></code> should not be used otherwise in the macro.</p></li>
+<li><p>Only use macros for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments.</p></li>
+<li><p>Do not otherwise use macro paramters that are used as argument for <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> or <code class="sourceCode cpp"><span class="er">#</span></code> in the macro.</p></li>
 </ul>
 </body>
 </html>
