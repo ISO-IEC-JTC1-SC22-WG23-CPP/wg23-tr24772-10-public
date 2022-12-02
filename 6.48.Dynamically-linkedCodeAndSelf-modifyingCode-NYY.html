@@ -218,10 +218,10 @@
 <h3 id="applicability-to-language">6.48.1 Applicability to language</h3>
 <p>Most loaders allow dynamically linked libraries also known as shared libraries. Code is designed and tested using a suite of shared libraries which are loaded at execution time. The process of linking and loading is outside the scope of the C++ standard.</p>
 <p>C++ prevents data pointers to be reinterpreted as function pointers and vice versa. Reinterpreting a pointer via a void pointer or <code class="sourceCode cpp"><span class="bu">std::</span>intptr_t</code> to a pointer of different type is undefined behaviour (with very few defined exceptions of data pointers to pointer to its raw bytes).</p>
-<h3 id="guidance-to-language-users">6.48.2 Guidance to language users</h3>
-<p>Follow the guidance of ISO/IEC 24772-1 clause 6.48.5.</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.48.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li>Rely on compiler warnings and analysis tools to prevent reinterpreting a data pointer as function pointer or vice versa.</li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.48.5.</p></li>
+<li><p>Rely on compiler warnings and analysis tools to prevent reinterpreting a data pointer as function pointer or vice versa.</p></li>
 </ul>
 </body>
 </html>
