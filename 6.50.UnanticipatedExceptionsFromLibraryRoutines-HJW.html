@@ -229,10 +229,10 @@
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   <span class="at">static</span> <span class="dt">exception_prone_type</span> the_safer_object;</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
-<h3 id="guidance-to-language-users">6.50.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.50.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type. Note that all destructors are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
-<li><p>Follow the advice of clause 6.36.2 for catching and handling exceptions.</p></li>
+<li><p>Use the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
 <li><p>Prefer function-scope static objects to namespace-scope objects for objects needing dynamic initialization.</p></li>
 </ul>
 </body>
