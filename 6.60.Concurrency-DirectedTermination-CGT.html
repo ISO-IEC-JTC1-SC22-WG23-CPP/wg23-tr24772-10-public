@@ -159,7 +159,7 @@
 <p>C++ threads use a fork-join model. This means that the initiating thread will wait for the completion of the initiated thread at the join place at the end of the scope that created the initiated thread if a call to join the terminating thread has been made; otherwise the initiating task will have no indication of when the created thread completes.</p>
 <p>Programmed mechanisms can be constructed to cause another thread to complete or to raise an exception, such as setting a shared variable to a known state that the target thread reads and then terminates itself.</p>
 <p>Are there any language-defined ways to check on the progress of a thread or know if it is executable? Can always use underlying mechanism where available. Future mechanism provides for communication with the spawned thread to know if it terminated returning a value or returning an exception.</p>
-<h2 id="guidance-to-language-users">6.60.2 Guidance to language users</h2>
-<p>Follow the guidance of 24772-1 Clause 6.59.5</p>
+<h2 id="avoidance-mechanisms-for-language-users">6.60.2 Avoidance mechanisms for language users</h2>
+<p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.59.5</p>
 </body>
 </html>
