@@ -327,9 +327,9 @@ Members declared <code class="sourceCode cpp"><span class="at">mutable</span></c
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutable</span> <span class="bu">std::</span>mutex <span class="va">m_mutex</span>;</span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> * <span class="va">m_head</span> { <span class="kw">nullptr</span> };</span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
-<h3 id="guidance-to-language-users">6.65.2 Guidance to language users</h3>
-<p>In addition to the general advice of TR 24772-1 clause 6.65:</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.65.2 Avoidance mechanisms for language users</h3>
 <ul>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.65.5:</p></li>
 <li><p>Do not cast-away <code class="sourceCode cpp"><span class="at">const</span></code>.</p></li>
 <li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used</p></li>
 <li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits <code class="sourceCode cpp"><span class="at">const</span></code> values to be modified as shown in clause 6.65.1; and</p></li>
