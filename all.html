@@ -3047,9 +3047,9 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <p>C++ 2020 provides callbacks in the form of stop_callback to notify the setting thread when a thread of interest has been terminated. It also provides stop_token for a thread to query it is being instructed to terminate.</p>
 <p>Any thread can re-throw an exception to be caught by the creator of the terminating thread, (but the parent may have terminated first).</p>
 <p>The semantics of C++ is that all children of the main program will terminate if the main program terminates. It is necessary to join the main program to all its children to ensure that children are not silently terminated prematurely.</p>
-<h3 id="guidance-to-language-users">6.62.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.62.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidelines of TR 24772-1 clause 6.63.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
 <li><p>Use low-level operating system primitives or other APIs where available to check that a required thread is still active.</p></li>
 <li><p>Make the main program join all created threads that need to complete normally.</p></li>
 </ul>
