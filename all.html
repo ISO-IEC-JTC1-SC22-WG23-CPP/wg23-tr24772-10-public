@@ -2943,9 +2943,9 @@ execution boundaries</p></li>
 <h2 id="EWF">6.56 Undefined Behaviour [EWF]</h2>
 <h3 id="applicability-to-language">6.56.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.56 applies to C++. In ISO/IEC 14882:2017, the terms “undefined behaviour” and “ill-formed, no diagnostic required” expose situations to be avoided.</p>
-<h3 id="guidance-to-language-users">6.56.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.56.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Follow the guidelines of ISO/IEC TR 24772-1:2019 clause 6.56.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.56.5.</p></li>
 <li><p>Use static analysis tools to help identify occurrences of undefined behaviour.</p></li>
 <li><p>Augment static analysis tool usage with runtime tools such as ASAN (address sanitizer) and related tools.</p></li>
 <li><p>Use multiple compilers/tools and different optimization levels to increase your chance of identifying constructs that have undefined behaviours.</p></li>
