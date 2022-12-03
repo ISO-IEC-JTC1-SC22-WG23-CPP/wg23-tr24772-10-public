@@ -2984,9 +2984,9 @@ execution boundaries</p></li>
 <li>6.14 and 6.33 dangling of data reference, if data is passed to the thread function as reference or pointer, instead of passing a copy.</li>
 <li>6.36 undhandle exception leading to premature termination of the program, if the thread object is destroyed and the spawned thread is neither joined nor detached. Creating a new thread through <code class="sourceCode cpp"><span class="bu">std::</span>async</code> will implicitly join.</li>
 </ul>
-<h3 id="guidance-to-language-users">6.59.2 Guidance to language users</h3>
+<h3 id="avoidance-mechanisms-for-language-users">6.59.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>If you are using a non-standard thread facilities, e.g., by making use of <code>std::thread::native_handle</code> follow the guidelines of TR 24772-1 clause 6.60.5.</p></li>
+<li><p>If you are using a non-standard thread facilities, e.g., by making use of <code>std::thread::native_handle</code>, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.60.5.</p></li>
 <li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> for thread creation, or always <code>.join()</code> or <code>.detach()</code> a created <code>std::thread</code>.</p></li>
 <li><p>Pass all thread function arguments by value, or ensure their lifetime outlasts the running thread. In the latter case proper synchronization is required.</p></li>
 </ul>
