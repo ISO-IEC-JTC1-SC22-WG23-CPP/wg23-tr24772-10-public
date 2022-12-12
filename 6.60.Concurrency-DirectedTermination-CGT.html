@@ -216,15 +216,22 @@
 </header>
 <h2 id="concurrency-directed-termination-cgt">6.60 Concurrency – Directed termination [CGT]</h2>
 <h3 id="applicability-to-language">6.60.1 Applicability to language</h3>
-<p>What about tasks? Explain std::function A functor is a class that can be called like a throw-away parallel object. Can also use in lambda expressions. The creating thread can only retrieve results by using a shared variable or using explicit thread calls to</p>
-<p>A thread in C++ runs until completion, either a normal completion or as the result of an unhandled exception. There is no mechanism in the language to terminate another thread. If the threading model is POSIX or some other underlying paradigm, the underlying threading service calls can be used to terminate a thread.</p>
-<p>C++ threads use a fork-join model. This means that the initiating thread will wait for the completion of the initiated thread at the join place at the end of the scope that created the initiated thread if a call to join the terminating thread has been made; otherwise the initiating task will have no indication of when the created thread completes.</p>
-<p>Programmed mechanisms can be constructed to cause another thread to complete or to raise an exception, such as setting a shared variable to a known state that the target thread reads and then terminates itself.</p>
-<p>Are there any language-defined ways to check on the progress of a thread or know if it is executable? Can always use underlying mechanism where available. Future mechanism provides for communication with the spawned thread to know if it terminated returning a value or returning an exception.</p>
+<p>This vulnerability as specified in ISO/IEC 24772-1 clause 6.60 is mitigated in C++, as long as the standard library facilities for threads are used. C++ does not provide the means to terminate a thread asynchronously. Instead C++ allows cooperative termination through the use of <code class="sourceCode cpp"><span class="bu">std::</span>stop_token</code>, however, a thread instructed by a stop request to cease execution can ignore such a request. For example, using <code class="sourceCode cpp"><span class="bu">std::</span>jthread<span class="bu">::</span>request_stop()</code> to send a stop request to the started thread, the created thread can have a thread function that never handles such a stop request.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> some_function(<span class="dt">int</span> some_arg);</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> other_function(<span class="bu">std::</span>stop_token tok, <span class="dt">int</span> some_arg);</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main(){</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>jthread t(some_function,<span class="dv">42</span>); <span class="co">// stop_token ignored</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>jthread t2(other_function,<span class="dv">42</span>); <span class="co">// stop_token passed</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    t.request_stop(); <span class="co">// no-op</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    t2.request_stop(); <span class="co">// stop_token tok signalled</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>} </span></code></pre></div>
+<p>In the above example, at the end of the main function the destructors of the thread objects t and t2 will call <code>this-&gt;request_stop()</code> and <code>this-&gt;join()</code>. If one of the thread functions never returns, then the corresponding <code class="sourceCode cpp">join()</code> call will block.</p>
+<p>Other programmed mechanisms can be constructed to cause another thread to complete, such as setting a shared variable to a known value that the target thread reads and then terminates itself.</p>
 <h2 id="avoidance-mechanisms-for-language-users">6.60.2 Avoidance mechanisms for language users</h2>
-<p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.59.5</p>
 <ul>
-<li>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> for thread creation, or always <code>.join()</code> or <code>.detach()</code> a created <code>std::thread</code>.</li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.60.5.</p></li>
+<li><p>Use static analysis tools and code reviews to ensure that threads accepting stop requests actually react on them.</p></li>
 </ul>
 </body>
 </html>
