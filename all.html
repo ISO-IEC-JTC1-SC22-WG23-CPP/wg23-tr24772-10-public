@@ -3086,6 +3086,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <li><p>Avoid relaxed atomic operations whenever possible. Prefer the sequentially consistent std::memory_order_seq_cst instead .</p></li>
 <li><p>Use mutexes appropriately to protect accesses to non-atomic shared objects.</p></li>
 <li><p>Use <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> to protect data shared with signal handlers in a single-threaded environment.</p></li>
+<li><p>Pass all thread function arguments by value, or ensure their lifetime outlasts the running thread. In the latter case proper synchronization is required.</p></li>
 </ul>
 <h2 id="concurrency-premature-termination-cgs">6.62 Concurrency – Premature Termination [CGS]</h2>
 <h3 id="applicability-to-language">6.62.1 Applicability to language</h3>
