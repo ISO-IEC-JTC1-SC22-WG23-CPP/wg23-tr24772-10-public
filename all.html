@@ -3048,6 +3048,9 @@ execution boundaries</p></li>
 <p>Are there any language-defined ways to check on the progress of a thread or know if it is executable? Can always use underlying mechanism where available. Future mechanism provides for communication with the spawned thread to know if it terminated returning a value or returning an exception.</p>
 <h2 id="avoidance-mechanisms-for-language-users">6.60.2 Avoidance mechanisms for language users</h2>
 <p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.59.5</p>
+<ul>
+<li>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> for thread creation, or always <code>.join()</code> or <code>.detach()</code> a created <code>std::thread</code>.</li>
+</ul>
 <h2 id="CGX">6.61 Concurrent Data Access [CGX]</h2>
 <h3 id="applicability-to-language">6.61.1 Applicability to language</h3>
 <p>C++ has threading and shared access to variables which have the vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.61.1. C++ provides features such as atomic (type template) that guarantee the internal consistency of the data and to prevent corruption of data due to potentially interleaved updates to data elements.</p>
