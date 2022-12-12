@@ -214,21 +214,16 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.59.Concurrency-Activation-CGA.md</h1>
 </header>
-<h2 id="concurrency-activation-cga">6.59 Concurrency – Activation [CGA]</h2>
+<h2 id="CGA">6.59 Concurrency – Activation [CGA]</h2>
 <h3 id="applicability-to-language">6.59.1 Applicability to language</h3>
-<p>This vulnerability does not apply to C++, as long as the standard library facilities for creating threads are used.</p>
-<p>Creating a thread using <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> is synchronized with the thread creation site.</p>
-<p>Other vulnerabilities can be created when creating a thread object:</p>
-<ul>
-<li>6.61 Concurrent Data Access,</li>
-<li>6.14 and 6.33 dangling of data reference, if data is passed to the thread function as reference or pointer, instead of passing a copy.</li>
-<li>6.36 undhandle exception leading to premature termination of the program, if the thread object is destroyed and the spawned thread is neither joined nor detached. Creating a new thread through <code class="sourceCode cpp"><span class="bu">std::</span>async</code> will implicitly join.</li>
-</ul>
+<p>This vulnerability as specified in ISO/IEC 24772-1 clause 6.59 does not apply to C++, as long as the standard library facilities for creating threads are used.</p>
+<p>Creating a thread using the <code class="sourceCode cpp"><span class="bu">std::</span>async</code> function or the <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> constructors is synchronized with the thread creation site.</p>
+<p>Failure to create or start a thread due to lack of system resources will cause an exception to be thrown to the creating thread thus the thread object never exists. For the vulnerabilities with unhandled exceptions see clause <a href="#OYB">6.36 Ignored error status and unhandled exceptions [OYB]</a>.</p>
+<p>Any exception thrown within a thread’s function, needs to be handled by that thread, otherwise such an exception will cause program termination. For handling such termination see clause <a href="#CGS">6.62 Concurrency - Premature termination [CGS]</a>.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.59.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>If you are using a non-standard thread facilities, e.g., by making use of <code>std::thread::native_handle</code>, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.60.5.</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> for thread creation, or always <code>.join()</code> or <code>.detach()</code> a created <code>std::thread</code>.</p></li>
-<li><p>Pass all thread function arguments by value, or ensure their lifetime outlasts the running thread. In the latter case proper synchronization is required.</p></li>
+<li><p>When using non-standard thread facilities, e.g., by making use of <code class="sourceCode cpp"><span class="bu">std::</span>thread<span class="bu">::</span>native_handle</code>, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.59.5.</p></li>
+<li><p>When handling the exception thrown due to failure to create a thread, ensure that potentially dependent other threads get informed.</p></li>
 </ul>
 </body>
 </html>
