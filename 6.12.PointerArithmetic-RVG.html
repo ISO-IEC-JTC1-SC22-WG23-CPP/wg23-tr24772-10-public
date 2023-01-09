@@ -142,68 +142,6 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -215,19 +153,17 @@
 <h1 class="title">parts/6.12.PointerArithmetic-RVG.md</h1>
 </header>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
-<p>TODO</p>
+<p>TO BE REVIEWED</p>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
-<p>The vulnerabilites described in ISO/IEC 24772-1:2022 clause 6.12.1 also apply to C++ pointers. Analogous vulnerabilities can also apply to C++ iterators. Especially, comparing with a relational operator or substracting pointers or iterators of compatible types that refer to different arrays or ranges is undefined behavior. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>. The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a total order of pointers of a given type.</p>
-<p>It is defined behavior to reinterpret cast to a pointer from the integral types std::uintptr_t/std::intptr_t, but only if the value of the integer value was previously obtained by converting a valid pointer to said integral type. Casting an arbitrary integral value to a pointer is undefined behavior.</p>
-<p>Pointers to functions and pointers to members and pointerst to void do not allow pointer arithmetic.</p>
-<p>Pointers to objects can implicitly convert to <code class="sourceCode cpp"><span class="dt">void</span> *</code> (cv-qualified accordingly), it is only defined to reinterpret cast the obtained pointer back to the original type. It is implementation-defined if that bidirectional <code class="sourceCode cpp"><span class="dt">void</span> *</code> conversion also works for function pointers.</p>
+<p>The vulnerabilites described in ISO/IEC 24772-1:2022 clause 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>.</p>
+<p>Pointers to functions and pointers to members and pointers to void do not allow pointer arithmetic.</p>
+<p>Comparing with a relational operator or substracting pointers or iterators of compatible types that refer to different arrays or ranges is undefined behavior.</p>
+<p>The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a total order of pointers of a given type.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
 <ul>
+<li><p>Avoid explicit pointer arithmetic, prefer using range-based or iterator-based algorithms as advised in clause <a href="#HCB">6.8</a>.</p></li>
 <li><p>Use the avoidance mechanisms of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
-<li><p>Avoid using reinterpret_cast&lt;&gt;() or pointer conversions to or from <code class="sourceCode cpp"><span class="dt">void</span> *</code>. Do not use C-style casts to achieve reinterpret_cast functionality.</p></li>
 <li><p>Compare pointers of unknown realm with the standard library comparison function objects instead of relational operators.</p></li>
-<li><p>Consider an outright ban on pointer arithmetic due to the error-prone nature of pointer arithmetic.</p></li>
-<li><p>Verify that all pointers are assigned a valid memory address for use.</p></li>
 </ul>
 </body>
 </html>

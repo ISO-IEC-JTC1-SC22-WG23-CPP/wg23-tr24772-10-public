@@ -1395,19 +1395,17 @@ enumerations for safe and simple use"</li>
 <li><p>If pointer and reference conversions cannot be avoided, treat compiler warnings that are issued for such conversions as hard errors.</p></li>
 </ul>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
-<p>TODO</p>
+<p>TO BE REVIEWED</p>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
-<p>The vulnerabilites described in ISO/IEC 24772-1:2022 clause 6.12.1 also apply to C++ pointers. Analogous vulnerabilities can also apply to C++ iterators. Especially, comparing with a relational operator or substracting pointers or iterators of compatible types that refer to different arrays or ranges is undefined behavior. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>. The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a total order of pointers of a given type.</p>
-<p>It is defined behavior to reinterpret cast to a pointer from the integral types std::uintptr_t/std::intptr_t, but only if the value of the integer value was previously obtained by converting a valid pointer to said integral type. Casting an arbitrary integral value to a pointer is undefined behavior.</p>
-<p>Pointers to functions and pointers to members and pointerst to void do not allow pointer arithmetic.</p>
-<p>Pointers to objects can implicitly convert to <code class="sourceCode cpp"><span class="dt">void</span> *</code> (cv-qualified accordingly), it is only defined to reinterpret cast the obtained pointer back to the original type. It is implementation-defined if that bidirectional <code class="sourceCode cpp"><span class="dt">void</span> *</code> conversion also works for function pointers.</p>
+<p>The vulnerabilites described in ISO/IEC 24772-1:2022 clause 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>.</p>
+<p>Pointers to functions and pointers to members and pointers to void do not allow pointer arithmetic.</p>
+<p>Comparing with a relational operator or substracting pointers or iterators of compatible types that refer to different arrays or ranges is undefined behavior.</p>
+<p>The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a total order of pointers of a given type.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
 <ul>
+<li><p>Avoid explicit pointer arithmetic, prefer using range-based or iterator-based algorithms as advised in clause <a href="#HCB">6.8</a>.</p></li>
 <li><p>Use the avoidance mechanisms of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
-<li><p>Avoid using reinterpret_cast&lt;&gt;() or pointer conversions to or from <code class="sourceCode cpp"><span class="dt">void</span> *</code>. Do not use C-style casts to achieve reinterpret_cast functionality.</p></li>
 <li><p>Compare pointers of unknown realm with the standard library comparison function objects instead of relational operators.</p></li>
-<li><p>Consider an outright ban on pointer arithmetic due to the error-prone nature of pointer arithmetic.</p></li>
-<li><p>Verify that all pointers are assigned a valid memory address for use.</p></li>
 </ul>
 <h2 id="null-pointer-dereference-xyh">6.13 NULL Pointer Dereference [XYH]</h2>
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
