@@ -155,6 +155,7 @@
 <h2 id="type-breaking-reinterpretation-of-data-amv">6.37 Type-breaking Reinterpretation of Data [AMV]</h2>
 <h3 id="applicability-to-language">6.37.1 Applicability to language</h3>
 <p><em>This subclause requires a complete rewrite to have it reflect C++ issues.</em></p>
+<p>possible write-up items… unions bad (and not the same as C) std::is_layout_compatible std::is_pointer_interconvertible_base_of casting from struct/class first member pointer to struct and vice versa</p>
 <p>The primary way in C that a reinterpretation of data is accomplished is through a union which may be used to interpret the same piece of memory in multiple ways. If the use of the union members is not managed carefully, then unexpected and erroneous results may occur.</p>
 <p>C allows the use of pointers to memory so that an integer pointer could be used to manipulate character data. This could lead to a mistake in the logic that is used to interpret the data leading to unexpected and erroneous results.</p>
 <p>C Part says</p>
