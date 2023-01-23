@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -154,18 +216,31 @@
 </header>
 <h2 id="type-breaking-reinterpretation-of-data-amv">6.37 Type-breaking Reinterpretation of Data [AMV]</h2>
 <h3 id="applicability-to-language">6.37.1 Applicability to language</h3>
-<p><em>This subclause requires a complete rewrite to have it reflect C++ issues.</em></p>
+<p><em>This subclause requires a complete rewrite to have it reflect C++ issues.</em> NEEDS MORE WORK!</p>
+<p>The vulnerability as documented in ISO IEC 24772-1 clause 6.37 applies to C++. The language mechanisms where type-breaking reinterpretation of data can happen involve unions and reinterpret_cast. For type-breaking reinterpretation involving pointers see <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a>.</p>
+<p>In C++, the issue of casting vulnerabilities are mitigated by the fact that the C++ named casts, i.e., <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, <code class="sourceCode cpp"><span class="kw">const_cast</span></code>, <code class="sourceCode cpp"><span class="kw">static_cast</span></code>, <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code>, and <code class="sourceCode cpp">bit_cast</code>, are easily identified, e.g., by text search, for more careful review. C-style casts do not share this property and therefore should be avoided. In addition, C++ named casts include some compile-time checks, and in the case of dynamic_cast run-time checks, that help avoid some but not all vulnerabilities. C++ also provides <code class="sourceCode cpp">&lt;type_traits&gt;</code>, such as <code class="sourceCode cpp"><span class="bu">std::</span>is_layout_compatible</code> and <code class="sourceCode cpp"><span class="bu">std::</span>is_pointer_interconvertible_base_of</code>, that can be used to help ensure some properties for the legality of a specific cast.</p>
+<p>Reading a union member that was not previously written is undefined behaviour except for a few cases described by ISO/IEC 14882:2020 clause [class.mem.general]. The type std::variant provides a similar mechanism to union but prevents reading an inactive member.</p>
+<p>Using reinterpret_cast to reinterpret the representation of an object as a different type is, in most cases, undefined behaviour. See <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> for the well-defined reinterpret_cast applications involving pointer types.</p>
+<pre><code>enum E { one, two, four=4 };
+constexpr auto x = std::bit_cast&lt;E&gt;(42); // 42 is not representable by E</code></pre>
+<p>Using <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> to cast from a <code class="sourceCode cpp"><span class="kw">struct</span></code>‘s/<code class="sourceCode cpp"><span class="kw">class</span></code>’ first data member (provided it is not a bit-field) to the struct/class type and vice versa is legal.</p>
+<p>— To be deleted — NOTE: Next sentence from cppreference.com… If there is no value of type To corresponding to the value representation produced, the behavior is undefined. If there are multiple such values, which value is produced is unspecified.</p>
+<p>i.e., bit_cast<T>, memcpy, reinterpret_cast<T> std::is_layout_compatible std::is_pointer_interconvertible_base_of casting from struct/class first member pointer to struct and vice versa struct prefixes unions not applicable since using a union to reinterpret a type breaks language rules</p>
+<p>guidance if you have a common base, use inheritance use std::variant instead of unions</p>
+<p>use std::bit_cast before using reinterpret_cast, use std::is_layout_compatible or std::is_pointer_interconvertible_base_of when applicable avoid using C-style casts if your language tools supports identifying C-style casts, use such</p>
 <p>possible write-up items… unions bad (and not the same as C) std::is_layout_compatible std::is_pointer_interconvertible_base_of casting from struct/class first member pointer to struct and vice versa</p>
 <p>The primary way in C that a reinterpretation of data is accomplished is through a union which may be used to interpret the same piece of memory in multiple ways. If the use of the union members is not managed carefully, then unexpected and erroneous results may occur.</p>
 <p>C allows the use of pointers to memory so that an integer pointer could be used to manipulate character data. This could lead to a mistake in the logic that is used to interpret the data leading to unexpected and erroneous results.</p>
-<p>C Part says</p>
-<p><em>Wait for Gabriel</em> <em>to help analyze this.</em></p>
+<p>— end of to be deleted —</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.37.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.38.5.</p></li>
-<li><p>When using unions, implement an explicit discriminant and check its value before accessing the data in the union.</p></li>
-<li><p>Ensure through static analysis that arbitrary pointer casts return a type compatible with the source.<span data-custom-style="annotation reference"></span></p></li>
-<li><p>Avoid the use of C-style casts and reinterpret_cast</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.37.5, and clauses <a href="#FLC">6.6 Conversion Errors [FLC]</a> and <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> of this document.</p></li>
+<li><p>Do not use C-style casts.</p></li>
+<li><p>Avoid all casts, except <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code>, if possible.</p></li>
+<li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> over <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> when reinterpreting the bit-representation of an object to a different type is necessary.</p></li>
+<li><p>Use <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> only where it is valid and where no other named casts apply.</p></li>
+<li><p>Whenever possible use <code class="sourceCode cpp"><span class="bu">std::</span>variant</code> or a similar type instead of <code class="sourceCode cpp"><span class="kw">union</span></code>s.</p></li>
+<li><p>Ensure through static analysis that arbitrary pointer casts return a type compatible with the source.</p></li>
 </ul>
 </body>
 </html>
