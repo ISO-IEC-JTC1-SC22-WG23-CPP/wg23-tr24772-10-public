@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -152,92 +214,30 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.17.ChoiceOfClearNames-NAI.md</h1>
 </header>
-<h2 id="choice-of-clear-names-nai">6.17 Choice of Clear Names [NAI]</h2>
+<h2 id="NAI">6.17 Choice of Clear Names [NAI]</h2>
 <h3 id="applicability-to-language">6.17.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.17 is applicable to C++.</p>
-<p>’’’ <!--
-This subclause requires a complete rewrite to have it reflect C++
-issues.. TBD!!!
-
-Think about discussing reserved names. Maybe also in Part 1.
---></p>
-<pre><code>
-C++ is susceptible to errors resulting from the use of similarly
-appearing names. C++ does require the declaration of variables before they
-are used, however, C++ allows scoping so that a variable that is not
-declared locally may be resolved to some outer block or namespace or included file and a human
-reviewer may not notice that resolution. Variable name length is effectively unlimited and all 
-characters are significant.
-
-As with the general case, calls to the wrong subprogram or references to
-the wrong data element (when missed by human review) can result in
-unintended behaviour. ISO/IEC 14882:2017 C++ clause 20.5.4
-\[constraints\] -- reserved names, from C++, also from C, deprecated
-names
-
-`Numeric_limits`{.cpp} are in std namespace,
-
-To Do *(Paul)*
-
--   One can add names to a templates as part of specialization.
-
--   Example extending a hash function from std::
-
--   Also inline namespaces.
-
--   Also the use of underscores in symbol names.
-
--   Also Unicode in identfiers.
-
-### 6.17.2 Avoidance mechanisms for language users
-
--   Follow the guidance of ISO/IEC 14882:2020 clause 20.5.4 regarding
-    names to refrain from usage.
-
--   Use names that are clear and non-confusing.
-
--   Use consistency in choosing names.
-
--   Keep the scope of names as small as reasonable.
-
--   Keep names short and concise in order to make the code easier to
-    understand.
-
--   Use longer names for longer-lived objects.
-
--   Choose names that are appropriately rich in meaning for the context.
-
--   When choosing names, keep in mind that code will be reused and
-    combined in ways that the original developers never imagined.
-
--   Do not differentiate names through only a mixture of case or the
-    presence/absence of an underscore character. (this is in Part 1?)
-
--   Do not choose names that conflict with (unreserved) keywords or
-    language-defined library names for the language being used, as
-    follows:
-
-    -       Names that begin with two or more underscore;
-    
-    -       Names that begin with a single underscore followed by an
-        uppercase letter;
-    
-    -   Contextual keywords such as module, final and override;
-
-    -   In the global namespace, identifiers commencing with std
-        followed by any string of digits;
-
-&gt; Follow common conventions for naming macros:
-
--   Avoid names for macros that are not all uppercase;
-
--   Avoid names that are all uppercase not used for macros;
-
-```{=html}
-&lt;!-- --&gt;</code></pre>
+<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.17 is applicable to C++, as it is susceptible to errors resulting from the use of similarly appearing names. However, the language rules prevent using an identifier that has not been declared. There are two possible issues: the use of the identical name for different purposes (see clause <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>) and the use of similar names for different purposes.</p>
 <ul>
-<li><p>Avoid differentiating through characters that are commonly confused visually such as ‘O’ and ‘0’, ‘l’ (lower case ‘L’), ‘I’ (capital ‘I’) and ‘1’, ‘S’ and ‘5’, ‘Z’ and ‘2’, and ‘n’ and ‘h’.</p></li>
-<li><p>Adopt or develop coding guidelines to define a common coding style and to avoid the above dangerous practices.</p></li>
+<li><em>Mixed casing</em>: C++ distinguishes upper case and lower-case letters in names. Thus, confusion can arise through the use of <code>Item</code> and <code>item</code> as distinct declared identifiers with different meanings.</li>
+<li><em>Underscores</em>: C++ permits single underscores in identifiers and they are significant. Thus, <code>BigDog</code> and <code>Big_Dog</code> are different identifiers. Multiple underscores or a leading underscore followed by an upper-case letter cause undefined behaviour, thus <code>Big__Dog</code> and <code>_BigDog</code> should not be used.</li>
+<li><em>Singular/plural forms</em>: C++ does permit the use of identifiers which differ solely in this manner such as <code>item</code> and <code>items</code>. However, C++ lets the programmer use the identifier <code>item</code> for a single object of a type <code>T</code> and the identifier <code>items</code> for an object denoting a range of items of <code>T</code>. The use of <code>item</code> where <code>items</code> was intended or vice versa usually will be detected by the compiler because of the type mismatch.</li>
+<li><em>International character sets</em>: C++ compilers support unicode characters in their source character set and also in identifiers. This can lead to vulnerabilities due to (near) identical representation of distinct names (e.g., homoglyph attacks).</li>
+<li><em>Identifier length</em>: The C++ standard recommends compilers to distinguish at least 1024 significant characters for an identifier. The actual limit of compiler for identifier length is implementation-defined and thus must be documented. All characters up to the length supported by the compiler in an identifier in C++ are significant. Thus <code>Long_IdentifierA</code> and <code>Long_IdentifierB</code> are always different if the documented identifier limit is at least 16 characters.</li>
+</ul>
+<p>C++ permits the use of names such as <code>x</code>, <code>xx</code>, and <code>xxx</code>, possibly defined in non-obvious scopes, and a programmer can easily, by mistake, write <code>xx</code> where <code>x</code> or <code>xxx</code> was intended. Especially for overloaded functions, argument-dependent-lookup might find a function in a scope that the user did not consider. The use of the wrong name will typically result in a failure to compile so no vulnerability will arise. However, if the wrong name has a type compatible with the intended name’s type, then an incorrect executable program will be generated.</p>
+<p>C++ defines reserves some names as context-specific keywords. While it is technically possible to use those names for other purposes, such use can be confusing.</p>
+<p>In the global scope some namespaces (such as <code>std</code>, <code>posix</code>) are reserved and should not be used otherwise.</p>
+<h3 id="avoidance-mechanisms-for-language-users">6.17.2 Avoidance mechanisms for language users</h3>
+<ul>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2019 clause 6.17.5.</p></li>
+<li><p>Follow the rules of ISO/IEC 14882:2020 clause [lex.name] regarding names to refrain from usage.</p></li>
+<li><p>Avoid the use of similar names to denote different objects of the same type.</p></li>
+<li><p>Use consistency in choosing names, especially for dealing with similar names.</p></li>
+<li><p>Use tooling to enforce project-specific naming rules and detect possible similar names, for example, homoglyphs.</p></li>
+<li><p>Keep the scope of names as small as reasonable.</p></li>
+<li><p>Ensure that the names in your program do not exceed the compiler’s documented limit.</p></li>
+<li><p>Do not differentiate names through only a mixture of case or the presence/absence of an underscore character.</p></li>
+<li><p>Do not use as identifiers the contextual keywords <code class="sourceCode cpp"><span class="kw">final</span></code> , <code class="sourceCode cpp"><span class="kw">import</span></code>, <code class="sourceCode cpp"><span class="kw">module</span></code> and <code class="sourceCode cpp"><span class="kw">override</span></code> and other reserved names.</p></li>
 </ul>
 </body>
 </html>
