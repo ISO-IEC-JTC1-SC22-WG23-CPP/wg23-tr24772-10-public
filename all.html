@@ -1394,6 +1394,7 @@ enumerations for safe and simple use"</li>
 <li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause <a href="#UJO">Modifying constants [UJO]</a>.</p></li>
 <li><p>When downcasting or crosscasting see the guidance in clause <a href="#BKK">Polymorphic Variables [BKK]</a>.</p></li>
 <li><p>If pointer and reference conversions cannot be avoided, treat compiler warnings that are issued for such conversions as hard errors.</p></li>
+<li><p>Ensure through static analysis that arbitrary pointer casts return a type compatible with the source.</p></li>
 </ul>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
 <p>TO BE REVIEWED</p>
