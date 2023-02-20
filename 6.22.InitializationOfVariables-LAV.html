@@ -214,51 +214,75 @@
 <header id="title-block-header">
 <h1 class="title">parts/6.22.InitializationOfVariables-LAV.md</h1>
 </header>
-<h2 id="initialization-of-variables-lav">6.22 Initialization of Variables [LAV]</h2>
+<h2 id="LAV">6.22 Missing Initialization of Variables [LAV]</h2>
 <h3 id="applicability-to-language">6.22.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 exists in C++.</p>
-<p>For local objects and dynamically allocated objects with trivial type, defining/allocating the object without initialization leaves the object with an indeterminate value. A subsequent read of such a variable, before it has been written is undefined behavior.</p>
-<p>An object with trivial type that was dynamically allocated with <code class="sourceCode cpp">malloc</code>, or some other C-style equivalent, will have an indeterminate value.</p>
-<p>An object that does not have a trivial type requires a constructor to be called in order for its lifetime to start correctly. Allocating space for such an object using <code class="sourceCode cpp">malloc</code> and attempting to cast and use it is undefined behavior, see Conversion Errors [FLC].</p>
-<p><em>TBD: Sentence highlighting that this problem doesn’t occur with <code class="sourceCode cpp"><span class="kw">new</span></code> + equivalent guidance</em></p>
-<p>Defining local variables as <code class="sourceCode cpp"><span class="at">const</span></code>, enforces initialization by the compiler. If determining the initial value of a variable requires complex logic, putting that logic into an immediately-invoked lambda expression that provides the initial value, permits the variable to be initialized when defined.</p>
-<p>Furthermore, a class with a user-defined constructor can choose to leave non-static data members of trivial type uninitialized. If such a class does not prevent access to such a member with indeterminate value, using the class can cause undefined behavior. This even happens when an object of that class is a subobject of another class that does not define a constructor.</p>
-<p>In addition some of the rules of initialization in C++ are complicated. For example, there are the following initialization cases: - no initialization (see above), - zero-initialization, - value-initialization, - default-initialization, - list initialization, - aggregate inialization, - member initialization, - base-class initialization, - constant initialization (<code class="sourceCode cpp"><span class="kw">constexpr</span></code> and <code class="sourceCode cpp"><span class="kw">constinit</span></code>), - static initialization, - dynamic initialization, - etc…</p>
-<p>Namespace-scope variables with dynamic initialization can cause undefined behavior if the initialization depends on other such variables. If the dependency is in the same translation unit the sequencing is defined in definition order, however, there is no sequencing across translation unit boundaries.</p>
-<p>Consider:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  A (<span class="dt">int</span> i ) : <span class="va">i_</span> { i }  {  }</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="va">i_</span>;</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> B {</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  B (A <span class="at">const</span> &amp; a) : <span class="va">j_</span>{a.<span class="va">i_</span>} { }</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="va">j_</span>;</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> A a;</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>B b (a);     <span class="co">//  #1</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>A a { <span class="dv">42</span> };  <span class="co">//  #2</span></span></code></pre></div>
-<p>If #1 and #2 are in the same translation unit, then <code>a</code> in #1 is incompletely initialized (zero initailized). If #1 and #2 are in different translation units, then the order of initialization of <code>a</code>(#2) relative to <code>b</code>(#1) is unspecified.</p>
-<p>Note, however, that the initialization order for function local statics is defined.</p>
-<p>Consider:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>A &amp; getA ();Conversion Errors \[FLC\]</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>B b (getA());</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>A &amp; getA ()</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">static</span> A a { <span class="dv">42</span> }; </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> a; <span class="co">// can cause data races</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 exists in C++, however, defining variables only when they can be initialized properly with an initializer in their definition avoids reading uninitialized memory.</p>
+<p>Defining/allocating objects of trivial type with automatic/dynamic storage duration without initialization leaves the object with an indeterminate value. A subsequent read of such a variable before it has been written is undefined behavior. In addition, sub-objects of trivial type that are omitted in a constructor’s member initializer list and not initialized by the constructor’s body or by a <em>default member initializer</em> will not be initialized by that constructor. For example, the following class definitions suffer from incomplete initialization of subobjects, even though class <code>test</code> defines a default constructor:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> base { <span class="dt">short</span> num; };                                                     </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> test : base                                                              </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>{                                                                               </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> E1 { e1a=<span class="dv">100</span>, e1b, e1c };                                                </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> one; </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> two; </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> ar1[<span class="dv">2</span>]{ <span class="fl">1.1</span>, <span class="fl">2.2</span> }; </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> ar2[<span class="dv">2</span>]; </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  E1 e1; </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  E1 e2;                 </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  test() </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  : <span class="co">// base unintialized </span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  one{ <span class="dv">1</span> }</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">// two uninitialized</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ar1 initialized through default member initializer</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ar2 uninitialized</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  , e1{} <span class="co">// initializes to zero, not a named enumerator value </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">// e2 uninitialized</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  { }                                  </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>};                                                                              </span></code></pre></div>
+<p>Dynamically allocating memory for an object using <code class="sourceCode cpp">malloc</code>, or some other C-style equivalent, does not initialize the object. Interpreting such memory as an object with trivial type will result in it having an indeterminate value.<br />
+Objects with non-trivial type require running a constructor for its lifetime to start correctly. In both cases attempting to cast a pointer to the allocated memory and using the object is undefined behavior except for special sanctioned cases, see <a href="#FLC">Conversion Errors [FLC]</a> and <a href="#HFC">Pointer Type Conversion [HFC]</a>.</p>
+<p>Non-local variables with static storage duration that are dynamically initialized can cause undefined behavior if the initialization depends on other such variables. If the dependency is in the same translation unit the sequencing is defined in definition order, however, there is no sequencing guarantees across translation unit boundaries and thus, undefined behaviour can occur by accessing an uninitialized variable. For example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  A (<span class="dt">int</span> i ) : <span class="va">i_</span> { i }  {  }</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="va">i_</span>;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> B {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  B (A <span class="at">const</span> &amp; a) : <span class="va">j_</span>{a.<span class="va">i_</span>} { }</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="va">j_</span>;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> A a;  <span class="co">// declare existance of variable &#39;a&#39;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">// defining variables with dynamic intialization:</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>B b { a };   <span class="co">//  #1</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>A a { <span class="dv">42</span> };  <span class="co">//  #2</span></span></code></pre></div>
+<p>If #1 and #2 are in the same translation unit, then <code>a</code> in #1 is incompletely initialized (zero initialized). If #1 and #2 are in different translation units, then the order of initialization of <code>a</code>(#2) relative to <code>b</code>(#1) is indeterminate.</p>
+<p>The <code>constexpr</code>-specifier for a variable ensures initialization at compile time. The <code class="sourceCode cpp"><span class="kw">constinit</span></code> specifier ensures a variable is initialized at compile time, even if it is non-const.</p>
+<p>Defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> or as <code class="sourceCode cpp"><span class="kw">constexpr</span></code>, enforces initialization by the compiler and makes reasoning about code easier.</p>
+<p>If determining the initial value of a variable requires complex logic, putting that logic into an immediately-invoked lambda expression that computes the initial value, permits the variable to be initialized when defined.</p>
+<!--
+In addition some of the rules of initialization in C++ are complicated.  For example, there are the 
+following initialization cases:
+- no initialization (see above),
+- zero-initialization,
+- value-initialization,
+- default-initialization,
+- list initialization,
+- aggregate inialization,
+- member initialization,
+- base-class initialization,
+- constant initialization (`constexpr`{.cpp} and `constinit`{.cpp}),
+- static initialization,
+- dynamic initialization, 
+- etc...
+-->
 <p>See C++ Core Guidelines ES.20 and CERT C++ Coding Guidelines EXP53-CPP. Note that ES.20 and EXP53 are complementary. Both point out that you should always initialize before reading, but ES.20 uses the narrow sense of initialize while EXP53 includes assignment.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.22.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li>Use the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.22.5</li>
 <li>Initialize every object defined, including data members.</li>
-<li>Do not depend on the order of dynamic initialization of namespace-scope variables, unless the initialization order is guaranteed by the language.</li>
-<li>Consider not using namespace-scope variables (see <span id="CGA">6.61</span>).</li>
+<li>Consider defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> to enforce initialization.</li>
+<li>In situations where variable initialization seems to require complex logic, encapsulate that logic either in a function or a lambda that encapsulates the complex logic and returns the initial value. In case of multiple interdependent variables, group those in a struct and return the struct.</li>
+<li>Avoid using non-const variables with static storage duration (see <span id="CGX">6.61 Concurrent Data Access [CGX]</span>).</li>
+<li>Define variables with static storage duration with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">constinit</span></code> whenever possible to avoid problems with dynamic initialization order.</li>
+<li>Do not depend on the order of dynamic initialization of non-local variables with static storage duration, unless the initialization order is guaranteed by the language.</li>
 <li>If the use of uninitialized variables is unavoidable, employ tools, including the compiler, that detect reads of variables with indeterminate values.</li>
 </ul>
 </body>
