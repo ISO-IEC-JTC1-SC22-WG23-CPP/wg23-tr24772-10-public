@@ -1268,16 +1268,19 @@ enumerations for safe and simple use"</li>
 </ul>
 <h2 id="CJM">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IECTR 24772-1:2019 exists in C++ when C-style strings are used. C++ provides the library class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_stringview</code> and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> that implement reference semantics to non-owned buffers. These classes do not guarantee a string termination character and using their underlying raw pointer as a C-style string can result in this vulnerability. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
-<p>C++ provides a class template for string processing, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> that manages the space for the string and the string length and always includes a termination character. On concatenation, the string object will increase in size to contain the resulting string. The class <code class="sourceCode cpp"><span class="bu">std::</span>filesystem<span class="bu">::</span>path</code> also provides string processing capabilities among other facilities by wrapping <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>.</p>
-<p>Unlike C-style strings, the class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string_view</code>, and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> permit embedded null characters to be used safely.</p>
+<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 exists in C++ when C-style strings are used. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
+<p>C++ provides a class template for string processing, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> that manages the space for the string and the string length and always includes a string termination character. On concatenation, the string object will increase in size to contain the resulting string.</p>
+<p>The class <code class="sourceCode cpp"><span class="bu">std::</span>filesystem<span class="bu">::</span>path</code> also provides string processing capabilities among other facilities by wrapping <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>.</p>
+<p>C++ provides the library class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_stringview</code> and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> that implement reference semantics to non-owned buffers. These classes do not guarantee a string termination character and using their underlying raw pointer as a C-style string can result in this vulnerability.</p>
+<p>Unlike C-style strings, the class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string_view</code>, and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> permit string termination characters as part of the string to be used safely because these classes know the length of the string buffer used.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.7.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Avoid C-style strings. Use <code class="sourceCode cpp"><span class="bu">std::</span>string</code> or corresponding instantiations of <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> for the character type used.</p></li>
-<li><p>If <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> is not appropriate, provide your own encapsulation and perform the appropriate verifications.</p></li>
+<li><p>Avoid C-style strings.</p></li>
+<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>string</code> or corresponding instantiations of <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> for the character type used.</p></li>
+<li><p>If you provide an encapsulation of a string, perform the appropriate verifications.</p></li>
 <li><p>If C-style strings are used, follow the guidance of ISO/IEC 24772-3 clause 6.7.2.</p></li>
 <li><p>When calling interfaces that expect C-style strings as arguments, pass the result of a <code class="sourceCode cpp"><span class="bu">std::</span>string<span class="bu">::</span>c_str()</code> as an argument.</p></li>
-<li><p>Do not employ types that cannot guarantee the string termination.</p></li>
+<li><p>Do not employ string types that cannot guarantee the string termination.</p></li>
 <li><p>When obtaining C-style strings via character pointers from interfaces, manage the string via a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> only if lifetime and content of the underlying buffer is persistent, or store it in a <code class="sourceCode cpp"><span class="bu">std::</span>string</code> object otherwise.</p></li>
 </ul>
 <h2 id="HCB">6.8 Buffer Boundary Violation [HCB]</h2>
@@ -2476,27 +2479,37 @@ constexpr auto x = std::bit_cast&lt;E&gt;(42); // 42 is not representable by E</
 </ul>
 <h2 id="memory-leak-and-heap-fragmentation-xyl">6.39 Memory Leak and Heap Fragmentation [XYL]</h2>
 <h3 id="applicability-to-language">6.39.1 Applicability to language</h3>
-<p>The memory leak vulnerability documented in ISO/IEC TR24772-1:2019 clause 6.39 exists in C++, unless the programmer takes steps to avoid it.</p>
-<p>C++ uses destructors, and a pattern called <em>Resource Acquisition Is Initialization (RAII)</em> which performs recovery of resources. Destructors (and therefore memory and resource releases) are deterministically ordered with respect to other events on their thread. Object destructors will not be called</p>
-<ul>
-<li><p>When an unhandled exception escapes its thread of execution</p></li>
-<li><p>Under conditions of abnormal termination</p></li>
-</ul>
-<p>See CERT ERR50-CPP for list of cases.</p>
-<p>The steps mentioned above will mitigate most memory leak issues.</p>
-<p>The mechanisms <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> and <code class="sourceCode cpp"><span class="bu">std::</span>shared_future</code> and similarly constructed reference-counting user code do not detect cycles which will cause leaks because the shared pointers (and hence what they point to) will not be destroyed.</p>
-<pre><code>&lt;!--
-need to clarify to rely on memory managing types, containers, and unique ptr, shared ptr is often bad , Peter
---&gt;</code></pre>
+<p>The memory leak vulnerability documented in ISO/IEC TR24772-1:2019 clause 6.39 exists in C++, unless the programmer takes steps to avoid it. Using standard library containers sidesteps most memory leak issues described in that document.</p>
+<p>See ISO/IEC TR 24772-3 for issues associated with the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code>. Because of the issues with these functions, C++ users should refrain from using these functions wherever possible.</p>
+<p>C++ has an additional vulnerability in that it provides multiple alternatives for allocation and deallocation.</p>
+<p>Failing to match the deallocation to the corresponding allocation causes undefined behaviour. For example, if an array <code class="sourceCode cpp"><span class="kw">new</span>[]</code> expression was used to allocate and create an array then array <code class="sourceCode cpp"><span class="kw">delete</span>[]</code> must be used for its destruction and release.</p>
+<p>The C++ object lifetime model allows to create an object in existing raw memory using non-allocating <em>placement new</em>. Such an object must be destroyed by calling its destructor explicitly, a call to delete causes undefined behaviour.</p>
+<p>C++ destructors allow <em>scope-based resource management</em> that should be used to mitigate memory leaks. The standard library provides the class templates <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> for managing heap-allocated objects. To avoid issues with constructors throwing exceptions during heap allocation with a <code class="sourceCode cpp"><span class="kw">new</span></code> expression and potentially causing leaks, these <em>smart pointers</em> should be obtained through the factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique()</code> or <code class="sourceCode cpp"><span class="bu">std::</span>make_shared()</code>. Using <code>shared_ptr</code> can cause memory leaks if it is used to create a cyclic data structure.</p>
+<p>If using functions that manage memory using the C library mechanisms is unavoidable, wrapping such a pointer immediately into a specialization of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr&lt;&gt;</code> that uses <code>free()</code> in its deleter object ensures that memory is correctly released when the <code>unique_ptr</code> is destroyed, for example:</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb156-1"><a href="#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> free_deleter{</span>
+<span id="cb156-2"><a href="#cb156-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb156-3"><a href="#cb156-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> <span class="kw">operator</span>()(T *p) <span class="at">const</span> {</span>
+<span id="cb156-4"><a href="#cb156-4" aria-hidden="true" tabindex="-1"></a>     <span class="bu">std::</span>free(<span class="kw">const_cast</span>&lt;<span class="bu">std::</span>remove_const_t&lt;T&gt;*&gt;(p));</span>
+<span id="cb156-5"><a href="#cb156-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb156-6"><a href="#cb156-6" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb156-7"><a href="#cb156-7" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb156-8"><a href="#cb156-8" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> unique_C_ptr=<span class="bu">std::</span>unique_ptr&lt;T,free_deleter&gt;;</span>
+<span id="cb156-9"><a href="#cb156-9" aria-hidden="true" tabindex="-1"></a><span class="co">//...</span></span>
+<span id="cb156-10"><a href="#cb156-10" aria-hidden="true" tabindex="-1"></a><span class="co">// abi::__cxa_demangle() returns a pointer to be released with free()</span></span>
+<span id="cb156-11"><a href="#cb156-11" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">auto</span> plain_demangle(<span class="dt">char</span> <span class="at">const</span> *name){</span>
+<span id="cb156-12"><a href="#cb156-12" aria-hidden="true" tabindex="-1"></a>  unique_C_ptr&lt;<span class="dt">char</span> <span class="at">const</span>&gt; result {abi::__cxa_demangle(name,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)};</span>
+<span id="cb156-13"><a href="#cb156-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result;</span>
+<span id="cb156-14"><a href="#cb156-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>C++ allocators, i.e., as defined in header <code class="sourceCode cpp">&lt;scoped_allocator&gt;</code>, can be used to mitigate heap fragmentation and guarantee deterministic timing through specific allocation strategies, especially with standard library containers. The class hierarchy provided by the header <code class="sourceCode cpp">&lt;memory_resource&gt;</code> provide some possible advanced allocation strategies. Users of earlier C++ versions often overloaded <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> to achieve similar results.</p>
+<p>The library functions <code class="sourceCode cpp"><span class="bu">std::</span>construct_at()</code> and <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at()</code> are simpler than and preferrable to using non-allocating <em>placement new</em> and manual destructor calls when those are needed.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.39.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Use containers and smart pointers in preference to direct (manual) memory management.</p></li>
-<li><p>Follow C++ Core guidelines section R and CERT MEM51.</p></li>
-<li><p>For heap fragmentation issues, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.39.5. In particular, create pools of fixed size with user-defined operators new and operators delete.</p></li>
-<li><p>Use dynamic analysis tools to detect cycles.</p></li>
-<li><p>Break cycles, for example by using <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code> or appropriate weak pointers.</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>abort()</code> or <code class="sourceCode cpp"><span class="bu">std::</span>terminate()</code> and related functions only in extreme situations. See CERT ERR50-CPP for list of cases.</p></li>
-<li><p>Use debugging tools such as leak detectors to help identify unreachable memory.</p></li>
+<li><p>Prefer containers like those in the standard library over any other form of memory management.</p></li>
+<li><p>Use smart pointers and their factory functions to allocate and manage heap memory.</p></li>
+<li><p>For heap fragmentation issues, use special memory resource objects with appropriate allocation strategies.</p></li>
+<li><p>If using <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> in potentially cyclic data structures, break cycles using <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code>.</p></li>
+<li><p>Use static analysis to prevent uses of C-library memory management functions and direct calls to operators <code class="sourceCode cpp"><span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">delete</span></code>.</p></li>
+<li><p>Use dynamic analysis to detect memory leaks and issues with heap fragmentation.</p></li>
 </ul>
 <h2 id="SYM">6.40 Templates and Generics [SYM]</h2>
 <h3 id="applicability-to-language">6.40.1 Applicability to language</h3>
