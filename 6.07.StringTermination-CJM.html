@@ -216,20 +216,22 @@
 </header>
 <h2 id="CJM">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 exists in C++ when C-style strings are used. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
-<p>C++ provides a class template for string processing, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> that manages the space for the string and the string length and always includes a string termination character. On concatenation, the string object will increase in size to contain the resulting string.</p>
-<p>The class <code class="sourceCode cpp"><span class="bu">std::</span>filesystem<span class="bu">::</span>path</code> also provides string processing capabilities among other facilities by wrapping <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>.</p>
-<p>C++ provides the library class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_stringview</code> and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> that implement reference semantics to non-owned buffers. These classes do not guarantee a string termination character and using their underlying raw pointer as a C-style string can result in this vulnerability.</p>
-<p>Unlike C-style strings, the class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code>, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string_view</code>, and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> permit string termination characters as part of the string to be used safely because these classes know the length of the string buffer used.</p>
+<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 exists in C++ when C-style strings are used, e.g., with interfaces that require NUL-terminated strings. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
+<p>C++ provides a class template for string processing, <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> that manages the space for the string and the string length and always includes a string termination character. For example, when concatenating, the <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> object will increase in size to contain the resulting string. Futhermore, as the string is guaranteed to have a string termination character, using its underlying raw pointer as a C-style string will mitigate this vulnerability because the string termination character is present.</p>
+<p>C++ provides the library class templates <code class="sourceCode cpp"><span class="bu">std::</span>basic_stringview</code> and <code class="sourceCode cpp"><span class="bu">std::</span>span</code> that implement reference semantics to non-owned buffers. These types do not rely on a string termination character to determine the length of the string, thus, use of these types avoids those vulnerabilities. However, using its underlying raw pointer as a C-style string can result in these vulnerabilities because the string termination character is not guaranteed to be present.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo(<span class="bu">std::</span>string <span class="at">const</span>&amp; s, <span class="bu">std::</span>string_view <span class="at">const</span>&amp; sv)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  puts(s.data());  <span class="co">// okay string has termination character</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  puts(sv.data()); <span class="co">// not okay; string termination not guaranteed</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.7.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Avoid C-style strings.</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>string</code> or corresponding instantiations of <code class="sourceCode cpp"><span class="bu">std::</span>basic_string</code> for the character type used.</p></li>
+<li><p>If using C-style strings is unavoidable, follow the guidance of ISO/IEC 24772-3 clause 6.7.2.</p></li>
+<li><p>Use a string type, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which manages the memory of its string and handles termination in order to mitigate against this vulnerability.</p></li>
 <li><p>If you provide an encapsulation of a string, perform the appropriate verifications.</p></li>
-<li><p>If C-style strings are used, follow the guidance of ISO/IEC 24772-3 clause 6.7.2.</p></li>
-<li><p>When calling interfaces that expect C-style strings as arguments, pass the result of a <code class="sourceCode cpp"><span class="bu">std::</span>string<span class="bu">::</span>c_str()</code> as an argument.</p></li>
-<li><p>Do not employ string types that cannot guarantee the string termination.</p></li>
-<li><p>When obtaining C-style strings via character pointers from interfaces, manage the string via a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> only if lifetime and content of the underlying buffer is persistent, or store it in a <code class="sourceCode cpp"><span class="bu">std::</span>string</code> object otherwise.</p></li>
+<li><p>Don’t use the underlying raw pointer of a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> or a <code class="sourceCode cpp"><span class="bu">std::</span>span</code> with interfaces that expect C-style strings.</p></li>
+<li><p>Use static analysis tools to help identify occurrences of undefined behaviour.</p></li>
 </ul>
 </body>
 </html>
