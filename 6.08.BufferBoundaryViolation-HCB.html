@@ -271,12 +271,11 @@
 <li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p></li>
 <li><p>To model a fixed-size array, use a library class such as <code>std::array</code>.</p></li>
 <li><p>To model arrays with dynamically changing size, use containers of the standard library, such as <code>std::vector</code> or <code>std::deque</code>.</p></li>
-<li><p>Avoid using a pointer paramter or a pointer-and-size parameter pair for representing a contiguous buffer.</p></li>
-<li><p>Prefer the library classes <code>std::views::counted</code>, <code>std::span</code> or <code>std::string_view</code> for such parameters.</p></li>
+<li><p>Avoid using a pointer parameter or a pointer-and-size parameter pair for representing a contiguous buffer; instead use a range parameter, for example, <code>std::views::counted</code>, <code>std::span</code>, or <code>std::string_view</code>.</p></li>
 <li><p>Prefer using range-based or iterator-based algorithms, such as those of the standard library, over pointer-manipulating or indexing loops.</p></li>
 <li><p>Use the range-based for loop construct to iterate within the defined bounds of a range.</p></li>
 <li><p>Ensure that ranges and iterators used by range-for or passed to algorithms are and remain valid.</p></li>
-<li><p>When performing random access by indexing, follow the guidance of clause 6.9.2 [#XYZ]. When performing other forms of random access, follow the guidance of clause 6.12.2 [#RVG].</p></li>
+<li><p>When performing random access by indexing, use the avoidance mechanisms of clause <a href="#XYZ">6.9.2</a>.</p></li>
 <li><p>Use static analysis tools to detect buffer boundary violations.</p></li>
 </ul>
 </body>

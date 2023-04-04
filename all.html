@@ -1279,7 +1279,7 @@ enumerations for safe and simple use"</li>
 <h3 id="avoidance-mechanisms-for-language-users">6.7.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Avoid C-style strings.</p></li>
-<li><p>If using C-style strings is unavoidable, follow the guidance of ISO/IEC 24772-3 clause 6.7.2.</p></li>
+<li><p>If using C-style strings is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.7.2.</p></li>
 <li><p>Use a string type, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which manages the memory of its string and handles termination in order to mitigate against this vulnerability.</p></li>
 <li><p>If you provide an encapsulation of a string, perform the appropriate verifications.</p></li>
 <li><p>Don’t use the underlying raw pointer of a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> or a <code class="sourceCode cpp"><span class="bu">std::</span>span</code> with interfaces that expect C-style strings.</p></li>
@@ -1342,12 +1342,11 @@ enumerations for safe and simple use"</li>
 <li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p></li>
 <li><p>To model a fixed-size array, use a library class such as <code>std::array</code>.</p></li>
 <li><p>To model arrays with dynamically changing size, use containers of the standard library, such as <code>std::vector</code> or <code>std::deque</code>.</p></li>
-<li><p>Avoid using a pointer paramter or a pointer-and-size parameter pair for representing a contiguous buffer.</p></li>
-<li><p>Prefer the library classes <code>std::views::counted</code>, <code>std::span</code> or <code>std::string_view</code> for such parameters.</p></li>
+<li><p>Avoid using a pointer parameter or a pointer-and-size parameter pair for representing a contiguous buffer; instead use a range parameter, for example, <code>std::views::counted</code>, <code>std::span</code>, or <code>std::string_view</code>.</p></li>
 <li><p>Prefer using range-based or iterator-based algorithms, such as those of the standard library, over pointer-manipulating or indexing loops.</p></li>
 <li><p>Use the range-based for loop construct to iterate within the defined bounds of a range.</p></li>
 <li><p>Ensure that ranges and iterators used by range-for or passed to algorithms are and remain valid.</p></li>
-<li><p>When performing random access by indexing, follow the guidance of clause 6.9.2 [#XYZ]. When performing other forms of random access, follow the guidance of clause 6.12.2 [#RVG].</p></li>
+<li><p>When performing random access by indexing, use the avoidance mechanisms of clause <a href="#XYZ">6.9.2</a>.</p></li>
 <li><p>Use static analysis tools to detect buffer boundary violations.</p></li>
 </ul>
 <h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
@@ -1402,43 +1401,46 @@ enumerations for safe and simple use"</li>
 <li><p>Ensure through static analysis that arbitrary pointer casts return a type compatible with the source.</p></li>
 </ul>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
-<p>TO BE REVIEWED</p>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
 <p>The vulnerabilites described in ISO/IEC 24772-1:2022 clause 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>.</p>
-<p>Pointers to functions and pointers to members and pointers to void do not allow pointer arithmetic.</p>
-<p>Comparing with a relational operator or substracting pointers or iterators of compatible types that refer to different arrays or ranges is undefined behavior.</p>
-<p>The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a total order of pointers of a given type.</p>
+<p>Pointers to functions, pointers to members, and pointers to <code class="sourceCode cpp"><span class="dt">void</span></code> do not allow pointer arithmetic.</p>
+<p>Adding or subtracting an integral value to a pointer value must yield a result that is a pointer of the same underlying array, otherwise the behavior is undefined (adding <code>0</code> to a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is well-defined). Note: the built-in indexing operator is defined in terms of pointer arithmetic.</p>
+<p>Subtraction of two pointers has undefined behaviour unless both pointers refer to the same underlying array or have both the <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value.</p>
+<p>Comparison of two pointers with one of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code> has unspecified behaviour unless both pointers refer to the same underlying array or object. The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a strict total order of pointers of a given type.</p>
+<p>Iterators as defined by the standard library suffer from similar vulnerabilities as by pointer arithmetic. Comparison and subtraction of two iterators, or computing <code>std::distance</code> cause undefined behavior for iterators that refer to different ranges. Forming an iterator that is outside of its underlying range similarly is undefined behavior.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>Avoid explicit pointer arithmetic, prefer using range-based or iterator-based algorithms as advised in clause <a href="#HCB">6.8</a>.</p></li>
+<li><p>Avoid explicit pointer arithmetic, prefer calling range-based algorithms as advised in clause <a href="#HCB">6.8</a>.</p></li>
 <li><p>Use the avoidance mechanisms of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
-<li><p>Compare pointers of unknown realm with the standard library comparison function objects instead of relational operators.</p></li>
+<li><p>Compare pointers of unknown realm with the standard library comparison function objects instead of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code>.</p></li>
 </ul>
 <h2 id="null-pointer-dereference-xyh">6.13 NULL Pointer Dereference [XYH]</h2>
+<p>TO BE CONTINUED</p>
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.13 exists in C++. Dereferencing a pointer with the value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is undefined behavior <a href="#EWF">[EWF]</a>.</p>
-<p>C++ does, however, provide references that cannot be null and can be used in most places instead of pointers. In addition the standard library type <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> can be used in place of pointers in many cases but requires similar diligence when it is empty.</p>
-<p>As a historical programming convention a return value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is used to denote tha absence of a result. This mechanism lead to a style where pointer returns are very common and magnify potential dereference problems. Instead of returning a pointer, <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> can be used to denote the absence of a result an still return a result by value. In addition, passing pointers as function arguments places the burden of checking for a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value on the called function. Using pointers as return values and function parameters is inherently problematic, due to the following issues:</p>
+<p>Using pointers is inherently problematic especially for function parameters and return values, due to the following issues:</p>
 <ul>
 <li>is a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value valid in context?</li>
-<li>is it a single object or an array of objects? (<code class="sourceCode cpp">T[]</code> as a function parameter type is identical to <code class="sourceCode cpp">T*</code>)</li>
-<li>what is the lifetime of the pointee?</li>
-<li>who has ownership of the pointee?</li>
 <li>is there protection against dereference of a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value?</li>
+<li>is it a single object or an array of objects? (<code class="sourceCode cpp">T[]</code> as a function parameter type is identical to <code class="sourceCode cpp">T*</code>)</li>
+<li>what is the lifetime of the target of the pointer?</li>
+<li>who has ownership of the target object?</li>
 </ul>
-<p>Using a reference as a function parameter instead of a pointer has none of these issues. Using a reference as function return type requires the caller to avoid accessing an object outisde of its lifetime (see <a href="#XYK">[XYK]</a>, <a href="#DCM">[DCM]</a>).</p>
-<p>Using a <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> as a function parameter or function return value instead of a pointer addresses all of these issues, except for the last. Accessing the content of a <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> requires a check for <code class="sourceCode cpp">has_value{}</code>, which happens implicitly when using <code class="sourceCode cpp"><span class="bu">std::</span>optional<span class="bu">::</span>value()</code> instead of its overloaded dereference- operator.</p>
-<p>Note: Be aware that <code class="sourceCode cpp">optional&lt;T&amp;&gt;</code> is not supported by the standard library. In that case either use <code class="sourceCode cpp"><span class="bu">std::</span>optional&lt;<span class="bu">std::</span>reference_wrapper&lt;T&gt;&gt;</code> or another implementation of <code class="sourceCode cpp">optional</code> supporting holding references.</p>
-<p>The language provided dynamic memory management functionionality might return a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value in case of a failed allocation. Employing the smart pointer factories <code class="sourceCode cpp">make_unique</code> or <code class="sourceCode cpp">make_shared</code> will return a non-null smart pointer managing the lifetime of the underlying memory or throw <code class="sourceCode cpp"><span class="bu">std::</span>bad_alloc</code> on a failed allocation.</p>
-<p>See C++ Core Guidelines ES.65 and section R: Resource Management, and CERT EXP34-C “Do not dereference null pointers”</p>
+<p>Using values instead of pointers sidesteps all pointer vulnerabilities, especially when returned from a function. For example, standard library containers like <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> have value semantics and do not suffer from this vulnerability.</p>
+<p>C++ references cannot be null in a well-defined program and solve the null-dereferencing vulnerability. They are particularly useful as function parameters. Using a reference as function return type requires the caller to avoid accessing an object outisde of its lifetime (see <a href="#XYK">[XYK]</a>, <a href="#DCM">[DCM]</a>).</p>
+<p>If absence of a value is necessary, a class type for optional values such as <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> provides well-defined behaviour and single-object ownership. In case of attempting to access the value of an empty <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> an exception is thrown.</p>
+<p>Note: Be aware that as of today <code class="sourceCode cpp">optional&lt;T&amp;&gt;</code> is not supported by the standard library. In that case either use <code class="sourceCode cpp"><span class="bu">std::</span>optional&lt;<span class="bu">std::</span>reference_wrapper&lt;T&gt;&gt;</code> or another implementation of <code class="sourceCode cpp">optional</code> supporting holding references.</p>
+<p>Constructing a smart pointer through the factories <code class="sourceCode cpp"><span class="bu">std::</span>make_unique</code> or <code class="sourceCode cpp"><span class="bu">std::</span>make_shared</code> will return a non-null smart pointer or throw an exception.</p>
+<!-- See C++ Core Guidelines ES.65 and section R: Resource Management, and CERT EXP34-C "Do not
+dereference null pointers" -->
 <h3 id="avoidance-mechanisms-for-language-users">6.13.2 Avoidance mechanisms for language users</h3>
 <ul>
-<li><p>If using objects of pointer-like types that may contain a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.13.2.</p></li>
-<li><p>Use references to reduce the number of places where pointers are dereferenced.</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> instead of a pointer to denote a potentially missing function argument or result.</p></li>
-<li><p>Use containers instaed of arrays such as <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, and <code class="sourceCode cpp"><span class="bu">std::</span>span</code>.</p></li>
+<li><p>Prefer references to reduce the number of places where pointers are dereferenced.</p></li>
+<li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> instead of a pointer to represent a potentially empty value.</p></li>
+<li><p>Use containers instead of arrays such as <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>, and <code class="sourceCode cpp"><span class="bu">std::</span>span</code>.</p></li>
 <li><p>Use <code class="sourceCode cpp">make_unique()</code> or <code class="sourceCode cpp">make_shared()</code> for allocating objects on the heap.</p></li>
 <li><p>Do not suppress exceptions on memory allocation and handle any exceptions that arise. If exceptions are suppressed, use the avoidance mechanisms of TR 24772-3:2020 clause 6.13.2.</p></li>
+<li><p>If using objects of pointer-like types that may contain a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.13.2.</p></li>
 <li><p>Use static and dynamic analysis tools to detect potential violations of this guideline.</p></li>
 </ul>
 <h2 id="XYK">6.14 Dangling Reference to Heap [XYK]</h2>
