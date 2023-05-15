@@ -286,27 +286,12 @@ void foo3 ()
 <p>_Remaining scenarios on lifetime extension: The lifetime of a temporary object created when evaluating the default arguments of a default or copy constructor used to initialize an element of an array ends before the next element of the array begins initialization. (Candidate for deletion unless we can create a scenario.)</p>
 <p>Subtle text from [class.temporary] para 5 in C++17 or C++20</p>
 <p>The temporary object to which the reference is bound or the temporary object that is the complete object of a subobject to which the reference is bound persists for the lifetime of the reference [Needs addressing with an example]</p>
-<p><strong>TODO from 6.14:</strong> In general, a temporary object is destroyed at the end of the surrounding full expression. However, in certain specific circumstances the language guarantees that a const-lvalue-reference or an rvalue-reference that is bound to a (member of a) temporary object extends the lifetime of the temporary until the reference goes out of scope. This lifetime extension is not transitive across function calls, therefore, changes in the code, such as replacing a data member access with an accessor member function, can silently lead to dangling in such lifetime-extension situations.</p>
-<p>A simple example is where the temporary <code class="sourceCode cpp"><span class="bu">std::</span>string</code> object constructed by the suffix <code class="sourceCode cpp"><span class="st">&quot;&quot;</span><span class="bu">s</span></code> is passed as a constructor argument:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad(<span class="st">&quot;a temporary string&quot;</span><span class="bu">s</span>); <span class="co">// \&quot;bad\&quot; holds a dangling pointer</span></span></code></pre></div>
-<p>Note: technically in this example the vulnerability exists in the conversion operator <code class="sourceCode cpp"><span class="bu">std::</span>string<span class="bu">::</span>operator string_view()</code> of <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, that returns a potentially dangling type from a member function callable on a temporary object.</p>
-<p>Functions returning <em>pointer-like</em> types are vulnerable, when the caller is not copying the resulting referent, but just stores the <em>potentially dangling object</em>. For example, the <em>range-for statement</em> uses the above mentioned lifetime extension for the range object to be iterated upon. If that range object itself is given as a reference already, the loop will access the elements through dangling iterators.</p>
-<pre class="{cpp}"><code>extern std::vector&lt;std::string&gt; make(); // creates a vector
-
-for(char c: make().front()) { // attempt to iterate over first string in vector
-   // vector and thus contained string is already destroyed
-}</code></pre>
-<p><strong>end of transferred text</strong></p>
 <h3 id="avoidance-mechanisms-for-language-users">6.33.2 Avoidance mechanisms for language users</h3>
 <ul>
 <li><p>Do not assign the address of an object, or reference to any entity where the referencing entity persists after the object has ceased to exist, in order to avoid the possibility of a dangling reference.</p></li>
 <li><p>Do not returning the address or reference of a local variable as the result of a function call.</p></li>
 <li><p>Avoid capturing by reference in lambdas that will be used non-locally, including return, or passing it to another thread, or stored in dynamic memory.</p></li>
 <li><p>If attempting to bind a reference to a temporary object, … thinking …</p></li>
-<li><p>Do not rely on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
-<li><p>Show that the <em>range-for</em> dangling vulnerability does not apply or take steps to avoid it, for example, use a variable representing the range and not an expression that yields a reference to a temporary.</p></li>
-<li><p>Consider making member functions ref-qualified, that return potentially dangling types to members or heap allocated objects managed by the class,<br />
-to avoid being called on temporary objects. Note: An rvalue-ref-qualified overload should either return a copy by value, or be defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> to prevent calling it on a temporary that would lead to returning an immediately dangling object.</p></li>
 </ul>
 <p>See also C++ Core Guidelines F.53, …</p>
 </body>
