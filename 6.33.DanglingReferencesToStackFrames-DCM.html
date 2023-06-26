@@ -217,8 +217,10 @@
 <h2 id="dangling-references-to-stack-frames-dcm">6.33 Dangling References to Stack Frames [DCM]</h2>
 <h3 id="applicability-to-language">6.33.1 Applicability to language</h3>
 <p>The vulnerability as expressed in ISO/IEC TR 24772-1:2019 and ISO/IEC TR 24772-3:2020 C exists in C++ by indirect access to variables with automatic storage duration or to temporary objects.</p>
-<p>The lifetime model of C++ makes it undefined behaviour (see subclause [EWF]) to access an object outside of its lifetime. This results in undefined behavior, when an object access is attempted after its destruction. C++ provides a rich set of <em>pointer-like</em> types whose values may refer to temporaries or variables with automatic storage duration and can dangle (see Subclause <a href="#XYK">[XYK]</a>). However, the efficiency of return-by-value, copy-elision, and move-semantics as specified by C++ reduces the incentive to return a <em>pointer-like</em> type from a function or bind a temporary to a local reference.</p>
+<p>The lifetime model of C++ makes it undefined behaviour (see subclause [EWF]) to access an object outside of its lifetime. This results in undefined behavior, when an object access is attempted after its destruction. C++ provides a rich set of <em>pointer-like</em> types whose values may refer to temporaries or variables with automatic storage duration and can dangle (see Subclause <a href="#XYK">[XYK]</a>).</p>
 <p>A C++ class type with a <em>pointer-like</em> member will behave as a <em>pointer-like</em> type, unless the class itself manages the lifetime of the object referred to by its member.</p>
+<p>In general, any caller storing the <em>pointer-like</em> object returned from a function call risks dangling; such situations require thorough lifetime analysis to ensure that access via the <em>pointer-like</em> object doesn’t dangle.</p>
+<p>The efficiency of return-by-value, copy-elision, and move-semantics as specified by C++ reduces the incentive to return a <em>pointer-like</em> type from a function or bind a temporary to a local reference.</p>
 <p>The lifetime of a temporary object usually ends at the end of a <em>full expression</em> where it was created. Dangling can occur, when an expression including the creation of a temporary object results in a <em>pointer-like</em> value referring to the temporary object. For example, <code>std::max</code> returns the const-reference given as parameter, which might be bound to a temporary argument:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> g(<span class="dt">int</span> i){</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> &amp;m = <span class="bu">std::</span>max(i,<span class="dv">20</span>);</span>
@@ -234,50 +236,52 @@
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> &amp;&amp; ra = A{<span class="dv">42</span>}.a; <span class="co">// lifetime extended</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> &amp; cra = A{<span class="dv">42</span>}.getA(); <span class="co">// dangling</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>The range-for loop statement contains a subtle situation with lifetime extension, which is no longer present from C++23 onwards. A temporary in the range expression will have its lifetime extended, unless it is accessed indirectly. As a mitigation C++ permits the creation of a variable for such situations that has the scope of the range-for loop, as shown in the following example:</p>
+<p>The range-based for statement contains a subtle situation with lifetime extension.<br />
+A temporary in the range expression will have its lifetime extended, unless it is accessed indirectly. As a mitigation C++ permits the creation of a variable for such situations that has the scope of the range-for loop, as shown in the following example:</p>
 <pre class="{cpp}"><code>extern std::vector&lt;std::string&gt; make(); // creates a vector
 
 for(char c : make().front()) { // attempt to iterate over first string in vector
-   // vector and thus contained string is already destroyed
+   // vector and thus contained string is already destroyed before C++23
 }
 
 for(auto range = make().front(); char c : range){ // mitigation, create a variable for the range to be iterated over
   // string to be iterated over remaings valid throughout
 }</code></pre>
+<p>This issue is no longer present from C++23 onwards, as temporaries within the for-range-initializer are lifetime extended until the end of the statement.</p>
 <p>Returning a <em>pointer-like</em> object from a function is problematic, if the return value refers to a temporary or an object with automatic storage duration, either directly or indirectly. The following example show different situations with this problem:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> *bad_pointer() {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">0</span>;</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> &amp;a;      <span class="co">// Error. Returning the address of a local variable - Undefined Behaviour.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> &amp;a;      <span class="co">// Returning the address of a local variable &quot;a&quot;.</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a> }</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; bad_reference() {</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> b = <span class="dv">0</span>;</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> b;      <span class="co">// Error, returning a reference to a local variable.</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt;::iterator bad_iterator()</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a> {</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt; c = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> };</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> c.begin();  <span class="co">// Error, returning an iterator that refers the first element of the local array &quot;c&quot;.</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a> }</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> d = <span class="dv">0</span>;</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { d = <span class="dv">1</span>; };   <span class="co">// Error, &#39;&amp;&#39; causes d to be captured by reference</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="kw">decltype</span>(<span class="kw">auto</span>) bad_assign(){ <span class="co">// deduces: std::string &amp;</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">std::</span>string{} = <span class="st">&quot;hello</span><span class="sc">\n</span><span class="st">&quot;</span><span class="bu">s</span>; <span class="co">// Error, return reference to temporary object returned from copy-assignment operator</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> erroneous_use() {</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_pointer();</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_reference();</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_iterator();</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_lambda()();</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_assign();</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; bad_reference(<span class="dt">int</span> b) {</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> b;      <span class="co">// Returning a reference to a local (parameter) variable &quot;b&quot; .</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt;::iterator bad_iterator()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a> {</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>array&lt;<span class="dt">int</span>,<span class="dv">3</span>&gt; c = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> };</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> c.begin();  <span class="co">// Returning an iterator that refers the first element of the local array &quot;c&quot;.</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> d = <span class="dv">0</span>;</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { d = <span class="dv">1</span>; };   <span class="co">// Returning a lambda that captures local variable &quot;d&quot; by reference</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="kw">decltype</span>(<span class="kw">auto</span>) bad_assign(){ <span class="co">// deduces: std::string &amp;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">std::</span>string{} = <span class="st">&quot;hello</span><span class="sc">\n</span><span class="st">&quot;</span><span class="bu">s</span>; <span class="co">// Returns reference to temporary object returned from copy-assignment operator</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> erroneous_use() {</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_pointer();</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_reference(<span class="dv">42</span>);</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; *bad_iterator();</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_lambda()();</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cout &lt;&lt; bad_assign();</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div>
 <p>In the examples above, the function <code>bad_assign</code> returns a <code class="sourceCode cpp"><span class="bu">std::</span>string &amp;</code> that was itself returned from the copy-assignement operator of <code class="sourceCode cpp"><span class="bu">std::</span>string</code>. Such an assignement operator (including the compiler-provied ones) can be called with a temporary as its left-hand operand, because it is an unqualified member function (for historical reasons).</p>
-<p>Calling a member function returning a <em>pointer-like</em> object to <code class="sourceCode cpp">*<span class="kw">this</span></code>, its sub-objects, or its managed objects on a temporary can be prevented by lvalue-ref qualification of the member function overloads. If a const-ref qualified overload is needed, defining an rvalue-ref qualified overload as <code class="sourceCode cpp">=<span class="kw">delete</span></code> or as returning by value prevents calling it on a temporary with returning a dangling object. For example, the following class user-declares its special member functions to avoid the situation created in the example function <code>bad_assign</code>:</p>
+<p>Dangling may occur by calling a member function on a temporary that returns a <em>pointer-like</em> object referring to <code class="sourceCode cpp">*<span class="kw">this</span></code>, a sub-object of <code class="sourceCode cpp">*<span class="kw">this</span></code>, or an object managed by <code class="sourceCode cpp">*<span class="kw">this</span></code>. This can be prevented by - For a non-const member function: adding an lvalue ref-qualification (<code class="sourceCode cpp">&amp;</code>), - For a const member function: adding an lvalue ref-qualification (<code class="sourceCode cpp"><span class="at">const</span> &amp;</code>) <strong>and</strong> declaring an rvalue ref-qualified overload (<code class="sourceCode cpp">&amp;&amp;</code>) either defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> or declared to return by value.</p>
+<p>In the following example, class <code class="sourceCode cpp">nta</code> declares its copy assignment with lvalue ref-qualification to avoid the situation created in the example function <code>bad_assign</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> ta{}; <span class="co">// default allows assignment to temporary</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> nta{</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>nta &amp; <span class="kw">operator</span>=(nta <span class="at">const</span> &amp;) &amp; = <span class="cf">default</span>; <span class="co">// lvalue-ref qualified</span></span>
@@ -286,33 +290,43 @@ for(auto range = make().front(); char c : range){ // mitigation, create a variab
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ta{} = ta{}; <span class="co">// returns dangling reference to temporary</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>nta &amp; check_nta(){</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nta() = nta(); <span class="co">// won&#39;t compile</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nta{} = nta{}; <span class="co">// won&#39;t compile</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
-<p>In general, calling functions returning <em>pointer-like</em> types are vulnerable, when the caller is not copying the resulting referent, but just stores the <em>pointer-like</em> object and uses it beyond the expression containing the call. Such situations require thorough lifetime analysis of the referent with respect to the use of the <em>pointer-like</em> object referring it.</p>
 <p>Referring to a variable with automtic storage duration from a <em>pointer-like</em> variable with static or thead-local storage duration usually means dangling, when the indirect access happens.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> <span class="at">const</span> init{<span class="dv">42</span>};</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>reference_wrapper&lt;<span class="dt">int</span> <span class="at">const</span>&gt; bad_ref = init; <span class="co">// static storage duration</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bad_global_assign(){</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> local{<span class="dv">44</span>};</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    bad_ref = local; <span class="co">// Error, further access of bad_ref dangles</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (bad_ref == <span class="dv">42</span>){ <span class="co">// undefined behavior on 2nd call</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="dt">int</span> local{<span class="dv">44</span>};</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>       bad_ref = local; <span class="co">// Any further access of bad_ref dangles</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>A class type with <em>pointer-like</em> members can lead to dangling when those members refer to constructor arguments.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X{</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> <span class="at">const</span> &amp;rci;</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>X(<span class="dt">int</span> i):rci{i}{} <span class="co">// Error, no lifetime extension of parameter object by binding reference to it</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad_var(<span class="st">&quot;a string&quot;</span><span class="bu">s</span>); <span class="co">// dangling view on temporary string object</span></span></code></pre></div>
-<p>In this example the vulnerability exists in the conversion <code class="sourceCode cpp"><span class="kw">operator</span> string_view()</code> of <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, that returns a <em>pointer-like</em> type from a member function callable on a temporary object.</p>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>X(<span class="dt">int</span> i):rci{i}{} <span class="co">// No lifetime extension of parameter object by binding reference to it</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
+<p>Similarly, in the following example the vulnerability exists in the conversion <code class="sourceCode cpp"><span class="kw">operator</span> string_view()</code> of <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, that returns a <em>pointer-like</em> type from a member function callable on a temporary object.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad_var(<span class="st">&quot;a string&quot;</span><span class="bu">s</span>); <span class="co">// dangling view on temporary string object</span></span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.33.2 Avoidance mechanisms for language users</h3>
 <p>Software developers can avoid the vulnerability or mitigate its ill effects in the following ways: They can</p>
 <ul>
 <li><p>Prefer value types, pass-by-value, and return-by-value over <em>pointer-like</em> types and passing or returning <em>pointer-like</em> objects*.</p></li>
-<li><p>Prohibit returning or assigning a <em>pointer-like</em> value referring to a variable with automatic storage duration or temporary object to a variable with static or thread storage duration. This includes prohibiting initializing <em>pointer-like</em> members from constructor value arguments.</p></li>
-<li><p>Avoid capturing by reference in lambdas that will be used non-locally, including return, or passing it to another thread or coroutine, or stored in dynamic memory.</p></li>
-<li><p>Avoid relying on lifetime extension of temporaries by binding them to named references. Use (local) variables instead.</p></li>
-<li><p>Show that the <em>range-for</em> dangling vulnerability does not apply or take steps to avoid it, for example, use a variable representing the range and not an expression that yields a reference to a temporary.</p></li>
-<li><p>Consider making member functions ref-qualified, that return <em>pointer-like</em> types to members or objects managed by the class,<br />
-to avoid being called on temporary objects. If required, provide an rvalue-ref-qualified overload that either returns a copy by value, or is defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> to prevent calling it on a temporary.</p></li>
+<li><p>Prohibit the following uses of a <em>pointer-like</em> value referring to a variable with automatic storage duration or referring to a temporary object:</p>
+<ul>
+<li>Returning the <em>pointer-like</em> value from a function;</li>
+<li>Assigning the <em>pointer-like</em> value to a <em>pointer-like</em> variable with a greater lifetime, such as a variable with static or thread storage duration, or initializing a <em>pointer-like</em> member variable from a constructor value parameter.</li>
+</ul></li>
+<li><p>Avoid capturing by reference in a lambda that will be used non-locally, that is</p>
+<ul>
+<li>returned,</li>
+<li>passed to another thread or coroutine, or</li>
+<li>stored in a variable with a longer lifetime than the captured variables.</li>
+</ul></li>
+<li><p>Avoid relying on lifetime extension of temporaries by binding them to named references; use (local) variables instead.</p></li>
+<li><p>Show that the <em>range-based for</em> dangling vulnerability does not apply or take steps to avoid it, for example, use a variable representing the range and not an expression that yields a reference to a temporary.</p></li>
+<li><p>Consider making member functions ref-qualified, that return <em>pointer-like</em> types to members or objects managed by the class.<br />
+If required, provide an rvalue-ref-qualified overload that either returns a copy by value, or is defined as <code class="sourceCode cpp">=<span class="kw">delete</span></code> to prevent calling it on a temporary.</p></li>
 <li><p>Perform lifetime analysis when using a <em>pointer-like</em> object beyond the expression that created it and ensure it is not used in a dangling situation.</p></li>
 <li><p>Employ static and dynamic analysis tools to detect dangling <em>pointer-like</em> objects.</p></li>
 </ul>
