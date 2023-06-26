@@ -2266,7 +2266,7 @@ if (i == 10){
 <span id="cb149-6"><a href="#cb149-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> &amp;&amp; ra = A{<span class="dv">42</span>}.a; <span class="co">// lifetime extended</span></span>
 <span id="cb149-7"><a href="#cb149-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> &amp; cra = A{<span class="dv">42</span>}.getA(); <span class="co">// dangling</span></span>
 <span id="cb149-8"><a href="#cb149-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>The range-for loop statement contains a subtle situation with lifetime extension. A temporary in the range expression will have its lifetime extended, unless it is accessed indirectly. As a mitigation C++ permits the creation of a variable for such situations that has the scope of the range-for loop, as shown in the following example:</p>
+<p>The range-for loop statement contains a subtle situation with lifetime extension, which is no longer present from C++23 onwards. A temporary in the range expression will have its lifetime extended, unless it is accessed indirectly. As a mitigation C++ permits the creation of a variable for such situations that has the scope of the range-for loop, as shown in the following example:</p>
 <pre class="{cpp}"><code>extern std::vector&lt;std::string&gt; make(); // creates a vector
 
 for(char c : make().front()) { // attempt to iterate over first string in vector
