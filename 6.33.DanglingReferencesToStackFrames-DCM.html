@@ -266,7 +266,7 @@ for(auto range = make().front(); char c : range){ // mitigation, create a variab
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> bad_lambda() {</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> d = <span class="dv">0</span>;</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { d = <span class="dv">1</span>; };   <span class="co">// Returning a lambda that captures local variable &quot;d&quot; by reference</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [&amp;] { <span class="cf">return</span> d = <span class="dv">1</span>; };   <span class="co">// Returning a lambda that captures local variable &quot;d&quot; by reference</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="kw">decltype</span>(<span class="kw">auto</span>) bad_assign(){ <span class="co">// deduces: std::string &amp;</span></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">std::</span>string{} = <span class="st">&quot;hello</span><span class="sc">\n</span><span class="st">&quot;</span><span class="bu">s</span>; <span class="co">// Returns reference to temporary object returned from copy-assignment operator</span></span>
