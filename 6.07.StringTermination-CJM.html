@@ -228,8 +228,8 @@
 <ul>
 <li><p>Avoid C-style strings.</p></li>
 <li><p>If using C-style strings is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.7.2.</p></li>
-<li><p>Use a string type, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which manages the memory of its string and handles termination in order to mitigate against this vulnerability.</p></li>
-<li><p>If you provide an encapsulation of a string, perform the appropriate verifications.</p></li>
+<li><p>Ensure that explicit overflow checks are performed for all string operations.</p></li>
+<li><p>Prefer using a string type, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which manages the memory of its string and handles termination in order to mitigate against this vulnerability.</p></li>
 <li><p>Don’t use the underlying raw pointer of a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> or a <code class="sourceCode cpp"><span class="bu">std::</span>span</code> with interfaces that expect C-style strings.</p></li>
 <li><p>Use static analysis tools to help identify occurrences of undefined behaviour.</p></li>
 </ul>
