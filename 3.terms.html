@@ -184,19 +184,16 @@ the expression in the comma-separated list bounded by the parentheses in a funct
 <p>lookup that finds additional overloads from the namespaces of the types of the arguments used in unqualified function calls</p>
 <p><strong><u>3.1.4</u></strong></p>
 <p><strong><u>behaviour</u></strong><br />
-an external appearance or action</p>
-<blockquote>
-<p>Note 3: See: implementation-defined behavior, locale-specific behavior, undefined behavior, unspecified behaviour</p>
-</blockquote>
+an external appearance or action [recommend removal - standard comp sci term]</p>
 <p><strong><u>3.1.5</u></strong></p>
 <p><strong><u>bit</u></strong><br />
 the unit of data storage in the execution environment large enough to hold an object that may have one of two values</p>
-<p>Note: It need not be possible to express the address of each individual bit of an object.</p>
+<p>Note: It need not be possible to express the address of each individual bit of an object. [recommend removal - standard comp sci term]</p>
 <p><strong><u>3.1.6</u></strong></p>
 <p><strong><u>byte</u></strong><br />
 the addressable unit of data storage large enough to hold any member of the basic character set of the execution environment</p>
 <blockquote>
-<p>Note: It is possible to express the address of each individual byte of an object uniquely. A byte is composed of a contiguous sequence of bits, the number of which is implementation-defined. The least significant bit is called the low-order bit; the most significant bit is called the high-order bit.</p>
+<p>Note: It is possible to express the address of each individual byte of an object uniquely. A byte is composed of a contiguous sequence of bits, the number of which is implementation-defined. The least significant bit is called the low-order bit; the most significant bit is called the high-order bit. [recommend removal - standard comp sci term]</p>
 </blockquote>
 <p><strong><u>3.1.7</u></strong></p>
 <p><strong><u>character</u></strong><br />
@@ -228,25 +225,26 @@ a user-defined type declared with the class-key ‘class’ or ‘struct’ {.ul
 <p><strong><u>formal parameter</u></strong><br />
 </p>
 <p>object declared as part of a function declaration or definition that acquires a value on entry to the function, or an identifier from the comma-separated list bounded by the parentheses immediately following the macro name in a function-like macro definition.</p>
+<p><strong>[3.1.xx] friend{.ul}</strong><br />
+</p>
+<p>function or class that can access the private and protected members of a specific class</p>
 <p><strong>[3.1.xx] hidden friend{.ul}</strong><br />
 </p>
-<p>friend function or function template that is only declared within a class or class template definition and hence is only found by ADL</p>
+<p>friend function that is only declared within a class or class template definition and hence is only found by ADL</p>
 <p><strong><u>3.1.xx</u></strong><br />
 </p>
 <p><strong><u>Implementation</u></strong><br />
 </p>
-<p>particular set of software, running in a particular translation environment under particular control options, that performs translation of programs for, and supports execution of functions in, a particular execution environment.</p>
+<p>toolchain that is used to build and support the execution of the C++ program</p>
 <p><strong><u>3.1.15</u></strong><br />
 </p>
 <p><strong><u>implementation-defined behaviour</u></strong><br />
 </p>
-<p>unspecified behaviour where each implementation documents how the choice is made</p>
-<p>Note: An example of implementation-defined behaviour is the propagation of the high-order bit when a signed integer is shifted right.</p>
+<p>behaviour, for a well-formed program construct and correct data, that depends on the implementation and that each implementation documents</p>
 <p><strong><u>3.1.16</u></strong><br />
+<strong><u>implementation-defined value</u></strong><br />
 </p>
-<p><strong><u>implementation-defined value</u></strong><br />
-</p>
-<p>unspecified value where each implementation documents how the choice for the value is selected.</p>
+<p>unspecified value where each implementation documents how the choice for the value is selected. [recommend removal - term not use other than note(s)]</p>
 <p><strong><u>3.1.17</u></strong><br />
 </p>
 <p><strong><u>implementation limit</u></strong><br />
@@ -256,97 +254,81 @@ a user-defined type declared with the class-key ‘class’ or ‘struct’ {.ul
 </p>
 <p><strong><u>indeterminate value</u></strong><br />
 </p>
-<p>unspecified value or a trap representation.</p>
+<p>unspecified value or a trap representation</p>
 <p><strong><u>3.1.19</u></strong><br />
 </p>
 <p><strong><u>Inheritance</u></strong><br />
 </p>
-<p>TBD</p>
+<p>TBD [recommend removal - well understood in OO languages]</p>
 <p><strong><u>3.1.20</u></strong><br />
 </p>
 <p><strong><u>language type</u></strong><br />
 </p>
-<p>see block-structured language, comb-structured language (Non-responsive)</p>
+<p>see block-structured language, comb-structured language (Non-responsive) [recommended removal - inadequate relevancy]</p>
 <p><strong><u>3.1.21</u></strong><br />
 </p>
 <p><strong><u>locale-specific behaviour</u></strong><br />
 </p>
 <p>behaviour that depends on local conventions of nationality, culture, and language that each implementation documents</p>
-<p>Note: An example, locale-specific behaviour is whether the islower() function returns true for characters other than the 26 lower case Latin letters.</p>
 <p><strong><u>3.1.22</u></strong><br />
 </p>
 <p><strong><u>memory location</u></strong><br />
 </p>
-<p>an object of scalar[^1] type, or a maximal sequence of adjacent bit-fields all having nonzero width (Non-responsive)</p>
-<blockquote>
-<p>Note: A bit-field and an adjacent non-bit-field member are in separate memory locations. The same applies to two bit-fields, if one is declared inside a nested structure declaration and the other is not, or if the two are separated by a zero-length bit-field declaration, or if they are separated by a non-bit-field member declaration. It is not safe to concurrently update two bit-fields in the same structure if all members declared between them are also bit-fields, no matter what the sizes of those intervening bit-fields happen to be. For example a structure declared as</p>
-</blockquote>
-<p>struct {</p>
-<p>char a;</p>
-<p>int b:5, c:11, :0, d:8;</p>
-<p>struct { int ee:8; } e;</p>
-<p>}</p>
-<p>contains four separate memory locations: The member a, and bit-fields d and e.ee are separate memory locations, and can be modified concurrently without interfering with each other. The bit-fields b and c together constitute the fourth memory location. The bit-fields b and c can’t be concurrently modified, but b and a, can be concurrently modified.</p>
+<p>an object of scalar type or a maximal sequence of adjacent bit-fields all having nonzero width [recommend removal and move to 6.3]</p>
 <p><strong><u>3.23</u></strong><br />
-</p>
-<p><strong><u>multibyte character</u></strong><br />
+<strong><u>multibyte character</u></strong><br />
 </p>
 <p>sequence of one or more bytes representing a member of the extended character set of either the source or the execution environment.</p>
-<p>Note: The extended character set is a superset of the basic character set.</p>
+<p>Note: The extended character set is a superset of the basic character set. [Recommend removal - not used]</p>
 <p><strong><u>3.1.24</u></strong><br />
-</p>
-<p><strong><u>namespace</u></strong><br />
-</p>
-<p>TBD</p>
+<strong><u>namespace</u></strong><br />
+optionally-named entity that can contain scoped declarations of any kind of entity [ensure that this is put into clause 4 on general concepts]</p>
 <p><strong><u>3.25</u></strong><br />
 </p>
 <p><strong><u>object</u></strong><br />
 </p>
-<p>region of data storage in the execution environment, the contents of which can represent values</p>
-<p>Note: When referenced, an object may be interpreted as having a particular type.</p>
+<p>region of data storage in the execution environment, the contents of which can represent values and that can be interpreted as having a particular type</p>
 <p><strong><u>3.1.26</u></strong><br />
 </p>
 <p><strong><u>overload</u></strong><br />
 </p>
-<p>TBD</p>
+<p>the use of the same symbol name to denote different entities</p>
 <p><strong><u>3.1.27</u></strong><br />
 </p>
 <p><strong><u>override</u></strong><br />
 </p>
-<p>TBD</p>
+<p>replacing the implementation of an inheritable function in a derived class</p>
 <p><strong><u>3.1.28</u></strong><br />
 </p>
 <p><strong><u>parameter</u></strong><br />
 </p>
 <p>(rewrite) See actual argument, argument, formal parameter (Non-responsive, needs definition)</p>
+<p>[Remove - obvious]</p>
 <p><strong><u>3.1.29</u></strong><br />
 </p>
 <p><strong>{Protected]{.ul}</strong><br />
 </p>
-<p>TBD</p>
+<p>visible only to itself and derived classes and friends</p>
 <p><strong><u>3.1.30</u></strong><br />
 </p>
 <p><strong><u>private</u></strong><br />
 </p>
-<p>TBD</p>
+<p>visible only to the class itself and friends</p>
 <p><strong><u>3.1.31</u></strong><br />
 </p>
 <p><strong><u>Public</u></strong><br />
 </p>
-<p>TBD</p>
-<p>3.1.32</p>
-<p>Pure</p>
-<p><u>TBD</u></p>
+<p>visible without restriction</p>
 <p><strong><u>3.1.33</u></strong><br />
 </p>
 <p><strong><u>recommended practice</u></strong><br />
 </p>
 <p>specification that is strongly recommended as being in keeping with the intent of the language standard, but that may be impractical for some implementations</p>
-<p>**<u>3.1.34</u>((<br />
+<p>[recommend removal - not used] **<u>3.1.34</u>((<br />
 </p>
 <p><strong><u>runtime-constraint</u></strong><br />
 </p>
-<p>requirement on a program when calling a library function</p>
+<p>a constraint imposed on an executing program [TBD - needs refinement] [continue from here - 7 August 2023]</p>
 <p><strong><u>3.1.35</u></strong><br />
 </p>
 <p><strong><u>single-byte character</u></strong><br />
