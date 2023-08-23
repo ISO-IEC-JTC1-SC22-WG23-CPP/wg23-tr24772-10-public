@@ -223,6 +223,7 @@
 <p>For arrays with fixed sizes the assignment operator or copy-constructor of <code class="sourceCode cpp"><span class="bu">std::</span>array</code> is the means of safe array copying.</p>
 <p>If a system requires its own container types with dynamic size, a naïve implementation might attempt to keep the copying external, like with C-style arrays. Such external copying should be avoided.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.10.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.10.5.</p></li>
 <li><p>Use standard library containers instead of C-style arrays, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
