@@ -1106,6 +1106,7 @@ use and possible exhaustion).</code></pre></li>
 <p><code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> can be used to reinterpret suitably sized trivial types on a bitwise level, i.e., for accessing the binary representation of a floating point value. However, for types with padding bits that do do not participate in an object’s value representation, the corresponding bits in a <code>bit_cast</code> result have indeterminate values. Malicious code could use such padding bits as a <em>secret channel</em>.</p>
 <p>See C++ Core Guidelines ES101 use unsigned types for bit manipulation.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.3.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.3.2</p></li>
 <li><p>Avoid the use of shift operations to implement multiplications or division by powers of two.</p></li>
@@ -1121,6 +1122,7 @@ use and possible exhaustion).</code></pre></li>
 <p>C++ has the vulnerability as described in ISO/IEC TR 24772-1 clause 6.4. The C++ standard assumes IEC 60559 if <code class="sourceCode cpp"><span class="bu">std::</span>numeric_limits<span class="bu">\</span>&lt;T&gt;::is_iec559</code> is true for the types in use. In the absence of this, C++ makes few guarantees about the behaviour of floating point numbers.</p>
 <p>Sorting floating point numbers with the built-in operators violates the preconditions of sorting predicates in the presence of NaN values and may raise floating point errors. The default sorting predicate <code>std::less</code> is suspect to this precondition violation, resulting in undefined behavior when sorting a range of floating point values that contains NaNs.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.4.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.4.5</p></li>
 <li><p>Verify compliance to ISO/IEC/IEEE 60559:2011 at compile time through <code class="sourceCode cpp"><span class="bu">std::</span>numeric_limits&lt;T&gt;::is_iec559</code>. Other numeric characteristics such as <code>min()</code>, <code>max()</code>, existence of NaNs, <code>has_denorm</code>, and infinities can be determined in this class template.</p></li>
