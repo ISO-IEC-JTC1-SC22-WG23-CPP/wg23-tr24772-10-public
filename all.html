@@ -1144,6 +1144,7 @@ use and possible exhaustion).</code></pre></li>
 <p>Note that unscoped enumeration types implicitly promote their underlying type and can be used as the index of an array without a cast, with all of the issues described in TR 24772-1 clause 6.5.</p>
 <p>From C++ 2017 forward, casting a value to an enumeration type is undefined behavior unless the source value is within the range of values of an enumeration type. See CERT INT50-CPP.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.5.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use <em>scoped enumerations</em> in preference to the C-style <em>unscoped enumerations</em> for related values, especially at namespace-level.</p>
 <ul>
@@ -1230,6 +1231,7 @@ enumerations for safe and simple use"</li>
 <p>Because C++ allows function and operator overloading, the effect of implicit conversions provides an additional mechanism of failure, by selecting an unwanted overload during overload resolution due to implicit conversions. This can influence failure modes with lookup as described in section <a href="#BJL">Namespace Issues [BJL]</a>. // Add overload resolution reference!!</p>
 <p>C++ also provides a library function <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>. This function provides the ability to preserve the bit representation when converting between unrelated types. If such is meaningful, then <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> reduces the risk of some undefined behaviours compared with other type punning approaches such as casts or unions.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.6.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.6.5:</p></li>
 <li><p>Avoid casts and type punning (see C++ Core guidelines ES.48), treat every cast as a candidate for refactoring.</p></li>

@@ -230,6 +230,7 @@
 <p>Note that unscoped enumeration types implicitly promote their underlying type and can be used as the index of an array without a cast, with all of the issues described in TR 24772-1 clause 6.5.</p>
 <p>From C++ 2017 forward, casting a value to an enumeration type is undefined behavior unless the source value is within the range of values of an enumeration type. See CERT INT50-CPP.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.5.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use <em>scoped enumerations</em> in preference to the C-style <em>unscoped enumerations</em> for related values, especially at namespace-level.</p>
 <ul>
