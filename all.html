@@ -1401,6 +1401,7 @@ enumerations for safe and simple use"</li>
 <p>Comparison of two pointers with one of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code> has unspecified behaviour unless both pointers refer to the same underlying array or object. The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a strict total order of pointers of a given type.</p>
 <p>Iterators as defined by the standard library suffer from similar vulnerabilities as by pointer arithmetic. Comparison and subtraction of two iterators, or computing <code>std::distance</code> cause undefined behavior for iterators that refer to different ranges. Forming an iterator that is outside of its underlying range similarly is undefined behavior.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Avoid explicit pointer arithmetic, prefer calling range-based algorithms as advised in clause <a href="#HCB">6.8</a>.</p></li>
 <li><p>Use the avoidance mechanisms of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
