@@ -297,6 +297,8 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li><p>Avoid assignments embedded within other statements and expressions.</p></li>
 <li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators.</p></li>
 <li><p>Avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
+<li><p>Avoid Boolean operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) with non-<code>bool</code> operands, e.g., operands of numeric types.</p></li>
+<li><p>Avoid bit operators (<code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> ) with anything except operands of non-<code>bool</code> unsigned types.</p></li>
 <li><p>Consider using alternative tokens for the logical operators.</p></li>
 <li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
 <li><p>Prohibit conflicting side-effects in sub-expressions.</p></li>
