@@ -276,14 +276,21 @@ It may not be clear whether the programmer intended to use the logical operator 
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
 <p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2^n where n is the number of bits in the unsigned type.</p>
-<p>C++ overloading of operators can also cause confusion. When overloaded, related operators like the compound assignment with their base operator, or comparison operators are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all. Similarly, for <code class="sourceCode cpp">a == b</code> (before C++20), there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code>.</p>
-<p>Unless the all relational operators are defined either explicitly or implicitly, unexpected results can occur. From C++20 onwards, a user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operator consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as =default, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
+<h4 id="c-overloading-of-operators-can-also-cause-confusion.">C++ overloading of operators can also cause confusion.</h4>
+<p>The language does not impose any restrictions on semantics of overloaded operators. This can cause (potentially generic) code to behave in completely unobvious ways, when such types with “unusual” operator semantics are used.</p>
+<p>For example, the boost.spirit library allows code like the following to create parser rules:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>r = real_p &gt;&gt; *(ch_p(<span class="ch">&#39;,&#39;</span>) &gt;&gt; real_p); <span class="co">// rule that accepts a comma-separated list of real numbers</span></span></code></pre></div>
+<p>This library uses C++ operator overloads to create an embedded domain-specific language for grammar rules, allowing the specification of parser rules as C++ expressions.</p>
+<p>When overloaded, related operators like the compound assignment with their base operator are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all.</p>
+<p>Similarly for overloaded relational operators, for <code class="sourceCode cpp">a == b</code>, there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code> if both are overloaded by the user.</p>
+<p>Unless all relational operators for a type are defined either explicitly in a consistent way or implicitly, unexpected results can occur. A user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operators consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as <code class="sourceCode cpp">=<span class="cf">default</span></code>, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <p>— Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
 <ul>
 <li><p>Simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example,</p>
 <ul>
+<li>by using parentheses around sub-expressions to limit precedence confusion,</li>
 <li>by extracting intermediate results into const variables with a meaningful name, or</li>
 <li>by extracting a subexpression into a function with a meaningful name.</li>
 </ul></li>
@@ -292,14 +299,9 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li><p>Avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
 <li><p>Consider using alternative tokens for the logical operators.</p></li>
 <li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
-<li><p>Do not have conflicting side-effects in sub-expressions.</p></li>
-<li><p>Follow the following C++ Core guidelines:</p>
-<ul>
-<li>ES 40 Avoid complicated expressions</li>
-<li>ES 41 If in doubt about operator precedence, parenthesize</li>
-<li>ES 44 Do not depend on order of evaluation</li>
-</ul></li>
-<li><p>Rely on C++20’s synthesized or rewritten comparison operators to ensure that all of the related comparison operators behave consistently.</p></li>
+<li><p>Prohibit conflicting side-effects in sub-expressions.</p></li>
+<li><p>Avoid defining semantics of overloaded operators to deviate from the semantics of these operators for the built-in types.</p></li>
+<li><p>Prefer defaulted and synthesized comparison operators over individual overloads to ensure that all of the related comparison operators behave consistently.</p></li>
 </ul>
 </body>
 </html>
