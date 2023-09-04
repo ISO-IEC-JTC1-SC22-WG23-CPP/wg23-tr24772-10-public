@@ -228,7 +228,7 @@
 <p>The typographical similarity can lead to code like the following, where it is unclear if the expression as spelled is actually intended, or if the author has typos in it, meaning a different operator instead:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==) ?</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">1</span>) &amp; (j = <span class="dv">1</span>); <span class="co">// (&gt;&gt;, &amp;&amp;, ==)?</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The following code in a production phone OS caused the “bricking” of many users phones:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="va">key_data_</span>.has_value() &amp; !<span class="va">key_data_</span>-&gt;label().empty())</span></code></pre></div>
@@ -266,7 +266,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">0</span>) &amp; j;</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Using the alternative tokens <code class="sourceCode cpp"><span class="kw">and</span></code> / <code class="sourceCode cpp"><span class="kw">or</span></code> in lieu of <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">||</code> reduces the possibility of confusion.</p>
+<p>Using the alternative tokens <code class="sourceCode cpp"><span class="kw">and</span></code> / <code class="sourceCode cpp"><span class="kw">or</span></code> in lieu of <code class="sourceCode cpp">&amp;&amp;</code> and <code class="sourceCode cpp">||</code> reduces the possibility of confusion. Similarly, <code>a not_eq b</code> is preferable to <code>a != b</code> since the latter is easily confused with the equally valid expression <code>a |= b</code>.</p>
 <p>Programmers can easily get in the habit of inserting the <code class="sourceCode cpp">;</code> statement terminator at the end of statements. However, inadvertently doing this can drastically alter the meaning of code, even though the code is valid as in the following example:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b;</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* … */</span></span>
@@ -299,7 +299,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li><p>Avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
 <li><p>Avoid Boolean operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) with non-<code>bool</code> operands, e.g., operands of numeric types.</p></li>
 <li><p>Avoid bit operators (<code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> ) with anything except operands of non-<code>bool</code> unsigned types.</p></li>
-<li><p>Consider using alternative tokens for the logical operators.</p></li>
+<li><p>Consider using alternative tokens for the logical operators, such as <code>and</code>, <code>or</code>, and <code>not</code>, and comparison operators such as <code>equal</code> and <code>not_eq</code>.</p></li>
 <li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
 <li><p>Prohibit conflicting side-effects in sub-expressions.</p></li>
 <li><p>Avoid defining semantics of overloaded operators to deviate from the semantics of these operators for the built-in types.</p></li>
