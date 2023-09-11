@@ -271,15 +271,16 @@
 </ul>
 <p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.44.5.</p></li>
+<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.44.5.</p></li>
 <li><p>In a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>
 <li><p>Avoid designs relying on downcasts or crosscasts; rely on proper virtual member functions in the base classes instead.</p></li>
 <li><p>Avoid explicit upcast, rely on implicit conversion.</p></li>
 <li><p>If a downcast or a crosscast is needed, prefer using <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> since it is checked.</p></li>
 <li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes. If this cannot be ensured, make the base class private, or avoid inheritance.</p></li>
-<li><p>Do not attempt to navigate class hierarchies using C-style casts or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>.</p></li>
-<li><p>Do not delete a polymorphic object without a virtual destructor. This includes using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr&lt;base&gt;</code> from a unique pointer allocated with <code class="sourceCode cpp"><span class="bu">std::</span>make_unique&lt;derived&gt;()</code></p></li>
+<li><p>Avoid attempting to navigate class hierarchies using C-style casts or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>.</p></li>
+<li><p>Prohibit deletion of a polymorphic object without a virtual destructor; including using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr&lt;base&gt;</code> from a unique pointer allocated with <code class="sourceCode cpp"><span class="bu">std::</span>make_unique&lt;derived&gt;()</code></p></li>
 </ul>
 <blockquote>
 <p>See also C++ Core Guidelines ES.48, ES.49, C.146, C.147, C.148 and C.153. source: OOP52-CPP?</p>
