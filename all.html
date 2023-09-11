@@ -2961,9 +2961,10 @@ execution boundaries</p></li>
 <p>The vulnerability as enumerated in ISO/IEC 24772-1 clause 6.49 applies to C++.</p>
 <p>As a mitigation, the C++ <code class="sourceCode cpp"><span class="at">extern</span> <span class="st">&quot;C&quot;</span></code> linkage specifier usually provides simple interoperability with libraries using the C application binary interface (ABI).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.49.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.49.5.</p></li>
-<li><p>Use the avoidance mechanisms of clause <a href="#DJS">6.47 Inter-language Calling [DJS]</a> as applicable.</p></li>
+<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.49.5.</p></li>
+<li><p>Follow the avoidance mechanisms of clause <a href="#DJS">6.47 Inter-language Calling [DJS]</a> as applicable.</p></li>
 </ul>
 <h2 id="unanticipated-exceptions-from-library-routines-hjw">6.50. Unanticipated Exceptions from Library Routines [HJW]</h2>
 <h3 id="applicability-to-language">6.50.1 Applicability to language</h3>
@@ -2981,9 +2982,10 @@ execution boundaries</p></li>
 <span id="cb181-10"><a href="#cb181-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
 <span id="cb181-11"><a href="#cb181-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.50.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type. Note that all destructors are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
-<li><p>Use the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
+<li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type, excluding all destructors, which are are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
+<li><p>Follow the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
 <li><p>Prefer function-scope static objects to namespace-scope objects for objects needing dynamic initialization.</p></li>
 </ul>
 <h2 id="NMP">6.51 Pre-processor Directives [NMP]</h2>
