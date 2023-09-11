@@ -2655,8 +2655,9 @@ T.31 -- forward to Clive.
 (*We may wish to summarize)*
 --&gt;</code></pre>
 <h3 id="avoidance-mechanisms-for-language-users">6.40.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.40.5. and the guidance provided in the different related sections of this document.</p></li>
+<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.40.5. and the guidance provided in the different related sections of this document.</p></li>
 <li><p>Use <code>static_assert</code> to prevent the use of inappropriate template arguments.</p></li>
 <li><p>Consider using <em>concepts</em> to constrain template parameters.</p></li>
 <li><p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions.</p></li>
@@ -2667,7 +2668,7 @@ T.31 -- forward to Clive.
 <li><p>In the same file as the primary template; or</p></li>
 <li><p>In the same file as the user-defined type for which the specialization is declared.</p></li>
 </ol></li>
-<li><p>Do not specialize function templates.</p></li>
+<li><p>Prohibit specializing function templates.</p></li>
 </ul>
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
