@@ -2824,8 +2824,9 @@ T.31 -- forward to Clive.
 <span id="cb173-24"><a href="#cb173-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In C++, the call to a member function can be qualified, as shown in the above example, and avoids the vulnerability.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.43.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>At a call site, consider whether virtual dispatch is desired. If not, construct the call using the qualified name.</p></li>
+<li><p>At a call site, consider whether virtual dispatch is desired: if not, construct the call using the qualified name.</p></li>
 <li><p>Be suspicious of any call from a virtual member function of the derived class to any member function of any of its base classes.</p></li>
 </ul>
 <h2 id="BKK">6.44 Polymorphic variables [BKK]</h2>
