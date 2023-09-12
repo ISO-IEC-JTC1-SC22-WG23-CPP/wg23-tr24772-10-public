@@ -216,7 +216,7 @@
 </header>
 <h2 id="CGX">6.61 Concurrent Data Access [CGX]</h2>
 <h3 id="applicability-to-language">6.61.1 Applicability to language</h3>
-<p>C++ has threading and shared access to variables which have the vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.61.1. C++ provides features such as atomic (type template) that guarantee the internal consistency of the data and to prevent corruption of data due to potentially interleaved updates to data elements.</p>
+<p>C++ has threading and shared access to variables which have the vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.61.1. C++ provides features such as atomic (type template) to guarantee the internal consistency of the data and to prevent corruption of data due to potentially interleaved updates to data elements.</p>
 <p>What about concurrent data access between tasks?</p>
 <p>Programmers should be aware that conversions or manipulations of data items are not always atomic, such as the conversion of an object as part of a computation</p>
 <p><em>Need the C++ definition of atomic (indivisible access and memory ordering)</em></p>
@@ -240,9 +240,10 @@
 <p>Use of volatile (keyword type qualifier) for signal handlers (communicating with hardware?). Prefer volatile for communicating with hardware?</p>
 <p>For signal handling, <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> or atomic variables can be used to prevent this vulnerability.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.61.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.62.5.</p></li>
-<li><p>Use mutexes, condition variables (convar) in preference to atomic variables to protect data from simultaneous access.</p></li>
+<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.62.5.</p></li>
+<li><p>Use mutexes and condition variables (<code class="sourceCode cpp">convar</code>) in preference to atomic variables to protect data from simultaneous access.</p></li>
 <li><p>Use volatile only for synchronizing abstract machine state from memory.</p></li>
 <li><p>Avoid the use of volatile for synchronizing access to shared memory between threads (which needs mutex, condvar, or atomics)</p>
 <ul>
