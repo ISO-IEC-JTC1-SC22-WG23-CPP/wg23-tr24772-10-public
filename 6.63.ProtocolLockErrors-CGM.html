@@ -165,6 +165,7 @@
 <p>a += b; // This operation is an atomic read-modify-write of the variable ‘a’.</p>
 <p>a = a + b; // This statement contains two accesses to ‘a’ and is not atomic.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.63.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
 <li><p>Be aware of the operation of each synchronization mechanism, such as the cases where accesses to atomic variables may occur more than once in a statement.</p></li>

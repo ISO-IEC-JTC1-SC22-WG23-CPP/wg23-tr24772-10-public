@@ -3184,6 +3184,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <p>a += b; // This operation is an atomic read-modify-write of the variable ‘a’.</p>
 <p>a = a + b; // This statement contains two accesses to ‘a’ and is not atomic.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.63.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
 <li><p>Be aware of the operation of each synchronization mechanism, such as the cases where accesses to atomic variables may occur more than once in a statement.</p></li>
@@ -3239,8 +3240,9 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <span id="cb188-12"><a href="#cb188-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In addition, operator overloading of output operators allows to extend formatting abilities to user-defined types.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.64.2 Avoidance mechanisms for language users</h3>
+<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Avoid the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p></li>
+<li><p>Forbid the use of the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p></li>
 <li><p>Use the avoidance mechanisms provided by the standard library as described in ISO/IEC 14882 20.20 Formatting [format] or similar libraries, if <em>printf-style</em> formatting of output or strings is desired, or when the formatting facilities of <code>std::ostream</code> are inadequate.</p></li>
 <li><p>Read untrusted input as plain characters and then check for validity, before any conversion to numbers or program entities occurs, using facilities that do not require format strings and that check and report error conditions.</p></li>
 </ul>
