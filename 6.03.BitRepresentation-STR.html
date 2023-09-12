@@ -229,14 +229,14 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.3.2 Avoidance mechanisms for language users</h3>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.3.2</p></li>
-<li><p>Avoid the use of shift operations to implement multiplications or division by powers of two.</p></li>
+<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-3 clause 6.3.2</p></li>
+<li><p>Avoid the use of shift operations to implement multiplication or division by powers of two.</p></li>
 <li><p>Use built-in bitwise operations only with operands of unsigned integral types or enums with an unsigned underlying type.</p></li>
 <li><p>When performing bitwise operations on operands of an unsigned type that gets promoted to a signed integral type, cast the result to the corresponding unsigned type immediately.</p></li>
 <li><p>Ensure that the right-hand operand of a shift operation is not negative or greater than the number of bits the left-hand operand. Use static analysis tools or other means to prove that the right hand operand of the shift is not out of bounds.</p></li>
 <li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> over other means such as <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> to access the binary representation of an object.</p></li>
 <li><p>Prefer abstractions in a class type encapsulating bit manipulations using unsigned types of well-defined width, such as <code class="sourceCode cpp"><span class="bu">std::</span>bitset</code>, over non-portable bitfields.</p></li>
-<li><p>Don’t use <code>std::memcpy</code> or <code>std::memmove</code> to copy objects. Those operations will copy padding bits, if present.</p></li>
+<li><p>Forbid the use of <code>std::memcpy</code> or <code>std::memmove</code> to copy objects as those operations copy padding bits, if present.</p></li>
 </ul>
 </body>
 </html>
