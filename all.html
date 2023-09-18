@@ -1702,8 +1702,9 @@ dereference null pointers" -->
 <span id="cb111-31"><a href="#cb111-31" aria-hidden="true" tabindex="-1"></a>  B * b;</span>
 <span id="cb111-32"><a href="#cb111-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// After the commented-out code is added to NS2, the binding of foo changes silently from NS::foo to NS2::foo</span></span>
 <span id="cb111-33"><a href="#cb111-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>;</p>
-<p>A similar situation can occur when a conflict arises between compiler-synthesized or rewritten operators and explicitly created versions of those operators. For example:</p>
+<p>This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>.</p>
+<p>Analogously, when a more specialized template is added to an imported namespace where the more general template has already been provided in another namespace, preference rules will silently prefer the more specialized template.</p>
+<p>A similar situation can occur when a conflict arises between compiler-synthesized or rewritten operators and explicitly created versions of those operators, as in the following example.</p>
 <div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
 <span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> <span class="kw">operator</span>==(A <span class="at">const</span> &amp;) <span class="at">const</span> { <span class="cf">return</span> <span class="kw">true</span>; }   </span>
@@ -1732,6 +1733,7 @@ dereference null pointers" -->
 </ol></li>
 <li><p>Define an entity in only one file to prevent ODR-violations.</p></li>
 <li><p>Ensure that no ODR-violations occur, i.e., through a static analysis tool.</p></li>
+<li><p>Use a version-aware analysis tool to identify situations where preference rules cause a silent change of name binding between versions.</p></li>
 <li><p>Only declare equaility or relational operators as member functions or friend functions of the class</p></li>
 </ul>
 <h2 id="LAV">6.22 Missing Initialization of Variables [LAV]</h2>
