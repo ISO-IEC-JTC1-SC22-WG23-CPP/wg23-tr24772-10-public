@@ -233,10 +233,10 @@ struct base {
 template &lt;typename T&gt; 
 struct d : base&lt;T&gt;{
 auto bar() {
-return foo; // matches global foo not base&lt;T&gt;::foo
+return foo; // matches global foo not base&lt;T&gt;::foo [1]
 }
 };</code></pre>
-<p>In the above example using either <code class="sourceCode cpp"><span class="kw">this</span>-&gt;foo</code> or <code class="sourceCode cpp">d::foo</code> the member of the base class will be used.</p>
+<p>In the above example line [1], in place of <code>foo</code>, either <code class="sourceCode cpp"><span class="kw">this</span>-&gt;foo</code> or the fully qualified name <code class="sourceCode cpp">d::foo</code> would refer to the member of the base class.</p>
 <p>When used appropriately, templates are suitable for embedded and safety critical systems;</p>
 <ul>
 <li>They provide type-safe generics in contrast to legacy <code class="sourceCode cpp"><span class="dt">void</span> *</code>-based or macro-based genericity;</li>
@@ -284,10 +284,6 @@ short val;
 auto x = Int{4} + Int{38};
 auto y = Short{4} + Short{2};</code></pre>
 <pre><code>&lt;!--
-Core guidelines (fill in references)
-
-I.9 T.10, T.11, 12, 13, T.20, T.21, T.22, T.23, T.24, T.25, T.26, T.30,
-T.31 -- forward to Clive.
 
 (*We may wish to summarize)*
 --&gt;</code></pre>
