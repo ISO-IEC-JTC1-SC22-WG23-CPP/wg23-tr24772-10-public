@@ -229,6 +229,15 @@
 </ul>
 <p>This means, unqualified member functions are callable on temporaries (rvalues) and thus can have side effects, but also can return an lvalue-reference to said temporary by returning <code>*this</code> (or members of <code>*this</code>), which can lead to dangling if such a reference is used beyond the expression of the function call returning it. For example, the compiler-provided assignment operators of a class are unqualified member functions that return an lvalue-reference to <code class="sourceCode cpp">*<span class="kw">this</span></code>.</p>
 <p>Rvalue-reference parameters in a context where their actual type is deduced from the call site, are called <em>forwarding references</em>. A forwarding references will either be deduced to an lvalue-reference or an rvalue-reference depending on the argument at the call site.</p>
+<p>Aliasing is expected and allowed in some cases, such as:</p>
+<pre><code>-   Assignment and compound assignment operators: the right parameter may alias the left parameter. The function result always refers to the left parameter unless overloaded differently. In the case of self-assignment the stored value should not change.
+
+-   Functions that `swap`{.cpp} their parameters: The two parameters to be swapped may refer to the same object.
+
+-   Shift operators used for input and output: the result always refers to the left parameter.
+
+-   Prefix increment and decrement operators: the result always refers to the parameter.
+    </code></pre>
 <p>The C++ preprocessor macros use a <em>call by name</em> parameter passing; a call to the macro replaces the macro by the body of the macro. This is called <em>macro expansion</em>. Macro expansion is applied to the program source text and amounts to the substitution of the formal parameters with the actual parameter expressions. Formal parameters are often parenthesized to avoid syntax issues after the expansion. Call by name parameter passing reevaluates the actual parameter expression each time the formal parameter is read.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.32.2 Avoidance mechanisms for language users</h3>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
@@ -241,13 +250,7 @@
 <li><p>Use forwarding reference parameters only, if perfect forwarding is needed in the body of a function template or generic lambda.</p></li>
 <li><p>Define member functions that have side effects on <code class="sourceCode cpp">*<span class="kw">this</span></code> or return a potentially dangling object referring to <code>*this</code> or its members with the appropriate lvalue-ref-qualification. Either delete the rvalue-ref-qualified overload if a const-ref-qualified overload exists to avoid calling the function on temporary objects, or define the rvalue-ref-qualified overload as returning by value.</p></li>
 <li><p>Document the referents of potentially dangling objects created by or modified by a function if any potentially dangling object outlives the invocation of that function.</p></li>
-<li><p>Document any allowable aliasing between the referents of function parameters of potentially dangling type. Absent such documentation, avoid passing aliased parameters. In particular, aliasing is expected and allowed in these classes of functions:</p>
-<ul>
-<li><p>Assignment and compound assignment operators: the right parameter may alias the left parameter. The function result always refers to the left parameter unless overloaded differently. In the case of self-assignment the stored value should not change.</p></li>
-<li><p>Functions named <code class="sourceCode cpp">swap</code>: The two parameters to be swapped may refer to the same object.</p></li>
-<li><p>Shift operators used for input and output: the result always refers to the left parameter.</p></li>
-<li><p>Prefix increment and decrement operators: the result always refers to the parameter.</p></li>
-</ul></li>
+<li><p>Document any allowable aliasing between the referents of function parameters of potentially dangling type. Absent such documentation, avoid passing aliased parameters.</p></li>
 <li><p>Do not use function-like macros. If used, surround all macro parameters in the replacement text with parenthesis.</p></li>
 </ul>
 </body>
