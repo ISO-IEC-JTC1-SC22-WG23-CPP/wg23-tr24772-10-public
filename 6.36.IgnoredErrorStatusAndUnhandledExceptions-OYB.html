@@ -240,17 +240,16 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.36.2 Avoidance mechanisms for language users</h3>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of subclause 6.36.5 of ISO/IEC 24772-1:2019.</p></li>
+<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.36.5.</p></li>
 <li><p>With respect to <code>errno</code>, follow the avoidance mechanisms of subclause 6.36.5 of ISO/IEC 24772-3.</p></li>
 <li><p>Prohibit error handling based on global state.</p></li>
 <li><p>Use static analysis tools to detect and report missing or ineffective error detection or handling.</p></li>
 <li><p>Use <code class="sourceCode cpp">[[<span class="at">nodiscard</span>]]</code> to prevent callers from ignoring error values and configure your compiler to report violations as errors (<code>-Werror</code>).</p></li>
-<li><p>Consider <code>std::optional</code> or <code>std::variant</code> or similar mechanisms to extend a return type with an error status.</p></li>
-<li><p>Handle errors at each function where an alternative strategy for mitigations of the error is available, and in functions where no local mitigation strategy is available, pass on the error indication or ignore the exception, respectively, so that the error will be handled up the call chain.</p></li>
-<li><p>Use a <code>try-catch</code> function body for <code>main</code> or any thread-entry function with a <code>catch(...)</code> handler to guarantee stack unwinding, that guarantees the destruction of all local objects.</p></li>
+<li><p>Consider <code class="sourceCode cpp"><span class="bu">std::</span>expected</code>, <code class="sourceCode cpp"><span class="bu">std::</span>optional</code>, <code class="sourceCode cpp"><span class="bu">std::</span>variant</code> or similar mechanisms to extend a return type with an error status.</p></li>
+<li><p>Handle errors at each function where an alternative strategy for mitigations of the error is available, and in functions where no local mitigation strategy is available pass on the error indication or ignore the exception, respectively, so that the error will be handled up the call chain.</p></li>
+<li><p>Use a <code class="sourceCode cpp"><span class="cf">try</span>-<span class="cf">catch</span></code> function body for <code class="sourceCode cpp">main</code> or any thread-entry function with a <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code> handler to guarantee stack unwinding, which guarantees the destruction of all local objects.</p></li>
 <li><p>Consider controlled termination as a last resort strategy for main or for <code class="sourceCode cpp"><span class="kw">noexcept</span></code> functions.</p></li>
 <li><p>Consider the use of <code class="sourceCode cpp"><span class="bu">std::</span>exception_ptr</code> or an object encapsulating its mechanics like <code class="sourceCode cpp"><span class="bu">std::</span>future</code> to transport an exception from one thread to another thread for further processing.</p></li>
 </ul>
-<p>See also C++ Core Guidelines E.1, E.2, E.5, E.6, E.13, E.17, E.19, E.25, and E.28.</p>
 </body>
 </html>
