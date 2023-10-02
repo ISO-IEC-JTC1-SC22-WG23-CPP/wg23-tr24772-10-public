@@ -1401,16 +1401,18 @@ enumerations for safe and simple use"</li>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
 <p>The vulnerabilites described in ISO/IEC 24772-1:2022 clause 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>.</p>
 <p>Pointers to functions, pointers to members, and pointers to <code class="sourceCode cpp"><span class="dt">void</span></code> do not allow pointer arithmetic.</p>
-<p>Adding or subtracting an integral value to a pointer value must yield a result that is a pointer of the same underlying array, otherwise the behavior is undefined (adding <code>0</code> to a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is well-defined). Note: the built-in indexing operator is defined in terms of pointer arithmetic.</p>
-<p>Subtraction of two pointers has undefined behaviour unless both pointers refer to the same underlying array or have both the <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value.</p>
+<p>The set of valid pointers referring to an array consists of the pointers to each array element plus the pointer just past the end of the array, however dereferencing a pointer one past the end of the array is undefined behaviour. A pointer to a single object is considered to point to an array of size one with respect to pointer arithmetic.</p>
+<p>Adding or subtracting an integral value to a pointer value must yield a result that is a valid pointer refering to the same array, otherwise the behavior is undefined. Note: the built-in indexing operator is defined in terms of pointer arithmetic.</p>
+<p>Subtraction of two pointers has undefined behaviour unless both pointers refer to the same array or are both null.</p>
 <p>Comparison of two pointers with one of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code> has unspecified behaviour unless both pointers refer to the same underlying array or object. The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a strict total order of pointers of a given type.</p>
-<p>Iterators as defined by the standard library suffer from similar vulnerabilities as by pointer arithmetic. Comparison and subtraction of two iterators, or computing <code>std::distance</code> cause undefined behavior for iterators that refer to different ranges. Forming an iterator that is outside of its underlying range similarly is undefined behavior.</p>
+<p>Iterators as defined by the standard library suffer from similar vulnerabilities as pointer arithmetic. Comparison and subtraction of two iterators, or computing <code>std::distance</code> cause undefined behavior for iterators that refer to different ranges. Forming an iterator that is outside of its underlying range similarly is undefined behavior.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
-<li><p>Avoid explicit pointer arithmetic, prefer calling range-based algorithms as advised in clause <a href="#HCB">6.8</a>.</p></li>
-<li><p>Use the avoidance mechanisms of clause 6.8.2. with respect to ordinary pointer arithmetic of a pointer to object.</p></li>
-<li><p>Compare pointers of unknown realm with the standard library comparison function objects instead of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code>.</p></li>
+<li><p>Avoid explicit pointer arithmetic, especially on a pointer to a single object.</p></li>
+<li><p>Prefer calling range-based algorithms over pointer arithmetic.</p></li>
+<li><p>Use the avoidance mechanisms of <a href="#HCB">6.8.2</a>.</p></li>
+<li><p>Compare arbitrary pointers to objects with the standard library comparison function objects instead of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code>.</p></li>
 </ul>
 <h2 id="XYH">6.13 NULL Pointer Dereference [XYH]</h2>
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
