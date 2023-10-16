@@ -216,6 +216,7 @@
 </header>
 <h1 id="language-concepts">4. Language concepts</h1>
 <p><u><em>This clause requires a rewrite. See C++ Core Guidelines CPL for a good explanation of the differences</em>.</u></p>
+<p>Define unchecked (random) access in clause 3 or explain C++ approach. Likely needs a new subclause. Indexing into raw memory is a random access with no checking. In the STL, the [] operator does random access without checking. The function <code class="sourceCode cpp">at</code> was added to provide range checking, including throwing an exceptiion if the check fails.</p>
 <p>C++ is a strongly- and statically-typed language: all variables and expressions must have a type. C++ also permits implicit and explicit conversions between types.</p>
 <p>C++ has a rich type system with many nuances. In addition to the C base types (int, long, float, double, char, and arrays with their C-style vulnerabilities), C++ provides the following:</p>
 <ul>
