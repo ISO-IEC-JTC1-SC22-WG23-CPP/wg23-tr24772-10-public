@@ -292,7 +292,7 @@ for(auto range = make().front(); char c : range){ // mitigation, create a variab
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>nta &amp; check_nta(){</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nta{} = nta{}; <span class="co">// won&#39;t compile</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
-<p>Referring to a variable with automtic storage duration from a <em>pointer-like</em> variable with static or thead-local storage duration usually means dangling, when the indirect access happens.</p>
+<p>Referring to a variable with automatic storage duration from a <em>pointer-like</em> variable with static or thead-local storage duration usually means dangling, when the indirect access happens.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> <span class="at">const</span> init{<span class="dv">42</span>};</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>reference_wrapper&lt;<span class="dt">int</span> <span class="at">const</span>&gt; bad_ref = init; <span class="co">// static storage duration</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bad_global_assign(){</span>
