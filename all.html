@@ -958,6 +958,7 @@ use and possible exhaustion).</code></pre></li>
 <span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>S1::S2 v2 <span class="co">// legal in C++ not C</span></span></code></pre></div>
 <p>Subsequently, the two languages have diverged, both adding features not present in the other. Not withstanding that, there is still a significant syntactic and semantic overlap between C and C++, so the starting point for this report has been the equivalent for C. However, in many cases, the additional features of C++ provide mechanisms for avoiding the vulnerabilities inherited from C, and these are reflected in the following sections.</p>
 <p><em>Include discussions of Object orientation, <strong>static</strong>, and <strong>const,</strong> scoped enumerations</em></p>
+<p>$include parts/4.1.Overview.md $include parts/4.2.TypeSystem.md $include parts/4.3.SymbolLookupResolution.md $include parts/4.4.Lifetime.md $include parts/4.5.Initialization.md $include parts/4.6.UndefinedBehaviour.md $include parts/4.7.ErrorHandling.md $include parts/4.8.Concurency.md</p>
 <!-- parts added -->
 <pre><code>4.1 Overview
 4.2 Type system
@@ -973,7 +974,6 @@ use and possible exhaustion).</code></pre></li>
    - abstract machine
    - standard library
 4.8 Concurrency</code></pre>
-<p>$include parts/4.1.Lifetime.md $include parts/4.2.SymbolLookupResolution.md $include parts/4.3.Concurency.md</p>
 <p>4.2 Type system A particular area that is misunderstood is integral promotion. It can be confusing because promotion can result in changing the internal representation of an unsigned type to/from a signed type. For expressions formed with operands of unscoped enumeration type or integral types with a conversion rank smaller than <code class="sourceCode cpp"><span class="dt">int</span></code>, <em>integral promotion</em> occurs before further implicit conversions happen. <em>Integral promotion</em> on unsigned types can convert these to the signed type <code class="sourceCode cpp"><span class="dt">int</span></code>. Undefined behavior can occur due to signed integer arithmetic overflow even when the operands are of an unsigned type. Assume for example, - signed and unsigned short occupies 16 bits - signed and unsigned int occupies 32 bits then the following code causes undefined behavior:</p>
 <div class="sourceCode" id="cb83"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
 <span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>   x * x;                           <span class="co">// signed integer overflow, result will not fit in signed 32 bit int</span></span></code></pre></div>
