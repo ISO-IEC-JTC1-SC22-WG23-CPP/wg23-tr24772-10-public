@@ -964,8 +964,9 @@ use and possible exhaustion).</code></pre></li>
 <h2 id="type-system">4.2 Type System</h2>
 <ul>
 <li>implicit conversions</li>
-<li>templates?</li>
+<li>templates? Bring tutorial material from clause 6.2/[#IHN] Type system clause 6.6/[#FLC] Conversion errors, clause 6.11/[#HFC] Pointer type conversions, clause 6.37[#AMV] Type breaking reinterpretation of data clause 6.41[#RIP] Inheritance (includes Mix-ins and multiple inheritance) clause 6.44/[#BKK] Polymorphic variables</li>
 </ul>
+<p>Mix-ins (6.20, 6.40, 6.41)</p>
 <p><em><strong>THIS REQUIRES MORE WORK</strong></em></p>
 <p>A particular area that is misunderstood is integral promotion. It can be confusing because promotion can result in changing the internal representation of an unsigned type to/from a signed type. For expressions formed with operands of unscoped enumeration type or integral types with a conversion rank smaller than <code class="sourceCode cpp"><span class="dt">int</span></code>, <em>integral promotion</em> occurs before further implicit conversions happen. <em>Integral promotion</em> on unsigned types can convert these to the signed type <code class="sourceCode cpp"><span class="dt">int</span></code>. Undefined behavior can occur due to signed integer arithmetic overflow even when the operands are of an unsigned type. Assume for example, - signed and unsigned short occupies 16 bits - signed and unsigned int occupies 32 bits then the following code causes undefined behavior:</p>
 <div class="sourceCode" id="cb82"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
