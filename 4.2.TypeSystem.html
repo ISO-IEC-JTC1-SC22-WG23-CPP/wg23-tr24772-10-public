@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -153,6 +215,30 @@
 <h1 class="title">parts/4.2.TypeSystem.md</h1>
 </header>
 <h2 id="type-system">4.2 Type System</h2>
-<p>TBD</p>
+<ul>
+<li>implicit conversions</li>
+<li>templates?</li>
+</ul>
+<p><em><strong>THIS REQUIRES MORE WORK</strong></em></p>
+<p>A particular area that is misunderstood is integral promotion. It can be confusing because promotion can result in changing the internal representation of an unsigned type to/from a signed type. For expressions formed with operands of unscoped enumeration type or integral types with a conversion rank smaller than <code class="sourceCode cpp"><span class="dt">int</span></code>, <em>integral promotion</em> occurs before further implicit conversions happen. <em>Integral promotion</em> on unsigned types can convert these to the signed type <code class="sourceCode cpp"><span class="dt">int</span></code>. Undefined behavior can occur due to signed integer arithmetic overflow even when the operands are of an unsigned type. Assume for example, - signed and unsigned short occupies 16 bits - signed and unsigned int occupies 32 bits then the following code causes undefined behavior:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   x * x;                           <span class="co">// signed integer overflow, result will not fit in signed 32 bit int</span></span></code></pre></div>
+<p>Note: C++ also uses the term promotion to apply to a subset of conversion that apply to intergral and floating point types.</p>
+<p>Implicit, i.e., automatic, conversions to a type <code>T</code> can be performed, for example, in the following situations:</p>
+<ol type="a">
+<li><p>If the declaration, <code class="sourceCode cpp">T t=e;</code>, is defined for some expression, <code>e</code>, and some invented variable, <code>t</code> [C++17, Clause 7 [conv], para 3];</p></li>
+<li><p>In expressions involving operands of operators (e.g., <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, etc.) subject to the requirements of each operators' operands [C++20, Clause 7.3 [conv], para 2.1];</p></li>
+<li><p>For example, the expression, <code>5 + 6.5</code>, has operands of type <code class="sourceCode cpp"><span class="dt">int</span></code> and <code class="sourceCode cpp"><span class="dt">double</span></code>. Per language rules, the integer operand will be implicitly converted to <code class="sourceCode cpp"><span class="dt">double</span></code>, i.e., the expression becomes <code class="sourceCode cpp"><span class="dt">double</span>(<span class="dv">5</span>) + <span class="fl">6.5</span></code>, i.e., <code>5.0 + 6.5</code>.</p></li>
+<li><p>In boolean contexts, such as</p>
+<ul>
+<li>operands of logical operators,</li>
+<li>the condition of the conditional operator, and</li>
+<li>the condition of the if-statement or loop-statements, contextual conversion to bool implicitly happens from arithmetic types, pointers, and classes with a possibly explicit <code>operator bool()</code>. [C++17, Clause 7 [conv], para 4];</li>
+</ul></li>
+<li><p>In the expression of a switch statement: the implicit conversion will be to an integral type [C++17, Clause 7 [conv], para 2.3];</p></li>
+<li><p>In an expression that initializes an object (e.g., an argument to a function call, the expression in a return statement) [C++17, Clause 7 [conv], para 2.4];</p></li>
+<li><p>When a non-<code class="sourceCode cpp"><span class="kw">explicit</span></code> class/struct/union constructor can be invoked on an object resulting in some desired type, <code>T</code>, from initial objects passed to the constructor; and</p></li>
+<li><p>When a conversion operator has not been declared <code class="sourceCode cpp"><span class="kw">explicit</span></code>, it can be implicitly invoked on an object resulting in some desired type, <code>T</code>, from an initial type.</p></li>
+</ol>
 </body>
 </html>
