@@ -1935,8 +1935,8 @@ following initialization cases:
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li>Use the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.22.5</li>
-<li>Initialize every object defined, including data members.</li>
-<li>Consider defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> to enforce initialization.</li>
+<li>Initialize every object defined, including data members, such as by providing an initializer for each variable definition.</li>
+<li>Consider defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> to enforce initialization, otherwise defer the definition of the variable until a sensible initial value can be provided.</li>
 <li>In situations where variable initialization seems to require complex logic, encapsulate that logic either in a function or a lambda that encapsulates the complex logic and returns the initial value. In case of multiple interdependent variables, group those in a struct and return the struct.</li>
 <li>Avoid using non-const variables with static storage duration (see <span id="CGX">6.61 Concurrent Data Access [CGX]</span>).</li>
 <li>Define variables with static storage duration with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">constinit</span></code> whenever possible to avoid problems with dynamic initialization order.</li>
