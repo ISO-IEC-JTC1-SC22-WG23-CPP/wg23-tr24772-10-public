@@ -216,14 +216,15 @@
 </header>
 <h2 id="CCB">6.5 Enumerator Issues [CCB]</h2>
 <h3 id="applicability-to-language">6.5.1 Applicability to language</h3>
-<h4 id="references">6.5.1.1 References</h4>
-<p>AUTOSAR A7-2-2 Enumeration base type shall be explicitly defined</p>
-<h4 id="applicability">6.5.1.2 Applicability</h4>
-<p>The vulnerability documented in ISO IEC 24772-1 clause 6.5 applies to C++. C++ offers alternative mechanims for the C-based definition and use of enums for defining distinct types composed of sets of related named constants.</p>
-<p>The type of each enum is different from all other types. Each enum has an underlying integral type, which the user can specify. Since enums are distinct types, the user can only assign values to an object of enumerated type that are values of that enumerated type. C++ does not support implicit conversion of an int to an enum, therefore preventing <code>A = B + C</code> where <code>A</code>, <code>B</code> and <code>C</code> are variables of the same enum, unless an overloaded operator “<code>+</code>” is provided.</p>
-<p>C++ enums can be scoped (<code>enum class</code>) or unscoped (<code>enum</code>). C++ supports implicit conversion of an unscoped enum to an integer by integral promotion</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Color : <span class="dt">short</span> {red, green, blue};</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">short</span> i = red; <span class="co">// implicit conversion</span></span></code></pre></div>
+<p>The vulnerability documented in ISO IEC 24772-1 clause 6.5 applies to C++. C++ provides scoped (<code class="sourceCode cpp"><span class="kw">enum</span> <span class="kw">class</span></code>) and unscoped (<code class="sourceCode cpp"><span class="kw">enum</span></code>) enumeration types, where an underlying integral type can be specified. For enumeration types with a fixed underlying type all values of the underlying integral type are valid. Unscoped enumeration types without an <em>enum-base</em> have a non-fixed underlying type that only guarantees values in the range of the provided enumerators are valid. The latter can cause non-representable values to be assigned to a variable of such an unscoped enumeration type.</p>
+<p>Assignment of a variable of an enum type require the assigned value to be of the same enum type. This can be either an enumerator of that enum type, or requires a cast (see <a href="#FLC">6.6 Conversion errors [FLC]</a>).</p>
+<p>C++ allows implicit conversion of an unscoped enum by integral promotion.</p>
+<p><strong>TODO continue here </strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Color  {red, green, blue};</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">short</span> i = red; <span class="co">// implicit conversion</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Color g { green + blue }; <span class="co">// integer result fits into short</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>Color h {<span class="dv">42</span>}; <span class="co">// OK non-narrowing</span></span></code></pre></div>
+<p>List initialization of enum types with fixed underlying type implicitly does a static cast.</p>
 <p>C++ does not support implicit conversion of a scoped enum to an int, hence, operations such as <code>++</code>, <code>+</code>, <code>&lt;</code> and enums used as array indices require explicit definitions.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> Color : <span class="dt">short</span> {red, green, blue};</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">short</span> i = red; <span class="co">// error -- no implicit conversion</span></span></code></pre></div>
