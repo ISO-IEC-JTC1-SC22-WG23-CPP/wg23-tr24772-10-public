@@ -220,10 +220,27 @@
 <li>templates? Bring tutorial material from clause 6.2/[#IHN] Type system clause 6.6/[#FLC] Conversion errors, clause 6.11/[#HFC] Pointer type conversions, clause 6.37[#AMV] Type breaking reinterpretation of data clause 6.41[#RIP] Inheritance (includes Mix-ins and multiple inheritance) clause 6.44/[#BKK] Polymorphic variables</li>
 </ul>
 <p>Mix-ins (6.20, 6.40, 6.41)</p>
+<h3 id="inheritance">Inheritance</h3>
+<p>C++ supports user-defined class types with one or more base classes. Dynamic polymorphism requires public bases defining virtual member functions.</p>
+<p>C++ provides access specifiers that allow inheritance to restrict the visibility of inherited members in their subclasses.</p>
+<p>A member declared in a class hides all members of the same name in any of its base classes. Such names can be reintroduced by the <code>using</code> declaration. For example:</p>
+<pre><code>    struct Base {
+       int f(int i);
+    };
+
+    struct Derived : public Base {
+       // using Base::f;
+       int f(char c);
+       int g() {
+          return f(123); // Surprise, f(char) is called
+      }
+};</code></pre>
+<p>If the <code>using declaration</code> is uncommented above, then <code>Base::f(int)</code> is called.</p>
+<p>For multiple inheritance users can request virtual inheritance, which causes data members inherited from the same ancestor class along multiple inheritance paths to be present only once; otherwise the data members are replicated and referring to them is ambiguous unless qualified by the name of the base class from which they are inherited. When members of equal name are inherited from multiple sources, C++ rejects an unqualified use of the common name as ambiguous as long as they are not hidden.</p>
 <p><em><strong>THIS REQUIRES MORE WORK</strong></em></p>
 <p>A particular area that is misunderstood is integral promotion. It can be confusing because promotion can result in changing the internal representation of an unsigned type to/from a signed type. For expressions formed with operands of unscoped enumeration type or integral types with a conversion rank smaller than <code class="sourceCode cpp"><span class="dt">int</span></code>, <em>integral promotion</em> occurs before further implicit conversions happen. <em>Integral promotion</em> on unsigned types can convert these to the signed type <code class="sourceCode cpp"><span class="dt">int</span></code>. Undefined behavior can occur due to signed integer arithmetic overflow even when the operands are of an unsigned type. Assume for example, - signed and unsigned short occupies 16 bits - signed and unsigned int occupies 32 bits then the following code causes undefined behavior:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   x * x;                           <span class="co">// signed integer overflow, result will not fit in signed 32 bit int</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">unsigned</span> <span class="dt">short</span> <span class="at">const</span> x = <span class="bn">0xfff0</span>;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   x * x;                           <span class="co">// signed integer overflow, result will not fit in signed 32 bit int</span></span></code></pre></div>
 <p>Note: C++ also uses the term promotion to apply to a subset of conversion that apply to intergral and floating point types.</p>
 <p>Implicit, i.e., automatic, conversions to a type <code>T</code> can be performed, for example, in the following situations:</p>
 <ol type="a">
