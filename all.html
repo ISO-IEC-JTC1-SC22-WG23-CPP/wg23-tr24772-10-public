@@ -3049,7 +3049,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <h3 id="applicability-to-the-language">6.45.1 Applicability to the language</h3>
 <p>The vulnerability as described in ISO/IEC 24772-1 clause 6.45 applies to C++ as explained below.</p>
 <p>C++ implementations are allowed to provide built-in functionality but are restricted to a specific naming schema reserved by the standard. For example, names containing a double underscore or that begin with an underscore and a capital letter are reserved for that purpose. See ISO/IEC 14882 clause [Lex.name]. The use of such names by the programmer is forbidden by the language. Language processors are not required to prohibit such usage, hence the vulnerability exists.</p>
-<p>The standard restricts definitions in reserved namespaces, such as <code>std</code> (see ISO/IEC 14882 clause [namespace.constraints]). In addition, specializing a template from namespace <code>std</code> is restricted, as for example, see ISO/IEC 14882 clause [meta.rqmts], unless explicitly allowed, see ISO/IEC 14882 clause [unord.hash].</p>
+<p>The standard restricts definitions in reserved namespaces, such as <code>std</code> (see ISO/IEC 14882 clause [namespace.constraints]). In addition, specializing a template from namespace <code>std</code> is restricted (see ISO/IEC 14882 clause [namespace.std]) unless explicitly allowed, for example, see ISO/IEC 14882 clause [unord.hash].</p>
 <h3 id="avoidance-mechanisms-for-program-users">6.45.2 Avoidance mechanisms for program users</h3>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
