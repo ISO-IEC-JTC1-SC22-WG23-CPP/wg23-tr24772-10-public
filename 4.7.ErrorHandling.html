@@ -153,9 +153,37 @@
 <h1 class="title">parts/4.7.ErrorHandling.md</h1>
 </header>
 <h2 id="error-handling">4.7 Error Handling</h2>
+<p>In C++, there are four mechanisms for error handling, exceptions, std::expected, std::error_code, and errno.</p>
+<p>Exceptions are a mechanism to gather error handling mechanism for a given error in one place. If an error detected, an exception is raised and control transferred to a matching catch handler where an appropriate action can handled or repropagated. If no matching handler is found, std::terminate is called and the program terminates. A search for a matching handler stops at main(), a function declared noexcept, and the top level function passed to threading API’s. See ISO/IEC 14882 for the complete list.</p>
+<p>In the case of failed assertions, calls to abort(), std::terminate, exit() similar functions, the program terminates without calling any destructors. For coroutines, a rethrown exception or an uncaught exception causes the coroutine to end and cannot be resume. The exception itself is not propagated.</p>
 <ul>
-<li>abstract machine</li>
-<li>standard library</li>
+<li><pre><code> (Ensure that vulnerability associated with this mechanism is documented in 6.36)       </code></pre></li>
+<li><pre><code>  Distinct mechanism for IEEE floating point exceptions</code></pre></li>
+<li><pre><code>     defer to C</code></pre></li>
+<li>assertions</li>
+<li><pre><code>  terminates program and all threads and tasks if assertion failure happens in main thread?</code></pre></li>
+<li><pre><code>  terminates thread if raised in a thread?</code></pre></li>
+<li><pre><code>  terminates task (and more?) if raised in a task.</code></pre></li>
+<li>[basic.start.name] para 4</li>
+<li><pre><code> terminating program without leaving current block (say calling exit) does not invoke any destructors.</code></pre></li>
+<li><pre><code>    if exit is called, during object destruction with static or thread storage duration, program has undefined behaviour</code></pre></li>
+<li>errno values and std::error_code</li>
+<li><pre><code>  Used by any library functions external to C++, and by some C++ libraries.</code></pre></li>
+<li><pre><code>  errno is a thread-local single value that, if non-zero, reports an error that has occurred and is returned by function as the return value.</code></pre></li>
+<li><pre><code>     Any external can be called using error_code which will wrap the errno.</code></pre></li>
+<li><pre><code>  error_code is an extension or errno but is not a global variable and can work with classes for better reporting.</code></pre></li>
+<li>signals</li>
+<li><pre><code> operating system dependant</code></pre></li>
+<li><pre><code> see what 24772-3 C says</code></pre></li>
+<li>system_error</li>
+<li>stacktrace</li>
+<li>std::expected</li>
+<li></li>
+<li>For 6.36</li>
+<li><pre><code> Vulnerability in mixing of different error mechanisms</code></pre></li>
 </ul>
+<h2 id="also-two-scenarios">Also two scenarios</h2>
+<p>Exceptions are raised upon detection of an error</p>
+<p>standard library</p>
 </body>
 </html>
