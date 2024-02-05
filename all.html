@@ -1063,9 +1063,26 @@ use and possible exhaustion).</code></pre></li>
 <h2 id="undefinedbehavior.md">4.6 UndefinedBehavior.md</h2>
 <p>TBD</p>
 <h2 id="error-handling">4.7 Error Handling</h2>
-<p>In C++, there are four mechanisms for error handling, exceptions, std::expected, std::error_code, and errno.</p>
-<p>Exceptions are a mechanism to gather error handling mechanism for a given error in one place. If an error detected, an exception is raised and control transferred to a matching catch handler where an appropriate action can handled or repropagated. If no matching handler is found, std::terminate is called and the program terminates. A search for a matching handler stops at main(), a function declared noexcept, and the top level function passed to threading API’s. See ISO/IEC 14882 for the complete list.</p>
-<p>In the case of failed assertions, calls to abort(), std::terminate, exit() similar functions, the program terminates without calling any destructors. For coroutines, a rethrown exception or an uncaught exception causes the coroutine to end and cannot be resume. The exception itself is not propagated.</p>
+<p>The C++ language and standard library provides several mechanisms for error handling:</p>
+<ul>
+<li>exceptions, signaling a contract violation</li>
+<li>returning just an error code with a special value denoting success.</li>
+<li>returning a special error value of the function’s return type, such as <code>std::string::npos</code></li>
+<li>combining the return value with an error indication, e.g., through <code>std::expected&lt;T,E&gt;</code> or <code>std::optional&lt;T&gt;</code> for a return type <code>T</code>. The error type <code>E</code> can use <code>std::error_code</code>, for example.</li>
+<li>marking the error status as a side effect, such as with the “global” variable <code>errno</code>, or as an objects status as with <code>std::istream</code>’s flags.</li>
+</ul>
+<p>Be aware, that many parts of the standard library specify preconditions and undefined behavior results if those aren’t met, for example, <code>std::vector&lt;int&gt;::front()</code> requires a non-empty vector, when called.</p>
+<p>Exceptions allow for errors to be propagated up the call chain. Throwing an exception due to a detected error situation allows the error to be handled at an appropriate level in a corresponding catch block. As the exception propagates to its handler, local objects are destroyed appropriately in reverse order of their construction; this mechanism is known as <em>stack unwinding</em>. A search for a matching handler stops at</p>
+<ul>
+<li>the function <code>main()</code>,</li>
+<li>a function declared <code>noexcept</code>, and</li>
+<li>the function of a thread.</li>
+</ul>
+<p>An exception propagated from constructors of non-local variables and destructors of variables with static storage duration can never have a matching handler.</p>
+<p>Failing to provide a matching handler on the call chain for an exception thrown causes a call to <code>std::terminate()</code> and the program terminates.</p>
+<p>When calling non-returning program termination functions like <code>abort()</code>, <code>std::terminate()</code>, or <code>exit()</code>, the program terminates without <em>stack unwinding</em>.</p>
+<p>#TODO:</p>
+<p>For coroutines, a rethrown exception or an uncaught exception causes the coroutine to end and cannot be resume. The exception itself is not propagated.</p>
 <ul>
 <li><pre><code> (Ensure that vulnerability associated with this mechanism is documented in 6.36)       </code></pre></li>
 <li><pre><code>  Distinct mechanism for IEEE floating point exceptions</code></pre></li>
@@ -1093,8 +1110,7 @@ use and possible exhaustion).</code></pre></li>
 <li><pre><code> Vulnerability in mixing of different error mechanisms</code></pre></li>
 </ul>
 <h2 id="also-two-scenarios">Also two scenarios</h2>
-<p>Exceptions are raised upon detection of an error</p>
-<p>standard library</p>
+<p>In addition to that list, an operating system might use the “signal” mechanism to notify a running C++ program. A signal-handler can be defined to act asynchronously upon a sent signal that isn’t ignored.</p>
 <h2 id="concurrency">4.8 Concurrency</h2>
 <p>C++ includes concurrency within the language, expressed by <em>threads</em> and <em>tasks.</em> Threads are sequences of execution that can be executed concurrently with the entity (thread) that created them, and with each other. There are good reasons to use threads in a C++ program:</p>
 <ol type="a">
