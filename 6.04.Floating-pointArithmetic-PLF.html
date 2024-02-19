@@ -220,7 +220,7 @@
 <p>The C++ standard assumes IEC 60559 if <code class="sourceCode cpp"><span class="bu">std::</span>numeric_limits<span class="bu">\</span>&lt;T&gt;::is_iec559</code> is true for the types in use. In the absence of this, C++ makes few guarantees about the behaviour of floating point numbers. In particular <code class="sourceCode cpp"><span class="bu">std::</span>less</code> is not a total order; <code class="sourceCode cpp"><span class="bu">std::</span>equal</code> is not equivalent to substitutability (NaNs compare unequal to themselves, but neither less nor greater, and negative zero compares equal to positive zero).</p>
 <p>Sorting floating point numbers with the built-in operators violates the preconditions of sorting predicates in the presence of NaN values and may raise floating point errors. The default sorting predicate <code>std::less</code> is suspect to this precondition violation, resulting in undefined behavior when sorting a range of floating point values that contains NaNs.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.4.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.4.5</p></li>
 <li><p>Verify compliance to ISO/IEC/IEEE 60559:2011 at compile time through <code class="sourceCode cpp"><span class="bu">std::</span>numeric_limits&lt;T&gt;::is_iec559</code>. Other numeric characteristics such as <code>min()</code>, <code>max()</code>, existence of NaNs, <code>has_denorm</code>, and infinities can be determined in this class template.</p></li>
