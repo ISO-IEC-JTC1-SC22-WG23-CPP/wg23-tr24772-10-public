@@ -1369,7 +1369,7 @@ enumerations for safe and simple use"</li>
 <p>Because C++ allows function and operator overloading, the effect of implicit conversions provides an additional mechanism of failure, by selecting an unwanted overload during overload resolution due to implicit conversions. This can influence failure modes with lookup as described in section <a href="#BJL">Namespace Issues [BJL]</a>. // Add overload resolution reference!!</p>
 <p>C++ also provides a library function <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>. This function provides the ability to preserve the bit representation when converting between unrelated types. If such is meaningful, then <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> reduces the risk of some undefined behaviours compared with other type punning approaches such as casts or unions.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.6.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.6.5:</p></li>
 <li><p>Avoid casts and type punning (see C++ Core guidelines ES.48), treat every cast as a candidate for refactoring.</p></li>
@@ -1402,7 +1402,7 @@ enumerations for safe and simple use"</li>
 <span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>  puts(sv.data()); <span class="co">// not okay; string termination not guaranteed</span></span>
 <span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.7.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Avoid C-style strings.</p></li>
 <li><p>If using C-style strings is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-3 clause 6.7.2.</p></li>
@@ -1465,7 +1465,7 @@ enumerations for safe and simple use"</li>
 <li><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i13-do-not-pass-an-array-as-a-single-pointer">C++ core guidelines I.13</a></li>
 </ul>
 <h3 id="avoidance-mechanisms-for-language-users">6.8.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.8.5.</p></li>
 <li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in TR 24772-3 clause 6.8.2.</p></li>
