@@ -1486,7 +1486,7 @@ enumerations for safe and simple use"</li>
 <p>For issues associated with exception handling and error handling, see clause <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
 <p>The parameter type for contiguous sequences <code class="sourceCode cpp"><span class="bu">std::</span>span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.9.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.9.5.</p></li>
 <li><p>Follow the advice from clause <a href="#HCB">6.8.2</a>.</p></li>
@@ -1503,7 +1503,7 @@ enumerations for safe and simple use"</li>
 <p>For arrays with fixed sizes the assignment operator or copy-constructor of <code class="sourceCode cpp"><span class="bu">std::</span>array</code> is the means of safe array copying.</p>
 <p>If a system requires its own container types with dynamic size, a naïve implementation might attempt to keep the copying external, like with C-style arrays. Such external copying should be avoided.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.10.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.10.5.</p></li>
 <li><p>Use standard library containers instead of C-style arrays, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
@@ -1524,7 +1524,7 @@ enumerations for safe and simple use"</li>
 <p>Casting along the inheritance relationships with <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> is safe, but it requires the dynamic type is known, which is the case when the types declare virtual member functions. Within a constructor or destructor only the static type of the current class is relevant, because the lifetime of any derived class object hasn’t started or has already ended. See subclause <a href="#BKK">Polymorphic Variables [BKK]</a>.</p>
 <p>Conversions involving <code class="sourceCode cpp"><span class="at">const</span></code> and/or <code class="sourceCode cpp"><span class="at">volatile</span></code> properties of a type are permitted using <code class="sourceCode cpp"><span class="kw">const_cast</span></code> (see <a href="#UJO">Modifying constants [UJO]</a>). Adding <code class="sourceCode cpp"><span class="at">const</span></code> with <code class="sourceCode cpp"><span class="kw">const_cast</span></code> is safe.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.11.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.11.5.</p></li>
 <li><p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p></li>
