@@ -1543,7 +1543,7 @@ enumerations for safe and simple use"</li>
 <p>Comparison of two pointers with one of the operators <code class="sourceCode cpp">&lt; &gt; &lt;= &gt;= &lt;=&gt;</code> has unspecified behaviour unless both pointers refer to the same underlying array or object. The standard library function objects for comparison, like <code>std::less&lt;&gt;</code>, provide a strict total order of pointers of a given type.</p>
 <p>Iterators as defined by the standard library suffer from similar vulnerabilities as pointer arithmetic. Comparison and subtraction of two iterators, or computing <code>std::distance</code> cause undefined behavior for iterators that refer to different ranges. Forming an iterator that is outside of its underlying range similarly is undefined behavior.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.12.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Avoid explicit pointer arithmetic, especially on a pointer to a single object.</p></li>
 <li><p>Prefer calling range-based algorithms over pointer arithmetic.</p></li>
@@ -1569,7 +1569,7 @@ enumerations for safe and simple use"</li>
 <!-- See C++ Core Guidelines ES.65 and section R: Resource Management, and CERT EXP34-C "Do not
 dereference null pointers" -->
 <h3 id="avoidance-mechanisms-for-language-users">6.13.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Avoid the need for pointers by using values.</p></li>
 <li><p>Prefer references over pointers for parameters.</p></li>
@@ -1608,7 +1608,7 @@ dereference null pointers" -->
 <span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v),back_inserter(v)); <span class="co">// modifying v while iterating is undefined behaviour</span></span>
 <span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v), <span class="bu">std::</span>ostream_iterator&lt;<span class="dt">int</span>&gt;(<span class="bu">std::</span>cout,<span class="st">&quot;, &quot;</span>));</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
-<p>Software developers can avoid the vulnerability or mitigate its ill effects in the following ways: They can</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.14.5.</p></li>
 <li><p>Prefer value types that manage heap memory, for example, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, and pass by value/return by value over the use of <em>pointer-like</em> types.</p></li>

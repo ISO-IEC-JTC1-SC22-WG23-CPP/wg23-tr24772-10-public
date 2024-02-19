@@ -243,7 +243,7 @@
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v),back_inserter(v)); <span class="co">// modifying v while iterating is undefined behaviour</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v), <span class="bu">std::</span>ostream_iterator&lt;<span class="dt">int</span>&gt;(<span class="bu">std::</span>cout,<span class="st">&quot;, &quot;</span>));</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
-<p>Software developers can avoid the vulnerability or mitigate its ill effects in the following ways: They can</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.14.5.</p></li>
 <li><p>Prefer value types that manage heap memory, for example, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, and pass by value/return by value over the use of <em>pointer-like</em> types.</p></li>
