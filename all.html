@@ -2220,7 +2220,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>The language mechanisms around templates and overload resolution can require definitions to exist that are not part of the executable program. But the mechanisms at compile time guarantee that the corresponding code never becomes part of the executable program. However, a programmer might be unaware of all details with respect to the language mechnisms and thus make subtle errors leading to code selected for the executable program that was unintended.</p>
 <p>If there is code that was once needed or might be needed in the future, programmers might opt to comment or use preprocessor conditional compilation to exclude such parts. The latter might even be confusing, because an intentionally undefined macro might be defined for a specific compilation outside of the program source text. Modern version control systems are better places to keep unused code in a revision or branch and ressurect it if needed through a merge.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.26.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.26.5.</p></li>
 <li><p>Use IDEs or similar tools that visualize the code that gets selected for the executable program.</p></li>
@@ -2249,7 +2249,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>If there isn’t a default case and the switched expression doesn’t match any of the cases, then control simply shifts to the next statement after the switch statement block. Unintentionally omitting a break statement between two cases will cause subsequent cases to be executed until a break or the end of the switch block is reached. This could cause unexpected results.</p>
 <p>The attribute <code class="sourceCode cpp">[[<span class="at">fallthrough</span>]]</code> expresses the programmer’s intent that the code where it is placed is intended to fall through. If this attribute is not used, compilers typically diagnose the absence of a break statement.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.27.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.27.5</p></li>
 <li><p>Use <code class="sourceCode cpp">[[<span class="at">fallthrough</span>]]</code> wherever fall-through is intended.</p></li>
@@ -2314,7 +2314,7 @@ if (i == 10){
 ```</code></pre>
 <p>If the assignments to b were added later and were expected to be part of each <code class="sourceCode cpp"><span class="cf">if</span></code> and <code class="sourceCode cpp"><span class="cf">else</span></code> clause (they are indented as such), the above code is incorrect: the assignment to <code class="sourceCode cpp">b</code> that was intended to be in the <code class="sourceCode cpp"><span class="cf">else</span></code> clause is unconditionally executed.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.28.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.28.5.</p></li>
 <li><p>Enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software.</p></li>
