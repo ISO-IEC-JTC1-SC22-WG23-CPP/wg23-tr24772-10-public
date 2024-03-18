@@ -240,7 +240,7 @@
     </code></pre>
 <p>The C++ preprocessor macros use a <em>call by name</em> parameter passing; a call to the macro replaces the macro by the body of the macro. This is called <em>macro expansion</em>. Macro expansion is applied to the program source text and amounts to the substitution of the formal parameters with the actual parameter expressions. Formal parameters are often parenthesized to avoid syntax issues after the expansion. Call by name parameter passing reevaluates the actual parameter expression each time the formal parameter is read.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.32.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.32.5.</p></li>
 <li><p>Prefer pass-by-value and pass-by-const-reference over other means of parameter declaration.</p></li>
