@@ -240,7 +240,7 @@
 <p>C++ allocators, i.e., as defined in header <code class="sourceCode cpp">&lt;scoped_allocator&gt;</code>, can be used to mitigate heap fragmentation and guarantee deterministic timing through specific allocation strategies, especially with standard library containers. The class hierarchy provided by the header <code class="sourceCode cpp">&lt;memory_resource&gt;</code> provide some possible advanced allocation strategies. Users of earlier C++ versions often overloaded <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> to achieve similar results.</p>
 <p>The library functions <code class="sourceCode cpp"><span class="bu">std::</span>construct_at()</code> and <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at()</code> are simpler than and preferrable to using non-allocating <em>placement new</em> and manual destructor calls when those are needed.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.39.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
 <ul>
 <li><p>Prefer containers like those in the standard library over any other form of memory management.</p></li>
