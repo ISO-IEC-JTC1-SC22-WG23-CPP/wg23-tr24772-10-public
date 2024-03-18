@@ -226,7 +226,7 @@
 <p>C++ also provides <code class="sourceCode cpp">&lt;type_traits&gt;</code>, such as <code class="sourceCode cpp"><span class="bu">std::</span>is_layout_compatible</code>, that can be used to ensure the legality of a specific <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>.</p>
 <p>A legacy means of “bit casting” is the use of <code>memcpy</code> to transfer the bytes of an object’s representation to another object of a different type. Except for cases that are well-defined with <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>, such use of <code>memcpy</code> to reinterpret data values is undefined behaviour.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.37.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.37.5, and clauses <a href="#FLC">6.6 Conversion Errors [FLC]</a> and <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> of this document.</p></li>
 <li><p>Prohibit casts that reinterpret data values.</p></li>
