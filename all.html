@@ -2360,7 +2360,7 @@ if (i == 10){
 <span id="cb159-3"><a href="#cb159-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; x &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
 <span id="cb159-4"><a href="#cb159-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.29.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.29.5.</p></li>
 <li><p>Do not modify a loop control variable within a loop.</p></li>
@@ -2390,7 +2390,7 @@ if (i == 10){
 <li><p><code class="sourceCode cpp">gsl::span</code> (soon to be <code class="sourceCode cpp"><span class="bu">std::</span>span</code>)</p></li>
 </ul>
 <h3 id="avoidance-mechanisms-for-language-users">6.30.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.30.5.</p></li>
 <li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++.</p></li>
@@ -2408,7 +2408,7 @@ if (i == 10){
 <p>The <code class="sourceCode cpp">setjmp</code> macro sets the current execution context into a variable, which can be use later to return to that current context using <code class="sourceCode cpp">longjmp</code> call. These calls originated from the C standard library to mimic <code class="sourceCode cpp"><span class="cf">goto</span></code> across the call stack. They do not support the relevant additions to C++ such as destructors for automatic objects, exceptions, and concurrency, and hence are incompatible with modern C++ programming.</p>
 <p>A coroutine is a function that can suspend execution for later resumption (optional).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.31.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.31.5.</p></li>
 <li><p>Write clear and concise structured code to make code as understandable as possible.</p></li>
