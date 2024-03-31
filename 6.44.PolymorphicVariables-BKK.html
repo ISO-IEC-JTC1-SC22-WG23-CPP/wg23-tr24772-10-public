@@ -271,7 +271,7 @@
 </ul>
 <p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.44.5.</p></li>
 <li><p>In a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>

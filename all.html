@@ -3017,7 +3017,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <span id="cb186-24"><a href="#cb186-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In C++, the call to a member function can be qualified, as shown in the above example, and avoids the vulnerability.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.43.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>At a call site, consider whether virtual dispatch is desired: if not, construct the call using the qualified name.</p></li>
 <li><p>Be suspicious of any call from a virtual member function of the derived class to any member function of any of its base classes.</p></li>
@@ -3079,7 +3079,7 @@ auto y = Short{4} + Short{2};</code></pre>
 </ul>
 <p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.44.5.</p></li>
 <li><p>In a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130).</p></li>
@@ -3099,7 +3099,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <p>C++ implementations are allowed to provide built-in functionality but are restricted to a specific naming schema reserved by the standard. For example, names containing a double underscore or that begin with an underscore and a capital letter are reserved for that purpose. See ISO/IEC 14882 clause [Lex.name]. The use of such names by the programmer is forbidden by the language. Language processors are not required to prohibit such usage, hence the vulnerability exists.</p>
 <p>The standard restricts definitions in reserved namespaces, such as <code>std</code> (see ISO/IEC 14882 clause [namespace.constraints]). In addition, specializing a template from namespace <code>std</code> is restricted (see ISO/IEC 14882 clause [namespace.std]) unless explicitly allowed, for example, see ISO/IEC 14882 clause [unord.hash].</p>
 <h3 id="avoidance-mechanisms-for-program-users">6.45.2 Avoidance mechanisms for program users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li>Prohibit identifiers containing a double underscore <code>__</code>.</li>
 <li>Avoid identifiers starting with <code>_</code>, except when used for a literal suffix.</li>
