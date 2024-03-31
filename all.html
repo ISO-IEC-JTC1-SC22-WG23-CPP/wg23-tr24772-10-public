@@ -3115,7 +3115,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <p>When calling a library, either the calling function or the library may make assumptions about parameters. For example, it may be assumed by a library that a parameter is non-zero so division by that parameter is performed without checking the value. Sometimes some validation is performed by the calling function, but the library may use the parameters in ways that were unanticipated by the calling function resulting in a potential vulnerability. Even when libraries do validate parameters, their response to an invalid parameter is usually undefined and can cause unanticipated results.</p>
 <p>This vulnerability applies in particular to C++ libraries which are designed for high efficiency; responsibility for satisfying the preconditions for most functions rests with the caller. When these preconditions are not met, the result will be undefined behaviour. In addition, error conditions are specified by the language for specific functions, such as raising an exception, returning an error code or a known value, such as NaN.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.46.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.47.5.</p></li>
 <li><p>Use translation modes provided by the implementation to perform addition analysis or checking, such as contracts checks, or instrumentation of executing code.</p></li>
@@ -3128,7 +3128,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <p>C++ compilers provide an application binary interface (ABI) that delineates areas of interoperability with other languages or other C++ compiler/runtime systems. An ABI includes calling conventions, data layout, error and exception handling and return conventions, name mangling, data model, initialization of memory, and linkage to operating systems and libraries.</p>
 <p>C++ compilers implement a C++ language linkage and a C language linkage. It is implementation-defined what other languages the implementation supports. Alternatively, other language systems provide linkages to C systems[^3](Ada has developed a standard for interfacing with C. Fortran has included a Clause 15 that explains how to call C functions.), leaving the developer the task of channeling everything through this common language system.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.47.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.47.5</p></li>
 <li><p>Use standard layout types for the interoperable interfaces.</p>
@@ -3153,7 +3153,7 @@ execution boundaries</p></li>
 <p>Most loaders allow dynamically linked libraries also known as shared libraries. Code is designed and tested using a suite of shared libraries which are loaded at execution time. The process of linking and loading is outside the scope of the C++ standard.</p>
 <p>C++ prevents data pointers to be reinterpreted as function pointers and vice versa. Reinterpreting a pointer via a void pointer or <code class="sourceCode cpp"><span class="bu">std::</span>intptr_t</code> to a pointer of different type is undefined behaviour (with very few defined exceptions of data pointers to pointer to its raw bytes).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.48.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.48.5.</p></li>
 <li><p>Rely on compiler warnings and reports from analysis tools to prevent reinterpreting a data pointer as function pointer or vice versa.</p></li>
