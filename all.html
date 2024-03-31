@@ -3273,8 +3273,9 @@ execution boundaries</p></li>
 </ul>
 <h2 id="implementationdefined-behaviour-fab">6.57 Implementation–defined Behaviour [FAB]</h2>
 <h3 id="applicability-to-language">6.57.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.57 applies to C++. In ISO/IEC 14882, the term “implementation-defined” is used to describe implementation-defined behaviour. In addition, the C++ standard provides a dedicated index titled, “Index of implementation-defined behavior”.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2019 clause 6.57 applies to C++. In ISO/IEC 14882, the term “implementation-defined” is used to describe implementation-defined behaviour. In addition, the C++ standard provides a dedicated index titled, “Index of implementation-defined behavior”.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.57.2 Avoidance mechanisms for language users</h3>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.57.5.</p></li>
 <li><p>Eliminate to the extent possible any reliance on implementation-defined behaviour from programs in order to increase portability. Even programs that are specifically intended for a particular implementation may in the future be ported to another environment or sections reused for future implementations.</p></li>
@@ -3283,10 +3284,10 @@ execution boundaries</p></li>
 </ul>
 <h2 id="deprecated-language-features-mem">6.58 Deprecated Language Features [MEM]</h2>
 <h3 id="applicability-to-language">6.58.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.58 applies to C++. Appendix D “Compatibility features” of ISO/IEC 14882:2020 enumerates the deprecated features. The C++ attribute <code class="sourceCode cpp">[[<span class="at">deprecated</span>]]</code> allows library writers and users to mark deprecated declarations.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.58 applies to C++. Appendix D “Compatibility features” of ISO/IEC 14882:2020 enumerates the deprecated features. The C++ attribute <code class="sourceCode cpp">[[<span class="at">deprecated</span>]]</code> allows library writers and users to mark deprecated declarations.</p>
 <p>Although backward compatibility is sometimes offered as an option for compilers so one can avoid changes to code to be compliant with current language specifications, updating the legacy software to the current standard is a better option.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.58.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.58.5.</p></li>
 <li><p>Enable compiler options or use static analysis tools that identify the use of deprecated features.</p></li>
@@ -3300,7 +3301,7 @@ execution boundaries</p></li>
 <p>Any exception thrown within a thread’s function, needs to be handled by that thread, otherwise such an exception will cause program termination. For handling such termination see clause <a href="#CGS">6.62 Concurrency - Premature termination [CGS]</a>.</p>
 <p>TODO: talk about detach() and forgetting to join.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.59.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>When using non-standard thread facilities, e.g., by making use of <code class="sourceCode cpp"><span class="bu">std::</span>thread<span class="bu">::</span>native_handle</code>, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.59.5.</p></li>
 <li><p>When handling the exception thrown due to failure to create a thread, ensure that potentially dependent other threads get informed.</p></li>
