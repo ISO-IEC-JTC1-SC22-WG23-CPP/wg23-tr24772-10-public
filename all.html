@@ -3321,7 +3321,7 @@ execution boundaries</p></li>
 <p>In the above example, at the end of the main function the destructors of the thread objects t and t2 will call <code>this-&gt;request_stop()</code> and <code>this-&gt;join()</code>. If one of the thread functions never returns, then the corresponding <code class="sourceCode cpp">join()</code> call will block.</p>
 <p>Other programmed mechanisms can be constructed to cause another thread to complete, such as setting a shared variable to a known value that the target thread reads and then terminates itself.</p>
 <h2 id="avoidance-mechanisms-for-language-users">6.60.2 Avoidance mechanisms for language users</h2>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.60.5.</p></li>
 <li><p>Use static analysis tools and code reviews to ensure that threads accepting stop requests handle the request.</p></li>
@@ -3352,7 +3352,7 @@ execution boundaries</p></li>
 <p>Use of volatile (keyword type qualifier) for signal handlers (communicating with hardware?). Prefer volatile for communicating with hardware?</p>
 <p>For signal handling, <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> or atomic variables can be used to prevent this vulnerability.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.61.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.62.5.</p></li>
 <li><p>Use mutexes and condition variables (<code class="sourceCode cpp">convar</code>) in preference to atomic variables to protect data from simultaneous access.</p></li>
@@ -3370,6 +3370,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <h2 id="concurrency-premature-termination-cgs">6.62 Concurrency – Premature Termination [CGS]</h2>
 <h3 id="applicability-to-language">6.62.1 Applicability to language</h3>
 <h3 id="section"></h3>
+<p>Need a statement of applicability.</p>
 <p>A thread will terminate when it completes its assigned method, or when it raises an exception, or when it has been explicitly terminated (how is this done)</p>
 <p>Joining a thread causes the joining thread to await the joined thread’s termination before continue. Useful for executing in parallel and then proceeding after the dispatched work is complete, but does not notify the joining task if the termination was premature.</p>
 <p>In C++ 2020, methods are provided to instruct one or more threads to terminate. This is not premature termination since the requested thread terminates itself.</p>
@@ -3377,9 +3378,9 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <p>Any thread can re-throw an exception to be caught by the creator of the terminating thread, (but the parent may have terminated first).</p>
 <p>The semantics of C++ is that all children of the main program will terminate if the main program terminates. It is necessary to join the main program to all its children to ensure that children are not silently terminated prematurely.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.62.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
 <li><p>Use low-level operating system primitives or other APIs where available to check that a required thread is still active.</p></li>
 <li><p>Ensure that the main program joins all created threads that need to complete normally.</p></li>
 </ul>
