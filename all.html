@@ -3163,7 +3163,7 @@ execution boundaries</p></li>
 <p>The vulnerability as enumerated in ISO/IEC 24772-1 clause 6.49 applies to C++.</p>
 <p>As a mitigation, the C++ <code class="sourceCode cpp"><span class="at">extern</span> <span class="st">&quot;C&quot;</span></code> linkage specifier usually provides simple interoperability with libraries using the C application binary interface (ABI).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.49.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.49.5.</p></li>
 <li><p>Follow the avoidance mechanisms of clause <a href="#DJS">6.47 Inter-language Calling [DJS]</a> as applicable.</p></li>
@@ -3184,7 +3184,7 @@ execution boundaries</p></li>
 <span id="cb194-10"><a href="#cb194-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
 <span id="cb194-11"><a href="#cb194-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.50.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type, excluding all destructors, which are are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
 <li><p>Follow the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
@@ -3211,7 +3211,7 @@ execution boundaries</p></li>
 <div class="sourceCode" id="cb198"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb198-1"><a href="#cb198-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.51.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
 <li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>

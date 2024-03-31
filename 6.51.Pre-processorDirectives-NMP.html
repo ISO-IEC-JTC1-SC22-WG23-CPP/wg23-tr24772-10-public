@@ -235,7 +235,7 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.51.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
 <li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>

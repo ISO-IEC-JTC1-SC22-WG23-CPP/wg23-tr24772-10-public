@@ -230,7 +230,7 @@
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.50.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type, excluding all destructors, which are are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
 <li><p>Follow the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
