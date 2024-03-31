@@ -3386,7 +3386,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 </ul>
 <h2 id="CGM">6.63 Protocol Lock Errors [CGM]</h2>
 <h3 id="applicability-to-language">6.63.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.63 is applicable to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.63 is applicable to C++.</p>
 <p>This subclause requires a complete rewrite to have it reflect C++ issues.</p>
 <p>Difference between threads and tasks. Can threads and tasks coexist?</p>
 <p>Deadlock with single mutex,</p>
@@ -3397,7 +3397,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <p>a += b; // This operation is an atomic read-modify-write of the variable ‘a’.</p>
 <p>a = a + b; // This statement contains two accesses to ‘a’ and is not atomic.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.63.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
 <li><p>Be aware of the operation of each synchronization mechanism, such as the cases where accesses to atomic variables may occur more than once in a statement.</p></li>
@@ -3437,6 +3437,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 </ul>
 <h2 id="uncontrolled-format-string-shl">6.64 Uncontrolled Format String [SHL]</h2>
 <h3 id="applicability-to-language">6.64.1 Applicability to language</h3>
+<p>The vulnerability as described in ISO/IEC 24772-1 is applicable to C++.</p>
 <p>C++ inherits the C libraries which provide a large family of input and output functions that use a control string to interpret the data read or format the output. These strings include all the feature described in ISO/IEC TR 24772-1:2019 clause 6.64.1.</p>
 <p>C++ provides type-safe alternatives for input/output, which do not use format strings and which should be used in preference, such as</p>
 <div class="sourceCode" id="cb201"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb201-1"><a href="#cb201-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> aNumber{};</span>
@@ -3453,7 +3454,7 @@ CP.111,<span data-custom-style="annotation reference"></span></li>
 <span id="cb201-12"><a href="#cb201-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In addition, operator overloading of output operators allows to extend formatting abilities to user-defined types.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.64.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Forbid the use of the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p></li>
 <li><p>Use the avoidance mechanisms provided by the standard library as described in ISO/IEC 14882 20.20 Formatting [format] or similar libraries, if <em>printf-style</em> formatting of output or strings is desired, or when the formatting facilities of <code>std::ostream</code> are inadequate.</p></li>

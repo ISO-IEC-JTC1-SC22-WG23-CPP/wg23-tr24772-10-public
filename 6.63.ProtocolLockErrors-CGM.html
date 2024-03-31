@@ -154,7 +154,7 @@
 </header>
 <h2 id="CGM">6.63 Protocol Lock Errors [CGM]</h2>
 <h3 id="applicability-to-language">6.63.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.63 is applicable to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.63 is applicable to C++.</p>
 <p>This subclause requires a complete rewrite to have it reflect C++ issues.</p>
 <p>Difference between threads and tasks. Can threads and tasks coexist?</p>
 <p>Deadlock with single mutex,</p>
@@ -165,7 +165,7 @@
 <p>a += b; // This operation is an atomic read-modify-write of the variable ‘a’.</p>
 <p>a = a + b; // This statement contains two accesses to ‘a’ and is not atomic.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.63.2 Avoidance mechanisms for language users</h3>
-<p>C++ software developers can avoid the vulnerability or mitigate its ill effects in the following ways. They can:</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
 <li><p>Be aware of the operation of each synchronization mechanism, such as the cases where accesses to atomic variables may occur more than once in a statement.</p></li>
