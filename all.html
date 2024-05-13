@@ -3608,6 +3608,7 @@ Members declared <code class="sourceCode cpp"><span class="at">mutable</span></c
 <li><p>Consider the use of <code class="sourceCode cpp"><span class="kw">constexpr</span></code> wherever possible to move the detection of the misuse of <code class="sourceCode cpp"><span class="at">const</span></code> to compile time.</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">mutable</span></code> only to member variables that do not influence the external behavior of an object.</p></li>
 </ul>
+<p>TBD The first C++ specific vulnerability is if exit is called, during object destruction with static or thread storage duration, program has undefined behaviour</p>
 <!-- -->
 <h1 id="language-specific-vulnerabilities-for-c">7. Language specific vulnerabilities for C</h1>
 <p>7.2 Copy/move semantics from Classes. (Peter Sommerlad’s paper at http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1412r0.pdf</p>
