@@ -3547,7 +3547,8 @@ Historically, classes with expensive computations in frequently-called const-mem
 <li><p>Within <code class="sourceCode cpp"><span class="at">const</span></code> member functions, avoid indirectly modifying the object’s state.</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">mutable</span></code> only to member variables that do not influence the observable state of an object.</p></li>
 <li><p>Ensure in concurrent code, that mutable data members are synchronisation primitives or are explicitly synchronized.</p></li>
-<li><p>Leverage the C++ type system to restrict the operations on a type in a way that emulates <em>logical const</em> and document where used.</p></li>
+<li><p>When designing C++ classes, provide <code class="sourceCode cpp"><span class="at">const</span></code> member functions to support <code class="sourceCode cpp"><span class="at">const</span></code> objects.</p></li>
+<li><p>Ensure that C++ classes modelling pointer-like types provide transitivity of <code class="sourceCode cpp"><span class="at">const</span></code> within <code class="sourceCode cpp"><span class="at">const</span></code> member functions.</p></li>
 </ul>
 <h1 id="language-specific-vulnerabilities-for-c">7. Language specific vulnerabilities for C</h1>
 <p>TBD</p>
