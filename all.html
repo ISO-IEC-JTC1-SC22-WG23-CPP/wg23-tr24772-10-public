@@ -3259,15 +3259,17 @@ execution boundaries</p></li>
 </ul>
 <h2 id="EWF">6.56 Undefined Behaviour [EWF]</h2>
 <h3 id="applicability-to-language">6.56.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2019 clause 6.56 applies to C++. In ISO/IEC 14882:2017, the terms “undefined behaviour” and “ill-formed, no diagnostic required” expose situations to be avoided.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.56 applies to C++. In ISO/IEC 14882:2023, the terms “undefined behaviour” and “ill-formed, no diagnostic required” expose situations to be avoided.</p>
+<p>For the special case of constant expressions, compilers are required to detect and reject undefined behaviour during the evaluation of constant expressions in the core language. It is unspecified whether or not undefined behaviour in the standard library is detected during constant expression evaluation.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.56.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.56.5.</p></li>
-<li><p>Use static analysis tools to help identify occurrences of undefined behaviour.</p></li>
+<li><p>Exploit compile-time evaluation whenever possible to detect undefined behaviour.</p></li>
+<li><p>Use static analysis tools in addition to the compiler to help identify occurrences of undefined behaviour.</p></li>
 <li><p>Augment static analysis tool usage with runtime tools such as ASAN (address sanitizer) and related tools.</p></li>
 <li><p>Use multiple compilers/tools and different optimization levels to increase the chance of identifying constructs that have undefined behaviours.</p></li>
-<li><p>Where the C++ language provides defined behaviour mechanisms and undefined behaviour mechanisms, mandate the use the mechanisms with defined behaviours.</p></li>
+<li><p>Where the C++ language or library provide both defined behaviour mechanisms and undefined behaviour mechanisms, mandate the use the mechanisms with defined behaviours.</p></li>
 </ul>
 <h2 id="implementationdefined-behaviour-fab">6.57 Implementation–defined Behaviour [FAB]</h2>
 <h3 id="applicability-to-language">6.57.1 Applicability to language</h3>
