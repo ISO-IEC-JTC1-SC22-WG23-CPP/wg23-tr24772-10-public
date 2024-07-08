@@ -3380,20 +3380,19 @@ execution boundaries</p></li>
 </ul>
 <h2 id="CGM">6.63 Protocol Lock Errors [CGM]</h2>
 <h3 id="applicability-to-language">6.63.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.63 is applicable to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.63 is applicable to C++. C++ provides some simple protocols to cover sharing and access to shared data, as well as</p>
 <p>This subclause requires a complete rewrite to have it reflect C++ issues.</p>
 <p>Difference between threads and tasks. Can threads and tasks coexist?</p>
+<p>Possibly describe different mutexes and locks and how to safely use them.</p>
 <p>Deadlock with single mutex,</p>
-<p>The C standard does not provide hidden protocols. Although the vulnerability does not apply to the C language, there could exist an application vulnerability if a program uses synchronization mechanisms incorrectly. For example:</p>
-<p>atomic int a;</p>
-<p>int b;</p>
-<p>/* . . . */</p>
-<p>a += b; // This operation is an atomic read-modify-write of the variable ‘a’.</p>
-<p>a = a + b; // This statement contains two accesses to ‘a’ and is not atomic.</p>
+<p>No priorities within the standard language and libraries.</p>
+<p>Synchronization: Mutexes Condition variables Semaphores Latches and Barriers Futures, promises and tasks (atomics) (see https://en.cppreference.com/w/cpp/thread)</p>
+<p>Availability of C++ parallel algorithms (i.e. use!)</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.63.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
+<li></li>
 <li><p>Be aware of the operation of each synchronization mechanism, such as the cases where accesses to atomic variables may occur more than once in a statement.</p></li>
 <li><p>Use higher level building blocks (such as TBB) in preference to …</p></li>
 <li><p>Use the C++ Task mechanism in preference to threads …</p></li>
