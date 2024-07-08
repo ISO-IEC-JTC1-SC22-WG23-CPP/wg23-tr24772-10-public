@@ -216,44 +216,22 @@
 </header>
 <h2 id="CGX">6.61 Concurrent Data Access [CGX]</h2>
 <h3 id="applicability-to-language">6.61.1 Applicability to language</h3>
-<p>C++ has threading and shared access to variables which have the vulnerabilities described in ISO/IEC TR 24772-1:2019 clause 6.61.1. C++ provides features such as atomic (type template) to guarantee the internal consistency of the data and to prevent corruption of data due to potentially interleaved updates to data elements.</p>
-<p>What about concurrent data access between tasks?</p>
-<p>Programmers should be aware that conversions or manipulations of data items are not always atomic, such as the conversion of an object as part of a computation</p>
-<p><em>Need the C++ definition of atomic (indivisible access and memory ordering)</em></p>
-<p><em>and volatile.</em></p>
-<p>The C++ <span data-custom-style="typ">atomic</span> capability can be applied to any basic data type equivalent to <span data-custom-style="typ">char</span>, <span data-custom-style="typ">short</span>, <span data-custom-style="typ">int</span>, <span data-custom-style="typ">long</span>, and <span data-custom-style="typ">long</span> <span data-custom-style="typ">long</span>. When the C++ <span data-custom-style="typ">std::atomic</span> facilities are used, the language guarantees that simultaneous updates and reads to an atomic element will be well-behaved. Atomic does not guarantee the order in which competing reads and/or updates will occur. In order to manage order of access, synchronized locks are required. In order to use the atomic capabilities, each variable must be declared to be of one of the <span data-custom-style="typ">std::atomic</span> types, and the member functions used to compare, load, store or exchange values in an atomic variable.</p>
-<p>We also need to move the notion of creating SHARED POINTERS FROM 6.13 TO HERE.</p>
-<p>A volatile qualifier on a variable is used to indicate that updates to the variable may happen at any time and outside of program control, hence two subsequent reads on such a variable may return different results.</p>
-<p>Programmers should be aware that even simple data accesses on modern architectures can involve instruction reordering, cache issues, and data alignment issues, hence the acquisition time and order are highly nondeterministic, especially when being accessed by concurrent threads. Any data structure that can be shared between threads should be shown to be accessed by at most one thread at a time or should be protected by synchronization mechanisms such as locks (see <a href="#CGM">Lock Protocol Errors [CGM]</a>) or atomicity.</p>
-<p>Most concurrent programming algorithms require some level of synchronization between threads or tasks when exchanging information, synchronization that “<span data-custom-style="typ">atomic</span>” does not provide. Mechanisms such as monitors, mailboxes, or mutexes (lock with a queue), futures, condition variables, and locks control scheduling of threads or tasks to control order-of-access and to enforce higher levels of cooperation between schedulable entities<span data-custom-style="annotation reference"></span>.</p>
-<p>Atomic tied to memory orders.</p>
-<p>Mutexes provide mutual exclusion and guaranteed visibility (consistency) of the shared data.</p>
-<p>Mutex is a lock-and-release that is usually hidden.</p>
-<p>Encapsulate mutexes and data</p>
-<p>Thread-level storage (official term thread_local) has lifetime of the thread. Can exist at local scope or global scope.</p>
-<p>For massively parallel concurrency – concurrent access mechanisms not applicable.</p>
-<p>No resource management</p>
-<p>Exception and exception handling (has some impact on threading)</p>
-<p>Memory management issues more complex under concurrency</p>
-<p>Volatile should be used for signal handlers to prevent the optimization of replicated accesses to volatile memory. (other) and does not guarantee that the object value will be available to other threads.</p>
-<p>Controlling access to shared data (protected or including</p>
-<p>Use of volatile (keyword type qualifier) for signal handlers (communicating with hardware?). Prefer volatile for communicating with hardware?</p>
-<p>For signal handling, <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> or atomic variables can be used to prevent this vulnerability.</p>
+<p>C++ has threading and shared access to variables which have the vulnerabilities described in ISO/IEC 24772-1 clause 6.61.1. Accessing mutable data from multiple threads without synchronization is undefined behaviour. C++ provides atomic types, mutual exclusion primitives and higher-level synchronization mechanisms in the standard library to prevent such data races. Sharing non-volatile constant data or not sharing data at all does not incur data races. For example, avoiding pointer-like types for thread function parameters guarantees that there is no sharing of the argument values.</p>
+<p>The C++ memory model defines how memory accesses can be reordered. The default memory order guarantees sequential consistency. For increased parallel execution other memory orders can be used but require expert-level of care.</p>
+<p>C++ programs that used multiple threads before the C++11 standard might employ volatile variables to guarantee race free data access. This practice is not sanctioned by current standards, you cannot use <code class="sourceCode cpp"><span class="at">volatile</span></code> for synchronization.</p>
+<p>The algorithm library allows specifying non-sequential execution policy for most algorithms. Employing parallel (<code class="sourceCode cpp"><span class="bu">std::</span>par</code>) or vectorized (<code class="sourceCode cpp"><span class="bu">std::</span>unseq</code>, <code class="sourceCode cpp"><span class="bu">std::</span>par_unseq</code>) execution policies may have additional requirements on data layout of the underlying ranges, especially to avoid data races.</p>
+<p>Primitives requiring explicit locking and unlocking the pairwise application of these operations is supported implicitly by <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code>, even when an exception might be thrown. In addition to scope-based locking, <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> guarantees deadlock-free locking of multiple mutexes.</p>
+<p>Variables with thread-local storage duration cannot create data races, as long as their address is not shared with other threads.</p>
+<p>Signal handling can use atomic variables or fences to prevent data races. The use of <code>volatile std::sig_atomic_t</code> only prevents a data race between a signal handler an the execution thread running the signal handler.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.61.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.62.5.</p></li>
-<li><p>Use mutexes and condition variables (<code class="sourceCode cpp">convar</code>) in preference to atomic variables to protect data from simultaneous access.</p></li>
-<li><p>Use volatile only for synchronizing abstract machine state from memory.</p></li>
-<li><p>Avoid the use of volatile for synchronizing access to shared memory between threads (which needs mutex, condvar, or atomics)</p>
-<ul>
-<li><pre><code>  See C++ Core guidelines CP.8, CP.200,</code></pre>
-CP.111,<span data-custom-style="annotation reference"></span></li>
-</ul></li>
-<li><p>Avoid relaxed atomic operations whenever possible. Prefer the sequentially consistent std::memory_order_seq_cst instead .</p></li>
-<li><p>Use mutexes appropriately to protect accesses to non-atomic shared objects.</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> to protect data shared with signal handlers in a single-threaded environment.</p></li>
-<li><p>Pass all thread function arguments by value, or ensure their lifetime outlasts the running thread. In the latter case proper synchronization is required.</p></li>
+<li><p>Place all mutable data in memory accessible to only one thread at a time;</p></li>
+<li><p>Use the appropriate standard library features for synchronization of shared mutable data, in particular use <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> or the other scoped-based locking library facilities;</p></li>
+<li><p>Prohibit the use of volatile for synchronization;</p></li>
+<li><p>Avoid specifying memory orders on atomic operations other than sequential consistency;</p></li>
+<li><p>Use atomic variables or fences for synchronization of data shared from a signal handler, employ <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> only in a single-threaded environment;</p></li>
+<li><p>Pass all thread function arguments by non-pointer-like values.</p></li>
 </ul>
 </body>
 </html>
