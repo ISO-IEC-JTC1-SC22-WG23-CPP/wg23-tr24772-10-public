@@ -228,7 +228,8 @@
 <ul>
 <li><p>Place all mutable data in memory accessible to only one thread at a time;</p></li>
 <li><p>Use the appropriate standard library features for synchronization of shared mutable data, in particular use <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> or the other scoped-based locking library facilities;</p></li>
-<li><p>Prohibit the use of volatile for synchronization;</p></li>
+<li><p>Prohibit calling lock and unlock facilities directly.</p></li>
+<li><p>Forbid the use of volatile for synchronization;</p></li>
 <li><p>Avoid specifying memory orders on atomic operations other than sequential consistency;</p></li>
 <li><p>Use atomic variables or fences for synchronization of data shared from a signal handler, employ <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> only in a single-threaded environment;</p></li>
 <li><p>Pass all thread function arguments by non-pointer-like values.</p></li>
