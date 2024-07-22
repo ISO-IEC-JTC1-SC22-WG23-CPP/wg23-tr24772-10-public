@@ -220,7 +220,7 @@
 <p>Creating a thread using the <code class="sourceCode cpp"><span class="bu">std::</span>async</code> function or the <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> constructors is synchronized with the thread creation site.</p>
 <p>Failure to create or start a thread due to lack of system resources will cause an exception to be thrown to the creating thread thus the thread object never exists. For the vulnerabilities with unhandled exceptions see clause <a href="#OYB">6.36 Ignored error status and unhandled exceptions [OYB]</a>.</p>
 <p>Any exception thrown within a thread’s function, needs to be handled by that thread, otherwise such an exception will cause program termination. For handling such termination see clause <a href="#CGS">6.62 Concurrency - Premature termination [CGS]</a>.</p>
-<p>TODO: talk about detach() and forgetting to join - see clause 6.60</p>
+<p>TODO: talk about detach() and forgetting to join - see clause 6.60 SGM: join() is discussed in 6.61 and 6.63, so likely not needed here. detach() likely is not relevant in the context of activation vulnerabilities.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.59.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
