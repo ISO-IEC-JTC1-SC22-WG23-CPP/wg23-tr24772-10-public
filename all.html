@@ -3317,25 +3317,28 @@ execution boundaries</p></li>
 <h3 id="applicability-to-language">6.60.1 Applicability to language</h3>
 <p>This vulnerability as specified in ISO/IEC 24772-1 clause 6.60 is mitigated in C++, as long as the standard C++ library facilities for threads are used. For issues associated with threades created using the standard C library, see ISO/IEC 24772-3 clause 6.60.</p>
 <p>C++ does not provide the means to terminate a C++ thread asynchronously, except in the case that std::terminate() is called. Instead C++ allows cooperative termination through the use of <code class="sourceCode cpp"><span class="bu">std::</span>stop_token</code>, however, a thread instructed by a stop request to cease execution can ignore such a request. For example, using <code class="sourceCode cpp"><span class="bu">std::</span>jthread<span class="bu">::</span>request_stop()</code> to send a stop request to the started thread, the created thread can have a thread function that never handles such a stop request.</p>
-<div class="sourceCode" id="cb199"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> some_function(<span class="dt">int</span> value);</span>
-<span id="cb199-2"><a href="#cb199-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> other_function(<span class="bu">std::</span>stop_token tok, <span class="dt">int</span> value);</span>
-<span id="cb199-3"><a href="#cb199-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb199-4"><a href="#cb199-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main(){</span>
-<span id="cb199-5"><a href="#cb199-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>jthread t(some_function,<span class="dv">42</span>); <span class="co">// stop_token will be ignored since not provided</span></span>
-<span id="cb199-6"><a href="#cb199-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>jthread t2(other_function,<span class="dv">42</span>); <span class="co">// stop_token passed</span></span>
-<span id="cb199-7"><a href="#cb199-7" aria-hidden="true" tabindex="-1"></a>    t.request_stop(); <span class="co">// no-op</span></span>
-<span id="cb199-8"><a href="#cb199-8" aria-hidden="true" tabindex="-1"></a>    t2.request_stop(); <span class="co">// stop_token tok signalled</span></span>
-<span id="cb199-9"><a href="#cb199-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb199-10"><a href="#cb199-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb199-11"><a href="#cb199-11" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> other_function(<span class="bu">std::</span>stop_token tok, <span class="dt">int</span> value) {</span>
-<span id="cb199-12"><a href="#cb199-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (!stop_token.stop_requested()) <span class="co">//</span></span>
-<span id="cb199-13"><a href="#cb199-13" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb199-14"><a href="#cb199-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>cout &lt;&lt; value++ &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; <span class="bu">std::</span>flush;</span>
-<span id="cb199-15"><a href="#cb199-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>this_thread<span class="bu">::</span>sleep_for(<span class="dv">200</span><span class="bu">ms</span>);</span>
-<span id="cb199-16"><a href="#cb199-16" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb199-17"><a href="#cb199-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="bu">std::</span>endl;</span>
-<span id="cb199-18"><a href="#cb199-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Note that in the while loop, if stop_token.stop_requested had not been checked, other_function would continue to run until the program itself is terminated. In the above example, at the end of the main function the destructors of the thread objects t and t2 will call <code>this-&gt;request_stop()</code> and <code>this-&gt;join()</code>. If one of the thread functions never returns, then the corresponding <code class="sourceCode cpp">join()</code> call will block.</p>
+<p>void some_function(int value); void stoppable_function(std::stop_token tok, int value);</p>
+<p>int main() { using namespace std; std::jthread t(some_function,10); // stop_token ignored since not provided std::jthread t2(stoppable_function,100); // stop_token passed t.request_stop(); // no-op as ignored in t t2.request_stop(); // stop_token <code class="sourceCode cpp">tok</code> signalled in <code class="sourceCode cpp">t2</code>, // returns <code class="sourceCode cpp"><span class="kw">true</span></code> showing <code>stop_token</code>{cpp} set }</p>
+<p>void stoppable_function(std::stop_token tok, int value) { using namespace std::literals; while (!tok.stop_requested()) // { std::osyncstream(std::cout) &lt;&lt; value++ &lt;&lt; ‘’; std::this_thread::sleep_for(200ms); } }</p>
+<p>void some_function(int value) { using namespace std::literals; for (int i =0; i&lt;10; ++i) { std::osyncstream(std::cout) &lt;&lt; value++ &lt;&lt; ‘’; std::this_thread::sleep_for(200ms); } }</p>
+<div class="sourceCode" id="cb199"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> OK = t2.request_stop(); }</span>
+<span id="cb199-2"><a href="#cb199-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb199-3"><a href="#cb199-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> stoppable_function(<span class="bu">std::</span>stop_token tok, <span class="dt">int</span> value) {</span>
+<span id="cb199-4"><a href="#cb199-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (!stop_token.stop_requested()) <span class="co">//</span></span>
+<span id="cb199-5"><a href="#cb199-5" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb199-6"><a href="#cb199-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>cout &lt;&lt; value++ &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; <span class="bu">std::</span>flush;</span>
+<span id="cb199-7"><a href="#cb199-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>this_thread<span class="bu">::</span>sleep_for(<span class="dv">200</span><span class="bu">ms</span>);</span>
+<span id="cb199-8"><a href="#cb199-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb199-9"><a href="#cb199-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> some_function(<span class="dt">int</span> value) {</span>
+<span id="cb199-10"><a href="#cb199-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i&lt;<span class="dv">10</span>; i++) <span class="co">//</span></span>
+<span id="cb199-11"><a href="#cb199-11" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb199-12"><a href="#cb199-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>cout &lt;&lt; value++ &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; <span class="bu">std::</span>flush;</span>
+<span id="cb199-13"><a href="#cb199-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>this_thread<span class="bu">::</span>sleep_for(<span class="dv">200</span><span class="bu">ms</span>);</span>
+<span id="cb199-14"><a href="#cb199-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb199-15"><a href="#cb199-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb199-16"><a href="#cb199-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="bu">std::</span>endl;</span>
+<span id="cb199-17"><a href="#cb199-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Note that in the while loop in ’stoppable_function()<code>{.cpp}, if stop_token.stop_requested had not been checked, it would continue to run until the program itself is terminated. In the above example, at the end of the main function the destructors of the thread objects t and t2 will call</code>this-&gt;request_stop()<code>and</code>this-&gt;join()<code>. If one of the thread functions never returns, then the corresponding</code>join()`{.cpp} call will block.</p>
 <p>Other programmed mechanisms can be constructed to cause another thread to complete, such as setting a shared variable to a known value that the target thread reads and then terminates itself.</p>
 <p>A common programming mistake is to create threads with the intention that they will participate in a joint computation, but missing the <code>join()</code> operation in one or mre threads. If <code>jthreads</code> are used for the threading, all threads are joined with the thread that created them.</p>
 <p>Even if a thread is successfully terminated, the thread that initiated the termination should take action to clean up after the terminating thread,such as releasing memory</p>
@@ -3343,7 +3346,7 @@ execution boundaries</p></li>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.60.5.</p></li>
-<li><p>Use static analysis tools and code reviews to ensure that threads accepting stop requests handle the request.</p></li>
+<li><p>Use code reviews and static analysis tools if available, to ensure that threads correctly terminate.</p></li>
 </ul>
 <h2 id="CGX">6.61 Concurrent Data Access [CGX]</h2>
 <h3 id="applicability-to-language">6.61.1 Applicability to language</h3>
