@@ -222,7 +222,7 @@
 <p>The compiler will ensure for variadic templates that the type and number of arguments is correct.</p>
 <p>A call to a function with default arguments can provide fewer arguments than parameters as long as the parameters for which no explicit argument is provided include a default argument.</p>
 <p>Where a function parameter-declaration-clause ends with an ellipsis, additional arguments can be accessed through the mechanisms provided by <code>&lt;cstdarg&gt;</code>. No information about the number or types of the parameters is supplied by the compiler. The use of this feature outside of special situations can be the basis for vulnerabilities.</p>
-<p>Undefined behavior can arise, for example:</p>
+<p>Undefined behavior<a href="#EWF">[EWF]</a> can arise, for example:</p>
 <ul>
 <li>Arguments with integral or enumeration type that are passed to an ellipsis parameter will undergo integral promotions, and so the type of the parameter is <code>int</code> and not <code>short</code>. The use of <code>short</code> with <code>va_arg</code> is therefore invalid.</li>
 </ul>

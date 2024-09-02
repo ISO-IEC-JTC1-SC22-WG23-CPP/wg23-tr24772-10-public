@@ -217,7 +217,7 @@
 <h2 id="NYY">6.48 Dynamically-linked Code and Self-modifying Code [NYY]</h2>
 <h3 id="applicability-to-language">6.48.1 Applicability to language</h3>
 <p>Most loaders allow dynamically linked libraries also known as shared libraries. Code is designed and tested using a suite of shared libraries which are loaded at execution time. The process of linking and loading is outside the scope of the C++ standard.</p>
-<p>C++ prevents data pointers to be reinterpreted as function pointers and vice versa. Reinterpreting a pointer via a void pointer or <code class="sourceCode cpp"><span class="bu">std::</span>intptr_t</code> to a pointer of different type is undefined behaviour (with very few defined exceptions of data pointers to pointer to its raw bytes).</p>
+<p>C++ prevents data pointers to be reinterpreted as function pointers and vice versa. Reinterpreting a pointer via a void pointer or <code class="sourceCode cpp"><span class="bu">std::</span>intptr_t</code> to a pointer of different type is undefined behaviour <a href="#EWF">[EWF]</a> (with very few defined exceptions of data pointers to pointer to its raw bytes).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.48.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>

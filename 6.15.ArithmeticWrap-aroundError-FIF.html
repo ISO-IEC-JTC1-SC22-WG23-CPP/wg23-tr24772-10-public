@@ -216,7 +216,7 @@
 </header>
 <h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
-<p>C++ has the vulnerability as documented in ISO/IEC 24772-1 clause 6.15, since overflow situations are undefined behaviour for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
+<p>C++ has the vulnerability as documented in ISO/IEC 24772-1 clause 6.15, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
 <ul>
 <li>although signed integers are defined to be represented as two’s complement, signed integer overflow is undefined behaviour,</li>
 <li>unsigned integer arithmetic is defined to wrap-around (modulo arithmetic) and not overflow,</li>

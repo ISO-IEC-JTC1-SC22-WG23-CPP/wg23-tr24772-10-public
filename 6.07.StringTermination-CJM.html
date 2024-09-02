@@ -232,7 +232,7 @@
 <li><p>Ensure that explicit overflow checks are performed for all string operations.</p></li>
 <li><p>Prefer using a string type, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which manages the memory of its string and handles termination in order to mitigate against this vulnerability.</p></li>
 <li><p>Don’t use the underlying raw pointer of a <code class="sourceCode cpp"><span class="bu">std::</span>string_view</code> or a <code class="sourceCode cpp"><span class="bu">std::</span>span</code> with interfaces that expect C-style strings.</p></li>
-<li><p>Use static analysis tools to help identify occurrences of undefined behaviour.</p></li>
+<li><p>Use static analysis tools to help identify occurrences of undefined behaviour <a href="#EWF">[EWF]</a>.</p></li>
 </ul>
 </body>
 </html>

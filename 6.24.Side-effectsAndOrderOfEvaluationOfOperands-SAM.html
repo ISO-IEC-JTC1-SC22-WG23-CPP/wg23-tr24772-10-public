@@ -228,7 +228,7 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i = <span class="dv">2</span>;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> j = i++;</span></code></pre></div>
 <p>the evaluation of i++ is 2 and the side-effects are the writing of 3 to i and the initialization of j.</p>
-<p>Within an expression, one must ensure an object is stored only once to avoid undefined behaviour, e.g.,</p>
+<p>Within an expression, one must ensure an object is stored only once to avoid undefined behaviour <a href="#EWF">[EWF]</a>, e.g.,</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>i = i++ + <span class="dv">5</span>; <span class="co">// undefined behaviour (before C++17)</span></span></code></pre></div>
 <p>or</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>k = i++ + i\--; <span class="co">// undefined behaviour in all versions of C++</span></span></code></pre></div>

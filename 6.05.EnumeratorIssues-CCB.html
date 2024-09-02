@@ -230,7 +230,7 @@
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">short</span> i = red; <span class="co">// error -- no implicit conversion</span></span></code></pre></div>
 <p>Where unscoped enums are used as array indexes and do not have a user-specified mapping to an underlying representation, there will be “holes” as documented in TR24772-1 clause 6.6.</p>
 <p>Note that unscoped enumeration types implicitly promote their underlying type and can be used as the index of an array without a cast, with all of the issues described in TR 24772-1 clause 6.5.</p>
-<p>From C++ 2017 forward, casting a value to an enumeration type is undefined behavior unless the source value is within the range of values of an enumeration type. See CERT INT50-CPP.</p>
+<p>From C++ 2017 forward, casting a value to an enumeration type is undefined behavior <a href="#EWF">[EWF]</a> unless the source value is within the range of values of an enumeration type. See CERT INT50-CPP.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.5.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>

@@ -269,7 +269,7 @@
 <li><p>can be done safely with a single call to <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code> which requires appropriate portions of inheritance to be polymorphic (i.e. has <code class="sourceCode cpp"><span class="kw">virtual</span></code> members).</p></li>
 <li><p>can often be done with a chain of <code class="sourceCode cpp">static_casts</code> traversing the inheritance hierarchy, which is almost always unsafe.</p></li>
 </ul>
-<p>Deleting derived objects via a base class pointer is undefined behavior, unless the base class declares a virtual destructor.</p>
+<p>Deleting derived objects via a base class pointer is undefined behavior <a href="#EWF">[EWF]</a>, unless the base class declares a virtual destructor.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
