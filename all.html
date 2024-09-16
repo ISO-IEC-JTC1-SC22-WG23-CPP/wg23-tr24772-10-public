@@ -3390,56 +3390,6 @@ execution boundaries</p></li>
 <li><p>Return some indication of conditions resulting in premature termination</p></li>
 <li><p>Ensure that the main program joins all created threads that need to complete normally, such as by using the std::jthread type.</p></li>
 </ul>
-<h2 id="CGM">6.63 Protocol Lock Errors [CGM]</h2>
-<h3 id="applicability-to-language">6.63.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.63 is applicable to C++. C++ provides some simple protocols to cover sharing and access to shared data, as well as</p>
-<p>This subclause requires a complete rewrite to have it reflect C++ issues.</p>
-<p>Difference between threads and tasks. Can threads and tasks coexist?</p>
-<p>Possibly describe different mutexes and locks and how to safely use them.</p>
-<p>Deadlock with single mutex,</p>
-<p>No priorities within the standard language and libraries.</p>
-<p>Synchronization: Mutexes Condition variables Semaphores Latches and Barriers Futures, promises and tasks (atomics) (see https://en.cppreference.com/w/cpp/thread)</p>
-<p>Availability of C++ parallel algorithms (i.e. use!)</p>
-<h3 id="avoidance-mechanisms-for-language-users">6.63.2 Avoidance mechanisms for language users</h3>
-<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
-<ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
-<li></li>
-<li><p>Be aware of the operation of each synchronization mechanism, such as the cases where accesses to atomic variables may occur more than once in a statement.</p></li>
-<li><p>Use higher level building blocks (such as TBB) in preference to …</p></li>
-<li><p>Use the C++ Task mechanism in preference to threads …</p></li>
-<li><p>Always put the acquisition and release of mutexes and the data access in a wrapper function. (i.e. <em>Do not call member functions of std::mutex, std::timed_mutex, std::recursive_mutex, std::recursive_timed_mutex, std::shared_mutex and std::shared_timed_mutex objects directly.)</em></p></li>
-<li><p><em>Use std::lock(), std::try_lock() or std::scoped_lock to acquire multiple mutexes in same scope. (std::lock() permits multiple mutexes at the same time).</em></p></li>
-<li><p>Use std::lock() only where multiple locks must be locked together and use std::lock_guard with the std::adopt_lock argument for all mutexes (needs example) see std::lock() example on cppreference.com.</p></li>
-<li><p><em>Wrap mutex locks std::lock or std::try_lock with std<strong>::</strong>lock_guard, std::unique_lock or std::shared_lock with adopt_lock tag within the same scope</em></p></li>
-<li><p>If explicit locking are used, ensure that the lock is released on every exit path, including exceptions. Use lock_guard, scope_lock and unique_lock in preference to lock(), unlock(), and try_lock(),</p></li>
-<li><p><strong><em>Do not use platform specific multi-threading facilities</em></strong></p></li>
-<li><p><strong><em>A thread shall not access objects whose lifetime has expired</em></strong></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.kj1vcao94oy1"><u>0.4.4 [12] Do not destroy objects of the following types std::mutex, std::timed_mutex, std::recursive_mutex, std::recursive_timed_mutex, std::shared_mutex, std::shared_timed_mutex if object is in locked or shared locked state Do not destroy a mutex while it is locked</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.1kfv9jdgd8ib"><u>0.4.5 [13] Mutexes locked with std::lock or std::try_lock shall be wrapped with std::lock_guard, std::unique_lock or std::shared_lock with adopt_lock tag within the same scope Ensure actively held locks are released on exceptional conditions</u> <u>12</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.729gvquxakq8"><u>0.4.6 [14] Do not call virtual functions and callable objects passed by argument of the function within the scope of locked mutex Never call unknown code while holding a lock (e.g., a callback)</u> <u>12</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.920crsa3sscx"><u>0.4.7 [15] Avoid deadlock by locking in a predefined order</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.xufkh9tsiuk8"><u>0.4.8 [16] Objects of std::lock_guards, std::unique_locks, std::shared_lock and std::scoped_lock classes shall always be named Remember to name your lock_guards and unique_locks</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.d6qklu5mi3fn"><u>0.4.9 [17] Define a mutex together with the data it guards. Use synchronized_value&lt;T&gt; where possible</u> <u>13</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.isn3bwogdp97"><u>0.4.10 [18] Do not speculatively lock a non-recursive mutex that is already owned by the calling thread</u> <u>14</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.einwxosnxvhf"><u>0.4.11 [19] There shall be no code path which results in locking of the non-recursive mutex within the scope when this mutex is already locked Within the scope of a lock, ensure that no static path results in a lock of the same mutex</u> <u>14</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.vq776pxv4nn5"><u>0.4.12 [20] The order of nested locks unlock shall form a DAG Ensure that order of nesting of locks in a project forms a DAG</u> <u>15</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.7pf8azwmy8l4"><u>0.4.13 [21] std::recursive_mutex and std::recursive_timed_mutex should not be used Do not use std::recursive_mutex</u> <u>17</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.z9k66jbl65u6"><u>0.4.14 [22] There should be a code path, where at least one member functions is called for std::unique_lock objects Only use std::unique_lock when std::lock_guard cannot be used</u> <u>18</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.3icrgfn0r3ae"><u>0.5 Conditional variable</u> <strong><u>19</u></strong></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.g0cdm0bk7l9l"><u>0.5.1 [23] std::condition_variable::wait, std::condition_variable::wait_for, std::condition_variable::wait_until shall always be called with a condition predicate</u> <u>19</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.ul4y0p7eoih1"><u>0.5.2 [24] Wrap functions that can spuriously wake up in a loop</u> <u>20</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.13kr181fh926"><u>0.5.3 [25] std::conditional_variable::notify_one() can be used if all threads must perform the same set of operations after waking up Preserve thread safety and liveness when using condition variables</u> <u>21</u></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.yt0hxah53p9e"><u>0.5.4 [26] Do not use std::condition_variable_any on a std::mutex</u></a></p></li>
-<li><p>[<span data-custom-style="Hyperlink">0.10.1 [35] Source CCG Rule CP.100: Don't use lock-free programming unless you absolutely have to</span></p>
-<p><span data-custom-style="Hyperlink">27</span>](https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.3hq5f8vdw7d)</p></li>
-<li><p>0.10.2 [36] Source CCG Rule CP.101: Distrust your hardware/compiler combination</p></li>
-<li><p>0.10.3 [37] Source CCG Rule CP.102: Carefully study the literature</p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.ca8el9ehijae"><span data-custom-style="Hyperlink">0.10.4 [38] Source CCG Rule CP.110: Do not write your own double-checked locking for initialization</span></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.9syx86lze887"><span data-custom-style="Hyperlink">0.10.5 [39] Source HIC Rule 18.2.4 Use std::call_once to ensure a function is called exactly once (rather than the Double-Checked Locking pattern)</span></a></p></li>
-<li><p><a href="https://docs.google.com/document/d/14E0BYqsH_d7fMKvXvaZWoNWtIC65cYBw0aZp4dlev0Q/edit#heading=h.gg4jn12ygzi5"><span data-custom-style="Hyperlink">0.10.6 [40] Source CCG Rule CP.111: Use a conventional pattern if you really need double-checked locking</span></a></p></li>
-<li></li>
-</ul>
 <h2 id="uncontrolled-format-string-shl">6.64 Uncontrolled Format String [SHL]</h2>
 <h3 id="applicability-to-language">6.64.1 Applicability to language</h3>
 <p>The vulnerability as described in ISO/IEC 24772-1 is applicable to C++.</p>
