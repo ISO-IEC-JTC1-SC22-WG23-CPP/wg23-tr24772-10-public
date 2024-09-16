@@ -216,7 +216,7 @@
 </header>
 <h2 id="dangling-references-to-stack-frames-dcm">6.33 Dangling References to Stack Frames [DCM]</h2>
 <h3 id="applicability-to-language">6.33.1 Applicability to language</h3>
-<p>The vulnerability as expressed in ISO/IEC TR 24772-1:2019 and ISO/IEC TR 24772-3:2020 C exists in C++ by indirect access to variables with automatic storage duration or to temporary objects.</p>
+<p>The vulnerability as expressed in ISO/IEC IS 24772-1:2024 and ISO/IEC TR 24772-3:2020 C exists in C++ by indirect access to variables with automatic storage duration or to temporary objects.</p>
 <p>The lifetime model of C++ makes it undefined behaviour <a href="#EWF">[EWF]</a> to access an object outside of its lifetime. This results in undefined behavior, when an object access is attempted after its destruction. C++ provides a rich set of <em>pointer-like</em> types whose values may refer to temporaries or variables with automatic storage duration and can dangle (see Subclause <a href="#XYK">[XYK]</a>).</p>
 <p>A C++ class type with a <em>pointer-like</em> member will behave as a <em>pointer-like</em> type, unless the class itself manages the lifetime of the object referred to by its member.</p>
 <p>In general, any caller storing the <em>pointer-like</em> object returned from a function call risks dangling; such situations require thorough lifetime analysis to ensure that access via the <em>pointer-like</em> object doesn’t dangle.</p>
