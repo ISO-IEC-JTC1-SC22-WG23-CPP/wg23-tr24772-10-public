@@ -216,7 +216,7 @@
 </header>
 <h2 id="passing-parameters-and-return-values-csj">6.32 Passing Parameters and Return Values [CSJ]</h2>
 <h3 id="applicability-to-language">6.32.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.32 exists in C++. However, the language also provides appropriate mitigation.</p>
+<p>The vulnerability as described in ISO/IEC IS 24772-1:2024 clause 6.32 exists in C++. However, the language also provides appropriate mitigation.</p>
 <p>C++ provides both <em>call by copy</em> (aka <em>call by value</em>) and <em>call by reference</em> parameter passing. The argument is evaluated to initialize the formal parameter (in the first case) or bound to the formal parameter (in the second case) of the function that is being called. A formal parameter behaves like a local variable, however, changes to a non-const reference parameter affect the bound object.</p>
 <p>The rich type system of C++ allows types that when passed by value still have <em>call by reference</em> semantics, for example, pointer types, <code>std::reference_wrapper</code>, or class types with pointer or reference member variables.</p>
 <p>C++ assumes that pointer or reference parameters of different types never alias, even if the underlying object representations are identical, i.e., for a function declared as <code class="sourceCode cpp"><span class="dt">void</span> f(<span class="dt">int</span> *pi, <span class="dt">long</span> *pl)</code> the compiler will assume that <code>pi</code> and <code>pl</code> always refer to different objects, even if <code class="sourceCode cpp"><span class="kw">sizeof</span>(<span class="dt">int</span>) == <span class="kw">sizeof</span>(<span class="dt">long</span>)</code>. Two parameters may refer to the same object if they have pointer or reference type, and the target types are the same or related. This means, aliasing between reference parameters or with a reference result needs to be taken into account in user code. For example, in an assignment expression the left and right hand side can refer to the same object. This implies that user-defined assignment operators must take precautions against self-assignment or document that it is forbidden.</p>
@@ -246,12 +246,13 @@
 <li><p>Prefer pass-by-value and pass-by-const-reference over other means of parameter declaration.</p></li>
 <li><p>Prefer reference parameters over corresponding pointer parameters.</p></li>
 <li><p>Use pass by non-const reference only when side-effects on the argument are intended (<em>inout</em>-parameter).</p></li>
-<li><p>Always reassign a variable passed by rvalue-reference before subsequent use after the call.</p></li>
+<li><p>Unless the moved-from state is well-defined, always reassign a variable passed by rvalue-reference before subsequent use after the call.</p></li>
 <li><p>Use forwarding reference parameters only, if perfect forwarding is needed in the body of a function template or generic lambda.</p></li>
-<li><p>Define member functions that have side effects on <code class="sourceCode cpp">*<span class="kw">this</span></code> or return a potentially dangling object referring to <code>*this</code> or its members with the appropriate lvalue-ref-qualification. Either delete the rvalue-ref-qualified overload if a const-ref-qualified overload exists to avoid calling the function on temporary objects, or define the rvalue-ref-qualified overload as returning by value.</p></li>
-<li><p>Document the referents of potentially dangling objects created by or modified by a function if any potentially dangling object outlives the invocation of that function.</p></li>
-<li><p>Document any allowable aliasing between the referents of function parameters of potentially dangling type. Absent such documentation, avoid passing aliased parameters.</p></li>
-<li><p>Do not use function-like macros. If used, surround all macro parameters in the replacement text with parenthesis.</p></li>
+<li><p>Define member functions with the appropriate lvalue-ref-qualification when they have side effects on <code class="sourceCode cpp">*<span class="kw">this</span></code> or return a pointer-like object referring to <code>*this</code> or its members.</p></li>
+<li><p>Either delete the rvalue-ref-qualified overload or define it as returning by value, when a const-ref-qualified overload of a member function exists that returns a pointer-like object referring to <code>*this</code> or its members.</p></li>
+<li><p>Document the referents of pointer-like objects created by or modified by a function if any pointer-like object outlives the invocation of that function.</p></li>
+<li><p>Document any allowable aliasing between the referents of function parameters of pointer-like type. Absent such documentation, avoid passing aliased parameters.</p></li>
+<li><p>Do not use function-like macros. If used, surround all macro parameters in the replacement text with parentheses.</p></li>
 </ul>
 </body>
 </html>
