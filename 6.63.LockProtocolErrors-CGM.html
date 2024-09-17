@@ -154,7 +154,7 @@
 </header>
 <h2 id="CGM">6.63 Lock Protocol Errors [CGM]</h2>
 <h3 id="applicability-to-language">6.63.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC IS 24772-1:2024 clause 6.63 exists in C++. C++ provides standard library mechanisms for thread synchronization. Accessing mutable data from multiple threads unsynchronized creates a data race which is undefined behaviour <a href="#EWF">[EWF]</a>.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.63 exists in C++. C++ provides standard library mechanisms for thread synchronization. Accessing mutable data from multiple threads without appropriate synchroniztion creates a data race which is undefined behaviour <a href="#EWF">[EWF]</a>.</p>
 <p>Employing <code>std::scoped_lock</code>{.cpp) and similar functionality from the standard library prevents lock protocol errors using mutexes as synchronisation mechanism. Higher-level synchronization mechanisms, such as provided by <code>std::future</code>, <code>std::latch</code>, or <code>std::barrier</code> side-step lock protocol errors. Employing parallel algorithms from the standard library require adhering to the user-code requirements on arguments passed to these algorithms to avoid lock protocol errors, such as data races. On the other hand lower-level means of inter-thread synchronisation, such as atomic variables, or explicitly calling <code>lock()</code> and <code>unlock()</code> functions require diligent programming to avoid this vulnerabilty.</p>
 <p>say st about coroutines and their protocol (may be)</p>
 <p>Availability of C++ parallel algorithms (i.e. use!)</p>
