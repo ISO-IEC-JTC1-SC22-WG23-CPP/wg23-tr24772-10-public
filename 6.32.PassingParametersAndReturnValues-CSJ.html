@@ -216,7 +216,7 @@
 </header>
 <h2 id="passing-parameters-and-return-values-csj">6.32 Passing Parameters and Return Values [CSJ]</h2>
 <h3 id="applicability-to-language">6.32.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC IS 24772-1:2024 clause 6.32 exists in C++. However, the language also provides appropriate mitigation.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.32 exists in C++. However, the language also provides appropriate mitigation.</p>
 <p>C++ provides both <em>call by copy</em> (aka <em>call by value</em>) and <em>call by reference</em> parameter passing. The argument is evaluated to initialize the formal parameter (in the first case) or bound to the formal parameter (in the second case) of the function that is being called. A formal parameter behaves like a local variable, however, changes to a non-const reference parameter affect the bound object.</p>
 <p>The rich type system of C++ allows types that when passed by value still have <em>call by reference</em> semantics, for example, pointer types, <code>std::reference_wrapper</code>, or class types with pointer or reference member variables.</p>
 <p>C++ assumes that pointer or reference parameters of different types never alias, even if the underlying object representations are identical, i.e., for a function declared as <code class="sourceCode cpp"><span class="dt">void</span> f(<span class="dt">int</span> *pi, <span class="dt">long</span> *pl)</code> the compiler will assume that <code>pi</code> and <code>pl</code> always refer to different objects, even if <code class="sourceCode cpp"><span class="kw">sizeof</span>(<span class="dt">int</span>) == <span class="kw">sizeof</span>(<span class="dt">long</span>)</code>. Two parameters may refer to the same object if they have pointer or reference type, and the target types are the same or related. This means, aliasing between reference parameters or with a reference result needs to be taken into account in user code. For example, in an assignment expression the left and right hand side can refer to the same object. This implies that user-defined assignment operators must take precautions against self-assignment or document that it is forbidden.</p>
@@ -242,7 +242,7 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.32.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.32.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 6.32.5.</p></li>
 <li><p>Prefer pass-by-value and pass-by-const-reference over other means of parameter declaration.</p></li>
 <li><p>Prefer reference parameters over corresponding pointer parameters.</p></li>
 <li><p>Use pass by non-const reference only when side-effects on the argument are intended (<em>inout</em>-parameter).</p></li>
