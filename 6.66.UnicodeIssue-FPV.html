@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>parts/6.66.UnicodeIssue-FPV.md</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">parts/6.66.UnicodeIssue-FPV.md</h1>
+</header>
+<p>6.66.1 Description of application vulnerability The ISO/IEC 10646:2020 character set includes characters that can cause a reordering of the displayed source code, such that the semantics of the displayed code differ from the semantics of the executed code. Such characters set text display direction left-to-right or right-to-left but are invisible unless the editor or display program is instructed to mnemonically display them. If left-to-right is the current default direction and a right-to-left character (RLI) is used, subsequent text will visually expand the text preceding the RLI character and overwrite text that had already been written. The following example, taken from [1], shows code with the invisible characters denoted visibly by +LRI, +PDI, +RLO, where these denotations stand for the zero-space Unicode control characters:</p>
+<p><LRI> Left-to-Right Isolate <PDI> Pop Directional Isolate <RLO> Right-to-Left Overwrite Due to the direction-changing characters, the following code alvl = ‘user’ if alvl != ‘none+RLO+LRI’: #Check if admin+PDI+LRI’ and alvl!= ‘user’ print(‘You are an admin.’) will be displayed to the human reader in some editors as:<br />
+alvl = ‘user’ if alvl != ‘none’ and alvl!= ‘user’ #Check if admin print(‘You are an admin.’) but execute as: alvl = ‘user’ if alvl != ‘none’: #Check if admin’ and alvl!= ‘user’<br />
+print(‘You are an admin.’) as the second condition shown in the visual representation is really part of the comment in the actual code. Some languages restrict the use of direction-changing control characters to comments or strings. Nevertheless, malicious use can make part of a string or comment appear to be part executable code, or vice versa as shown above and also below using RLI in a string. ’‘’Subtract funds from account then RLI’’’ ; return ’‘’LRI’’’ This line can display as, depending on the text editor used; ’‘’Subtract funds from bank account then return;’’’ but executes as ; return A similar situation arises from the use of the carriage return <CR> and line feed <LF> characters, depending upon the environment where the code is executed. Example Blow_Up(); <CR> BeReallyNice() The lack of a <LF> can cause the code (e.g in UNIX-based systems) to be displayed as BeReallyNice() while the code executes as Blow_Up(); BeReallyNice() because some environments will overwrite the displayed line if the <LF> is not included with the <CR>. 6.66.2 Related coding guidelines 6.66.3 Mechanism of failure The examples in 6.66.1 show how readers of code can be misled about the actual code that will be executed once the code is compiled or interpreted. Seemingly executed code can be effectively added or subtracted in the visual display of the program. Thus these Unicode characters are a simple means to cause the execution of malicious code.<br />
+Additionally, the end-of-line issue can be a source of unintentional errors and a difficult search for the origin of unexpected program behaviour, when executed code is accidentally not shown in the displayed source code. 6.66.4 Applicable language characteristics This vulnerability description is intended to be applicable to languages with the following characteristics: - Languages that permit non-printing Unicode control characters causing differences between displayed code and executed code as part of program code, string literals or comments. - Languages that permit arbitrary sequences of <CR> and <LF> characters.<br />
+6.66.5 Avoiding the vulnerability or mitigating its effect To avoid the vulnerability or mitigate its ill effects, software developers can: • Carefully manage and thoroughly review the use of any characters that can in any way hide the functionality and representation of program code. • Avoid reliance on simple visual inspection of code; instead use tools to reveal dangerous control characters. • Always use static analysis tools that identify all occurrences of non-printing and hidden characters within a program. • Use tools to confirm that program code conforms to the end-of-line convention of the environment in which code is edited and compiled. • Use only editors that are capable of revealing the hidden Unicode (zero-space) control characters and ensure that the appropriate editor setting is enabled. • Avoid copying code from untrusted sources unless the code is thoroughly checked as described above.</p>
+</body>
+</html>
