@@ -216,13 +216,14 @@
 </header>
 <h2 id="NYY">6.48 Dynamically-linked Code and Self-modifying Code [NYY]</h2>
 <h3 id="applicability-to-language">6.48.1 Applicability to language</h3>
-<p>Most loaders allow dynamically linked libraries also known as shared libraries. Code is designed and tested using a suite of shared libraries which are loaded at execution time. The process of linking and loading is outside the scope of the C++ standard.</p>
-<p>C++ prevents data pointers to be reinterpreted as function pointers and vice versa. Reinterpreting a pointer via a void pointer or <code class="sourceCode cpp"><span class="bu">std::</span>intptr_t</code> to a pointer of different type is undefined behaviour <a href="#EWF">[EWF]</a> (with very few defined exceptions of data pointers to pointer to its raw bytes).</p>
+<p>The vulnerability described in ISO/IEC 24772-1:2024 applies to C++. As for the C programming language, the process of linking and loading is outside the scope of the C++ standard.</p>
+<p>In C++, the conversion of a function pointer to another type (to misdirect a pointer, for example) requires the use of a C-style cast or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. Such casts can result in unspecified behaviour, undefined behaviour or implementation-defined behaviour.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.48.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.48.5.</p></li>
-<li><p>Rely on compiler warnings and reports from analysis tools to prevent reinterpreting a data pointer as function pointer or vice versa.</p></li>
+<li>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.48.5 and ISO/IEC 24772-3 clause 6.48.2.</li>
+<li>Follow the avoidance mechanisms of 6.11.2 Pointer type conversions [HFC].</li>
+<li>Document and carefully review all uses of <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> or C-style casts.</li>
 </ul>
 </body>
 </html>
