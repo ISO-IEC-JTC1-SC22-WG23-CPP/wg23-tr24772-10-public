@@ -2969,7 +2969,8 @@ auto y = Short{4} + Short{2};</code></pre>
 <h2 id="BLP">6.42 Violations of the Liskov Substitution Principle or the Contract Model [BLP]</h2>
 <h3 id="applicability-to-language">6.42.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.42 applies to C++. C++ leaves verification of the correctness of an overridden call to the programmer.</p>
-<p>The vulnerability can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning. An example is provided below.</p>
+<p>The vulnerability can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning.</p>
+<p>An example is provided below.</p>
 <div class="sourceCode" id="cb184"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Base  {</span>
 <span id="cb184-2"><a href="#cb184-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span>:</span>
 <span id="cb184-3"><a href="#cb184-3" aria-hidden="true" tabindex="-1"></a>     <span class="kw">virtual</span> <span class="dt">int</span> function_to_override( <span class="dt">int</span> x ) = <span class="dv">0</span>;</span>
@@ -2985,15 +2986,13 @@ auto y = Short{4} + Short{2};</code></pre>
 <span id="cb184-13"><a href="#cb184-13" aria-hidden="true" tabindex="-1"></a>         }</span>
 <span id="cb184-14"><a href="#cb184-14" aria-hidden="true" tabindex="-1"></a>     <span class="co">// ...      </span></span>
 <span id="cb184-15"><a href="#cb184-15" aria-hidden="true" tabindex="-1"></a> };</span></code></pre></div>
+<p>A future version of the C++ standard is expected to contain “contracts”, which formalize the notion of preconditions, postconditions and contract assertions.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.42.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Obey all preconditions and postconditions of each member function, whether they are specified in the language or not.</p></li>
-<li><p>Prohibit the strengthening of preconditions (specified or not) by overriding member functions.</p></li>
-<li><p>Prohibit the weakening of postconditions (specified or not) by overriding member functions.</p></li>
-<li><p>Prohibit the use of public inheritance for “has-a” relationships. Use composition for “has-a”-relationships instead.</p></li>
-<li><p>Use static analysis tools that identify misuse of inheritance in the contract model.</p></li>
-<li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes, and if this cannot be ensured, make the base class private, or avoid inheritance.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 6.42.5</p></li>
+<li><p>Use static analysis tools that identify violations of preconditions and postconditions.</p></li>
+<li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes.</p></li>
 </ul>
 <blockquote>
 <p>See also C++ Core Guidelines C.120, C.121, C.122, C.126, C.127, and C.129 through C.133.</p>
