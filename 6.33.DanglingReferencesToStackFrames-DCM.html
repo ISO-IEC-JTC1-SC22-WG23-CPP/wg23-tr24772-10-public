@@ -311,6 +311,7 @@ for(auto range = make().front(); char c : range){ // mitigation, create a variab
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
 <p>Similarly, in the following example the vulnerability exists in the conversion <code class="sourceCode cpp"><span class="kw">operator</span> string_view()</code> of <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, that returns a <em>pointer-like</em> type from a member function callable on a temporary object.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad_var(<span class="st">&quot;a string&quot;</span><span class="bu">s</span>); <span class="co">// dangling view on temporary string object</span></span></code></pre></div>
+<p>A C++-specific way of causing dangling_references to the stack is by means of the <code class="sourceCode cpp">placement_new</code> construct (see clause 7.4).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.33.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
