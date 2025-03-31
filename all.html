@@ -3561,7 +3561,7 @@ Historically, classes with expensive computations in frequently-called const-mem
 <p>If exit is called, during object destruction with static or thread storage duration, program has undefined behaviour <a href="#EWF">[EWF]</a>.</p>
 <p>If the destruction of an object with static or thread storage duration exits via an exception, the function std::terminate is called (14.6.2).</p>
 <p>From the C++ manual: Calling the function std::abort() declared in <cstdlib> terminates the program without executing any destructors and without calling the functions passed to std::atexit() or std::at_quick_exit().</p>
-<p>And Exceptions thrown in destructors of objects with static storage duration or in constructors of objects associated with non-block variables with static storage duration are not caught by a function-try-block on the main function. Exceptions thrown in destructors of objects with thread storage duration or in constructors of objects associated with non-block variables with thread storage duration are not caught by a function-try-block on the initial function of the thread.</p>
+<p>Exceptions thrown in destructors of objects with static storage duration or in constructors of objects associated with non-block variables with static storage duration are not caught by a function-try-block on the main function. Exceptions thrown in destructors of objects with thread storage duration or in constructors of objects associated with non-block variables with thread storage duration are not caught by a function-try-block on the initial function of the thread.</p>
 <h3 id="cross-reference">7.2.2 Cross Reference</h3>
 <p>(MISRA, etc references?)</p>
 <h3 id="mechanism-of-failure">7.2.3 Mechanism of Failure</h3>
@@ -3580,44 +3580,35 @@ Historically, classes with expensive computations in frequently-called const-mem
 <h3 id="description-of-vulnerability-1">7.4.1 Description of Vulnerability</h3>
 <p>The C++ object lifetime model allows the creation of an object in existing memory using non-allocating <em>placement new</em>. The programmer is responsible for:</p>
 <ul>
-<li>Ensuring that any object previously occupying the space referenced in the <code>placement new</code> call is properly destroyed before the call;</li>
 <li>Ensuring the space requirement of memory for the object;</li>
-<li>Initialization of the object before use of the object; and</li>
-<li>Ensuring the destruction of the new object after use and the return of any space allocated after use.</li>
+<li>Ensuring that any object previously occupying the space referenced in the <code>placement new</code> call is properly destroyed before the call;</li>
+<li>Ensuring the destruction of the new object after use and the return of any space allocated after use;</li>
+<li>Ensuring that no object is accessed outside of its lifetime; and</li>
+<li>Ensuring that the storage used by placement <code class="sourceCode cpp"><span class="kw">new</span></code> is appropriately destroyed after use.</li>
 </ul>
-<p>Failure to destroy the object explicitly means that its destructor is not called which can result in memory leaks for resources managed by that object.</p>
 <h3 id="cross-reference-1">7.4.2 Cross Reference</h3>
 <h3 id="mechanism-of-failure-1">7.4.3 Mechanism of Failure</h3>
-<p>If <code class="sourceCode cpp">placement <span class="kw">new</span></code> is used to create a single element (such as an int)</p>
-<p>A potential exists that the space being used does not match the physical layout or alignment and adjacent occupied memory can be overwritten.</p>
-<p>If an existing object with a non-trivial destructor is at the location being used for the “placement” argument of <em>placement new</em>, then its lifetime will not be automatically ended, which can result in undefined behaviour, such as the loss of locks, or files left open and becoming inaccessible.</p>
-<p>Similarly, the creation of a new object with a non-trivial destrucor, <em>placement new</em> is not responsible for calling the destructor when the object goes out of scope, which can similarly result in undefined behaviours.</p>
-<p>The lifetime of an object whose storage is reused by a call to placement new has its lifetime ended and therefore should not be used to access the object after the <em>placement new</em> call; however, the pointed-to object returned by <em>placement new</em> is valid.</p>
-<div class="sourceCode" id="cb203"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Incorrect usage</span></span>
+<p>A potential exists that the storage is insufficient for the size or alignment of the object being created can result in undefined behaviour such as buffer overflow <a href="#HCB">[HCB]</a>.</p>
+<p>If an existing object with a non-trivial destructor is at the location being used for the “placement” argument of placement ‘new’{.cpp}, then although its lifetime is ended, its destructor is not called automatically. This can result in undefined behaviour, if for example mutexes remain locked or files are left open. For the same reason, the lifetime of the newly-created object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> requires that its lifetime be managed manually.</p>
+<p>The lifetime of an object whose storage is reused by a call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> is ended by that call. Therefore access to the object after the placement <code class="sourceCode cpp"><span class="kw">new</span></code> call results in <em>undefined behaviour</em>. The pointed-to object returned by placement <code>new</code> is valid.</p>
+<div class="sourceCode" id="cb203"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Incorrect usage!!</span></span>
 <span id="cb203-2"><a href="#cb203-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X { <span class="dt">int</span> n; };</span>
-<span id="cb203-3"><a href="#cb203-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> X *p = <span class="kw">new</span> <span class="at">const</span> X{<span class="dv">3</span>};</span>
-<span id="cb203-4"><a href="#cb203-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">int</span> a = p-&gt;n;</span>
-<span id="cb203-5"><a href="#cb203-5" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> (<span class="kw">const_cast</span>&lt;X*&gt;(p)) <span class="at">const</span> X{<span class="dv">5</span>}; <span class="co">// p doesn&#39;t point to new object because its type is const</span></span>
-<span id="cb203-6"><a href="#cb203-6" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">int</span> b = p-&gt;n++;    <span class="co">// undefined behavior</span></span>
-<span id="cb203-7"><a href="#cb203-7" aria-hidden="true" tabindex="-1"></a>                        <span class="co">//</span></span>
-<span id="cb203-8"><a href="#cb203-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb203-9"><a href="#cb203-9" aria-hidden="true" tabindex="-1"></a><span class="co">// </span><span class="al">TBD</span><span class="co"> - also see if there is a 6.X about aliasing that we can reference</span></span></code></pre></div>
-<pre><code>// Correct usage
-struct X { int n; };
-X *p = new const X{3};
-X *q = new (const_cast&lt;X*&gt;(p)) const X{5}; // q points to new object</code></pre>
-<pre><code>// Dangerous usage
-struct X { int n; };
-struct Y { int n; };
-const X *q = new (const_cast&lt;X*&gt;(p)) const X{5};
-    // Any access through  and </code></pre>
-<p>A call to placement new without a new-initializer for types with trivial constructors, can result in parts of the object having indeterminate values (likely the values related to the underlying storage).<br />
-This can lead to <a href="#AMV">6.37 Type-breaking Reinterpretation of Data [AMV]</a></p>
-<p>Allocating an object with <em>placement new</em> using trivial data (such as an int or array of a primitive type) can … or</p>
+<span id="cb203-3"><a href="#cb203-3" aria-hidden="true" tabindex="-1"></a>X *p = <span class="kw">new</span> X{<span class="dv">3</span>};</span>
+<span id="cb203-4"><a href="#cb203-4" aria-hidden="true" tabindex="-1"></a> ... <span class="co">// Uses of p</span></span>
+<span id="cb203-5"><a href="#cb203-5" aria-hidden="true" tabindex="-1"></a>X *q = <span class="kw">new</span> (p) X{<span class="dv">5</span>}; <span class="co">// Lifetime of *p ends.</span></span>
+<span id="cb203-6"><a href="#cb203-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = q-&gt;n++;    <span class="co">// OK</span></span>
+<span id="cb203-7"><a href="#cb203-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> b = p-&gt;n++;    <span class="co">// Undefined Behavior, lifetime of *p is ended.</span></span></code></pre></div>
+<ul>
+<li><code class="sourceCode cpp"><span class="kw">delete</span></code> is not called on the object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code>. LEFT HERE!</li>
+</ul>
+<p>A call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> without a new-initializer for types with trivial constructors, can result in parts of the object having indeterminate values (likely the values related to the underlying storage).<br />
+This can lead to [6.37] Type-breaking Reinterpretation of Data [AMV]](#AMV)</p>
+<p>Allocating an object with placement <code class="sourceCode cpp"><span class="kw">new</span></code> using trivial data (such as an int or array of a primitive type) can … or</p>
 <p>X * q = new (const_cast&lt;X*&gt;(p)) X; end or const int c = q-&gt;n; // OK ```</p>
 <h3 id="avoiding-the-vulnerability-or-mitigating-its-effects-1">7.4.4 Avoiding the vulnerability or mitigating its effects</h3>
 <p>Avoid the use of <em>placement new</em> and where needed,</p>
 <p>Avoid the use of reinterpret_cast</p>
+<p>Ensure that memory is correctly aligned for the new constructs</p>
 <!-- -->
 <h1 id="implications-for-standardization">8. Implications for standardization</h1>
 <p>Future standardization efforts should consider:</p>
