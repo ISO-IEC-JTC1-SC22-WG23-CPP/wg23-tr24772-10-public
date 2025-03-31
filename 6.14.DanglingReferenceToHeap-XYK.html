@@ -242,6 +242,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>vector v{<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>};</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v),back_inserter(v)); <span class="co">// modifying v while iterating is undefined behaviour</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v), <span class="bu">std::</span>ostream_iterator&lt;<span class="dt">int</span>&gt;(<span class="bu">std::</span>cout,<span class="st">&quot;, &quot;</span>));</span></code></pre></div>
+<p>A C++-specific way of causing dangling_references to the heap is by means of the <code class="sourceCode cpp">placement_new</code> construct (see clause 7.4).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
