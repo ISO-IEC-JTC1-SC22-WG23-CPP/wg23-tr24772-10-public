@@ -3586,25 +3586,19 @@ Historically, classes with expensive computations in frequently-called const-mem
 <li>Ensuring that no object is accessed outside of its lifetime; and</li>
 <li>Ensuring that the storage used by placement <code class="sourceCode cpp"><span class="kw">new</span></code> is appropriately destroyed after use.</li>
 </ul>
+<p>In addition, it is possible to use <em>placement new</em> to effect type-breaking reinterpretation of data <a href="#AMV">[AMV]</a>.</p>
 <h3 id="cross-reference-1">7.4.2 Cross Reference</h3>
 <h3 id="mechanism-of-failure-1">7.4.3 Mechanism of Failure</h3>
-<p>A potential exists that the storage is insufficient for the size or alignment of the object being created can result in undefined behaviour such as buffer overflow <a href="#HCB">[HCB]</a>.</p>
-<p>If an existing object with a non-trivial destructor is at the location being used for the “placement” argument of placement ‘new’{.cpp}, then although its lifetime is ended, its destructor is not called automatically. This can result in undefined behaviour, if for example mutexes remain locked or files are left open. For the same reason, the lifetime of the newly-created object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> requires that its lifetime be managed manually.</p>
-<p>The lifetime of an object whose storage is reused by a call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> is ended by that call. Therefore access to the object after the placement <code class="sourceCode cpp"><span class="kw">new</span></code> call results in <em>undefined behaviour</em>. The pointed-to object returned by placement <code>new</code> is valid.</p>
-<div class="sourceCode" id="cb203"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Incorrect usage!!</span></span>
-<span id="cb203-2"><a href="#cb203-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> X { <span class="dt">int</span> n; };</span>
-<span id="cb203-3"><a href="#cb203-3" aria-hidden="true" tabindex="-1"></a>X *p = <span class="kw">new</span> X{<span class="dv">3</span>};</span>
-<span id="cb203-4"><a href="#cb203-4" aria-hidden="true" tabindex="-1"></a> ... <span class="co">// Uses of p</span></span>
-<span id="cb203-5"><a href="#cb203-5" aria-hidden="true" tabindex="-1"></a>X *q = <span class="kw">new</span> (p) X{<span class="dv">5</span>}; <span class="co">// Lifetime of *p ends.</span></span>
-<span id="cb203-6"><a href="#cb203-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = q-&gt;n++;    <span class="co">// OK</span></span>
-<span id="cb203-7"><a href="#cb203-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> b = p-&gt;n++;    <span class="co">// Undefined Behavior, lifetime of *p is ended.</span></span></code></pre></div>
-<ul>
-<li><code class="sourceCode cpp"><span class="kw">delete</span></code> is not called on the object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code>. LEFT HERE!</li>
-</ul>
+<p>If storage is insufficient for the size or alignment of the object being created, then undefined behaviour such as buffer overflow <a href="#HCB">[HCB]</a> can result.</p>
+<p>The lifetime of an object whose storage is reused by a call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> is ended by that call, and attempts to access to that object can result in <em>undefined behaviour</em>, even though there are a subset of cases where such behaviour is well-defined. References to the pointed-to object returned by placement <code>new</code> are always valid.</p>
+<p>The lifetime of the object whose storage is being replaced is ended, however its destructor is not called implicitly. This can result in <em>undefined behaviour</em>, if for example mutexes remain locked or files are left open. Similarly, the lifetime of the newly-created object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> requires that its lifetime be managed manually.</p>
+<p>A <em>delete-expression</em> ends the lifetime of an object by calling the destructor(s), and deallocates the storage. Since <em>placement new</em> is a non-allocating form of <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code>, any attempt to delete the object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> (questionable! - discuss) results in undefined behaviour.</p>
+<p>If the use of <em>placement new</em> results in an overlap with other objects’ storage, then the same issues apply.</p>
 <p>A call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> without a new-initializer for types with trivial constructors, can result in parts of the object having indeterminate values (likely the values related to the underlying storage).<br />
 This can lead to [6.37] Type-breaking Reinterpretation of Data [AMV]](#AMV)</p>
-<p>Allocating an object with placement <code class="sourceCode cpp"><span class="kw">new</span></code> using trivial data (such as an int or array of a primitive type) can … or</p>
-<p>X * q = new (const_cast&lt;X*&gt;(p)) X; end or const int c = q-&gt;n; // OK ```</p>
+<p>STOPPED HERE.</p>
+<p><code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> is a standard library alternatives for <em>placement-new</em> that initialize the object, including arrays and constant expressions. Similarly <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at</code> supports calling the destructor for both scalars and arrays.</p>
+<p>and</p>
 <h3 id="avoiding-the-vulnerability-or-mitigating-its-effects-1">7.4.4 Avoiding the vulnerability or mitigating its effects</h3>
 <p>Avoid the use of <em>placement new</em> and where needed,</p>
 <p>Avoid the use of reinterpret_cast</p>
