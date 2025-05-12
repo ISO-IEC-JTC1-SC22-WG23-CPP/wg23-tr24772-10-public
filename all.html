@@ -3603,31 +3603,27 @@ Historically, classes with expensive computations in frequently-called const-mem
 <p>http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1412r0.pdf</p>
 <h2 id="placement-new-issues">7.4 Placement new issues</h2>
 <h3 id="description-of-vulnerability-1">7.4.1 Description of Vulnerability</h3>
-<p>The C++ object lifetime model allows the creation of an object in existing memory using non-allocating <em>placement new</em>. The programmer is responsible for:</p>
+<p>The C++ object lifetime model allows the creation of an object in existing memory using the (non-allocating) placement new expression. When using this construct the programmer is responsible for ensuring:</p>
 <ul>
-<li>Ensuring the space requirement of memory for the object;</li>
-<li>Ensuring that any object previously occupying the space referenced in the <code>placement new</code> call is properly destroyed before the call;</li>
-<li>Ensuring the destruction of the new object after use and the return of any space allocated after use;</li>
-<li>Ensuring that no object is accessed outside of its lifetime; and</li>
-<li>Ensuring that the storage used by placement <code class="sourceCode cpp"><span class="kw">new</span></code> is appropriately destroyed after use.</li>
+<li>the space requirement of memory for the object;</li>
+<li>that any object previously occupying the space referenced in the placement new expression is properly destroyed before the call;</li>
+<li>the destruction of the new object after use and the return of any space allocated after use;</li>
+<li>that no object is accessed outside of its lifetime; and</li>
+<li>that the storage used by the placement new expression is appropriately destroyed after use.</li>
 </ul>
-<p>In addition, it is possible to use <em>placement new</em> to effect type-breaking reinterpretation of data <a href="#AMV">[AMV]</a>.</p>
+<p>In addition, it is possible to use a placement new expression to effect type-breaking reinterpretation of data (See [6.11] Pointer type conversion <a href="#HFC">[HFC]</a>).</p>
 <h3 id="cross-reference-1">7.4.2 Cross Reference</h3>
 <h3 id="mechanism-of-failure-1">7.4.3 Mechanism of Failure</h3>
 <p>If storage is insufficient for the size or alignment of the object being created, then undefined behaviour such as buffer overflow <a href="#HCB">[HCB]</a> can result.</p>
-<p>The lifetime of an object whose storage is reused by a call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> is ended by that call, and attempts to access to that object can result in <em>undefined behaviour</em>, even though there are a subset of cases where such behaviour is well-defined. References to the pointed-to object returned by placement <code>new</code> are always valid.</p>
-<p>The lifetime of the object whose storage is being replaced is ended, however its destructor is not called implicitly. This can result in <em>undefined behaviour</em>, if for example mutexes remain locked or files are left open. Similarly, the lifetime of the newly-created object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> requires that its lifetime be managed manually.</p>
-<p>A <em>delete-expression</em> ends the lifetime of an object by calling the destructor(s), and deallocates the storage. Since <em>placement new</em> is a non-allocating form of <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code>, any attempt to delete the object created by <em>placement new</em>. (questionable! - discuss) results in undefined behaviour.</p>
-<p>If the use of <em>placement new</em> results in an overlap with other objects’ storage, then the same issues apply.</p>
-<p>A call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> without a new-initializer for types with trivial constructors, can result in parts of the object having indeterminate values (likely the values related to the underlying storage).<br />
-This can lead to [6.37] Type-breaking Reinterpretation of Data [AMV]](#AMV)</p>
-<p>STOPPED HERE. WHAT ABOUT REINTERPRET_CAST? IT IS RECOMMENDED BELOW</p>
-<p><code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> is a standard library alternative for <em>placement-new</em> that initializes the object, including arrays and constant expressions. Similarly <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at</code> supports calling the destructor for both scalars and arrays.</p>
-<p>and</p>
+<p>The lifetime of an object whose storage is reused in a placement new expression is ended, and attempts to access to that object can result in <em>undefined behaviour</em>, even though there are a subset of cases where such behaviour is well-defined.</p>
+<p>The lifetime of the object whose storage is being replaced is ended, however its destructor is not called implicitly. This can result in <em>undefined behaviour</em>, if for example mutexes remain locked or files are left open. Similarly, the lifetime of the newly-created object created by a placement new expression generally requires that its lifetime be managed manually.</p>
+<p>A <em>delete-expression</em> ends the lifetime of an object by calling the destructor(s), and deallocates the storage. Since a placement new expression calls a non-allocating form of <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code>, any attempt to delete the object created by the placement new expression by a delete expression generally results in undefined behaviour.</p>
+<p>If the use of a placement new expression results in an overlap with other objects’ storage, then the same issues apply.</p>
+<p>A placement new expression without a new-initializer for types with trivial constructors, can result in parts of the object having indeterminate values (likely the values related to the underlying storage).<br />
+This can lead to pointer type reinterpretation issues (see [6.11] Pointer type conversion <a href="#HFC">[HFC]</a>).</p>
+<p>The standard library provides <code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> as an alternative for a placement new expression. The vulnerabilities described above for placement new expressions also apply to <code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code>.</p>
 <h3 id="avoiding-the-vulnerability-or-mitigating-its-effects-1">7.4.4 Avoiding the vulnerability or mitigating its effects</h3>
-<p>Avoid the use of <em>placement new</em> and where needed, use <code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> SM – Added above. Please check!</p>
-<p>Avoid the use of reinterpret_cast</p>
-<p>Ensure that memory is correctly aligned for the new constructs</p>
+<p>Apply extreme scrutiny to code that uses placement new expressions or <code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code>.</p>
 <!-- -->
 <h1 id="implications-for-standardization">8. Implications for standardization</h1>
 <p>Future standardization efforts should consider:</p>
