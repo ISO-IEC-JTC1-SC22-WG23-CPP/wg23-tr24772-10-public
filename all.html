@@ -3601,7 +3601,7 @@ Historically, classes with expensive computations in frequently-called const-mem
 </ul>
 <h2 id="copymove-semantics-from-classes.-peter-sommerlads-paper-at">7.3 Copy/move semantics from Classes. (Peter Sommerlad’s paper at</h2>
 <p>http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1412r0.pdf</p>
-<h2 id="placement-new-issues">7.4 Placement-new issues</h2>
+<h2 id="placement-new-issues">7.4 Placement new issues</h2>
 <h3 id="description-of-vulnerability-1">7.4.1 Description of Vulnerability</h3>
 <p>The C++ object lifetime model allows the creation of an object in existing memory using non-allocating <em>placement new</em>. The programmer is responsible for:</p>
 <ul>
@@ -3617,15 +3617,15 @@ Historically, classes with expensive computations in frequently-called const-mem
 <p>If storage is insufficient for the size or alignment of the object being created, then undefined behaviour such as buffer overflow <a href="#HCB">[HCB]</a> can result.</p>
 <p>The lifetime of an object whose storage is reused by a call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> is ended by that call, and attempts to access to that object can result in <em>undefined behaviour</em>, even though there are a subset of cases where such behaviour is well-defined. References to the pointed-to object returned by placement <code>new</code> are always valid.</p>
 <p>The lifetime of the object whose storage is being replaced is ended, however its destructor is not called implicitly. This can result in <em>undefined behaviour</em>, if for example mutexes remain locked or files are left open. Similarly, the lifetime of the newly-created object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> requires that its lifetime be managed manually.</p>
-<p>A <em>delete-expression</em> ends the lifetime of an object by calling the destructor(s), and deallocates the storage. Since <em>placement new</em> is a non-allocating form of <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code>, any attempt to delete the object created by placement <code class="sourceCode cpp"><span class="kw">new</span></code> (questionable! - discuss) results in undefined behaviour.</p>
+<p>A <em>delete-expression</em> ends the lifetime of an object by calling the destructor(s), and deallocates the storage. Since <em>placement new</em> is a non-allocating form of <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code>, any attempt to delete the object created by <em>placement new</em>. (questionable! - discuss) results in undefined behaviour.</p>
 <p>If the use of <em>placement new</em> results in an overlap with other objects’ storage, then the same issues apply.</p>
 <p>A call to placement <code class="sourceCode cpp"><span class="kw">new</span></code> without a new-initializer for types with trivial constructors, can result in parts of the object having indeterminate values (likely the values related to the underlying storage).<br />
 This can lead to [6.37] Type-breaking Reinterpretation of Data [AMV]](#AMV)</p>
-<p>STOPPED HERE.</p>
-<p><code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> is a standard library alternatives for <em>placement-new</em> that initialize the object, including arrays and constant expressions. Similarly <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at</code> supports calling the destructor for both scalars and arrays.</p>
+<p>STOPPED HERE. WHAT ABOUT REINTERPRET_CAST? IT IS RECOMMENDED BELOW</p>
+<p><code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> is a standard library alternative for <em>placement-new</em> that initializes the object, including arrays and constant expressions. Similarly <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at</code> supports calling the destructor for both scalars and arrays.</p>
 <p>and</p>
 <h3 id="avoiding-the-vulnerability-or-mitigating-its-effects-1">7.4.4 Avoiding the vulnerability or mitigating its effects</h3>
-<p>Avoid the use of <em>placement new</em> and where needed,</p>
+<p>Avoid the use of <em>placement new</em> and where needed, use <code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code> SM – Added above. Please check!</p>
 <p>Avoid the use of reinterpret_cast</p>
 <p>Ensure that memory is correctly aligned for the new constructs</p>
 <!-- -->
