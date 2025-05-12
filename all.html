@@ -2581,13 +2581,14 @@ If required, provide an rvalue-ref-qualified overload that either returns a copy
 </ul>
 <h2 id="OTR">6.34 Subprogram Signature Mismatch [OTR]</h2>
 <h3 id="applicability-to-language">6.34.1 Applicability to language</h3>
-<p>In general, there must be a match between the number of parameters in a function call and the number of arguments in the function definition. For issues related to macro signatures, see subclause <a href="NMP">Pre-processor directives[NMP]</a>.</p>
+<p>The vulnerabilities documented in ISO IEC 24772-1 6.34 is applicable to C++ as described below.</p>
+<p>In general in C++, there must be a match between the number of parameters in a function call and the number of arguments in the function definition. For issues related to macro signatures, see subclause <a href="NMP">Pre-processor directives[NMP]</a>.</p>
 <p>The number of arguments can be different to the number of parameters in a function where: - a function template includes a <em>function parameter pack</em>, or - a function parameter includes a default argument, or - a function parameter-declaration-clause ends with an ellipsis, <code>f(\...)</code>.</p>
 <p>Calling a function template with a <em>function parameter pack</em> results in a specialization of the function with the parameter types matching the corresponding argument types.</p>
 <p>The compiler will ensure for variadic templates that the type and number of arguments is correct.</p>
 <p>A call to a function with default arguments can provide fewer arguments than parameters as long as the parameters for which no explicit argument is provided include a default argument.</p>
-<p>Where a function parameter-declaration-clause ends with an ellipsis, additional arguments can be accessed through the mechanisms provided by <code>&lt;cstdarg&gt;</code>. No information about the number or types of the parameters is supplied by the compiler. The use of this feature outside of special situations can be the basis for vulnerabilities.</p>
-<p>Undefined behavior <a href="#EWF">[EWF]</a> can arise, for example:</p>
+<p>Where a function parameter-declaration-clause ends with an ellipsis, additional arguments can be accessed through the mechanisms provided by <code>&lt;cstdarg&gt;</code>.<br />
+No information about the number or types of the parameters is supplied by the compiler. The use of this feature outside of special situations can be the basis for vulnerabilities. and undefined behavior <a href="#EWF">[EWF]</a> can arise, for example:</p>
 <ul>
 <li>Arguments with integral or enumeration type that are passed to an ellipsis parameter will undergo integral promotions, and so the type of the parameter is <code>int</code> and not <code>short</code>. The use of <code>short</code> with <code>va_arg</code> is therefore invalid.</li>
 </ul>
