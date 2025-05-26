@@ -1484,16 +1484,16 @@ If such is meaningful, then <code class="sourceCode cpp"><span class="bu">std::<
 <h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
 <h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC TR 24772-1:2022 6.9 exists in C++ when an access is performed using <code>operator[]</code>.</p>
-<p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code>operator[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like `operator[], but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
+<p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code>operator[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code>operator[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
 <p>For issues associated with exception handling and error handling, see clause <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
-<p>The parameter type for contiguous sequences <code>std::span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API. With the introduction of the <code class="sourceCode cpp">at()</code> function in C++ 26, a checked version of indexing is available.</p>
+<p>The parameter type for contiguous sequences <code>std::span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API. With the introduction of the <code>at()</code> function in C++ 26, a checked version of indexing is available.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.9.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.9.5.</p></li>
 <li><p>Follow the advice from clause <a href="#HCB">6.8.2</a>.</p></li>
-<li><p>Implement your own indexable containers with an overload of <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> that actually does a bounds check.</p></li>
-<li><p>Prefer the <code class="sourceCode cpp">at()</code> member function of the standard library containers over <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> and handle the bounds violation exceptions.</p></li>
+<li><p>Implement your own indexable containers with an overload of <code>operator[]</code> that actually does a bounds check.</p></li>
+<li><p>Prefer the <code>at()</code> member function of the standard library containers over <code>operator[]</code> and handle the bounds violation exceptions.</p></li>
 <li><p>If indexing cannot be avoided, use static analysis or explicit checks to establish that bounds violations do not occur.</p></li>
 </ul>
 <h2 id="XYW">6.10 Unchecked Array Copying [XYW]</h2>
