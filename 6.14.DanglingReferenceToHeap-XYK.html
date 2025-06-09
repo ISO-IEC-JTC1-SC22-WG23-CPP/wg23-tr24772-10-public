@@ -227,7 +227,7 @@
 <li><code class="sourceCode cpp"><span class="bu">std::</span>string_view</code></li>
 <li><code class="sourceCode cpp"><span class="bu">std::</span>span</code></li>
 </ul></li>
-<li><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code></li>
+<li><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code>.</li>
 </ul>
 <p>In addition, a user-defined class type can be a <em>pointer-like</em> type, if a subobject is of <em>pointer-like</em> type and refers to an object (<em>target</em>) whose lifetime is different from and not managed by the current object. Sometimes, regular object types act as <em>pointer-like</em> types, e.g., indices into a container or operating system handles, and their validity can not be directly mapped to the C++ object lifetime model.</p>
 <p>If the lifetime of a <em>pointer-like</em> value ends before the lifetime of its <em>target</em>, then the vulnerability does not apply to that <em>pointer-like</em> value. This is the primary C++ strategy for avoiding vulnerabilities of dangling <em>pointer-like</em> values. For example, an object argument passed as a function parameter of reference type persists throughout the function call. The lifetime guarantee of a function argument passed indirectly via a <em>pointer-like</em> type does not apply if * the target is destroyed explicitly by the called function (taking ownership of the target) or a concurrently executing operation, or if * copies of the <em>pointer-like</em> parameter outlive the function call, for example, as the return value, or in a coroutine or thread frame.</p>
@@ -242,7 +242,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>vector v{<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>};</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v),back_inserter(v)); <span class="co">// modifying v while iterating is undefined behaviour</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v), <span class="bu">std::</span>ostream_iterator&lt;<span class="dt">int</span>&gt;(<span class="bu">std::</span>cout,<span class="st">&quot;, &quot;</span>));</span></code></pre></div>
-<p>A C++-specific way of causing dangling_references to the heap is by means of the <code class="sourceCode cpp">placement_new</code> construct (see clause 7.4).</p>
+<p>A C++-specific way of causing dangling_references to the heap is by means of a placement new expression (see 7.4 Placement new issues [XXX]).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
