@@ -1042,10 +1042,10 @@ use and possible exhaustion).</code></pre></li>
 <p>Overload resolution</p>
 <h2 id="object-lifetime">4.4 Object Lifetime</h2>
 <p>In principle, the lifetime of an object begins immediately after a constructor completes creating the object and ends immediately before a destructor is called. C++ distinguishes references from objects. A reference has a lifetime that begins immediately after it is initialized and ends when the scope containing it completes. If the lifetime of an object designated by a reference ends before the lifetime of the reference ends, the reference is dangling and further access to its referent is undefined behaviour.</p>
-<p>The lifetime of an object relates to its storage. There are four types of storage durations: static - includes global and static variables; lifetime guaranteed to be the execution duration of main() (or the equivalent for freestanding implementations) thread - variables have a lifetime of no longer than the lifetime of the containing thread automatic - scope of declaration defines lifetime dynamic - storage for objects is acquired from dynamic memory allocation and its lifetime is manually controlled.</p>
+<p>The lifetime of an object relates to its storage. There are four types of storage durations: - static - includes global and static variables; lifetime guaranteed to be the execution duration of main() (or the equivalent for freestanding implementations) - thread - variables have a lifetime of no longer than the lifetime of the containing thread - automatic - scope of declaration defines lifetime - dynamic - storage for objects is acquired from dynamic memory allocation and its lifetime is manually controlled.</p>
 <p>The lifetime of an object can be prematurely terminated by - calling its destructor - releasing or reusing its storage - reusing its storage in a placement new expression</p>
 <p>Accessing an object outside of its lifetime is undefined behaviour.</p>
-<p>Sharing a reference to an object can result in incorrect behaviours if an object is terminated using one reference and later accessed via another reference. A leak occurs when an object who’s lifetime has not ended but there are no more variables, pointers or references to that object.</p>
+<p>Sharing a reference to an object can result in incorrect behaviours if an object is terminated using one reference and later accessed via another reference. A memory leak occurs when an object who’s lifetime has not ended but there are no more variables, pointers or references to that object.</p>
 <p>TO Do: verify that this clause identifies issues raised in: 6.11.PointerTypeConversion-HFC.md 6.13.NULLPointerDereference-XYH.md 6.14.DanglingReferenceToHeap-XYK.md 6.22.InitializationOfVariables-LAV.md 6.33.DanglingReferencesToStackFrames-DCM.md 6.38.DeepVsShallowCopying-YAN.md 6.39.MemoryLeakAndHeapFragmentation-XYL.md 6.61.ConcurrentDataAccess-CGX.md 6.63.ProtocolLockErrors-CGM.md 6.65.ModifyingConstants-UJO.md</p>
 <h2 id="initialization">4.5 Initialization</h2>
 <p>C++ provides a number of ways that an object can be initialized - Value initialization, e.g. std::string s{}; - Direct initialization, e.g. std::string s(“hello”); - Copy initialization, e.g. std::string s = “hello”; - List initialization, e.g. std::string s{‘a’, ‘b’, ‘c’}; - Aggregate initialization, e.g. char a[3] = {‘a’, ‘b’}; - Reference initialization, e.g. char&amp; c = a[0]; - Zero initialization - Default initialization copy, move, default constructor</p>
@@ -1422,17 +1422,17 @@ If such is meaningful, then <code class="sourceCode cpp"><span class="bu">std::<
 </ul>
 <h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
 <h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2022 6.9 exists in C++ when an access is performed using <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
-<p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
+<p>The vulnerability as documented in ISO/IEC TR 24772-1:2022 6.9 exists in C++ when an access is performed using <code>operator[]</code>.</p>
+<p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code>operator[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code>operator[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
 <p>For issues associated with exception handling and error handling, see clause <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
-<p>The parameter type for contiguous sequences <code class="sourceCode cpp"><span class="bu">std::</span>span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API.</p>
+<p>The parameter type for contiguous sequences <code>std::span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API. With the introduction of the <code>at()</code> function in C++ 26, a checked version of indexing is available.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.9.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.9.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.9.5.</p></li>
 <li><p>Follow the advice from clause <a href="#HCB">6.8.2</a>.</p></li>
-<li><p>Implement your own indexable containers with an overload of <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> that actually does a bounds check.</p></li>
-<li><p>Prefer the <code class="sourceCode cpp">at()</code> member function of the standard library containers over <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> and handle the bounds violation exceptions.</p></li>
+<li><p>Implement your own indexable containers with an overload of <code>operator[]</code> that actually does a bounds check.</p></li>
+<li><p>Prefer the <code>at()</code> member function of the standard library containers over <code>operator[]</code> and handle the bounds violation exceptions.</p></li>
 <li><p>If indexing cannot be avoided, use static analysis or explicit checks to establish that bounds violations do not occur.</p></li>
 </ul>
 <h2 id="XYW">6.10 Unchecked Array Copying [XYW]</h2>
@@ -1533,7 +1533,7 @@ dereference null pointers" -->
 <li><code class="sourceCode cpp"><span class="bu">std::</span>string_view</code></li>
 <li><code class="sourceCode cpp"><span class="bu">std::</span>span</code></li>
 </ul></li>
-<li><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code></li>
+<li><code class="sourceCode cpp"><span class="bu">std::</span>reference_wrapper</code>.</li>
 </ul>
 <p>In addition, a user-defined class type can be a <em>pointer-like</em> type, if a subobject is of <em>pointer-like</em> type and refers to an object (<em>target</em>) whose lifetime is different from and not managed by the current object. Sometimes, regular object types act as <em>pointer-like</em> types, e.g., indices into a container or operating system handles, and their validity can not be directly mapped to the C++ object lifetime model.</p>
 <p>If the lifetime of a <em>pointer-like</em> value ends before the lifetime of its <em>target</em>, then the vulnerability does not apply to that <em>pointer-like</em> value. This is the primary C++ strategy for avoiding vulnerabilities of dangling <em>pointer-like</em> values. For example, an object argument passed as a function parameter of reference type persists throughout the function call. The lifetime guarantee of a function argument passed indirectly via a <em>pointer-like</em> type does not apply if * the target is destroyed explicitly by the called function (taking ownership of the target) or a concurrently executing operation, or if * copies of the <em>pointer-like</em> parameter outlive the function call, for example, as the return value, or in a coroutine or thread frame.</p>
@@ -1548,7 +1548,7 @@ dereference null pointers" -->
 <div class="sourceCode" id="cb105"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>vector v{<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>};</span>
 <span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v),back_inserter(v)); <span class="co">// modifying v while iterating is undefined behaviour</span></span>
 <span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>copy(begin(v),end(v), <span class="bu">std::</span>ostream_iterator&lt;<span class="dt">int</span>&gt;(<span class="bu">std::</span>cout,<span class="st">&quot;, &quot;</span>));</span></code></pre></div>
-<p>A C++-specific way of causing dangling_references to the heap is by means of the <code class="sourceCode cpp">placement_new</code> construct (see clause 7.4).</p>
+<p>A C++-specific way of causing dangling_references to the heap is by means of a placement new expression (see 7.4 Placement new issues [XXX]).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
@@ -2495,7 +2495,7 @@ for(auto range = make().front(); char c : range){ // mitigation, create a variab
 <span id="cb160-4"><a href="#cb160-4" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
 <p>Similarly, in the following example the vulnerability exists in the conversion <code class="sourceCode cpp"><span class="kw">operator</span> string_view()</code> of <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, that returns a <em>pointer-like</em> type from a member function callable on a temporary object.</p>
 <div class="sourceCode" id="cb161"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string_view bad_var(<span class="st">&quot;a string&quot;</span><span class="bu">s</span>); <span class="co">// dangling view on temporary string object</span></span></code></pre></div>
-<p>A C++-specific way of causing dangling_references to the stack is by means of the <code class="sourceCode cpp">placement_new</code> construct (see clause 7.4).</p>
+<p>A C++-specific way of causing dangling_references to the stack is by means of a placement new expression (see 7.4 Placement new issues [XXX]).</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.33.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
