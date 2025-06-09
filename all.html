@@ -2837,16 +2837,18 @@ auto y = Short{4} + Short{2};</code></pre>
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.41 is applicable to C++.</p>
-<p>Inheritance as a mechanism in C++ serves multiple purposes and is defined differently than in most other languages supporting inheritance.</p>
+<p>Inheritance as a mechanism in C++ is defined differently than in most other languages supporting inheritance, e.g.:</p>
+<p>(From 4.6 - consider where to place. C++ permits virtual private member functions to be overridden. (ensure this is addressed in 6.41) C++ permits pure virtual functions to have a definition outside the class that defined it, plus the ability to explicitly invoke it.)</p>
 <ul>
-<li>There is no implicit common base class.</li>
-<li>Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. Full qualification via the base class name is required to access these hidden members.</li>
-<li>A base class that declares virtual member functions defines inheritance in the classic object-oriented programming way. To employ the dynamic polymorphism in that case, requires the use of references or pointers to the base type. Such a base type needs to be public base class to obtain the ‘is-a’-relationship of the derived class. Multiple such bases complicate lookup and can yield ambiguities, causing code not to compile. Even private virtual member functions can be overridden in derived classes.</li>
-<li>C++ allows base classes that don’t have virtual member functions. That means, the derived class cannot change the behavior of the base, but still inherits all features. To prevent accidentally using a derived class object via a base class reference, such bases could be defined as protected or private. However, that has other side effects, such as losing the “aggregate” property of a type with only public members and bases otherwise.</li>
-<li>Inheriting from a non-polymorphic base class can be used to implement adaptor types, i.e., by limiting or extending the base’s functionality. Using private inheritance can be prevent treating the derived type object as a base type object. Inheriting constructors and using declarations ease re-promoting the scope of otherwise hidden members of the base.<br />
-</li>
-<li>Multiple inheritance adds additional dimension, because a class can inherit the same base class <code>A</code> indirectly via different direct base classes. Without any special preparation, this means the base class <code>A</code> object exists multiple times. Addressing members of <code>A</code> explicitly requires to specify the differentiating base class as a prefix, otherwise the code will be ambiguous. If all classes in such a multiple inheritance hierarchy that directly inherit from <code>A</code> use the keyword <code class="sourceCode cpp"><span class="kw">virtual</span></code> when inheriting from <code>A</code>, there will be only one object of type <code>A</code> in the most derived object. Inconsistently inheriting from <code>A</code> with and without <code>virtual</code> might lead to confusing behavior, because still multiple base objects of type <code>A</code> exist. Inheriting from base classes without virtual member functions and without non-static data members (empty bases) does not suffer from the multiple object problem of multiple inheritance, because the empty base class object will be omitted (elided) by the compiler (empty base class optimization). Such empty bases are often used to <em>mix-in</em> functionality into derived classes.</li>
+<li><p>There is no implicit common base class.</p></li>
+<li><p>Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.)</p></li>
+<li><p>To employ the dynamic polymorphism requires the use of references or pointers to the base type.</p></li>
+<li><p>Even private virtual member functions can be overridden in derived classes.</p></li>
+<li><p>Base classes that don’t have virtual member functions are permitted; implying that a derived class cannot change the behavior of the base, but still inherits all features.</p>
+<p>To prevent accidentally using a derived class object via a base class reference, such bases could be defined as protected or private. However, that has other side effects, such as losing the “aggregate” property of a type with only public members and bases otherwise.</p>
+<p>Inheriting from a non-polymorphic base class can be used to implement adaptor types, i.e., by limiting or extending the base’s functionality. Using private inheritance can prevent treating the derived type object as a base type object. Inheriting constructors and using declarations ease re-promoting the scope of otherwise hidden members of the base.</p></li>
 </ul>
+<p>Multiple inheritance adds additional dimension, because a class can inherit the same base class <code>A</code> indirectly via different direct base classes. Without any special preparation, this means the base class <code>A</code> object exists multiple times. Addressing members of <code>A</code> explicitly requires to specify the differentiating base class as a prefix, otherwise the code will be ambiguous. If all classes in such a multiple inheritance hierarchy that directly inherit from <code>A</code> use the keyword <code class="sourceCode cpp"><span class="kw">virtual</span></code> when inheriting from <code>A</code>, there will be only one object of type <code>A</code> in the most derived object. Inconsistently inheriting from <code>A</code> with and without <code>virtual</code> might lead to confusing behavior, because still multiple base objects of type <code>A</code> exist. Inheriting from base classes without virtual member functions and without non-static data members (empty bases) does not suffer from the multiple object problem of multiple inheritance, because the empty base class object will be omitted (elided) by the compiler (empty base class optimization). Such empty bases are often used to <em>mix-in</em> functionality into derived classes.</p>
 <p>The compiler-provided default behaviour for copy and move operations as well as destruction favors value semantics which conflicts with object-oriented polymorphic behaviour.</p>
 <ul>
 <li><p><strong>Virtual Destructor</strong>: This means, base classes that define virtual member functions will need to also define a virtual destructor and in addition need to care about the copy and move operations, otherwise deleting a dynamically-allocated derived object via a base class pointer will cause undefined behaviour <a href="#EWF">[EWF]</a>.</p></li>
@@ -2895,6 +2897,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <ul>
 <li><p>declare the class as a <code class="sourceCode cpp"><span class="kw">final</span></code> class to prohibit derived classes</p></li>
 <li><p>call the global <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> when the size parameter does not match what is expected, e.g.,</p></li>
+<li><p>(!!!! Remove? Seems like old issue !!!)</p></li>
 </ul>
 <div class="sourceCode" id="cb176"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb176-1"><a href="#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (sz != <span class="kw">sizeof</span>(base))</span>
 <span id="cb176-2"><a href="#cb176-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ::<span class="kw">operator</span> <span class="kw">new</span>(sz);</span></code></pre></div>
@@ -2908,7 +2911,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <ul>
 <li><p><em>Execution of malicious redefinitions</em> can be prevented by use of <code class="sourceCode cpp"><span class="kw">final</span></code> on each member function to generate compiler diagnostics when overriding is not permitted.</p></li>
 <li><p><em>Accidental redefinition</em> can be mitigated by a project mandate to use the <code class="sourceCode cpp"><span class="kw">override</span></code> or <code class="sourceCode cpp"><span class="kw">final</span></code> special identifiers when overriding a virtual member functions.</p></li>
-<li><p><em>Accidental failure of redefinition</em> can be prevented by using <code class="sourceCode cpp"><span class="kw">override</span></code> on each member function intended to be redefined to generate compiler diagnostics when overriding does not apply.</p></li>
+<li><p><em>Accidental failure of redefinition</em> can be prevented by using <code>override</code> on each member function intended to be redefined to generate compiler diagnostics when overriding does not apply.</p></li>
 <li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them. If copy and move operations are user-defined in a derived class they must ensure to call the corresponding base class operations.</p></li>
 <li><p><em>Direct reading and writing of visible class members</em> of a base class can be avoided by declaring the data members private and only allowing the class-invariant-preserving member functions in the derived classes. If those member functions are not part of the public API, they can be declared as <code class="sourceCode cpp"><span class="kw">protected</span></code>.</p></li>
 </ul>
@@ -2916,16 +2919,18 @@ auto y = Short{4} + Short{2};</code></pre>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</p></li>
-<li><p>Except for <em>mix-in empty bases</em> avoid multiple inheritance.</p></li>
+<li><p>Avoid multiple inheritance.</p></li>
 <li><p>Avoid defining copy or move operations (see clause 6.38 Deep vs. Shallow Copying [YAN]), and if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations.</p></li>
-<li><p>Prefer composition over inheritance, and in general keep inheritance hierarchies shallow.</p></li>
-<li><p>Restrict the use of virtual member functions to situations where unbounded run-time polymorphism is beneficial.</p></li>
+<li><p>Prefer composition over inheritance.</p></li>
+<li><p>When inheritance is used, keep inheritance hierarchies shallow.</p></li>
+<li><p>Avoid the use of virtual member functions to situations except where unbounded run-time polymorphism can be justified.</p></li>
+<li><p>if a class is used polymorphically, ensure its ultimate base classes have virtual destructors.</p></li>
 <li><p>Use <code class="sourceCode cpp"><span class="kw">override</span></code> when overriding a virtual member function to generate compiler diagnostics for failures to override.</p></li>
-<li><p>Mandate re-compilation of all derived classes when a base class changes.</p></li>
-<li><p>Consider using fully-qualified names to address members of a base class.</p></li>
+<li><p>Mandate re-compilation of all derived classes when a base class changes. (Really??? Check).</p></li>
+<li><p>Consider using fully-qualified names to address members of a base class. (check for a rationale above)</p></li>
 <li><p>When defining a potentially hiding overload in a derived class, consider adding a <em>using declaration</em> of the base class name.</p></li>
 <li><p>Prohibit the use of public inheritance for “has-a” relationships; instead preferring composition or private/protected inheritance to “has-a”-relationships.</p></li>
-<li><p>Prohibit mix virtual and non-virtual inheritance of the same base class in a hierarchy.</p></li>
+<li><p>Prohibit mixing virtual and non-virtual inheritance of the same base class in a hierarchy.</p></li>
 </ul>
 <h2 id="BLP">6.42 Violations of the Liskov Substitution Principle or the Contract Model [BLP]</h2>
 <h3 id="applicability-to-language">6.42.1 Applicability to language</h3>
