@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>parts/4.4.Lifetime.md</title>
+  <title>parts/4.7.UndefinedBehaviour.md</title>
   <style>
     html {
       line-height: 1.5;
@@ -150,14 +150,21 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">parts/4.4.Lifetime.md</h1>
+<h1 class="title">parts/4.7.UndefinedBehaviour.md</h1>
 </header>
-<h2 id="object-lifetime">4.4 Object Lifetime</h2>
-<p>In principle, the lifetime of an object begins immediately after a constructor completes creating the object and ends immediately before a destructor is called. C++ distinguishes references from objects. A reference has a lifetime that begins immediately after it is initialized and ends when the scope containing it completes. If the lifetime of an object designated by a reference ends before the lifetime of the reference ends, the reference is dangling and further access to its referent is undefined behaviour.</p>
-<p>The lifetime of an object relates to its storage. There are four types of storage durations: static - includes global and static variables; lifetime guaranteed to be the execution duration of main() (or the equivalent for freestanding implementations) thread - variables have a lifetime of no longer than the lifetime of the containing thread automatic - scope of declaration defines lifetime dynamic - storage for objects is acquired from dynamic memory allocation and its lifetime is manually controlled.</p>
-<p>The lifetime of an object can be prematurely terminated by - calling its destructor - releasing or reusing its storage - reusing its storage in a placement new expression</p>
-<p>Accessing an object outside of its lifetime is undefined behaviour.</p>
-<p>Sharing a reference to an object can result in incorrect behaviours if an object is terminated using one reference and later accessed via another reference. A leak occurs when an object who’s lifetime has not ended but there are no more variables, pointers or references to that object.</p>
-<p>TO Do: verify that this clause identifies issues raised in: 6.11.PointerTypeConversion-HFC.md 6.13.NULLPointerDereference-XYH.md 6.14.DanglingReferenceToHeap-XYK.md 6.22.InitializationOfVariables-LAV.md 6.33.DanglingReferencesToStackFrames-DCM.md 6.38.DeepVsShallowCopying-YAN.md 6.39.MemoryLeakAndHeapFragmentation-XYL.md 6.61.ConcurrentDataAccess-CGX.md 6.63.ProtocolLockErrors-CGM.md 6.65.ModifyingConstants-UJO.md</p>
+<h2 id="unspecified-undefined-and-implementation-defined-behaviour">4.6 Unspecified, Undefined and Implementation-defined behaviour</h2>
+<h3 id="undefined-behavior.md">4.6.1 Undefined Behavior.md</h3>
+<p>The C++ standard defines undefined behaviour as behavior for which the C++ standard document imposes no requirements. The previous statement means that a program that uses a mechanism that invokes undefined behaviour can see any result ranging from the expected result up to and including a loss of the entire system. Even when a program behaviour based on a situation that includes undefined behaviour is acceptable during testing, its behaviour can change on the next execution with potentially disasterous results. Compilers are not required to identify constructs with undefined behaviour, yet avoidance of such constructs is essential.</p>
+<p>Subclause 6.56 documents associated vulnerabilities for undefined behaviour.</p>
+<h3 id="unspecified-behaviour">4.6.2 Unspecified Behaviour</h3>
+<p>According to the C++ standard, unspecfied behaviour is behaviour, for a well-formed program construct with correct data, that depends on the implementation. The implementation is not required to document the behaviour and the result could be unexpected. For example, the order of evaluation of function parameters is unspecified, but irrelevant if there is no dependency between the actual parameters of a call. Another class of unspecified behaviour are ones that by themselves seem innocuous but subsequent use of unspecified results can lead to undefined behaviour.</p>
+<p>The following shows (move to 6.55)</p>
+<pre><code>char data[1 + int(1 + 0.2 - 0.1 - 0.1)] = { };
+int size = 1 + int(1 + 0.2 - 0.1 - 0.1);
+char f() { return data[size-1];} // Possible buffer overflow</code></pre>
+<p>This example permits the value of <code>size</code> to be different than the length of data because the size definition is executed at runtime and the definition of data must be completed at compile time, which is one source of unspecified behaviour. Subclause 6.55 documents associated vulnerabilities for unspecified behaviour.</p>
+<h3 id="implemation-defined-behaviour">4.6.3 Implemation-defined behaviour</h3>
+<p>According to the C++ standard, implementation-defined behaviour is behaviour, for a well-formed program construct with correct data, that depends on the implementation and each implementation is required to document. Any change in toolchain, version of the implementation, or switches used in program construction can result in changes to runtime behaviour.</p>
+<p>Subclause 6.57 documents associated vulnerabilities for implementation-defined behaviour.</p>
 </body>
 </html>

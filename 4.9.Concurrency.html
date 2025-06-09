@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>parts/6.09.UncheckedArrayIndexing-XYZ.md</title>
+  <title>parts/4.9.Concurrency.md</title>
   <style>
     html {
       line-height: 1.5;
@@ -212,22 +212,23 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">parts/6.09.UncheckedArrayIndexing-XYZ.md</h1>
+<h1 class="title">parts/4.9.Concurrency.md</h1>
 </header>
-<h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
-<h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2022 6.9 exists in C++ when an access is performed using <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>.</p>
-<p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code class="sourceCode cpp"><span class="kw">operator</span>[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
-<p>For issues associated with exception handling and error handling, see clause <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
-<p>The parameter type for contiguous sequences <code class="sourceCode cpp"><span class="bu">std::</span>span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API.</p>
-<h3 id="avoidance-mechanisms-for-language-users">6.9.2 Avoidance mechanisms for language users</h3>
-<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
-<ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2022 clause 6.9.5.</p></li>
-<li><p>Follow the advice from clause <a href="#HCB">6.8.2</a>.</p></li>
-<li><p>Implement your own indexable containers with an overload of <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> that actually does a bounds check.</p></li>
-<li><p>Prefer the <code class="sourceCode cpp">at()</code> member function of the standard library containers over <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> and handle the bounds violation exceptions.</p></li>
-<li><p>If indexing cannot be avoided, use static analysis or explicit checks to establish that bounds violations do not occur.</p></li>
-</ul>
+<h2 id="concurrency">4.8 Concurrency</h2>
+<p>C++ includes concurrency through the language and library constructs, expressed by <em>threads</em>, <em>tasks</em> and <em>coroutines</em>. Threads are sequences of execution that can be executed concurrently with the entity (thread) that created them, and with each other. There are good reasons to use threads in a C++ program:</p>
+<ol type="a">
+<li><p>The running program, or a running thread, block for real-world events, such as awaiting input, awaiting completion of a system-level event, or communications with non-local systems.</p></li>
+<li><p>Threading permit other parts of the program to continue execution even while one or more parts are blocked, or lets a program to await and respond to sets of events in the order that they are received.</p></li>
+<li><p>Threading lets the program make effective use of multiple cores, proving significantly more computing power to a program.</p></li>
+</ol>
+<p>Threads are initiated by calling std::threads constructor, as documented in 6.59.</p>
+<p>A thread in C++ runs until completion, either a normal completion or as the result of an unhandled exception. There is no mechanism in the language to terminate another thread.</p>
+<p>C++ threads use a fork-join model. This means that the initiating thread will wait for the completion of the initiated thread at the join place; otherwise the initiating thread will have no indication of when the created thread completes.</p>
+<p>Once declared, a thread is initialized and begins execution on its sequence of instructions. A thread can be <em>joined</em>, i.e. the joining thread awaits the completion of the joined thread, or a thread can be <em>detached</em>.</p>
+<p>Threads share data and events via <em>atomic</em> variables, <em>condition_variables</em>, <em>futures</em>, and <em>mutexes</em>.</p>
+<p>Threads terminate when they complete the execution of the function that was named at thread initiation.</p>
+<p>C++ also has the notion of light weight concurrency in the form of <em>tasks</em>. These tasks are created by calling <code class="sourceCode cpp">std:packaged_task</code> with a <em>function</em>, <em>lambda expression</em>, <em>bind expression</em> or another <em>function object</em>. It is expected that the result of each task execution is collected by the initiator of the task at the end of that execution by calling <em>get_future</em> (t) and waiting for that completion.</p>
+<p>In addition, C++ programs can interact with other programs executing in a system using operating system-level calls to initiate, schedule, communicate and destroy/terminate itself or others.</p>
+<p>There are a number of significant vulnerabilities associated with concurrency, which are described in 6.59 through 6.63 of this document.</p>
 </body>
 </html>
