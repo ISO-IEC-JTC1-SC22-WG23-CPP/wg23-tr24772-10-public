@@ -173,9 +173,13 @@
 <p>NOTE: The following may be moved to a clause 7 vulnerability or into 6.4. eg. float128_t</p>
 <p>There is another form of floating point error handling. IEEE 754 calls them <em>floating point exceptions</em> but they are unrelated to C++ exceptions.</p>
 <ul>
-<li><p><code>errno</code> values and <code>std::error_code</code> Used by any library functions external to C++, and by some C++ libraries. <code>errno</code> is a thread-local single value that, if non-zero, reports an error that has occurred and is returned by function as the return value. Any external can be called using <code>std::error_code</code> which will wrap the <code>errno</code>. <code>std::error_code</code> is an extension of <code>errno</code> but is not a global variable and can work with classes for better reporting.</p></li>
-<li><p>system_error</p></li>
-<li><p>stacktrace</p></li>
+<li>errno values and std::error_code</li>
+<li><pre><code>  Used by any library functions external to C++, and by some C++ libraries.</code></pre></li>
+<li><pre><code>  errno is a thread-local single value that, if non-zero, reports an error that has occurred and is returned by function as the return value.</code></pre></li>
+<li><pre><code>     Any external can be called using error_code which will wrap the errno.</code></pre></li>
+<li><pre><code>  error_code is an extension or errno but is not a global variable and can work with classes for better reporting.</code></pre></li>
+<li>system_error</li>
+<li>stacktrace</li>
 <li></li>
 </ul>
 <p>In addition to that list, an operating system might use the “signal” mechanism to notify a running C++ program. A signal-handler can be defined to act asynchronously upon a sent signal that isn’t ignored.</p>
