@@ -217,8 +217,8 @@
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
 <p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.41 is applicable to C++.</p>
-<p>Inheritance as a mechanism in C++ is defined differently than in most other languages supporting inheritance, e.g.:</p>
 <p>(From 4.6 - consider where to place. C++ permits virtual private member functions to be overridden. (ensure this is addressed in 6.41) C++ permits pure virtual functions to have a definition outside the class that defined it, plus the ability to explicitly invoke it.)</p>
+<p>In C++, Inheritance is defined differently than in most other languages that support inheritance, e.g.:</p>
 <ul>
 <li><p>There is no implicit common base class.</p></li>
 <li><p>Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.)</p></li>
