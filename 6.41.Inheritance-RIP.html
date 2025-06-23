@@ -216,19 +216,14 @@
 </header>
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.41 is applicable to C++.</p>
-<p>(From 4.6 - consider where to place. C++ permits virtual private member functions to be overridden. (ensure this is addressed in 6.41) C++ permits pure virtual functions to have a definition outside the class that defined it, plus the ability to explicitly invoke it.)</p>
-<p>In C++, Inheritance is defined differently than in most other languages that support inheritance, e.g.:</p>
-<ul>
-<li><p>There is no implicit common base class.</p></li>
-<li><p>Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.)</p></li>
-<li><p>To employ the dynamic polymorphism requires the use of references or pointers to the base type.</p></li>
-<li><p>Even private virtual member functions can be overridden in derived classes.</p></li>
-<li><p>Base classes that don’t have virtual member functions are permitted; implying that a derived class cannot change the behavior of the base, but still inherits all features.</p>
-<p>To prevent accidentally using a derived class object via a base class reference, such bases could be defined as protected or private. However, that has other side effects, such as losing the “aggregate” property of a type with only public members and bases otherwise.</p>
-<p>Inheriting from a non-polymorphic base class can be used to implement adaptor types, i.e., by limiting or extending the base’s functionality. Using private inheritance can prevent treating the derived type object as a base type object. Inheriting constructors and using declarations ease re-promoting the scope of otherwise hidden members of the base.</p></li>
-</ul>
-<p>Multiple inheritance adds additional dimension, because a class can inherit the same base class <code>A</code> indirectly via different direct base classes. Without any special preparation, this means the base class <code>A</code> object exists multiple times. Addressing members of <code>A</code> explicitly requires to specify the differentiating base class as a prefix, otherwise the code will be ambiguous. If all classes in such a multiple inheritance hierarchy that directly inherit from <code>A</code> use the keyword <code class="sourceCode cpp"><span class="kw">virtual</span></code> when inheriting from <code>A</code>, there will be only one object of type <code>A</code> in the most derived object. Inconsistently inheriting from <code>A</code> with and without <code>virtual</code> might lead to confusing behavior, because still multiple base objects of type <code>A</code> exist. Inheriting from base classes without virtual member functions and without non-static data members (empty bases) does not suffer from the multiple object problem of multiple inheritance, because the empty base class object will be omitted (elided) by the compiler (empty base class optimization). Such empty bases are often used to <em>mix-in</em> functionality into derived classes.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.41 is applicable to C++.</p>
+<p>(From 4.6 - consider where to place. See 6.41 or 6.42 for vulnerabilities related to this issue.</p>
+<p>Virtual functions _C++ permits virtual private member functions to be overridden. (ensure this is addressed in 6.41) C++ permits pure virtual functions to have a definition outside the class that defined it, plus the ability to explicitly invoke it.</p>
+<p>In C++, Inheritance is defined differently than in most other languages that support inheritance, e.g.: - There is no implicit common base class. - Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.) - To employ the dynamic polymorphism requires the use of references or pointers to the base type. - Even private virtual member functions can be overridden in derived classes.</p>
+<p>Inheriting from a non-polymorphic base class can be used to implement adaptor types, i.e., by limiting or extending the base’s functionality. Using private inheritance can prevent treating the derived type object as a base type object. Inheriting constructors and using declarations ease re-promoting the scope of otherwise hidden members of the base.</p>
+<p>Multiple inheritance adds additional dimension, because a class can inherit the same base class <code>A</code> indirectly via different direct base classes. Without any special preparation, this means the base class <code>A</code> object exists multiple times. Addressing members of <code>A</code> explicitly requires to specify the differentiating base class as a prefix, otherwise the code will be ambiguous. If all classes in such a multiple inheritance hierarchy that directly inherit from <code>A</code> use the keyword <code class="sourceCode cpp"><span class="kw">virtual</span></code> when inheriting from <code>A</code>, there will be only one object of type <code>A</code> in the most derived object. Inconsistently inheriting from <code>A</code> with and without <code>virtual</code> might lead to confusing behavior, because still multiple base objects of type <code>A</code> exist.</p>
+<p>In C++, a name declared in a virtual base and inherited multiple times but hidden on any virtual path is considered to be hidden on all virtual paths. Consequently, a hiding declaration introduced later will silently alter the semantics of code refering to this name. The vulnerability does not arise if a multiply-inherited name is found on at least one non-virtual inheritance path, since the use of the name is diagnosed as ambiguous.</p>
+<p>Inheriting from base classes without virtual member functions and without non-static data members (empty bases) does not suffer from the multiple object problem of multiple inheritance, because the empty base class object will be omitted (elided) by the compiler (empty base class optimization). Such empty bases are often used to <em>mix-in</em> functionality into derived classes.</p>
 <p>The compiler-provided default behaviour for copy and move operations as well as destruction favors value semantics which conflicts with object-oriented polymorphic behaviour.</p>
 <ul>
 <li><p><strong>Virtual Destructor</strong>: This means, base classes that define virtual member functions will need to also define a virtual destructor and in addition need to care about the copy and move operations, otherwise deleting a dynamically-allocated derived object via a base class pointer will cause undefined behaviour <a href="#EWF">[EWF]</a>.</p></li>
@@ -298,19 +293,18 @@
 <h2 id="avoidance-mechanisms-for-language-users">6.41.2 Avoidance mechanisms for language users</h2>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</p></li>
-<li><p>Avoid multiple inheritance.</p></li>
-<li><p>Avoid defining copy or move operations (see clause 6.38 Deep vs. Shallow Copying [YAN]), and if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations.</p></li>
-<li><p>Prefer composition over inheritance.</p></li>
-<li><p>When inheritance is used, keep inheritance hierarchies shallow.</p></li>
-<li><p>Avoid the use of virtual member functions to situations except where unbounded run-time polymorphism can be justified.</p></li>
-<li><p>if a class is used polymorphically, ensure its ultimate base classes have virtual destructors.</p></li>
-<li><p>Use <code class="sourceCode cpp"><span class="kw">override</span></code> when overriding a virtual member function to generate compiler diagnostics for failures to override.</p></li>
-<li><p>Mandate re-compilation of all derived classes when a base class changes. (Really??? Check).</p></li>
-<li><p>Consider using fully-qualified names to address members of a base class. (check for a rationale above)</p></li>
-<li><p>When defining a potentially hiding overload in a derived class, consider adding a <em>using declaration</em> of the base class name.</p></li>
-<li><p>Prohibit the use of public inheritance for “has-a” relationships; instead preferring composition or private/protected inheritance to “has-a”-relationships.</p></li>
-<li><p>Prohibit mixing virtual and non-virtual inheritance of the same base class in a hierarchy.</p></li>
+<li>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</li>
+<li>Avoid multiple inheritance.</li>
+<li>Use static tools, including compilers from multiple sources, to detect hiding of member names in virtual base classes.</li>
+<li>Avoid defining copy or move operations (see clause 6.38 Deep vs. Shallow Copying [YAN]), and if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations.</li>
+<li>Prefer composition over inheritance.</li>
+<li>Keep inheritance hierarchies shallow.</li>
+<li>Avoid the use of virtual member functions unless unbounded run-time polymorphism can be justified.</li>
+<li>If a class is used polymorphically, ensure its ultimate base classes have virtual destructors.</li>
+<li>Use the special identifier <code class="sourceCode cpp"><span class="kw">override</span></code> whenever overriding a virtual member function to generate compiler diagnostics for failures to override.</li>
+<li>Consider using fully-qualified names to address members of a base class. (check for a rationale above)</li>
+<li>When defining a potentially hiding overload in a derived class, consider adding a <em>using declaration</em> for the name from the base class.</li>
+<li>Prohibit mixing virtual and non-virtual inheritance of the same base class in a hierarchy.</li>
 </ul>
 </body>
 </html>
