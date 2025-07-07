@@ -217,11 +217,11 @@
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
 <p>The vulnerability as described in ISO/IEC 24772-1:2024 6.41 is applicable to C++.</p>
-<p>(From 4.6 - consider where to place. See 6.41 or 6.42 for vulnerabilities related to this issue.</p>
-<p>Virtual functions _C++ permits virtual private member functions to be overridden. (ensure this is addressed in 6.41) C++ permits pure virtual functions to have a definition outside the class that defined it, plus the ability to explicitly invoke it.</p>
-<p>In C++, Inheritance is defined differently than in most other languages that support inheritance, e.g.: - There is no implicit common base class. - Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.) - To employ the dynamic polymorphism requires the use of references or pointers to the base type. - Even private virtual member functions can be overridden in derived classes.</p>
-<p>Inheriting from a non-polymorphic base class can be used to implement adaptor types, i.e., by limiting or extending the base’s functionality. Using private inheritance can prevent treating the derived type object as a base type object. Inheriting constructors and using declarations ease re-promoting the scope of otherwise hidden members of the base.</p>
-<p>Multiple inheritance adds additional dimension, because a class can inherit the same base class <code>A</code> indirectly via different direct base classes. Without any special preparation, this means the base class <code>A</code> object exists multiple times. Addressing members of <code>A</code> explicitly requires to specify the differentiating base class as a prefix, otherwise the code will be ambiguous. If all classes in such a multiple inheritance hierarchy that directly inherit from <code>A</code> use the keyword <code class="sourceCode cpp"><span class="kw">virtual</span></code> when inheriting from <code>A</code>, there will be only one object of type <code>A</code> in the most derived object. Inconsistently inheriting from <code>A</code> with and without <code>virtual</code> might lead to confusing behavior, because still multiple base objects of type <code>A</code> exist.</p>
+<p>In C++, inheritance is defined differently than in most other languages that support inheritance, e.g.: - There is no implicit common base class. - Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.) - Dynamic polymorphism requires the use of references or pointers. - Private virtual member functions can be overridden in derived classes.</p>
+<p>A vulnerability similar to namespace issues (see [BJL]) can arise if a new <em>final overrider</em> is defined, which can result in a silent change to the semantics of an existing program.</p>
+<p>The implementation of virtual member functions does not take access into account. This can lead to a potentially surprising situation where a virtual function overrides an otherwise inaccessible base class function. This is quite different than the situation for non-virtual private member functions, which cannot be accessed from outside the declaring class or any <code class="sourceCode cpp"><span class="kw">friend</span></code>s.</p>
+<p>Inheriting from a non-polymorphic base class can be used to implement <em>adaptor</em> types, i.e., by limiting or extending the base’s functionality. Using private inheritance can prevent treating the derived type object as a base type object. Inheriting constructors and using declarations ease re-promoting the scope of otherwise hidden members of the base.</p>
+<p>Multiple inheritance adds an additional dimension since a class can inherit the same base class <code>A</code> indirectly via different direct base classes. Without any special preparation, this means the base class <code>A</code> object exists multiple times. Addressing members of <code>A</code> explicitly requires to specify the differentiating base class as a prefix, otherwise the code will be ambiguous. If all classes in such a multiple inheritance hierarchy that directly inherit from <code>A</code> use the keyword <code class="sourceCode cpp"><span class="kw">virtual</span></code> when inheriting from <code>A</code>, there will be only one object of type <code>A</code> in the most derived object. Inconsistently inheriting from <code>A</code> with and without <code>virtual</code> might lead to confusing behavior, because still multiple base objects of type <code>A</code> exist. Even when an ambiguity does not currently exist, refering to a base class member using its qualified name reduces the chance that a future modification silently changes the program’s behaviour through accessing a different member with the same name.</p>
 <p>In C++, a name declared in a virtual base and inherited multiple times but hidden on any virtual path is considered to be hidden on all virtual paths. Consequently, a hiding declaration introduced later will silently alter the semantics of code refering to this name. The vulnerability does not arise if a multiply-inherited name is found on at least one non-virtual inheritance path, since the use of the name is diagnosed as ambiguous.</p>
 <p>Inheriting from base classes without virtual member functions and without non-static data members (empty bases) does not suffer from the multiple object problem of multiple inheritance, because the empty base class object will be omitted (elided) by the compiler (empty base class optimization). Such empty bases are often used to <em>mix-in</em> functionality into derived classes.</p>
 <p>The compiler-provided default behaviour for copy and move operations as well as destruction favors value semantics which conflicts with object-oriented polymorphic behaviour.</p>
@@ -230,81 +230,37 @@
 <li><p><strong>Slicing</strong>: A common failure is to not eliminate implicitly callable copy and move operations in base classes which will lead to accidental copying of a base class suboject via a base class reference that actually refers to a derived object. Preventing implicit copy and move operations in base classes defining virtual member functions is a common mitigation.</p></li>
 <li><p><strong>Incomplete Copy</strong>: When a derived class defines its own non-defaulted, non-deleted copy or move operations, care must be taken to actually copy and move all base class subobjects as well. Omitting a base class when defining copy or move constructors means the default construction of a base class object happens. Not invoking a base class assignment in the definition of copy and move assignment operators will cause the base class retaining its previous members and not obtaining the source object’s base members. None of these omissions are a compile error and none are an issue for empty bases.</p></li>
 </ul>
-<p>If a base class overloads <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code>, any derived classes will inherit and therefore will use such. If the base class’ <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and/or <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> assume the size of the objects being allocated are all the size of the base class and they are not all the same size, then this will result in undefined behaviour such as access errors to memory that wasn’t allocated, overwriting of memory (if there are regions of memory immediately after the last byte allocated), memory leaks, etc. For example, consider,</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;new&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> base</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span>:</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">static</span> <span class="dt">void</span>* <span class="kw">operator</span> <span class="kw">new</span>(<span class="bu">std::</span>size_t sz)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cerr &lt;&lt; <span class="st">&quot;DEBUG: Base::&quot;</span> &lt;&lt; <span class="ot">__func__</span> &lt;&lt; <span class="st">&quot;(&quot;</span> &lt;&lt; sz &lt;&lt; <span class="st">&quot;)&quot;</span> &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ::<span class="kw">operator</span> <span class="kw">new</span>(<span class="kw">sizeof</span>(base));</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">static</span> <span class="dt">void</span> <span class="kw">operator</span> <span class="kw">delete</span>(<span class="dt">void</span> *ptr, <span class="bu">std::</span>size_t sz)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cerr &lt;&lt; <span class="st">&quot;DEBUG: Base::&quot;</span> &lt;&lt; <span class="ot">__func__</span> &lt;&lt; <span class="st">&quot;(&quot;</span> &lt;&lt; ptr &lt;&lt; <span class="ch">&#39;,&#39;</span> &lt;&lt; sz &lt;&lt; <span class="st">&quot;)&quot;</span> &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    ::<span class="kw">operator</span> <span class="kw">delete</span>(ptr);</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> derived : <span class="kw">public</span> base</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> d;</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main()</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cerr &lt;&lt; <span class="st">&quot;DEBUG: sizeof(base): &quot;</span> &lt;&lt; <span class="kw">sizeof</span>(base) &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>cerr &lt;&lt; <span class="st">&quot;DEBUG: sizeof(derived): &quot;</span> &lt;&lt; <span class="kw">sizeof</span>(derived) &lt;&lt; <span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">// new derived invokes base::operator new</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  derived *p = <span class="kw">new</span> derived;</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">// delete p invokes base::operator delete</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="kw">delete</span> p;</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>If a class-overloaded <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> can only handle fixed-sized allocations, then consider the following:</p>
-<ul>
-<li><p>declare the class as a <code class="sourceCode cpp"><span class="kw">final</span></code> class to prohibit derived classes</p></li>
-<li><p>call the global <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> when the size parameter does not match what is expected, e.g.,</p></li>
-<li><p>(!!!! Remove? Seems like old issue !!!)</p></li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (sz != <span class="kw">sizeof</span>(base))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ::<span class="kw">operator</span> <span class="kw">new</span>(sz);</span></code></pre></div>
-<ul>
-<li>use the version of <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> that has a <code class="sourceCode cpp"><span class="bu">std::</span>size_t</code> size parameter passed to it so that the global <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> can be properly called (if the global <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> was called to allocate the data), e.g.,</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (sz != <span class="kw">sizeof</span>(base))</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  ::<span class="kw">operator</span> <span class="kw">delete</span>(ptr);</span></code></pre></div>
-<p>It should also be mentioned that C++ requires <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> to return a valid pointer should its size parameter be zero.</p>
-<p>The mechanisms of failure from ISO/IEC TR 24772-1:2019 clause 6.41 manifest and can be mitigated in C++ as follows:</p>
+<p>If a base class overloads <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code>, any derived classes will inherit and therefore will use such. If the base class’ <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and/or <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> assume the size of the objects being allocated are all the size of the base class and they are not all the same size, then this will result in undefined behaviour such as access errors to memory that wasn’t allocated, overwriting of memory (if there are regions of memory immediately after the last byte allocated), memory leaks, etc.</p>
+<p>The mechanisms of failure from ISO/IEC 24772-1:2024 clause 6.41 can be mitigated in C++ as follows:</p>
 <ul>
 <li><p><em>Execution of malicious redefinitions</em> can be prevented by use of <code class="sourceCode cpp"><span class="kw">final</span></code> on each member function to generate compiler diagnostics when overriding is not permitted.</p></li>
 <li><p><em>Accidental redefinition</em> can be mitigated by a project mandate to use the <code class="sourceCode cpp"><span class="kw">override</span></code> or <code class="sourceCode cpp"><span class="kw">final</span></code> special identifiers when overriding a virtual member functions.</p></li>
 <li><p><em>Accidental failure of redefinition</em> can be prevented by using <code>override</code> on each member function intended to be redefined to generate compiler diagnostics when overriding does not apply.</p></li>
-<li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private if the class invariant depends on them. If copy and move operations are user-defined in a derived class they must ensure to call the corresponding base class operations.</p></li>
-<li><p><em>Direct reading and writing of visible class members</em> of a base class can be avoided by declaring the data members private and only allowing the class-invariant-preserving member functions in the derived classes. If those member functions are not part of the public API, they can be declared as <code class="sourceCode cpp"><span class="kw">protected</span></code>.</p></li>
+<li><p><em>Breaking of class invariants</em> can be avoided by proper initialization even with the default constructor and by defining data members private to ensure that the functions with the appropriate functionality are called and thus class invariants are preserved. If copy and move operations are user-defined in a derived class they must ensure to call the corresponding base class operations.</p></li>
 </ul>
 <h2 id="avoidance-mechanisms-for-language-users">6.41.2 Avoidance mechanisms for language users</h2>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</li>
+<li>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</li>
 <li>Avoid multiple inheritance.</li>
-<li>Use static tools, including compilers from multiple sources, to detect hiding of member names in virtual base classes.</li>
 <li>Avoid defining copy or move operations (see clause 6.38 Deep vs. Shallow Copying [YAN]), and if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations.</li>
 <li>Prefer composition over inheritance.</li>
 <li>Keep inheritance hierarchies shallow.</li>
 <li>Avoid the use of virtual member functions unless unbounded run-time polymorphism can be justified.</li>
 <li>If a class is used polymorphically, ensure its ultimate base classes have virtual destructors.</li>
 <li>Use the special identifier <code class="sourceCode cpp"><span class="kw">override</span></code> whenever overriding a virtual member function to generate compiler diagnostics for failures to override.</li>
-<li>Consider using fully-qualified names to address members of a base class. (check for a rationale above)</li>
+<li>Use the special identifier <code class="sourceCode cpp"><span class="kw">final</span></code> to prevent an unexpected overriding of that function deeper in the hierarchy.</li>
+<li>Require the use of <code class="sourceCode cpp"><span class="kw">final</span></code> or <code class="sourceCode cpp"><span class="kw">override</span></code> when overriding a member function.</li>
+<li>Do not assume that the accessability of a virtual function impacts where it can be overridden.</li>
+<li>Consider using fully-qualified names to address members of a base class.</li>
 <li>When defining a potentially hiding overload in a derived class, consider adding a <em>using declaration</em> for the name from the base class.</li>
 <li>Prohibit mixing virtual and non-virtual inheritance of the same base class in a hierarchy.</li>
+<li>Preserve class invariants and qualify all class members as <code class="sourceCode cpp"><span class="kw">protected</span></code> or <code class="sourceCode cpp"><span class="kw">private</span></code> whenever appropriate.</li>
+<li>Use static analysis tools, including compilers from different sources, to:
+<ul>
+<li>detect hiding of member names in virtual base classes.</li>
+<li>identify methods that are accidentaly turned into overrides when equally-named methods are added to parents.</li>
+</ul></li>
 </ul>
 </body>
 </html>
