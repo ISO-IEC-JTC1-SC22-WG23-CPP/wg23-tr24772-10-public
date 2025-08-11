@@ -217,8 +217,8 @@
 <h2 id="concurrency">4.9 Concurrency</h2>
 <p>C++ includes concurrency through the language and library constructs, expressed by <em>threads</em>, <em>tasks</em> and <em>coroutines</em>. Threads are sequences of execution that can be executed concurrently with the entity (thread) that created them, and with each other. There are good reasons to use threads in a C++ program:</p>
 <ol type="a">
-<li><p>The running program, or a running thread, block for real-world events, such as awaiting input, awaiting completion of a system-level event, or communications with non-local systems.</p></li>
-<li><p>Threading permit other parts of the program to continue execution even while one or more parts are blocked, or lets a program to await and respond to sets of events in the order that they are received.</p></li>
+<li><p>The running program or a running thread block for real-world events, such as awaiting input, awaiting completion of a system-level event, or communications with non-local systems.</p></li>
+<li><p>Threading permits other parts of the program to continue execution even while one or more parts are blocked, or lets a program to await and respond to sets of events in the order that they are received.</p></li>
 <li><p>Threading lets the program make effective use of multiple cores, proving significantly more computing power to a program.</p></li>
 </ol>
 <p>Threads are initiated by calling std::threads constructor, as documented in 6.59.</p>
@@ -229,6 +229,6 @@
 <p>Threads terminate when they complete the execution of the function that was named at thread initiation.</p>
 <p>C++ also has the notion of light weight concurrency in the form of <em>tasks</em>. These tasks are created by calling <code class="sourceCode cpp">std:packaged_task</code> with a <em>function</em>, <em>lambda expression</em>, <em>bind expression</em> or another <em>function object</em>. It is expected that the result of each task execution is collected by the initiator of the task at the end of that execution by calling <em>get_future</em> (t) and waiting for that completion.</p>
 <p>In addition, C++ programs can interact with other programs executing in a system using operating system-level calls to initiate, schedule, communicate and destroy/terminate itself or others.</p>
-<p>There are a number of significant vulnerabilities associated with concurrency, which are described in 6.59 through 6.63 of this document.</p>
+<p>There vulnerabilities associated with concurrency are documented in 6.59 through 6.63 of this document.</p>
 </body>
 </html>
