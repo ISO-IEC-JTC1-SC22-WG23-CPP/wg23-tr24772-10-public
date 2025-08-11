@@ -216,44 +216,37 @@
 </header>
 <p>6.66 Code representation differs between compiler view and reader view [FPV]</p>
 <p>6.66.1 Description of application vulnerability</p>
-<p>NOTES: Note for further consideration: C++ identifiers can start with a Unicode XID_start character and can only contain XID_Continue characters (and no others).</p>
-<pre><code>This is text from Part 1. Needs to be shortened and specialized for C++.
-The authorative paper for this vulnerability contains C++ examples:
-  https://trojansource.codes/trojan-source.pdf
-
-The vulnerability as described in ISO IEC 24772-1:2024 is applicable to C++.
-
-The unicode standard used for this document is www.unicode.org/versions/Unicode.16.0.0.</code></pre>
-<p>The vulnerability as described in ISO/IEC 24772-1 6.66 applies to C++.</p>
-<p>C++ uses the ISO/IEC 10646:2020 character set which includes characters that can cause a reordering of the displayed source code, including text strings and comments, such that the semantics of the displayed code differ from the semantics of the executed code. Such characters set text display direction left-to-right or right-to-left but are invisible unless the editor or display program is instructed to mnemonically display them. If left-to-right is the current default direction and a right-to-left character (RLI) is used, subsequent text will visually expand the text after the RLI character and overwrite text that had already been written. The following example, taken from [1], shows code with the invisible characters denoted visibly by <code>+LRI</code>, <code>+PDI</code>, <code>+RLO</code>, where these denotations stand for the zero-space Unicode control characters: <LRI> Left-to-Right Isolate <PDI> Pop Directional Isolate <RLO> Right-to-Left Overwrite</p>
+<p>The vulnerability as described in ISO IEC 24772-1:2024 is applicable to C++.</p>
+<p>C++ supports the ISO/IEC 10646:2020 character set, which includes characters that can cause a reordering of the displayed source code, including text strings and comments, such that the semantics of the displayed code differ from the semantics of the executed code. This can occur when such characters set text display direction left-to-right or right-to-left; they are invisible unless the editor or display program is instructed to mnemonically display them. If left-to-right is the current default direction and a right-to-left character (RLI) is used, subsequent text will visually expand the text after the RLI character and overwrite text that had already been written. The following example, taken from [1], shows code with the invisible characters denoted visibly by <code>+LRI</code>, <code>+PDI</code>, <code>+RLO</code>, where these denotations stand for the zero-space Unicode control characters: <LRI> Left-to-Right Isolate <PDI> Pop Directional Isolate <RLO> Right-to-Left Overwrite</p>
 <p>Due to the direction-changing characters, the following code</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>include &lt;iostream&gt;</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>include string</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>   <span class="dt">bool</span> isAdmin = <span class="kw">false</span>;</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>   <span class="co">/*+RLO } +LRIif (isAdmin)+PDI +LRI begin admins only */</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>       <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;You are an admin.</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>   <span class="co">/* end admins only +RLO { +LRI*/</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> }</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>will be displayed to the human reader in some editors as:  </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="er">```</span>{.cpp}</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>   <span class="dt">bool</span> isAdmin = <span class="kw">false</span>;</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>   <span class="co">/* begin admins only */</span> <span class="cf">if</span> (isAdmin) {</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>       <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;You are an admin.</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>   <span class="co">/* end admins only */</span> }</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="dv">0</span>;</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   <span class="dt">bool</span> isAdmin = <span class="kw">false</span>;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   <span class="co">/*+RLO } +LRIif (isAdmin)+PDI +LRI begin admins only */</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>       <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;You are an admin.</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>   <span class="co">/* end admins only +RLO { +LRI*/</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="dv">0</span>;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>will be displayed to the human reader in some editors as:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   <span class="dt">bool</span> isAdmin = <span class="kw">false</span>;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="co">/* begin admins only */</span> <span class="cf">if</span> (isAdmin) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;You are an admin.</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>   <span class="co">/* end admins only */</span> }</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="dv">0</span>;</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>but execute as:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main() {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="dt">bool</span> isAdmin = <span class="kw">false</span>;</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>cout &lt;&lt;<span class="st">&quot;You are an admin.</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="dv">0</span>;</span></code></pre></div>
-<p>as the test for admin is actually commented out. C++ restricts (????) the use of direction-changing control characters to comments or strings. Nevertheless, malicious use can make part of a string or comment appear to be part of executable code, or make executable code appear to be part of a comment as shown above.</p>
-<p>The examples above show how readers of code can be misled about the actual code that will be executed once the code is compiled and executed. Seemingly executed code can be effectively added or subtracted in the visual display of the program. Thus these Unicode characters are a simple means to cause the execution of malicious code.</p>
-<p>In addition, when the <code>&lt;CR&gt;</code> character is used without a following <code>&lt;LF&gt;</code> character, some environments will overwrite the displayed line with whatever follows, effectively hiding the code that precedes the <code>&lt;CR&gt;</code> character. This is a source of unintentional errors and can be difficult to identify, since executable code is hidden in the displayed source code.</p>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="dv">0</span>;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>as the test for admin is actually commented out.</p>
+<p>C++ restricts the use of direction-changing control characters in identifiers, but permits them in strings or comments, including strings used for source file inclusion and resource inclusion. Malicious use can: - make executable code appear to be part of a comment as shown above; - obfiscate the file name used for inclusion; or - make part of a string or comment appear to be part of executable code.</p>
+<p>The example above shows how readers of code can be misled about the actual code that will be executed once the code is compiled and executed. Seemingly executed code can be effectively added or subtracted in the visual display of the program. Thus these Unicode characters are a simple means to cause the execution of malicious code.</p>
+<p>In addition, of the whitespace characters, when the <code>&lt;CR&gt;</code> character is used without a following <code>&lt;LF&gt;</code> character, some environments will overwrite the displayed line with whatever follows, effectively hiding the code that precedes the <code>&lt;CR&gt;</code> character. This is a source of unintentional errors and can be difficult to identify, since executable code is hidden in the displayed source code.</p>
 <p>6.66.2 Avoiding the vulnerability or mitigating its effect</p>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ developers can: • Apply the avoidance mechanisms of ISO/IEC 24772-1 6.66.5. • Be exceptionally careful when reimplementing code on a POSIX-compliant environment that was developed on a non-POSIX-compliant environment.</p>
 <p>[1] Anderson, R. &amp; Boucher, N. Trojan Source: Invisible Vulnerabilities, https://trojansource.codes/trojan-source.pdf</p>
