@@ -3503,21 +3503,23 @@ Historically, classes with expensive computations in frequently-called const-mem
 <h2 id="finalization-issues">7.2 Finalization Issues</h2>
 <h3 id="description-of-vulnerability">7.2.1 Description of Vulnerability</h3>
 <p>Reference 24772-1 clause 7.31 Fault tolerance and failure strategies [REU]</p>
-<p>If exit is called, during object destruction with static or thread storage duration, program has undefined behaviour <a href="#EWF">[EWF]</a>.</p>
-<p>If the destruction of an object with static or thread storage duration exits via an exception, the function std::terminate is called (14.6.2).</p>
-<p>From the C++ manual: Calling the function std::abort() declared in <cstdlib> terminates the program without executing any destructors and without calling the functions passed to std::atexit() or std::at_quick_exit().</p>
-<p>Exceptions thrown in destructors of objects with static storage duration or in constructors of objects associated with non-block variables with static storage duration are not caught by a function-try-block on the main function. Exceptions thrown in destructors of objects with thread storage duration or in constructors of objects associated with non-block variables with thread storage duration are not caught by a function-try-block on the initial function of the thread.</p>
+<p>In C++, the finalization of objects, and behaviours such as saving results to external storage before program termination or the notification of other entities external to the program, can be impacted by the way the program terminates.</p>
 <h3 id="cross-reference">7.2.2 Cross Reference</h3>
 <p>(MISRA, etc references?)</p>
 <h3 id="mechanism-of-failure">7.2.3 Mechanism of Failure</h3>
-<p>Different behaviours if code is single-threaded or has concurrent behaviour. If code is single-treaded, try to terminate by cleaning upo all open connections or ‘files’ and shut down normally. If code is concurrent, …</p>
+<p>If <code>std::exit</code> is called during the destruction of an object with static durtion or with thread storage duration, the program has undefined behaviour <a href="#EWF">[EWF]</a>.</p>
+<p>If during stack unwinding, the destruction of an object terminates by throwing an exception, the function <code>std::terminate</code> is called, and any subsequent cleanup performed by the program will not occur. Similarly, if the destruction of an object with static duration or with thread storage duration exits via an exception, the function <code>std::terminate</code> is called, and any subsequent cleanup performed by the program will not occur.</p>
+<p>Calling <code>std::abort</code> or <code>std::_Exit</code> terminates the program without executing any destructors and without calling the functions passed to <code>std::atexit</code> or <code>std::at_quick_exit</code>. Therefore, any cleanup performed by those functions will not occur. In addition, <code>std::quick_exit</code> calls <code>std::_Exit</code> after calling functions passed to <code>std::at_quick_exit</code>.</p>
+<p>Exceptions thrown in destructors of objects with thread storage duration or in constructors of objects associated with non-block variables with thread storage duration are not caught by a function-try-block on the initial function of the thread or on the <code>main</code> function. This results in a call to <code>std::terminate</code> and any subsequent cleanup performed by the program will not occur.</p>
 <h3 id="avoiding-the-vulnerability-or-mitigating-its-effects">7.2.4 Avoiding the vulnerability or mitigating its effects</h3>
 <ul>
+<li>Follow the avoidance mechanisms of [[OYB]][#OYB].</li>
 <li>Avoid calling <code class="sourceCode cpp"><span class="bu">std::</span>exit</code> from a destructor.</li>
-<li>Avoid throwing an exception from the destructor of an object with static duration or thread-storage duration.</li>
-<li>Avoid calling <code class="sourceCode cpp">_Exit</code> or <code class="sourceCode cpp">abort</code> (as they bypass all cleanup)</li>
-<li>Avoid calling <code class="sourceCode cpp">quick_exit</code></li>
-<li>Prefer std::error, ???</li>
+<li>Avoid throwing an exception from a destructor.</li>
+<li>Avoid calling <code class="sourceCode cpp"><span class="bu">std::</span>_Exit</code> or <code class="sourceCode cpp"><span class="bu">std::</span>abort</code>.</li>
+<li>Avoid calling <code class="sourceCode cpp"><span class="bu">std::</span>quick_exit</code>.</li>
+<li>Prefer local objects with static storage duration or with thread storage duration to global objects to ensure that exceptions thrown from their constructors can be caught.</li>
+<li></li>
 </ul>
 <h2 id="copymove-semantics-from-classes.-peter-sommerlads-paper-at">7.3 Copy/move semantics from Classes. (Peter Sommerlad’s paper at</h2>
 <p>http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1412r0.pdf</p>
