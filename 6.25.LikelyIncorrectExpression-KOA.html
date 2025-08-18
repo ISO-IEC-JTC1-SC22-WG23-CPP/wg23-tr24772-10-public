@@ -284,6 +284,11 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>When overloaded, related operators like the compound assignment with their base operator are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all.</p>
 <p>Similarly for overloaded relational operators, for <code class="sourceCode cpp">a == b</code>, there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code> if both are overloaded by the user.</p>
 <p>Unless all relational operators for a type are defined either explicitly in a consistent way or implicitly, unexpected results can occur. A user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operators consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as <code class="sourceCode cpp">=<span class="cf">default</span></code>, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
+<h4 id="the-most-vexing-parse">6.25.1.2 The Most vexing parse</h4>
+<p>In C++ if the syntax of a declaration can be interpreted as a function declaration in preference to an object declaration, . In the following example, the intention is to create a scoped lock object, but the compiler interprets it as a function declaration <code>lock()</code>. ```{.cpp}</p>
+<p>std::scoped_lock<std::mutex> lock(); ```</p>
+<p>std::vector<int> v1();</p>
+<p>std::vector<int> v2{};</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <p>— Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
