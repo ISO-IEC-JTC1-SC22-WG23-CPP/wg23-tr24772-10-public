@@ -3553,19 +3553,29 @@ This can lead to pointer type reinterpretation issues (see [6.11] Pointer type c
 <ul>
 <li>Apply extreme scrutiny to code that uses placement new expressions or <code class="sourceCode cpp"><span class="bu">std::</span>construct_at</code>.</li>
 </ul>
-<h2 id="coroutines">7.5 Coroutines</h2>
+<h2 id="coroutines-library-usage">7.5 Coroutines (library usage)</h2>
+<p><em>TBD: simplify to only issues associated with such usage</em></p>
 <h3 id="description-of-vulnerability-2">7.5.1 Description of Vulnerability</h3>
-<p>In C++, coroutines are “stackless” suspendable functions which are also implemented in the language in a way that is highly customizable which, when writing code to implement coroutines is suspectible to a number of vulnerabilities including:</p>
+<p>In C++, coroutines are “stackless” suspendable functions that implement non-hierarchical control flows in a program. They are a highly customizable language feature. The use of coroutines provided by API’s are relatively straightforward, so this clause focusses on couroutines written from ‘scratch’.</p>
+<p>Employing coroutines in non-trivial ways expose the same issues as writing code for the operating system, such as scheduling and resource management in a concurrent environment.</p>
+<p>Coroutines are suspectible to a number of vulnerabilities including:</p>
 <ul>
-<li>using an object after its ownership has been transferred or its lifetime has ended</li>
-<li>assuming the resumption of execution is in the same context as prior executions or other code</li>
-<li>assuming there will be no use of allocating memory from the heap dynamically</li>
+<li>attempted access of a coroutine object after its ownership has been transferred or its lifetime has ended, see <a href="#XYK">[XYK]</a> and <a href="#DCM">[DCM]</a>.</li>
+<li>the expectation that the resumption of execution is in the same context as prior executions or other code, i.e., intuition about the consistency of scope-based resource management (RAII) will likely fail</li>
+<li>assumptions of no dynamic allocation</li>
 </ul>
-<p>While C++ coroutines can easily be used, they are not as easily defined in a library avoiding vulnerabilities. C++ coroutines involve the following:</p>
+<p>While the use of pre-defined C++ coroutine types such as <code class="sourceCode cpp"><span class="bu">std::</span>generator</code> are straightforward, defining your own coroutine infrastructure is challenging and error-prone.</p>
+<p>The coroutine <code class="sourceCode cpp"><span class="dt">promise_type</span></code> (as given by <code class="sourceCode cpp"><span class="bu">std::</span>coroutine_traits&lt;&gt;::<span class="dt">promise_type</span></code>) is distinct from <code class="sourceCode cpp"><span class="bu">std::</span>promise/<span class="bu">std::</span>future</code>, but must adhere to the well-defined C++ protocol [support.coroutine].</p>
+<p>Interfaces with any coroutine must adhere to the coroutine suspension/resumption protocols (called the <em>awaiter interface</em> by C++) …</p>
+<p>The use of C++ coroutines involves the following:</p>
 <ul>
-<li>Internal to a coroutine function, all coroutines must use one or more of <code class="sourceCode cpp"><span class="kw">co_return</span></code>, <code class="sourceCode cpp"><span class="kw">co_yield</span></code>, or <code class="sourceCode cpp"><span class="kw">co_await</span></code>, and, the function signature’s types must have a coroutine promise type assocatied with it. Be aware that a coroutine promise type is not the same as or related to std::promise, rather, a coroutine promise type is a type designed to hold coroutine state while the coroutine executes. Coroutines are concurrent yet sequential and do not require threads.</li>
-<li>While the default for C++ coroutines is for the coroutine’s return type to define a suitable coroutine promise type as a member, this can be overridden by defining a <code class="sourceCode cpp"><span class="bu">std::</span>coroutine_traits</code> partial specialization. Such specializations must define a <code class="sourceCode cpp"><span class="dt">promise_type</span></code> for a given coroutine function signature. (This implies that the coroutine promise type might not be defined as a member of the coroutine return type.) This allows one to define coroutines that work with others’ types and those other types need not be modified in any way in order for the coroutine to be defined using those types.</li>
-<li>In addition to the coroutine promise type, C++ coroutines are often associated with “awaiter” interfaces (typically implemented as distinct types). Such awaiter interfaces are used with coroutine operations, i.e., <code class="sourceCode cpp"><span class="kw">co_await</span></code> and indirectly with <code class="sourceCode cpp"><span class="kw">co_yield</span></code> and <code class="sourceCode cpp"><span class="kw">co_return</span></code> or <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">co_await</span></code>.</li>
+<li><p>Initiating the coroutine, which initiates the coroutine and returns the handle to the coroutine object which is normally suspended awaiting further interactions</p></li>
+<li><p>When a coroutine call is complete,</p></li>
+<li><p>Internal to a coroutine function, all coroutines must use one or more of <code class="sourceCode cpp"><span class="kw">co_return</span></code>, <code class="sourceCode cpp"><span class="kw">co_yield</span></code>, or <code class="sourceCode cpp"><span class="kw">co_await</span></code>, and, the function signature’s types must have a coroutine promise type assocatied with it.</p></li>
+<li><p>Coroutines are concurrent yet sequential and do not require threads.</p></li>
+<li><p>This allows one to define coroutines that work with others’ types and those other types need not be modified in any way in order for the coroutine to be defined using those types.</p></li>
+<li><p>In addition to the coroutine promise type, C++ coroutines are often associated with “awaiter” interfaces (typically implemented as distinct types). Such awaiter interfaces are used with coroutine operations, i.e., <code class="sourceCode cpp"><span class="kw">co_await</span></code> and indirectly with <code class="sourceCode cpp"><span class="kw">co_yield</span></code> and<code class="sourceCode cpp"><span class="kw">co_return</span></code> or <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">co_await</span></code>.</p></li>
+<li><p>If a coroutine accesses external state and then suspends, access to that state after a subsequent resumption can find that state inconsistent with expectations.</p></li>
 </ul>
 <p>Authors of the coroutine promise type and awaiter interfaces must write such code with care. Failure to do so can easily result in vulnerabilities.</p>
 <p>C++ coroutines are “stackless” which implies:</p>
@@ -3591,7 +3601,7 @@ This can lead to pointer type reinterpretation issues (see [6.11] Pointer type c
 <span id="cb197-3"><a href="#cb197-3" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
 <span id="cb197-4"><a href="#cb197-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> foo()</span>
 <span id="cb197-5"><a href="#cb197-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb197-6"><a href="#cb197-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>lock_guard lg{m};</span>
+<span id="cb197-6"><a href="#cb197-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>scoped_lock lg{m};</span>
 <span id="cb197-7"><a href="#cb197-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> i;</span>
 <span id="cb197-8"><a href="#cb197-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In <code class="sourceCode cpp">foo()</code> the mutex <code>m</code> is acquired before accessing the value of <code>i</code> and returning a copy of it. Making that copy occurs while the lock on <code>m</code> is held. After such the function is terminated and all locally-scoped variables are destroyed –which will also release the lock. Contrast such with this:</p>
@@ -3600,25 +3610,26 @@ This can lead to pointer type reinterpretation issues (see [6.11] Pointer type c
 <span id="cb198-3"><a href="#cb198-3" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
 <span id="cb198-4"><a href="#cb198-4" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>generator&lt;<span class="dt">int</span>&gt; bar()</span>
 <span id="cb198-5"><a href="#cb198-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb198-6"><a href="#cb198-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>lock_guard lg{m};</span>
-<span id="cb198-7"><a href="#cb198-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">co_yield</span> i;</span>
+<span id="cb198-6"><a href="#cb198-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>scope_lock lg{m};</span>
+<span id="cb198-7"><a href="#cb198-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">co_yield</span> i;            <span class="co">// Guaranteed deadlock.</span></span>
 <span id="cb198-8"><a href="#cb198-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>While conceptually one might argue that this code is “equivalent”, in practice, it is different especially in these respects:</p>
 <ul>
 <li><code class="sourceCode cpp"><span class="kw">co_yield</span></code> does not terminate the coroutine <code>bar()</code> since<code>bar()</code> is implicitly terminated after it is resumed after the <code>co_yield</code> suspension has been resumed. (There is an implicit <code>co_return</code> at the end of this function.)</li>
 <li>If the coroutine promise doesn’t first copy the value of <code>i</code> and uses it directly, e.g., as a reference, and something else concurrently uses that reference but first tries to acquire a lock on <code>m</code>, then that lock acquistion will block until the mutex <code>m</code> is released. The mutex <code>m</code> will not be released until after the coroutine has been resumed but it might never be resumed. The latter would mean that it is possible for the lock on <code>m</code> to result in deadlock.</li>
 </ul>
-<p>The above <code class="sourceCode cpp">bar()</code> example is therefore better written like this:</p>
+<p>The above <code class="sourceCode cpp">bar()</code> example is can be safely implemented as as:</p>
 <div class="sourceCode" id="cb199"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>mutex m;</span>
 <span id="cb199-2"><a href="#cb199-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i = <span class="dv">42</span>;</span>
 <span id="cb199-3"><a href="#cb199-3" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
-<span id="cb199-4"><a href="#cb199-4" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>generator&lt;<span class="dt">int</span>&gt; bar()</span>
-<span id="cb199-5"><a href="#cb199-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb199-6"><a href="#cb199-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>unique_lock lk{m};</span>
-<span id="cb199-7"><a href="#cb199-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> <span class="at">const</span> tmp{i};          <span class="co">// make a copy</span></span>
-<span id="cb199-8"><a href="#cb199-8" aria-hidden="true" tabindex="-1"></a>    lk.unlock();                <span class="co">// release the lock</span></span>
-<span id="cb199-9"><a href="#cb199-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">co_yield</span> tmp;               <span class="co">// yield the copy with no locks held</span></span>
-<span id="cb199-10"><a href="#cb199-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb199-4"><a href="#cb199-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> bar_impl(){</span>
+<span id="cb199-5"><a href="#cb199-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>scoped_lock lk{m};</span>
+<span id="cb199-6"><a href="#cb199-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> i;</span>
+<span id="cb199-7"><a href="#cb199-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb199-8"><a href="#cb199-8" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>generator&lt;<span class="dt">int</span>&gt; bar()</span>
+<span id="cb199-9"><a href="#cb199-9" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb199-10"><a href="#cb199-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">co_yield</span> bar_impl();               <span class="co">// yield a copy with no locks held</span></span>
+<span id="cb199-11"><a href="#cb199-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>since:</p>
 <ul>
 <li>using <code>i</code> directly requires holding a lock so store <code>i</code> in a local copy which allows releasing the lock</li>
@@ -3658,10 +3669,14 @@ This can lead to pointer type reinterpretation issues (see [6.11] Pointer type c
 <p>If a coroutine promise’s <code class="sourceCode cpp">final_suspend()</code> function does not return an awaiter that suspends the coroutine, the coroutine state will be immediately destroyed when the coroutine ends and therefore any code that uses coroutine promise state after such will have undefined behaviour. (Typically this will be seen by code exhibiting segmentation faults / access violations trying to access such state.) Should code need to access coroutine promise state after the coroutine has finished executing, ensure that the promise type’s <code class="sourceCode cpp">final_suspend()</code> returns an awaiter that suspends the coroutine, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>suspend_always</code>, and anything that manages those coroutine promise instances also destroys those instances when they are no longer needed. Failing to do the latter will result in memory “leaks” of those instances’ promise states (which will never be destroyed).</p>
 <h3 id="avoiding-the-vulnerability-or-mitigating-its-effects-2">7.5.4 Avoiding the vulnerability or mitigating its effects</h3>
 <ul>
-<li><p>Ensure all objects that manage/own coroutines, outlive the coroutines they manage/own.</p></li>
+<li><p>Ensure all objects that manage/own coroutines outlive the coroutines they manage/own.</p></li>
 <li><p>Unless one is absolutely certain the coroutine promise state is no longer required after the coroutine finishes executing, ensure the coroutine promise <code class="sourceCode cpp">final_suspend()</code> returns <code class="sourceCode cpp"><span class="bu">std::</span>suspend_always</code> or an awaiter that causes that coroutine to become suspended, and, there is(/are) object(s) that will manage and ultimately destroy those coroutines.</p></li>
-<li><p>In <code class="sourceCode cpp">await_suspend()</code> code never access <code class="sourceCode cpp">*<span class="kw">this</span></code> after ownership/control of the coroutine handle has been transferred to other code / threads-of-execution. Instead do what is needed with <code class="sourceCode cpp">*<span class="kw">this</span></code> prior to the ownership/control transfer.</p></li>
+<li><p>In <code class="sourceCode cpp">await_suspend()</code> code, never access <code class="sourceCode cpp">*<span class="kw">this</span></code> after ownership/control of the coroutine handle has been transferred (say to another thread-of-execution). Instead do what is needed with <code class="sourceCode cpp">*<span class="kw">this</span></code> prior to the ownership/control transfer.</p></li>
+<li><p>Do not rely directly on scope-based resource management within a coroutine.</p></li>
 </ul>
+<h2 id="coroutines-direct-implementation">7.6 Coroutines (direct implementation)</h2>
+<h3 id="section">7.6.1</h3>
+<h3 id="etc">7.6.2 etc</h3>
 <!-- -->
 <h1 id="implications-for-standardization">8. Implications for standardization</h1>
 <p>Future standardization efforts should consider:</p>
