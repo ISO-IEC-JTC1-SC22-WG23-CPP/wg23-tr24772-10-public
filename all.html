@@ -2729,16 +2729,21 @@ No information about the number or types of the parameters is supplied by the co
 <p>When using C++ allocators that are not derived from <code class="sourceCode cpp"><span class="bu">std::</span>pmr<span class="bu">::</span>memory_resource</code> or are not part of an allocator provided by a library, care is needed to avoid vulnerabilities due to memory leaks due to issues in allocator code.</p>
 <p>The library functions <code class="sourceCode cpp"><span class="bu">std::</span>construct_at()</code> and <code class="sourceCode cpp"><span class="bu">std::</span>destroy_at()</code> are simpler than and preferrable to <em>placement new</em> and destructor calls.</p>
 <p>STOPPED HERE.</p>
-<p>ISSUES WITH SHARED_PTR AND weak ptr or <code class="sourceCode cpp"><span class="bu">std::</span>make_shared()</code>. Using <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr()</code> can cause memory leaks if it is used to create a cyclic data structure that is not internally connected using weak pointers. Y_shr -&gt; A -&gt; B -&gt; C -&gt; A X_shr -&gt; A shared_ptr differentiates between ownership and reference to A <code class="sourceCode cpp">Shared_ptr</code> is a smart pointer that retains shared ownership f an object through a pointer. Shared_ptr can also own zero objects. A weak_ptr is a smart pointer that holds a non-owning reference to an object that is managed by shared_ptr. A weak_ptr must be converted to a shared_ptr in order to access the referenced object.</p>
+<p>ISSUES WITH SHARED_PTR AND weak ptr or <code class="sourceCode cpp"><span class="bu">std::</span>make_shared()</code>.</p>
+<p>A <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr&lt;T&gt;</code> is a reference-counted pointer to type <code>T</code>. Several shared_ptr objects can own the same object. An owned object is destroyed when the last shared_ptr that owns it is destroyed or otherwise released. A memory-leak vulnerability can occur when using shared pointers for data structures such as a doubly-linked list. In such circumstances the reference count can never drop to zero unless addition measures are taken, such as breaking the cycle using a weak pointer. (EXAMPLE HERE?)</p>
+<p><More discussion needed for below></p>
+<p>In a concurrent context, the issues associated with access to data structures through <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> and <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code> are complicated by concurrent access to such structures. If shared pointers are being used in a concurrent context, locking is required in order to manage concurrent access to a single object.</p>
+<p>In a concurrent context, <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> (and <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code>) store a pointer to the owned object and the associated control block.</p>
+<p><code class="sourceCode cpp"><span class="bu">std::</span>atomic&lt;<span class="bu">std::</span>shared_ptr&lt;T&gt;&gt;</code> and <code class="sourceCode cpp"><span class="bu">std::</span>atomic&lt;<span class="bu">std::</span>weak_ptr&lt;T&gt;&gt;</code> so that exclusive access to the pointer can be guaranteed.</p>
+<p>Using <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr()</code> can cause memory leaks if it is used to create a cyclic data structure that is not internally connected using weak pointers. Y_shr -&gt; A -&gt; B -&gt; C -&gt; A X_shr -&gt; A shared_ptr differentiates between ownership and reference to A <code class="sourceCode cpp">Shared_ptr</code> is a smart pointer that retains shared ownership f an object through a pointer. Shared_ptr can also own zero objects. A weak_ptr is a smart pointer that holds a non-owning reference to an object that is managed by shared_ptr. A weak_ptr must be converted to a shared_ptr in order to access the referenced object.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.39.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanism of ISO/IEC 24772-1:2024 6.39.5</p></li>
 <li><p>Refrain from using the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code> wherever possible.</p></li>
 <li><p>Avoid mixing C-based functions and C++ memory management functions.</p></li>
-<li><p>Prefer PMR</p></li>
-<li></li>
-<li><p>Prefer containers like those in the standard library over any other form of memory management.</p></li>
+<li><p>Prefer C++ allocators that are derived from <code class="sourceCode cpp"><span class="bu">std::</span>pmr<span class="bu">::</span>memory_resource</code>.</p></li>
+<li><p>Prefer containers standard library containers over other forms of memory management.</p></li>
 <li><p>Use smart pointers and their factory functions to allocate and manage heap memory.</p></li>
 <li><p>For heap fragmentation issues, use special memory resource objects with appropriate allocation strategies.</p></li>
 <li><p>If using <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> in potentially cyclic data structures, break cycles using <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code>.</p></li>
@@ -3410,7 +3415,7 @@ char f() { return data[size-1];} // Possible buffer overflow</code></pre>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Forbid the use of the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p></li>
-<li><p>Use the avoidance mechanisms provided by the standard library as described in ISO/IEC 14882 20.20 Formatting [format] or similar libraries, if <em>printf-style</em> formatting of output or strings is desired, or when the formatting facilities of <code>std::ostream</code> are inadequate.</p></li>
+<li><p>Apply the avoidance mechanisms provided by the standard library as described in ISO/IEC 14882 20.20 Formatting [format] or similar libraries, if <em>printf-style</em> formatting of output or strings is desired, or when the formatting facilities of <code>std::ostream</code> are inadequate.</p></li>
 <li><p>Read untrusted input as plain characters and then check for validity, before any conversion to numbers or program entities occurs, using facilities that do not require format strings and that check and report error conditions.</p></li>
 </ul>
 <h1 id="UJO">6.65 Modifying constants [UJO]</h1>
