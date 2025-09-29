@@ -244,7 +244,12 @@
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="dv">0</span>;</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>as the test for admin is actually commented out.</p>
-<p>C++ restricts the use of direction-changing control characters in identifiers, but permits them in strings or comments, including strings used for source file inclusion and resource inclusion. Malicious use can: - make executable code appear to be part of a comment as shown above; - obfiscate the file name used for inclusion; or - make part of a string or comment appear to be part of executable code.</p>
+<p>C++ restricts the use of direction-changing control characters in identifiers, but permits them in strings or comments, including strings used for source file inclusion and resource inclusion. Malicious use can:</p>
+<ul>
+<li>make executable code appear to be part of a comment as shown above;</li>
+<li>obfiscate the file name used for inclusion; or</li>
+<li>make part of a string or comment appear to be part of executable code.</li>
+</ul>
 <p>The example above shows how readers of code can be misled about the actual code that will be executed once the code is compiled and executed. Seemingly executed code can be effectively added or subtracted in the visual display of the program. Thus these Unicode characters are a simple means to cause the execution of malicious code.</p>
 <p>In addition, of the whitespace characters, when the <code>&lt;CR&gt;</code> character is used without a following <code>&lt;LF&gt;</code> character, some environments will overwrite the displayed line with whatever follows, effectively hiding the code that precedes the <code>&lt;CR&gt;</code> character. This is a source of unintentional errors and can be difficult to identify, since executable code is hidden in the displayed source code.</p>
 <h2 id="avoiding-the-vulnerability-or-mitigating-its-effect">6.66.2 Avoiding the vulnerability or mitigating its effect</h2>
