@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -152,24 +214,18 @@
 <header id="title-block-header">
 <h1 class="title">parts/4.8.ErrorHandling.md</h1>
 </header>
-<h2 id="error-handling">4.8 Error Handling</h2>
+<h2 id="errorhandling">4.8 Error Handling</h2>
 <p>The C++ language and standard library provides several mechanisms for error handling:</p>
 <ul>
-<li>exceptions, signaling a contract violation.</li>
-<li>returning just an error code with a special value denoting success.</li>
-<li>returning a special error value of the function’s return type, such as <code>std::string::npos</code>.</li>
-<li>combining the return value with an error indication in a sum type, e.g., through <code>std::expected&lt;T,E&gt;</code> or <code>std::optional&lt;T&gt;</code> for a return type <code>T</code>.</li>
-<li>marking the error status as a side effect, such as with the thread-local variable <code>errno</code>, or as an object’s status as with <code>std::istream</code>’s flags. The standard library provides <code>std::error_code</code> that can be used to map <code>errno</code> values for further processing.</li>
+<li>throwing an exception.</li>
+<li>returning an error code, including a special value denoting success.</li>
+<li>returning a special error value of the function’s return type, such as <code>std::string::npos</code>,or combining the return value with an error indication in a sum type, e.g., <code>std::expected&lt;T,E&gt;</code> or <code>std::optional&lt;T&gt;</code> for a return type <code>T</code>.</li>
+<li>creating an error side effect, such as by marking an object’s state (such as <code>std::istream</code>’s flags), or setting the thread-local variable <code>errno</code>. Note that the standard library provides <code>std::error_code</code> that can be used to map <code>errno</code> values for further processing.</li>
 </ul>
-<p>Many parts of the standard library specify preconditions and undefined behavior <a href="#EWF">[EWF]</a> results if those aren’t met, for example, <code>std::vector&lt;int&gt;::front()</code> requires a non-empty vector, when called.</p>
-<p>Exceptions allow errors to be propagated up the call chain to a matching handler, or to program termination. Even though the standard library provides a type hierarchy derived from <code>std::exception</code>, any copyable type can be thrown. Throwing an exception due to a detected error situation allows the error to be handled at an appropriate level in a corresponding catch block. As the exception propagates to its handler, local objects are destroyed appropriately in reverse order of their construction in a mechanism known as <em>stack unwinding</em>. A search for a matching handler stops at - the function <code>main()</code>, - a function declared <code>noexcept</code>, and - the function of a thread.</p>
+<p>Many parts of the standard library specify preconditions and undefined behavior (<a href="#undefined">4.7</a>) results if those aren’t met, for example, <code>std::vector&lt;int&gt;::front()</code> requires a non-empty vector, when called.</p>
+<p>Exceptions allow errors to be propagated up the call chain to a matching handler, or to program termination if unhandled. Throwing an exception due to a detected error situation allows the error to be handled at an appropriate level in a corresponding catch block. Even though the standard library provides a type hierarchy derived from <code>std::exception</code>, the value of any copyable type can be thrown. As an exception propagates to its handler, local objects are destroyed appropriately in reverse order of their construction in a mechanism known as <em>stack unwinding</em>. A search for a matching handler stops at a matching <code class="sourceCode cpp"><span class="cf">catch</span></code> handler, or if unsuccessful the exception remains unhandled and the search stops at a function declared <code class="sourceCode cpp"><span class="kw">noexcept</span></code> or the thread’s top-level function or <code class="sourceCode cpp">main()</code> causing program termination by calling <code>std::terminate()</code>.</p>
 <p>An exception propagated from constructors of non-local variables and destructors of variables with static storage duration can never have a matching handler.</p>
-<p>Failing to provide a matching handler on the call chain for an exception thrown causes a call to <code>std::terminate()</code> and the program terminates.</p>
-<p>When calling non-returning program termination functions like <code>abort()</code>, <code>std::terminate()</code>, or <code>exit()</code>, the program terminates without <em>stack unwinding</em>.</p>
-<p>#TODO: shorten again by moving to 6.36? talk about coroutines… see what Paul finds out</p>
-<p>An exception propagating out of a coroutine causes the coroutine to end in an unresumable state and the exception is not further propagated.</p>
-<!--For coroutines, a rethrown exception or an uncaught exception causes the coroutine to end and cannot be resumed.
- The exception itself is not propagated.-->
+<p>Calls to any non-returning program termination functions such as <code>abort()</code>, <code>std::terminate()</code>, or <code>exit()</code> results in program termination without <em>stack unwinding</em>.</p>
 <p>NOTE: The following may be moved to a clause 7 vulnerability or into 6.4. eg. float128_t</p>
 <p>There is another form of floating point error handling. IEEE 754 calls them <em>floating point exceptions</em> but they are unrelated to C++ exceptions.</p>
 <ul>
@@ -180,5 +236,6 @@
 <li></li>
 </ul>
 <p>In addition to that list, an operating system might use the “signal” mechanism to notify a running C++ program. A signal-handler can be defined to act asynchronously upon a sent signal that isn’t ignored.</p>
+<p>#TODO: shorten again by moving to 6.36? talk about coroutines… see what Paul finds out</p>
 </body>
 </html>
