@@ -216,7 +216,7 @@
 </header>
 <h2 id="memory-leak-and-heap-fragmentation-xyl">6.39 Memory Leak and Heap Fragmentation [XYL]</h2>
 <h3 id="applicability-to-language">6.39.1 Applicability to language</h3>
-<p>The memory leak vulnerability documented in ISO/IEC 24772-1:2024 clause 6.39 exists in C++, unless the programmer takes steps to avoid it. A leak occurs when an object whose lifetime (see 4.4) has not ended but there are no more variables, pointers or references to that object.</p>
+<p>The memory leak vulnerability documented in ISO/IEC 24772-1:2024 clause 6.39 exists in C++, unless the programmer takes steps to avoid it. A leak occurs when an object whose lifetime (<a href="#lifetime">4.4</a>) has not ended but there are no more variables, pointers or references to that object.</p>
 <p>See ISO/IEC TR 24772-3 for the vulnerabilities associated with the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code>.</p>
 <p>C++ has an additional vulnerability in that it provides multiple alternatives for allocation and deallocation.</p>
 <p>Failing to match the deallocation to the corresponding allocation results in undefined behaviour <a href="#EWF">[EWF]</a>. For example, if an array <code class="sourceCode cpp"><span class="kw">new</span>[]</code> expression was used to allocate and create an array then array <code class="sourceCode cpp"><span class="kw">delete</span>[]</code> must be used for its destruction and release to avoid undefined behaviour.</p>
