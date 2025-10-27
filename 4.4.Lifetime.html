@@ -152,7 +152,7 @@
 <header id="title-block-header">
 <h1 class="title">parts/4.4.Lifetime.md</h1>
 </header>
-<h2 id="object-lifetime">4.4 Object Lifetime</h2>
+<h2 id="lifetime">4.4 Object Lifetime</h2>
 <p>In principle, the lifetime of an object (recursively including subobjects) begins immediately after its constructor completes creating the object and ends immediately before its destructor is called.</p>
 <p>Accessing an object outside of its lifetime is undefined behaviour, see <a href="#undefined">4.7</a>.</p>
 <p>C++ distinguishes references from objects. A reference has a lifetime that begins immediately after it is initialized and ends when the scope or the object containing it ends. If the lifetime of an object designated by a reference ends before the lifetime of the reference ends, the reference is dangling and further access to its referent is undefined behaviour.</p>
