@@ -215,19 +215,21 @@
 <h1 class="title">parts/4.5.Initialization.md</h1>
 </header>
 <h2 id="initialization">4.5 Initialization</h2>
-<p>C++ provides a number of ways that an object can be initialized - Value initialization, e.g. std::string s{}; - Direct initialization, e.g. std::string s(“hello”); - Copy initialization, e.g. std::string s = “hello”; - List initialization, e.g. std::string s{‘a’, ‘b’, ‘c’}; - Aggregate initialization, e.g. char a[3] = {‘a’, ‘b’}; - Reference initialization, e.g. char&amp; c = a[0]; - Zero initialization - Default initialization copy, move, default constructor</p>
-<p>C++ has many forms of initilization, which generally guarantee that subsequent access to the declared object will be well-defined, however C++ does not always guarantee that it contains a legal value unless the programmer explicitly initializes it with a value. See ##6.22 Missing initialization of variables [LAV]#LAV.</p>
-<p>The kind of initialization that happens in C++ when an explicit initializer is not used depends on the context of the declaration.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">int</span> i; <span class="co">// zero-initialized in global name space, </span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> foo()</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   {</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>       <span class="dt">int</span> i; <span class="co">// default initialized, inderterminate value</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>       <span class="dt">int</span> j{};  <span class="co">// value-initialized to zero</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
-<p>Non-local variables with static storage duration that are dynamically initialized can cause undefined behavior <a href="#EWF">[EWF]</a> if the initialization depends on other such variables, see ##6.22 Missing initialization of variables [LAV]#LAV.</p>
-<p>The lifetime of most objects of a class type begins when the object’s constructor has completed. In some situations binding a reference to a temporary will extend the lifetime of the temporary. See ##4.4 Lifetime and ## 6.33 Dangling References to Stack Frames [DCM]. // In any case, an object should not be accessed until its initialization is complete (including concurrency???). Richard C thinks that https://eel.is/c++draft/basic.start.dynamic#5 means that there is no danger of one thread accessing a dynamically initialized global variable before the initialization has taken place - is that the case?</p>
-<p>When a function is called, each parameter is initialized with its corresponding argument. The initialization of a parameter, including every associated value computation and side effect, is indeterminately sequenced with respect to that of any other parameter, see ## 6.24 Side-effects and Order of Evaluation of Operands [SAM]. On the other hand, the value computation and side effects of the initializer-clauses in an initializer-list are evaluated in the order they appear.</p>
-<p>There are many ways for a user to construct, or initialize, an object.</p>
+<p>C++ provides a number of ways that an object can be initialized, e.g.,</p>
+<ul>
+<li>Value initialization, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string s1{};</code></li>
+<li>Direct initialization, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string s2{<span class="st">&quot;hello&quot;</span>};</code></li>
+<li>Copy initialization, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string s3 = s2;</code></li>
+<li>Move initialization, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string s4{<span class="bu">std::</span>move(s3)};</code></li>
+<li>List initialization, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string s5{<span class="ch">&#39;a&#39;</span>, <span class="ch">&#39;b&#39;</span>, <span class="ch">&#39;c&#39;</span>};</code></li>
+<li>Aggregate initialization, e.g., <code class="sourceCode cpp"><span class="dt">char</span> a[<span class="dv">3</span>] = {<span class="ch">&#39;a&#39;</span>, <span class="ch">&#39;b&#39;</span>};</code></li>
+<li>Reference initializing, i.e., reference binding, e.g., <code class="sourceCode cpp"><span class="dt">char</span>&amp; c = a[<span class="dv">0</span>];</code></li>
+<li>Zero initialization, e.g., via value initialization: <code class="sourceCode cpp"><span class="dt">int</span> i{};</code></li>
+<li>Default initialization, e.g., <code class="sourceCode cpp"><span class="bu">std::</span>string s6;</code></li>
+</ul>
+<p>These many forms of initialization typically guarantee that subsequent access to the object will be well-defined. However, in some cases the value of an object can be indeterminate after its lifetime has started unless an initializer is specified, e.g., a local <code class="sourceCode cpp"><span class="dt">int</span></code> variable without an initializer (see 6.22 Missing initialization of variables <a href="#LAV">[LAV]</a>).</p>
+<!--// In any case, an object should not be accessed until its initialization is complete (including concurrency???). Richard C thinks that https://eel.is/c++draft/basic.start.dynamic#5 means that there is no danger of one thread accessing a dynamically initialized global variable before the initialization has taken place - is that the case? heavily discussed on 20251110-->
+<p>When a function is called, each function parameter is initialized with its corresponding argument. The initialization of a function parameter, including every associated value computation and side effect, is indeterminately sequenced with respect to that of any other function parameter (see 6.24 Side-effects and Order of Evaluation of Operands <a href="#SAM">[SAM]</a>. On the other hand, the value computation and side effects of arguments in <em>list initialization</em> are evaluated in the order they appear from left to right.</p>
+<p>Using the <code class="sourceCode cpp"><span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">constinit</span></code> keyword when defining a variable guarantees its initialization at compile-time.</p>
 </body>
 </html>
