@@ -3107,6 +3107,7 @@ execution boundaries</p></li>
 <h3 id="applicability-to-language">6.48.1 Applicability to language</h3>
 <p>The vulnerability described in ISO/IEC 24772-1:2024 applies to C++. As for the C programming language, the process of linking and loading is outside the scope of the C++ standard.</p>
 <p>In C++, the conversion of a function pointer to another type (to misdirect a pointer, for example) requires the use of a C-style cast or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. Such casts can result in unspecified behaviour, undefined behaviour or implementation-defined behaviour.</p>
+<!-- The reflection mechanism introduced in the C++26 revision of the standard does not allow self-modifying code, because it is compile-time only. -->
 <h3 id="avoidance-mechanisms-for-language-users">6.48.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
