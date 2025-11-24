@@ -219,15 +219,24 @@
 <p>The vulnerability as described in ISO/IEC 24772-1 clause 6.56 applies to C++. In ISO/IEC 14882:2023, the terms “undefined behaviour” and “ill-formed, no diagnostic required” expose situations to be avoided.</p>
 <p>For the special case of constant expressions, compilers are required to detect and reject undefined behaviour during the evaluation of constant expressions in the core language. It is unspecified whether or not undefined behaviour in the standard library is detected during constant expression evaluation.</p>
 <p>C++ compilers and static analysis tools can often detect code that can lead to undefined behaviour and provide diagnostic messages to that effect. Use of multiple compiler tool chains during development increases the likelyhood that such behaviours will be detected. Similarly, runtime tools such as address sanitizers and thread sanitizers can be used during development to detect and report concrete instances of undefined behaviour. In addition, recent C++ language revisions have provided safer alternatives some standard library calls that can lead to undefined behaviours. For example,the calls <code class="sourceCode cpp"><span class="bu">std::</span>stoi</code> or <code class="sourceCode cpp"><span class="bu">std::</span>from_chars</code> provide equivalent functionality to <code class="sourceCode cpp"><span class="bu">std::</span>atoi</code> but without the the risk of undefined behaviour.</p>
+<p>Code with UB often appears to work correctly but masks situations that can result in serious consequences, for example:</p>
+<ul>
+<li>Compilers optimize based on the assemed lack of UB, that can result in the incorrect pruning of code paths</li>
+<li>Compiler (or tool chain) changes or updates can result in previously undetected UB’s being manifested with serious consequences.</li>
+<li>If the impact of a UB is the overwriting of some memory location, non-obvious changes to the source code can result in a previously benign action now having serious consequences.</li>
+<li>The impact of the UB often depends on additional factors, for example the available capacity of a container decides if memory needs to be reallocated.</li>
+</ul>
+<p>Undefined behaviour often manifests in code distant from where the UB occured, resulting in extremely hard to find bug. Therfore, retrospective detection of undefined behaviour is exceedingly difficult and resource intensive. Many undefined behaviour situations can be avoided through the use of explicit tests or assertions for undefined behaviour situations, such as null-pointer tests before assessing via a pointer, array-bounds checks before access to array members, and floating-integeral conversions that cannot be represented in the target type. Modern compilers can eliminate such tests when they know that the check will succeed.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.56.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.56.5.</p></li>
 <li><p>Exploit compile-time evaluation whenever possible to detect undefined behaviour.</p></li>
-<li><p>Use static analysis tools in addition to the compiler to help identify occurrences of undefined behaviour.</p></li>
-<li><p>Augment static analysis tool usage with runtime tools such as ASAN (address sanitizer) and related tools.</p></li>
+<li><p>Use static analysis tools to help identify occurrences and consequences of undefined behaviour.</p></li>
+<li><p>Use runtime tools such as ASAN (address sanitizer) and related tools.</p></li>
 <li><p>Use multiple compilers/tools and different optimization levels to increase the chance of identifying constructs that have undefined behaviours.</p></li>
 <li><p>Where the C++ language or library provide both defined behaviour mechanisms and undefined behaviour mechanisms, mandate the use the mechanisms with defined behaviours.</p></li>
+<li><p>Explicitly test or use assertions for situations that can cause undefined behaviour.</p></li>
 </ul>
 </body>
 </html>
