@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -166,189 +228,175 @@
 </blockquote>
 <p><strong><u>3.3</u></strong></p>
 <p><u>access protection</u>:</p>
-<p><strong><u>3.4</u></strong></p>
-<p>ADL]{.ul}:</p>
-<p>argument dependent lookup.</p>
+<p><strong><u>3.4</u></strong><br />
+</p>
 <p><strong><u>alignment</u></strong><br />
-requirement that objects of a particular type be located on storage boundaries with addresses that are particular multiples of a byte address</p>
-<p><strong><u>3.3</u></strong></p>
+</p>
+<p>requirement that objects of a particular type be located on storage boundaries with addresses that are particular multiples of a byte address</p>
+<p><strong><u>3.5</u></strong></p>
 <p><strong><u>argument</u></strong><br />
 the expression in the comma-separated list bounded by the parentheses in a function call expression, or a sequence of preprocessing tokens in the comma-separated list bounded by the parentheses in a function-like macro invocation</p>
 <blockquote>
 <p>Note 1: Also called actual argument</p>
 <p>Note 2: An argument replaces a <em>formal parameter</em> as the call is realized.</p>
 </blockquote>
-<p><strong><u>3.4</u></strong></p>
-<p>argument dependent lookup</p>
-<p>lookup that finds additional overloads from the namespaces of the types of the arguments used in unqualified function calls</p>
-<p><strong><u>3.5</u></strong></p>
-<p><strong><u>behaviour</u></strong><br />
-external appearance or action [recommend removal - standard comp sci term]</p>
 <p><strong><u>3.6</u></strong></p>
-<p><strong><u>bit</u></strong><br />
-unit of data storage in the execution environment large enough to hold an object that may have one of two values</p>
-<p>Note: It need not be possible to express the address of each individual bit of an object [recommend removal - standard comp sci term]</p>
+<p><strong><u>argument dependent lookup</u></strong><br />
+</p>
+<p>lookup that finds additional overloads from the namespaces of the types of the arguments used in unqualified function calls</p>
 <p><strong><u>3.7</u></strong></p>
-<p><strong><u>byte</u></strong><br />
-addressable unit of data storage large enough to hold any member of the basic character set of the execution environment</p>
-<blockquote>
-<p>Note: It is possible to express the address of each individual byte of an object uniquely. A byte is composed of a contiguous sequence of bits, the number of which is implementation-defined. The least significant bit is called the low-order bit; the most significant bit is called the high-order bit. [recommend removal - standard comp sci term]</p>
-</blockquote>
-<p><strong><u>3.8</u></strong></p>
-<p><strong><u>character</u></strong><br />
-abstract member of a set of elements used for the organization, control, or representation of data and ideally when treated sequentially represents text</p>
-<p><strong><u>3.9</u></strong></p>
 <p><strong><u>class</u></strong><br />
 a user-defined type declared with the class-key ‘class’ or ‘struct’ {.ul}</p>
-<p><strong><u>3.10</u></strong></p>
+<p><strong><u>3.8</u></strong></p>
 <p><strong><u>correctly rounded result</u></strong><br />
-representation in the result format that is nearest in value, subject to the current rounding mode, to what the result would be given unlimited range and precision</p>
-<p><strong><u>3.11</u></strong></p>
+</p>
+<p>representation in the result format that is nearest in value, subject to the current rounding mode, to what the result would be given unlimited range and precision</p>
+<p><strong><u>3.9</u></strong></p>
 <p><strong><u>diagnostic message</u></strong><br />
 </p>
 <p>informational message that is either an error or warning about an issue detected by the implementation</p>
+<p><strong><u>3.10</u></strong><br />
+</p>
+<p><strong>[erroneous behaviour]</strong><br />
+</p>
+<p>well-defined behavior that the implementation is recommended to diagnose</p>
+<p><strong><u>3.11</u></strong><br />
+<strong><u>erroneous value</u></strong><br />
+</p>
+<p>value of an object not declared <code class="sourceCode cpp">[[<span class="at">indeterminate</span>]]</code> and who’s value has not yet been set and can lead to erroneous behaviour if produced by an evaluation</p>
 <p><strong><u>3.12</u></strong><br />
+</p>
+<p><strong><u>explicit template specialization</u></strong><br />
+</p>
+<p>a template specialization that defines a distinct implementation for the specified arguments</p>
+<p><strong>[3.13]</strong><br />
 </p>
 <p><strong><u>formal parameter</u></strong><br />
 </p>
 <p>object declared as part of a function declaration or definition that acquires a value on entry to the function, or an identifier from the comma-separated list bounded by the parentheses immediately following the macro name in a function-like macro definition.</p>
-<p><strong>[3.13] friend{.ul}</strong><br />
+<p><strong>[3.14] friend{.ul}</strong><br />
 </p>
 <p>function or class that can access the private and protected members of a specific class</p>
-<p><strong>[3.14] hidden friend{.ul}</strong><br />
+<p><strong>[3.15] hidden friend{.ul}</strong><br />
 </p>
 <p>friend function that is only declared within a class or class template definition and hence is only found by ADL</p>
-<p><strong><u>3.15</u></strong><br />
+<p><strong><u>3.16</u></strong><br />
 </p>
 <p><strong><u>Implementation</u></strong><br />
 </p>
-<p>toolchain that is used to build and support the execution of the C++ program</p>
-<p><strong><u>3.16</u></strong><br />
+<p>specific toolchain that is used to build and support the execution of the C++ program</p>
+<p><strong><u>3.17</u></strong><br />
 </p>
 <p><strong><u>implementation-defined behaviour</u></strong><br />
 </p>
 <p>behaviour, for a well-formed program construct and correct data, that depends on the implementation and that each implementation documents</p>
-<p><strong><u>3.17</u></strong><br />
+<p><strong><u>3.18</u></strong><br />
 </p>
 <p><strong><u>implementation limit</u></strong><br />
 </p>
-<p>restriction imposed upon programs by the implementation.</p>
-<p><strong><u>3.18</u></strong><br />
+<p>capacity restriction imposed upon programs by the implementation.</p>
+<p><strong><u>3.19</u></strong><br />
 <strong><u>indeterminate value</u></strong><br />
 </p>
-<p>unspecified value or a trap representation</p>
-<p><strong><u>3.19</u></strong><br />
+<p>value of an object declared <code class="sourceCode cpp">[[<span class="at">indeterminate</span>]]</code> and who’s value has not yet been set and can lead to undefined behaviour if produced by an evaluation</p>
+<p><strong><u>3.20</u></strong><br />
 <strong><u>indeterminately sequenced</u></strong><br />
 </p>
 <p>sequenced in a way that one of two evaluations will be executed before the other but in an unspecified order</p>
-<p><strong><u>3.20</u></strong><br />
+<p><strong><u>3.21</u></strong><br />
 <strong><u>locale-specific behaviour</u></strong><br />
 </p>
 <p>behaviour that depends on local conventions of nationality, culture, and language that each implementation documents</p>
-<p><strong><u>3.21</u></strong><br />
-<strong><u>namespace</u></strong><br />
-optionally-named entity that can contain scoped declarations of any kind of entity [ensure that this is put into clause 4 on general concepts]</p>
 <p><strong><u>3.22</u></strong><br />
+<strong><u>namespace</u></strong><br />
+optionally-named entity that can contain scoped declarations</p>
+<p>[ensure that this is put into clause 4 on general concepts]</p>
+<p><strong><u>3.23</u></strong><br />
 <strong><u>object</u></strong><br />
 </p>
-<p>region of data storage in the execution environment, the contents of which can represent values and that can be interpreted as having a particular type</p>
+<p>region of data storage in the execution environment that has a type</p>
 <p><strong><u>3.24</u></strong><br />
 <strong><u>overload</u></strong><br />
 </p>
-<p>the use of the same symbol name to denote different entities</p>
+<p>a function or operator sharing a name with others but distinguished by having a different namespace, parameter list, qualifier set or other relevant property</p>
 <p><strong><u>3.25</u></strong><br />
+<strong><u>overload resolution</u></strong><br />
+</p>
+<p>a mechanism for selecting the best function to call given a list of expressions that are to be the arguments of the call and a set of functions that can be called based on the context of the call.</p>
+<p>[Need a clause 4 discussion?]</p>
+<p><strong><u>3.26</u></strong><br />
 <strong><u>override</u></strong><br />
 </p>
-<p>replace the implementation of an inheritable function in a derived class</p>
-<p><strong><u>3.26</u></strong><br />
+<p>replace the implementation of a virtual (inheritable??) function in a derived class</p>
+<p><strong><u>3.27</u></strong><br />
 <strong><u>pointer-like-type</u></strong><br />
 </p>
-<p>set of types whose values depend upon the existence and value of another object, such as types for references, pointers, iterators and views</p>
-<p><strong><u>3.27</u></strong><br />
+<p>set of types whose values depend upon the existence and value of another object, such as references, pointers, iterators and views</p>
+<p><strong><u>3.28</u></strong><br />
 </p>
 <p><strong><u>protected</u></strong><br />
 </p>
-<p>visible only to itself and derived classes and friends</p>
-<p><strong><u>3.28</u></strong><br />
+<p>member of a class that is visible only to the class itself, derived classes and friends</p>
+<p><strong><u>3.29</u></strong><br />
 </p>
 <p><strong><u>private</u></strong><br />
 </p>
 <p>member of a class that is visible only to the class itself and friends</p>
-<p><strong><u>3.29</u></strong><br />
+<p><strong><u>3.30</u></strong><br />
 </p>
 <p><strong><u>public</u></strong><br />
 </p>
 <p>visible without restriction</p>
-<p><strong><u>3.30</u></strong><br />
-</p>
-<p><strong><u>runtime-constraint</u></strong><br />
-</p>
-<p>a constraint imposed on an executing program [TBD - needs refinement] [continue from here - 7 August 2023]</p>
 <p><strong><u>3.31</u></strong><br />
 </p>
-<p><strong><u>single-byte character</u></strong><br />
+<p><strong><u>storage duration</u></strong><br />
 </p>
-<p>bit representation that fits in a byte (binary representation?)</p>
+<p>property of an object that defines the minimum potential lifetime of the storage containing the object, including static storage duration, thread storage duration, automatic storage duration and dynamic storage duration</p>
 <p><strong><u>3.32</u></strong><br />
-</p>
-<p><strong><u>static</u></strong><br />
-</p>
-<p><u>TBD</u></p>
-<p><strong><u>3.33</u></strong><br />
-</p>
-<p><strong><u>STL</u></strong><br />
 </p>
 <p><strong><u>standard library</u></strong><br />
 </p>
-<p>[TBD]</p>
-<p><strong><u>3.34</u></strong><br />
+<p>[TBD] [Is this really necessary?]</p>
+<p><strong><u>3.33</u></strong><br />
 </p>
 <p><strong><u>template</u></strong><br />
 </p>
-<p>TBD</p>
+<p>a family of classes, functions or variables, or an alias for a family of types, or a concept</p>
+<p>[also template specialization or explicit template specialization]</p>
+<p><strong><u>3.34</u></strong><br />
+</p>
+<p><strong><u>template specialization</u></strong><br />
+</p>
+<p>a named template together with a set of arguments that produces a concrete instance of the entity</p>
 <p><strong><u>3.35</u></strong><br />
-</p>
-<p><strong><u>trap representation</u></strong><br />
-</p>
-<p>object representation that need not represent a value of the object type [This makes no sense - SGM]</p>
-<p><strong><u>3.36</u></strong><br />
 </p>
 <p><strong><u>undefined behaviour</u></strong><br />
 </p>
-<p>use of a non-portable or erroneous program construct or of erroneous data, for which the language standard imposes no requirements</p>
+<p>use of a non-portable or erroneous program construct or erroneous data, for which the language standard imposes no requirements</p>
 <blockquote>
 <p>Note: Undefined behaviour ranges from ignoring the situation completely with unpredictable results, to behaving during translation or program execution in a documented manner characteristic of the environment (with or without the issuance of a diagnostic message), to terminating a translation or execution (with the issuance of a diagnostic message). An example of, undefined behaviour is the behaviour on integer overflow.</p>
 </blockquote>
-<p><strong><u>3.37</u></strong><br />
+<p><strong><u>3.36</u></strong><br />
 </p>
 <p><strong><u>unspecified behaviour</u></strong><br />
 </p>
-<p>use of an unspecified value, or other behaviour where the language standard provides two or more possibilities and imposes no further requirements on which is chosen in any instance</p>
-<blockquote>
-<p>Note: For example, unspecified behaviour is the order in which the arguments to a function are evaluated.</p>
-</blockquote>
-<p><strong><u>3.38</u></strong><br />
+<p>use of an unspecified value or other behaviour where the language standard provides two or more possibilities and imposes no further requirements on which is chosen in any instance, such as the order in which the arguments to a function are evaluated</p>
+<p><strong><u>3.37</u></strong><br />
 </p>
 <p><strong><u>unspecified value</u></strong><br />
 </p>
 <p>valid value of the relevant type where the language standard imposes no requirements on which value is chosen in any instance</p>
-<blockquote>
-<p>Note: An unspecified value cannot be a trap representation.</p>
-</blockquote>
-<p><strong><u>3.39</u></strong><br />
+<p><strong><u>3.38</u></strong><br />
 </p>
 <p><strong><u>value</u></strong><br />
 </p>
 <p>precise meaning of the contents of an object when interpreted as having a specific type</p>
-<blockquote>
-<p>Note: See implementation-defined value, indeterminate value, unspecified value, trap representation</p>
-</blockquote>
-<p><strong><u>3.40</u></strong><br />
+<p><strong><u>3.39</u></strong><br />
 </p>
 <p><strong><u>virtual</u></strong><br />
 </p>
 <p><u>TBD</u></p>
-<p><strong><u>3.41</u></strong><br />
+<p><strong><u>3.40</u></strong><br />
 </p>
 <p><strong><u>wide character</u></strong><br />
 </p>
