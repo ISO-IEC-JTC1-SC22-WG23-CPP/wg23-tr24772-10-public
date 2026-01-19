@@ -276,7 +276,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
 <p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2^n where n is the number of bits in the unsigned type.</p>
-<h4 id="c-overloading-of-operators-can-also-cause-confusion.">C++ overloading of operators can also cause confusion.</h4>
+<p>C++ overloading of operators can also cause confusion.</p>
 <p>The language does not impose any restrictions on semantics of overloaded operators. This can cause (potentially generic) code to behave in completely unobvious ways, when such types with “unusual” operator semantics are used.</p>
 <p>For example, the boost.spirit library allows code like the following to create parser rules:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>r = real_p &gt;&gt; *(ch_p(<span class="ch">&#39;,&#39;</span>) &gt;&gt; real_p); <span class="co">// rule that accepts a comma-separated list of real numbers</span></span></code></pre></div>
@@ -286,9 +286,28 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>Unless all relational operators for a type are defined either explicitly in a consistent way or implicitly, unexpected results can occur. A user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operators consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as <code class="sourceCode cpp">=<span class="cf">default</span></code>, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
 <h4 id="the-most-vexing-parse">6.25.1.2 The Most vexing parse</h4>
 <p>In C++ if the syntax of a declaration can be interpreted as a function declaration in preference to an object declaration, . In the following example, the intention is to create a scoped lock object, but the compiler interprets it as a function declaration <code>lock()</code>. ```{.cpp}</p>
-<p>std::scoped_lock<std::mutex> lock(); ```</p>
-<p>std::vector<int> v1();</p>
-<p>std::vector<int> v2{};</p>
+<p>std::scoped_lock<std::mutex> lock();</p>
+<pre><code>
+std::vector&lt;int&gt; v1();
+
+std::vector&lt;int&gt; v2{};
+
+
+#### 6.25.1.3 Vulnerabilities with associative containers
+
+The subscript `operator[]`{.cpp} for a non-const object of types such as `std::map`{.cpp} guarantees that the given key will exist when the method returns, known as add-or-update behaviour. 
+
+```{.cpp}
+   bool find_elem (std::map&lt;std::string, std::string&gt; &amp; m, std::string key)
+   {
+       if ( m[key] != std::string { } )
+       {
+          return true; // key found in map
+       }
+       // not found
+       return false;
+   }</code></pre>
+<p>In the above function, when a key is not already present in the map, it will be added. This can result in resource exhaustion.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <p>— Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
@@ -309,6 +328,7 @@ It may not be clear whether the programmer intended to use the logical operator 
 <li><p>Prohibit conflicting side-effects in sub-expressions.</p></li>
 <li><p>Avoid defining semantics of overloaded operators to deviate from the semantics of these operators for the built-in types.</p></li>
 <li><p>Prefer defaulted and synthesized comparison operators over individual overloads to ensure that all of the related comparison operators behave consistently.</p></li>
+<li><p>Use <code class="sourceCode cpp">find()</code> or <code class="sourceCode cpp">contains()</code> to check if a key exists in associative containers.</p></li>
 </ul>
 </body>
 </html>
