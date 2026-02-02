@@ -251,7 +251,7 @@
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x = y){</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>A fair amount of analysis may need to be done to determine whether the programmer intended to do an assignment as part of the <code class="sourceCode cpp"><span class="cf">if</span></code> statement (valid in C++) or whether the programmer made the common mistake of using an <code class="sourceCode cpp">=</code> (assignment) instead of a <code class="sourceCode cpp">==</code> (equality).</p>
+<p>In the above example, significant analysis can need to determine whether the programmer intended to do an assignment as part of the <code class="sourceCode cpp"><span class="cf">if</span></code> statement (valid in C++) or whether the programmer made the common mistake of using <code class="sourceCode cpp">=</code> (assignment) instead of <code class="sourceCode cpp">==</code> (equality).</p>
 <p>This confusion can be corrected by moving assignments outside of Boolean contexts. This would change the example code to:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> x,y;</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* … */</span></span>
@@ -261,7 +261,7 @@
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>This would clearly state what the programmer meant and that the assignment of y to x was intended.</p>
 <p>Additional confusion occurs in the use of the logical <code class="sourceCode cpp">&amp;&amp;</code> or <code class="sourceCode cpp">||</code> operators and the bitwise <code class="sourceCode cpp">&amp;</code> or <code class="sourceCode cpp">|</code> operators. The compiler will implicitly convert arithmetic expressions to <code class="sourceCode cpp"><span class="dt">bool</span></code> for operands of the logical operators. Similarly, operands of <code class="sourceCode cpp"><span class="dt">bool</span></code> type will be promoted to <code class="sourceCode cpp"><span class="dt">int</span></code> for operands of the bitwise operators (see <a href="#FLC">Conversion Errors [FLC]</a>).<br />
-It may not be clear whether the programmer intended to use the logical operator <code class="sourceCode cpp">&amp;&amp;</code> or bitwise operator <code class="sourceCode cpp">&amp;</code> instead:</p>
+It is not be clear whether the programmer intended to use the logical operator <code class="sourceCode cpp">&amp;&amp;</code> or bitwise operator <code class="sourceCode cpp">&amp;</code> instead:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> f(<span class="dt">unsigned</span> i, <span class="dt">unsigned</span> j)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> (i &gt; <span class="dv">0</span>) &amp; j;</span>
@@ -270,10 +270,11 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>Programmers can easily get in the habit of inserting the <code class="sourceCode cpp">;</code> statement terminator at the end of statements. However, inadvertently doing this can drastically alter the meaning of code, even though the code is valid as in the following example:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a,b;</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* … */</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a == b);  <span class="co">// the semi-colon will make the following code always execute</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    {             </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (a == b);  <span class="co">// the semi-colon terminates the `if`{.cpp} statement</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                  <span class="co">// and make the following code always execute</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    {             </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>     <span class="co">/* ... */</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
 <p>Because of the misplaced semi-colon, the code block following the if will always be executed. In this case, it is extremely likely that the programmer did not intend to put the semi-colon there.</p>
 <p>Unary ‘<code>+</code>’{.cpp} on a variable is (almost) a no-op, and is possibly a mistype of ‘<code>++</code>’{.cpp}. A unary ‘<code>-</code>’{.cpp} on a variable will switch its sign, unless applied to a variable of an unsigned type, in which case the result is the value subtracted from 2^n where n is the number of bits in the unsigned type.</p>
 <p>C++ overloading of operators can also cause confusion.</p>
@@ -281,50 +282,51 @@ It may not be clear whether the programmer intended to use the logical operator 
 <p>For example, the boost.spirit library allows code like the following to create parser rules:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>r = real_p &gt;&gt; *(ch_p(<span class="ch">&#39;,&#39;</span>) &gt;&gt; real_p); <span class="co">// rule that accepts a comma-separated list of real numbers</span></span></code></pre></div>
 <p>This library uses C++ operator overloads to create an embedded domain-specific language for grammar rules, allowing the specification of parser rules as C++ expressions.</p>
-<p>When overloaded, related operators like the compound assignment with their base operator are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all.</p>
-<p>Similarly for overloaded relational operators, for <code class="sourceCode cpp">a == b</code>, there is no guarantee that <code class="sourceCode cpp">a != b</code> is equivalent to <code class="sourceCode cpp">!(a == b)</code> if both are overloaded by the user.</p>
+<p>When related operators like the compound assignment with their base operator are overloaded, they are not longer guaranteed to keep their behavioral relationship that they have for built-in types. For example, <code class="sourceCode cpp">a += b</code> is not guaranteed to behave like <code class="sourceCode cpp">a = a + b</code>, or being defined at all.</p>
+<p>Similarly for overloaded relational operators, the statement</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>a == b</span></code></pre></div>
+<p>does not guarantee that</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>a != b</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="er">```</span> <span class="kw">and</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="er">```</span>{.cpp}</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>!(a == b)</span></code></pre></div>
+<p>are equivalent if both are overloaded by the user.</p>
 <p>Unless all relational operators for a type are defined either explicitly in a consistent way or implicitly, unexpected results can occur. A user-declared three-way comparison operator (<code class="sourceCode cpp">&lt;=&gt;</code>) is used by the compiler to synthesize the relational operators consistently. If <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code> is defined as <code class="sourceCode cpp">=<span class="cf">default</span></code>, the equality comparison operators will also be defined; and if <code class="sourceCode cpp"><span class="kw">operator</span>==</code> with return type <code class="sourceCode cpp"><span class="dt">bool</span></code> is defined, a corresponding inequality <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> is also defined implicitly.</p>
 <h4 id="the-most-vexing-parse">6.25.1.2 The Most vexing parse</h4>
-<p>In C++ if the syntax of a declaration can be interpreted as a function declaration in preference to an object declaration, . In the following example, the intention is to create a scoped lock object, but the compiler interprets it as a function declaration <code>lock()</code>. ```{.cpp}</p>
-<p>std::scoped_lock<std::mutex> lock();</p>
-<pre><code>
-std::vector&lt;int&gt; v1();
-
-std::vector&lt;int&gt; v2{};
-
-
-#### 6.25.1.3 Vulnerabilities with associative containers
-
-The subscript `operator[]`{.cpp} for a non-const object of types such as `std::map`{.cpp} guarantees that the given key will exist when the method returns, known as add-or-update behaviour. 
-
-```{.cpp}
-   bool find_elem (std::map&lt;std::string, std::string&gt; &amp; m, std::string key)
-   {
-       if ( m[key] != std::string { } )
-       {
-          return true; // key found in map
-       }
-       // not found
-       return false;
-   }</code></pre>
+<p>In C++ if the syntax of a declaration can be interpreted as a function declaration in preference to an object declaration. In the following example, the intention is to create a scoped lock object, but the compiler interprets it as a function declaration <code>lock()</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>scoped_lock&lt;<span class="bu">std::</span>mutex&gt; lock();</span></code></pre></div>
+<p>std::vector<int> v1();</p>
+<p>std::vector<int> v2{};</p>
+<p>!!! more explanation needed</p>
+<h4 id="vulnerabilities-with-associative-containers">6.25.1.3 Vulnerabilities with associative containers</h4>
+<p>The subscript <code class="sourceCode cpp"><span class="kw">operator</span>[]</code> for a non-const object of types such as <code class="sourceCode cpp"><span class="bu">std::</span>map</code> guarantees that the given key will exist when the method returns, known as add-or-update behaviour.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>   <span class="dt">bool</span> find_elem (<span class="bu">std::</span>map&lt;<span class="bu">std::</span>string, <span class="bu">std::</span>string&gt; &amp; m, <span class="bu">std::</span>string key)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>   {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>       <span class="cf">if</span> ( m[key] != <span class="bu">std::</span>string { } )</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>       {</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>          <span class="cf">return</span> <span class="kw">true</span>; <span class="co">// key found in map</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="co">// not found</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> <span class="kw">false</span>;</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>   }</span></code></pre></div>
 <p>In the above function, when a key is not already present in the map, it will be added. This can result in resource exhaustion.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
-<p>— Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
+<p>— Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
 <ul>
-<li><p>Simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example,</p>
+<li><p>Simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example by,</p>
 <ul>
-<li>by using parentheses around sub-expressions to limit precedence confusion,</li>
-<li>by extracting intermediate results into const variables with a meaningful name, or</li>
-<li>by extracting a subexpression into a function with a meaningful name.</li>
+<li>using parentheses around sub-expressions to limit precedence confusion,</li>
+<li>extracting intermediate results into const variables with a meaningful name, or</li>
+<li>extracting a subexpression into a function with a meaningful name.</li>
 </ul></li>
-<li><p>Avoid assignments embedded within other statements and expressions.</p></li>
+<li><p>Prohibit assignments embedded within other statements and expressions.</p></li>
 <li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators.</p></li>
 <li><p>Avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
-<li><p>Avoid Boolean operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) with non-<code>bool</code> operands, e.g., operands of numeric types.</p></li>
+<li><p>Prohibit mixing Boolean operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) with non-<code>bool</code> operands, e.g., operands of numeric types.</p></li>
 <li><p>Avoid bit operators (<code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> ) with anything except operands of non-<code>bool</code> unsigned types.</p></li>
-<li><p>Consider using alternative tokens for the logical operators, such as <code>and</code>, <code>or</code>, and <code>not</code>, and comparison operators such as <code>equal</code> and <code>not_eq</code>.</p></li>
-<li><p>If your code structure requires an empty statement <code class="sourceCode cpp">;</code> use an empty code block instead <code class="sourceCode cpp">{}</code>.</p></li>
+<li><p>Prefer using alternative tokens for the logical operators, such as <code>and</code>, <code>or</code>, and <code>not</code>, and comparison operators such as <code>equal</code> and <code>not_eq</code>.</p></li>
+<li><p>For code structure that require an empty statement, use an empty code block <code class="sourceCode cpp">{}</code> instead of <code class="sourceCode cpp">;</code>.</p></li>
 <li><p>Prohibit conflicting side-effects in sub-expressions.</p></li>
 <li><p>Avoid defining semantics of overloaded operators to deviate from the semantics of these operators for the built-in types.</p></li>
 <li><p>Prefer defaulted and synthesized comparison operators over individual overloads to ensure that all of the related comparison operators behave consistently.</p></li>
