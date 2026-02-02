@@ -142,6 +142,68 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -155,14 +217,20 @@
 <h2 id="XYQ">6.26 Dead and Deactivated Code [XYQ]</h2>
 <h3 id="applicability-to-language">6.26.1 Applicability to language</h3>
 <p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.26 exists in C++.</p>
-<p>The language mechanisms around templates and overload resolution can require definitions to exist that are not part of the executable program. But the mechanisms at compile time guarantee that the corresponding code never becomes part of the executable program. However, a programmer might be unaware of all details with respect to the language mechnisms and thus make subtle errors leading to code selected for the executable program that was unintended.</p>
-<p>If there is code that was once needed or might be needed in the future, programmers might opt to comment or use preprocessor conditional compilation to exclude such parts. The latter might even be confusing, because an intentionally undefined macro might be defined for a specific compilation outside of the program source text. Modern version control systems are better places to keep unused code in a revision or branch and ressurect it if needed through a merge.</p>
+<p>An instantiated template follows the same reachability rules as would be followed for the non-template case.</p>
+<p>This clause does not consider: - discarded statements that are intentionally unreachable, e.g., through branches of the `if constexpr’{.cpp} statement.<br />
+- commented out code; - an uninstantiated template; - code excluded using the C++ preprocessor as these do not result in the generation of code.</p>
+<p>C++ provides the <code class="sourceCode cpp">= <span class="kw">delete</span></code> definition that can be used to mark that a (possibly overloaded) function is intentionally deactivated.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>string foo(<span class="dt">int</span>) = <span class="kw">delete</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>string foo(<span class="dt">char</span>);</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   <span class="kw">auto</span> s = foo(<span class="dv">0</span>); <span class="co">// compiler error - selected function is deleted.</span></span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.26.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.26.5.</p></li>
-<li><p>Use IDEs or similar tools that visualize the code that gets selected for the executable program.</p></li>
-<li><p>Use modern version control to manage unused code.</p></li>
+<li>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.26.5.</li>
+<li>Define functions that are intentionally deactivated as <code class="sourceCode cpp">= <span class="kw">delete</span></code></li>
+<li>In situations where compile-tests are possible instead of the runtime equivalent, consider the use of <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">static_assert</span></code> to force compile-time processing.</li>
+<li>In situations where compile-tests are not possible, consider the use of <code class="sourceCode cpp"><span class="ot">assert</span>(<span class="kw">false</span>)</code> to document code as intentionally deactivated.</li>
 </ul>
 </body>
 </html>
