@@ -3184,15 +3184,15 @@ execution boundaries</p></li>
 <h2 id="unspecified-behaviour-bqf">6.55 Unspecified Behaviour [BQF]</h2>
 <h3 id="applicability-of-language">6.55.1 Applicability of language</h3>
 <p>The vulnerability as described in ISO/IEC 24772-1:2019 clause 6.55 applies to C++.</p>
-<p>In the following example, the value of <code class="sourceCode cpp">size</code> can be different than the length of <code class="sourceCode cpp">data</code> because the extent of <code class="sourceCode cpp">data</code> must be calculated at compile time but the calculation of <code class="sourceCode cpp">size</code> can be determined at compile time or executed at runtime, which is one source of unspecified behaviour.</p>
-<pre><code>char data[1 + int(1 + 0.2 - 0.1 - 0.1)] = { }; // compile-time evaluation
-int size = 1 + int(1 + 0.2 - 0.1 - 0.1);       // compile-time or run-time evaluation
-char f() { return data[size-1];} // Possible buffer overflow</code></pre>
+<p>In the following example, the value of <code class="sourceCode cpp">size</code> can be different than the length of <code class="sourceCode cpp">data</code> because the extent of <code class="sourceCode cpp">data</code> must be calculated at compile time but the calculation of <code class="sourceCode cpp">size</code> can be determined either at compile time or during program execution, one source of unspecified behaviour.</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb194-1"><a href="#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> data[<span class="dv">1</span> + <span class="dt">int</span>(<span class="dv">1</span> + <span class="fl">0.2</span> - <span class="fl">0.1</span> - <span class="fl">0.1</span>)] = { }; <span class="co">// compile-time evaluation</span></span>
+<span id="cb194-2"><a href="#cb194-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> size = <span class="dv">1</span> + <span class="dt">int</span>(<span class="dv">1</span> + <span class="fl">0.2</span> - <span class="fl">0.1</span> - <span class="fl">0.1</span>);       <span class="co">// compile-time or run-time evaluation</span></span>
+<span id="cb194-3"><a href="#cb194-3" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> f() { <span class="cf">return</span> data[size-<span class="dv">1</span>];} <span class="co">// Possible buffer overflow</span></span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.55.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.55.5.</p></li>
-<li><p>Use static analysis tools and multiple compilers/tools to help identify occurrences of unspecified behaviour.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.55.5.</p></li>
+<li><p>Use static analysis tools and multiple compilers/tools from different sources to help identify occurrences of unspecified behaviour.</p></li>
 </ul>
 <h2 id="EWF">6.56 Undefined Behaviour [EWF]</h2>
 <h3 id="applicability-to-language">6.56.1 Applicability to language</h3>
