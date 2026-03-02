@@ -156,11 +156,8 @@
 <h3 id="applicability-of-language">6.54.1 Applicability of language</h3>
 <p>The vulnerability as described in ISO/IEC 24772-1 clause 6.54 applies to C++.</p>
 <p>C++ is a rich language and provides facilities for a wide range of application areas with a long history of evolution. This evolution includes the language as well as the evolution of best and safe practices. Therefore, code can look obscure because it either uses obsolete or very modern language idioms.</p>
+<p>A compiler often provides checks for obscure language use and give corresponding diagnostics, when those checks are enabled. Different compilers tend to have different sets of such checks. The use of more than one compiler can also help enforce standard conformance.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.54.2 Avoidance mechanisms for language users</h3>
-<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
-<ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.54.5.</p></li>
-<li><p>Use static analysis tools, including multiple compilers from different sources to help identify occurrences of obscure language features.</p></li>
-</ul>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can: - Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.54.5. - Use static analysis tools, including multiple compilers from different sources and with appropriate levels of checking to help identify occurrences of obscure language features.</p>
 </body>
 </html>
