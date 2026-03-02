@@ -228,25 +228,39 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a = <span class="dv">81</span> / ((++i) * (++i) * (++i));</span></code></pre></div>
 <p>which has undefined behaviour so this macro expansion is difficult to predict.</p>
 <p>Another mechanism of failure can occur when the arguments within the body of a function-like macro are not fully parenthesized. The following example shows the CUBE macro without parenthesized arguments.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define CUBE</span>(X)<span class="pp"> </span>(X<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>X<span class="pp"> </span><span class="er">\</span>*<span class="pp"> </span>X)</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define CUBE</span>(X)<span class="pp"> </span>(X<span class="pp"> </span>*<span class="pp"> </span>X<span class="pp"> </span>*<span class="pp"> </span>X)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = CUBE(<span class="dv">2</span> + <span class="dv">1</span>);</span></code></pre></div>
 <p>This example expands to:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a = (<span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span> * <span class="dv">2</span> + <span class="dv">1</span>)</span></code></pre></div>
 <p>which evaluates to 7 instead of the intended 27.</p>
+<p>Both issues shown above are a result of the text replacement mechanisms of preprocessing. Usually such function-like macros can be replaced by type-safe <code class="sourceCode cpp"><span class="kw">constexpr</span></code> functions that do not suffer from the vulnerabilities caused by text replacement, as shown below:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> CUBE(<span class="kw">auto</span> <span class="at">const</span> x) { <span class="cf">return</span> x * x * x; }</span></code></pre></div>
+<p>Historically, one use of function-like macros was to provide source-location information via the compiler-provided macros <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, and <code class="sourceCode cpp"><span class="ot">__func__</span></code>. Modern C++ provides <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> with the <code class="sourceCode cpp"><span class="bu">std::</span>sources_location<span class="bu">::</span>current()</code> default function argument that allows passing that information from a function’s call site without the need to use a macro.</p>
+<p>Similar issues can apply to object-like macros:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define THREE </span>=<span class="pp"> </span><span class="dv">1</span>+<span class="dv">2</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> x = THREE*THREE</span></code></pre></div>
+<p>becomes</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> x = <span class="dv">1</span>+<span class="dv">2</span>*<span class="dv">1</span>+<span class="dv">2</span> <span class="co">// 5, not 6 as expected</span></span></code></pre></div>
+<p>Most object-like macros can be replaced by <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables that do not suffer from this vulnerability.</p>
+<p>A remaining use case for function like macros is the use of “stringification” of macro arguments or joining macro arguments to form a new token (##).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define jstringify</span>(<span class="pp"> </span>x,<span class="pp"> </span>y<span class="pp"> </span>)<span class="pp">   #</span>x<span class="pp"> ## </span>y</span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.51.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible.</p></li>
-<li><p>Replace normal macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
+<li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible, but if a function-like macro must be used, ensure that:</p>
+<ul>
+<li>its parameters and body are parenthesized;</li>
+<li>each argument is evaluated at most once;</li>
+<li>the replaced code does not have side effects.</li>
+</ul></li>
+<li><p>Ensure that arguments to function-like macros do not resemble a preprocessing directive.</p></li>
+<li><p>Replace object-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
 <li><p>Replace conditional compilation with the preprocessor with <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> where possible, e.g., in function bodies, including cases where compile-time define of a macro (as empty) controls if a macro definition is used to expand to an empty statement or another statement.</p></li>
 <li><p>Replace preprocessor include directives with module <code class="sourceCode cpp"><span class="kw">import</span></code> where possible.</p></li>
-<li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> mechanisms over employing macros that use <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, or <code class="sourceCode cpp"><span class="ot">__func__</span></code>.</p></li>
-<li><p>If a function-like macro must be used, ensure that its parameters and body are parenthesized.</p></li>
-<li><p>In a function-like macro, ensure that each argument is evaluated at most once.</p></li>
-<li><p>Prohibit embedding the following in a function-like macro: pre-processor directives; or side-effects such as an assignment, increment/decrement, volatile access, or function call.</p></li>
+<li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> mechanisms over macros that use <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, or <code class="sourceCode cpp"><span class="ot">__func__</span></code>.</p></li>
 <li><p>Only use macros for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments.</p></li>
-<li><p>Prohibit the use of macro paramters that are used as argument for <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> or <code class="sourceCode cpp"><span class="er">#</span></code> in the macro.</p></li>
+<li><p>Avoid the use of <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> and <code class="sourceCode cpp"><span class="er">#</span></code> in the same macro body.</p></li>
 </ul>
 </body>
 </html>
