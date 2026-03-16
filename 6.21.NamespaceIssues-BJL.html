@@ -334,7 +334,8 @@
 <ul>
 <li><p>Use the avoidance mechanisms of clauses 6.20.2, 6.40.2, and 6.41.2 as applicable.</p></li>
 <li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
-<li><p>Arguments to called functions should not be subject to implicit conversions.</p></li>
+<li><p>Consider using named function objects instead of function names for calling a function to suppress overload resolution using argument dependent lookup (ADL).</p></li>
+<li><p>Avoid implicit conversions of function arguments.</p></li>
 <li><p>Prefer using declarations to using directives.</p></li>
 <li><p>Do not overload and use default arguments for the same set of functions.</p></li>
 <li><p>Do not specialize function templates.</p></li>
