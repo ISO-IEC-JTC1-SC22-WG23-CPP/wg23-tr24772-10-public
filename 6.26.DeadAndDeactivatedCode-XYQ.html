@@ -216,22 +216,17 @@
 </header>
 <h2 id="XYQ">6.26 Dead and Deactivated Code [XYQ]</h2>
 <h3 id="applicability-to-language">6.26.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.26 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.26 exists in C++ in function bodies compiled into the target program.</p>
+<p>This clause does not consider other parts of the C++ source that do not result in the generation of code, such as: - discarded statements that are intentionally unreachable, e.g., through branches of the <code>if constexpr'{.cpp} statement.     - commented out code;   - a function deactivated with</code>=delete`{.cpp}; - an uninstantiated template; - code excluded using the C++ preprocessor.</p>
 <p>An instantiated template follows the same reachability rules as would be followed for the non-template case.</p>
-<p>This clause does not consider: - discarded statements that are intentionally unreachable, e.g., through branches of the `if constexpr’{.cpp} statement.<br />
-- commented out code; - an uninstantiated template; - code excluded using the C++ preprocessor</p>
-<p>as these do not result in the generation of code.</p>
-<p>C++ provides the <code class="sourceCode cpp">= <span class="kw">delete</span></code> definition that can be used to mark that a (possibly overloaded) function is intentionally deactivated.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>string foo(<span class="dt">int</span>) = <span class="kw">delete</span>;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>string foo(<span class="dt">char</span>);</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   <span class="kw">auto</span> s = foo(<span class="dv">0</span>); <span class="co">// compiler error - selected function is deleted.</span></span></code></pre></div>
+<p>C++ overload resolution rules can cause confusion (see <a href="#BJL">6.21 Namespace issues[BJL]</a>). To prevent the selection of an unintented overload, a function can be defined with <code class="sourceCode cpp">=<span class="kw">delete</span></code>. C++ provides <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> to mark branches that are intentionally dead, but care is necessary since calling <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> at runtime is undefined behaviour.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.26.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.26.5.</li>
 <li>Define functions that are intentionally deactivated as <code class="sourceCode cpp">= <span class="kw">delete</span></code></li>
 <li>In situations where compile-tests are possible instead of the runtime equivalent, consider the use of <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">static_assert</span></code> to force compile-time processing.</li>
-<li>In situations where compile-tests are not possible, consider the use of <code class="sourceCode cpp"><span class="ot">assert</span>(<span class="kw">false</span>)</code> to document code as intentionally deactivated.</li>
+<li>In situations where compile-tests are not possible, consider the use of <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> to document code as intentionally deactivated.</li>
 </ul>
 </body>
 </html>
