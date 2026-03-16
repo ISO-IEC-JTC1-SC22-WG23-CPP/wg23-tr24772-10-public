@@ -2125,7 +2125,8 @@ It is not be clear whether the programmer intended to use the logical operator <
 <p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.26 exists in C++.</p>
 <p>An instantiated template follows the same reachability rules as would be followed for the non-template case.</p>
 <p>This clause does not consider: - discarded statements that are intentionally unreachable, e.g., through branches of the `if constexpr’{.cpp} statement.<br />
-- commented out code; - an uninstantiated template; - code excluded using the C++ preprocessor as these do not result in the generation of code.</p>
+- commented out code; - an uninstantiated template; - code excluded using the C++ preprocessor</p>
+<p>as these do not result in the generation of code.</p>
 <p>C++ provides the <code class="sourceCode cpp">= <span class="kw">delete</span></code> definition that can be used to mark that a (possibly overloaded) function is intentionally deactivated.</p>
 <div class="sourceCode" id="cb145"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>string foo(<span class="dt">int</span>) = <span class="kw">delete</span>;</span>
 <span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>   <span class="bu">std::</span>string foo(<span class="dt">char</span>);</span>
