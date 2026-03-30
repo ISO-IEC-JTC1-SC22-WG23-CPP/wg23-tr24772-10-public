@@ -216,25 +216,14 @@
 </header>
 <h2 id="unanticipated-exceptions-from-library-routines-hjw">6.50. Unanticipated Exceptions from Library Routines [HJW]</h2>
 <h3 id="applicability-to-language">6.50.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.50 exists for C++. In particular the issue of the failing dynamic initialization of namespace-scope objects exists in C++.</p>
-<p>When dynamic initialization of a namespace-scope object fails with an exception, the exception cannot be caught and the program is terminated. Function-scope static objects, in contrast, are initialized the first time execution passes through the declaration. Using function-scope static objects in preference to dynamic initialization ensures that there is always an enclosing function that could catch the exception.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">exception_prone_type</span> troubling_object;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// An exception from the constructor could cause termination.</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// The following function always returns a reference to the same object,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">// which is initialized the first time this function is called.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">// If initialization fails, it will be retried on the next call.</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="dt">exception_prone_type</span>&amp; safer_object()</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   <span class="at">static</span> <span class="dt">exception_prone_type</span> the_safer_object;</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> the_safer_object;</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p>The vulnerability as documented in ISO IEC 24772-1:2019 clause 6.50 exists for C++. C++ supports both the exception mechanism and the error return mechanism This clause assumes that any exceptions thrown by an external library are compatible with C++, otherwise the result will be undefined.</p>
+<p>When calling a function from a library whose source code is not visible, an unknown exception type can be thrown. For such cases, an exception thrown from such a function is guaranteed to be caught by <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code>. See <span id="OYB">Ignored Error Status and Unhandled Exceptions [OYB]</span>.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.50.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Expect functions not marked <code class="sourceCode cpp"><span class="kw">noexcept</span></code> to throw exceptions of arbitrary type, excluding all destructors, which are are implicitly <code class="sourceCode cpp"><span class="kw">noexcept</span></code>.</p></li>
-<li><p>Follow the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
-<li><p>Prefer function-scope static objects to namespace-scope objects for objects needing dynamic initialization.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO IEC 24772-1 6.50.</p></li>
+<li><p>Apply the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
+<li><p>Surround function calls that can throw unanticipated exceptions, including calls to external libraries, in a <code class="sourceCode cpp"><span class="cf">try</span>-<span class="cf">catch</span></code> with a <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code> handler.</p></li>
 </ul>
 </body>
 </html>
