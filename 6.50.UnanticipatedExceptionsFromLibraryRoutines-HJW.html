@@ -216,14 +216,14 @@
 </header>
 <h2 id="unanticipated-exceptions-from-library-routines-hjw">6.50. Unanticipated Exceptions from Library Routines [HJW]</h2>
 <h3 id="applicability-to-language">6.50.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO IEC 24772-1:2019 clause 6.50 exists for C++. C++ supports both the exception mechanism and the error return mechanism This clause assumes that any exceptions thrown by an external library are compatible with C++, otherwise the result will be undefined.</p>
-<p>When calling a function from a library whose source code is not visible, an unknown exception type can be thrown. For such cases, an exception thrown from such a function is guaranteed to be caught by <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code>. See <span id="OYB">Ignored Error Status and Unhandled Exceptions [OYB]</span>.</p>
+<p>The vulnerability as documented in ISO IEC 24772-1:2019 clause 6.50 exists for C++. C++ supports both the exception mechanism and the error return mechanism. This clause assumes that any exceptions thrown by an external library are compatible with C++, otherwise the result is undefined.</p>
+<p>When calling a function from a library whose source code is not visible, an unknown exception can be thrown. For such cases, the exception thrown from such a function is guaranteed to be caught by <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code>. See <span id="OYB">Ignored Error Status and Unhandled Exceptions [OYB]</span>.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.50.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanisms of ISO IEC 24772-1 6.50.</p></li>
 <li><p>Apply the avoidance mechanisms of clause 6.36.2 for catching and handling exceptions.</p></li>
-<li><p>Surround function calls that can throw unanticipated exceptions, including calls to external libraries, in a <code class="sourceCode cpp"><span class="cf">try</span>-<span class="cf">catch</span></code> with a <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code> handler.</p></li>
+<li><p>Surround function calls that can throw unanticipated exceptions, including calls to external libraries, in a <code class="sourceCode cpp"><span class="cf">try</span>-<span class="cf">catch</span></code> with an appropriate <code class="sourceCode cpp"><span class="cf">catch</span>(...)</code> handler.</p></li>
 </ul>
 </body>
 </html>
