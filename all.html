@@ -1679,17 +1679,17 @@ dereference null pointers" -->
 </ul>
 <p>In the case of template specialization or non-identical definitions of the same entity in different translation units (ODR-violation), ill-formed code might be the result, however, a C++ compiler is not obliged to diagnose that situation, leading to undefined behaviour <a href="#EWF">[EWF]</a>.</p>
 <p>In the case of overloading and overriding cases, C++ compilers are required to diagnose an ambiguity if it exists.</p>
-<p>However, overload resolution applies preference rules in order to select among multiple matching functions or function templates as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question then changes its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability. Function template specializations are not considered during overload resolution, only the base template is considered.</p>
+<p>Overload resolution applies preference rules in order to select among multiple matching functions or function templates as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question will then change its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability. Function template specializations are not considered during overload resolution; only the base template is considered.</p>
 <div class="sourceCode" id="cb111"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
 <span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a><span class="co">// void foo (int);</span></span>
 <span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar ()</span>
 <span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="dv">0</span>);         <span class="co">// The call to &#39;foo(long)&#39; requires implicitly conversion</span></span>
-<span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// from &#39;int&#39; to &#39;long&#39;.   The function &#39;foo(int)&#39; </span></span>
-<span id="cb111-9"><a href="#cb111-9" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// would be a &quot;better match&quot; and so would silently</span></span>
-<span id="cb111-10"><a href="#cb111-10" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// be chosen when subsequently introduced</span></span>
+<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>  foo (<span class="dv">0</span>);         <span class="co">// The call to &#39;foo(long)&#39; was intended</span></span>
+<span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// but requires implicitly conversion from &#39;int&#39; to &#39;long&#39;.</span></span>
+<span id="cb111-9"><a href="#cb111-9" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// Once &#39;foo(int)&#39; is introduced it is a match without</span></span>
+<span id="cb111-10"><a href="#cb111-10" aria-hidden="true" tabindex="-1"></a>                   <span class="co">// the implicit conversion, hence is silently chosen </span></span>
 <span id="cb111-11"><a href="#cb111-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>A new declaration can impact existing code in a number of situations involving the addition of:</p>
 <ul>
@@ -1699,7 +1699,9 @@ dereference null pointers" -->
 <li>a non-template function that is preferred to a function template,</li>
 <li>a template specialization.</li>
 </ul>
-<p>A <code class="sourceCode cpp"><span class="kw">using</span></code> directive broadens the possible scopes that will be examined for names during lookup. Where lookup searches a namespace referred to by a <code class="sourceCode cpp"><span class="kw">using</span></code> directive, all names in that namespace will be visible some of which may be unwanted. A using declaration, on the other hand, declares only the specified name into the scope of the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration.</p>
+<p>A <code class="sourceCode cpp"><span class="kw">using</span></code> directive broadens the possible scopes that will be examined for names during lookup.<br />
+Where lookup searches a namespace referred to by a <code class="sourceCode cpp"><span class="kw">using</span></code> directive, all names in that namespace will be visible but some can be unwanted.<br />
+A <em>using</em> declaration, on the other hand, declares only the specified name into the scope of the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration.</p>
 <div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS1</span>
 <span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1 (<span class="dt">int</span>);</span>
