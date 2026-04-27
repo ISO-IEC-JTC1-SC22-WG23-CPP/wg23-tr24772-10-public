@@ -215,8 +215,7 @@
 <h1 class="title">parts/3.terms.md</h1>
 </header>
 <h1 id="terms-and-definitions">3. Terms and definitions</h1>
-<p>&lt;!- SGM - removed "symbols and conventions from title and renumbered from [3.1.x] to [3.x] –&gt;</p>
-<p>For the purposes of this document, the terms and definitions given in ISO/IEC 2382, in TR 24772–1, in 14882:2014 and the following apply. Other terms are defined where they appear in <em>italic</em> type.</p>
+<p>For the purposes of this document, the terms and definitions given in ISO/IEC 2382, in ISO IEC 24772-1, in ISO IEC 14882:2023 and the following apply. Other terms are defined where they appear in <em>italic</em> type.</p>
 <p>The following terms are in alphabetical order, with general topics referencing the relevant specific terms.</p>
 <p><strong><u>3.1</u></strong></p>
 <p><u>TBD</u></p>
@@ -227,7 +226,8 @@
 <p>Note 1: Where only one of two actions is meant, read or modify. Modify includes the case where the new value being stored is the same as the previous value. Expressions that are not evaluated do not access objects</p>
 </blockquote>
 <p><strong><u>3.3</u></strong></p>
-<p><u>access protection</u>:</p>
+<p><strong><u>access protection</u></strong>:</p>
+<p>use of the <em>protected</em> keyword to signify that access to the named object is restricted to methods within the class or a subclass</p>
 <p><strong><u>3.4</u></strong><br />
 </p>
 <p><strong><u>alignment</u></strong><br />
@@ -254,14 +254,15 @@ a user-defined type declared with the class-key ‘class’ or ‘struct’ {.ul
 <p><strong><u>3.9</u></strong></p>
 <p><strong><u>diagnostic message</u></strong><br />
 </p>
-<p>informational message that is either an error or warning about an issue detected by the implementation</p>
+<p>informational message that is either an error or a warning about an issue detected by the implementation</p>
 <p><strong><u>3.10</u></strong><br />
 </p>
 <p><strong>[erroneous behaviour]</strong><br />
 </p>
 <p>well-defined behavior that the implementation is recommended to diagnose</p>
 <p><strong><u>3.11</u></strong><br />
-<strong><u>erroneous value</u></strong><br />
+</p>
+<p><strong><u>erroneous value</u></strong><br />
 </p>
 <p>value of an object not declared <code class="sourceCode cpp">[[<span class="at">indeterminate</span>]]</code> and who’s value has not yet been set and can lead to erroneous behaviour if produced by an evaluation</p>
 <p><strong><u>3.12</u></strong><br />
