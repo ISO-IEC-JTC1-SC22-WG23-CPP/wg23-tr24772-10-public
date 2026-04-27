@@ -216,7 +216,7 @@
 </header>
 <h1 id="UJO">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC TR 24772-1:2019 clause 6.65 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.65 exists in C++.</p>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime without invoking mechanisms which have undefined behaviour <a href="#EWF">[EWF]</a>. For example, an access path to an object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that the value of the object will not change via this access path without invoking mechanisms which have undefined behaviour, e.g.,</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;              <span class="co">// the simplest access path</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; j = <span class="kw">const_cast</span>&lt;<span class="dt">int</span>&amp;&gt;(i); <span class="co">// undefined behaviour</span></span>
@@ -243,8 +243,7 @@
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  test(k);</span></code></pre></div>
-<p>When using pointers, confusion can occur between qualifications on the pointer’s type (pointer type) and qualifications on the type being referenced (pointee type).</p>
-<p>A common misconception is that a member function qualified with <code class="sourceCode cpp"><span class="at">const</span></code> cannot modify any of its members.<br />
+<p>When using pointers, confusion can occur between qualifications on the pointer’s type (pointer type) and qualifications on the type being referenced (pointee type). A common misconception is that a member function qualified with <code class="sourceCode cpp"><span class="at">const</span></code> cannot modify any of its members.<br />
 The following badly defined class introduces a non-<code class="sourceCode cpp"><span class="at">const</span></code> access path to a potentially const object:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  {</span>
@@ -294,13 +293,13 @@ Historically, classes with expensive computations in frequently-called const-mem
 <h3 id="avoidance-mechanisms-for-language-users">6.65.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.65.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO IEC 24772-1 clause 6.65.5.</p></li>
 <li><p>Forbid casting away <code class="sourceCode cpp"><span class="at">const</span></code> by <code class="sourceCode cpp"><span class="kw">const_cast</span></code> or by any other means.</p></li>
 <li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits values accessed by a <code class="sourceCode cpp"><span class="at">const</span></code> access path to be modified via a different access path.</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">const</span></code> on pointer-like parameters as a promise to callers and an obligation on the implementation to not modify the referred object.</p></li>
-<li><p>Within <code class="sourceCode cpp"><span class="at">const</span></code> member functions, avoid indirectly modifying the object’s state.</p></li>
+<li><p>Prohibit indirectly modifying the object’s state within any of its <code class="sourceCode cpp"><span class="at">const</span></code> member functions.</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">mutable</span></code> only to member variables that do not influence the observable state of an object.</p></li>
-<li><p>Ensure in concurrent code, that mutable data members are synchronisation primitives or are explicitly synchronized.</p></li>
+<li><p>Ensure in concurrent code, that mutable data members are implicitly or explicitly synchronized.</p></li>
 <li><p>When designing C++ classes, provide <code class="sourceCode cpp"><span class="at">const</span></code> member functions to support <code class="sourceCode cpp"><span class="at">const</span></code> objects.</p></li>
 <li><p>Ensure that C++ classes modelling pointer-like types provide transitivity of <code class="sourceCode cpp"><span class="at">const</span></code> within <code class="sourceCode cpp"><span class="at">const</span></code> member functions.</p></li>
 </ul>
