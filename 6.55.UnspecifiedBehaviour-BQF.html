@@ -221,6 +221,9 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> data[<span class="dv">1</span> + <span class="dt">int</span>(<span class="dv">1</span> + <span class="fl">0.2</span> - <span class="fl">0.1</span> - <span class="fl">0.1</span>)] = { }; <span class="co">// compile-time evaluation</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> size = <span class="dv">1</span> + <span class="dt">int</span>(<span class="dv">1</span> + <span class="fl">0.2</span> - <span class="fl">0.1</span> - <span class="fl">0.1</span>);       <span class="co">// compile-time or run-time evaluation</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> f() { <span class="cf">return</span> data[size-<span class="dv">1</span>];} <span class="co">// Possible buffer overflow</span></span></code></pre></div>
+<p>Similarly, the order of evaluation of parameters in functions calls is unspecified, for example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i = <span class="dv">0</span>;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>f(i, ++i); <span class="co">// can be f(0,1), or f(1,1), depending on evaluation order.</span></span></code></pre></div>
 <h3 id="avoidance-mechanisms-for-language-users">6.55.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
