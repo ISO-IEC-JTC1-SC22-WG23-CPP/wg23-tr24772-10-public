@@ -142,68 +142,6 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
@@ -218,53 +156,60 @@
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
 <p>C++ is a statically typed language. In some ways, C++ is both strongly and weakly typed, as it requires all objects/expressions to have a type, but allows for some implicit conversions of values from one type to another type. The following cases require special consideration:</p>
 <ul>
-<li><p>The implicit conversions between arithmetic types (including <code class="sourceCode cpp"><span class="dt">bool</span></code>) that can silently truncate values or produce objects with less precision (for details see <a href="#FLC">Conversion Errors [FLC]</a>), such as <em>integral promotion</em> from small (unsigned) integer types (e.g. <code class="sourceCode cpp"><span class="dt">unsigned</span> <span class="dt">char</span></code>) to the signed integer type <code class="sourceCode cpp"><span class="dt">int</span></code> that can lead to operations with undefined behavior <a href="#EWF">[EWF]</a>, where unsigned arithmetic is defined with modulo semantics.</p></li>
+<li><p>The implicit conversions between arithmetic types (including <code>bool</code>) that can silently truncate values or produce objects with less precision (for details see <a href="#FLC">Conversion Errors [FLC]</a>), such as <em>integral promotion</em> from small (unsigned) integer types (e.g. <code>unsigned char</code>) to the signed integer type <code>int</code> that can lead to operations with undefined behavior <a href="#EWF">[EWF]</a>, where unsigned arithmetic is defined with modulo semantics.</p></li>
 <li><p>The standard types used to represent text characters ( <code>char</code>, <code>char8_t</code>, <code>wchar_t</code>, <code>char16_t</code>, <code>char32_t</code>) are treated as arithmetic types even when used to represent text and thus are subject to implicit conversions to and from other arithmetic types. Using values of character types in arithmetic expressions, especially together with other types can be confusing. Furthermore, using values of such types or sequences of such values with their corresponding string types with relational operators might not provide an expected sorting order, depending on the language or the encoding the text represents. Libraries for text processing might take such locale-specific or text-representation-specific behavior into account, whereas the built-in operators of the language don’t.</p></li>
 <li><p>Conversions during function overload resolution are considered explicit conversions, when there is not a direct match of argument type with parameter type. Such conversions can lead to ambiguities that result in a compile error, but there can also be a single best matching overload that does not correspond to developer’s expectation including conversion of argument types (see <a href="#YOW">Identifier Name Reuse [YOW]</a>). Even where the code presently corresponds to programmer expectation, a later addition of code can create a new “better match”, potentially resulting in a silent change of behaviour (see <a href="#BJL">Namespace issues [BJL]</a>, and <a href="#FLC">Conversion Errors [FLC]</a>).</p></li>
 <li><p>Values of an unscoped enumeration convert to their underlying integral type in arithmetic expressions (see <a href="#CCB">Enumerator Issues [CCB]</a>).</p></li>
 <li><p>Built-in array types as well as function types will decay to a pointer type. For array types this is problematic, because the array’s extent is lost (see <a href="#XYZ">Unchecked Array Indexing [XYZ]</a> and <a href="#RVG">Pointer Arithmetic [RVG]</a>)</p></li>
 <li><p>Pointer types implicitly convert to pointer-to-void (see <a href="#HFC">Pointer Type Conversions [HFC]</a>).</p></li>
 <li><p>Pointer and reference types referring a derived class object can implicitly convert to a pointer or reference to one of its public base classes respectively (see <a href="#BKK">Polymorphic Variables [BKK]</a>).</p></li>
-<li><p>User-defined class types can define conversion operators and converting constructors that can be called with a single argument. If these member functions are not declared with the keyword <code class="sourceCode cpp"><span class="kw">explicit</span></code> they are eligible for use in implicit conversions.</p></li>
-<li><p>Implicit conversions from an arithmetic type to <code class="sourceCode cpp"><span class="dt">bool</span></code> often indicate a missing comparison. Conversions from <code class="sourceCode cpp"><span class="dt">bool</span></code> in arithmetic expression can obfuscate code. For example, the following code relies on <code class="sourceCode cpp"><span class="kw">false</span></code> converting to/from zero and <code class="sourceCode cpp"><span class="kw">true</span></code> to one and from non-zero:</p></li>
+<li><p>User-defined class types can define conversion operators and converting constructors that can be called with a single argument. If these member functions are not declared with the keyword <code>explicit</code> they are eligible for use in implicit conversions.</p></li>
+<li><p>Implicit conversions from an arithmetic type to <code>bool</code> often indicate a missing comparison. Conversions from <code>bool</code> in arithmetic expression can obfuscate code. For example, the following code relies on <code>false</code> converting to/from zero and <code>true</code> to one and from non-zero:</p></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> fluxcompensation(<span class="dt">double</span> flux, <span class="dt">bool</span> compensate){</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (flux) { <span class="co">// double to bool conversion</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> delta = compute_delta();</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> <span class="at">const</span> compensate_v = <span class="fl">1.4</span>;</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> flux + delta * compensate; <span class="co">// bool to double conversion</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  } </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fl">1.</span>;</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>double fluxcompensation(double flux, bool compensate){
+  if (flux) { // double to bool conversion
+    double delta = compute_delta();
+    double const compensate_v = 1.4;
+    return flux + delta * compensate; // bool to double conversion
+  } 
+  return 1.;
+}</code></pre>
 <ul>
-<li>In a boolean context, conversions that would not occur implicily can take place, specifically, a pointer-to-bool conversion and the application of an <code class="sourceCode cpp"><span class="kw">explicit</span> <span class="kw">operator</span> <span class="dt">bool</span>()</code> conversion operator. These conversions are idiomatic C++ in boolean contexts; however, some prefer explicit tests to show intent, for example, <code class="sourceCode cpp"><span class="cf">if</span> (p) { *p = <span class="dv">42</span>; }</code> vs. <code class="sourceCode cpp"><span class="cf">if</span> (p != <span class="kw">nullptr</span>) { *p = <span class="dv">42</span>; }</code>.</li>
+<li>In a boolean context, conversions that would not occur implicily can take place, specifically, a pointer-to-bool conversion and the application of an <code>explicit operator bool()</code> conversion operator. These conversions are idiomatic C++ in boolean contexts; however, some prefer explicit tests to show intent, for example, <code>if (p) { *p = 42; }</code> vs. <code>if (p != nullptr) { *p = 42; }</code>.</li>
 </ul>
-<p>Note that type aliases (<code class="sourceCode cpp"><span class="kw">using</span></code>, and <code class="sourceCode cpp"><span class="kw">typedef</span></code>) do not define a different type from their alias just a different name and thus do not incur any conversion between the alias and the aliased type.</p>
-<p>Instead of using the built-in arithmetic types or generic library types such as <code class="sourceCode cpp"><span class="bu">std::</span>string</code> for your domain values, C++ permmitts wrapping them in user-defined-class types as so-called <em>strong types</em>. For integral values, <code class="sourceCode cpp"><span class="kw">enum</span> <span class="kw">class</span></code> types can also be used. Strong types provide only those operator overloads and conversions for each such type that make sense in the application domain. User-defined-literal operators help with providing constants of appropriate strong types. Such strong types provide full control of conversions and operations available, avoiding semantically unsound operations that the built-in or other generic types might provide.</p>
+<p>Note that type aliases (<code>using</code>, and <code>typedef</code>) do not define a different type from their alias just a different name and thus do not incur any conversion between the alias and the aliased type.</p>
+<p>Instead of using the built-in arithmetic types or generic library types such as <code>std::string</code> for your domain values, C++ permmitts wrapping them in user-defined-class types as so-called <em>strong types</em>. For integral values, <code>enum class</code> types can also be used. Strong types provide only those operator overloads and conversions for each such type that make sense in the application domain. User-defined-literal operators help with providing constants of appropriate strong types. Such strong types provide full control of conversions and operations available, avoiding semantically unsound operations that the built-in or other generic types might provide.</p>
 <p>For example, a very simple strong type representation of temperature values can be implemented as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Celsius {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> value;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Fahrenheit {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> value;</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Fahrenheit convert_to_fahrenheit(Celsius c){</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> { <span class="dv">9</span>*c.value/<span class="dv">5</span>+<span class="dv">32</span>};</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">//...</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>Celsius wrong = convert_to_fahrenheit({<span class="fl">20.</span>}); <span class="co">// doesn&#39;t compile</span></span></code></pre></div>
+<pre><code>struct Celsius {
+    double value;
+};
+struct Fahrenheit {
+    double value;
+};
+Fahrenheit convert_to_fahrenheit(Celsius c){
+    return { 9*c.value/5+32};
+}
+//...
+Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre>
 <p>In a realistic scenario using a library for strong type support eases the definition and use of strong types.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.2.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.2.5. and provided in the different related clauses of this document.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.2.5. and provided in the related clauses of this document.</p></li>
 <li><p>Be aware of the rules of the type system, overload resolution, and implicit conversions to avoid vulnerabilities.</p></li>
 <li><p>Enable compiler warnings regarding implicit conversions and use static analysis tools that provide such warnings.</p></li>
-<li><p>Define as <code class="sourceCode cpp"><span class="kw">explicit</span></code> any constructor of a class that can be called with a single argument of a different type .</p></li>
-<li><p>Define any conversion operator as <code class="sourceCode cpp"><span class="kw">explicit</span></code></p></li>
-<li><p>Use strong types for domain values instead of the built-in types and on system boundaries, e.g., for input, convert a read value immediately to the appropriate strong type.</p></li>
-<li><p>UIse a braced-initializer when defining variables of an arithmetic type to prevent a potential narrowing conversion from the initial value’s type.</p></li>
-<li><p>Avoid the use of the following text-representing character types, <code>char</code>, <code>char8_t</code>, <code>wchar_t</code>, <code>char16_t</code> and <code>char32_t</code>, in arithmetic or relational expressions; use an appropriate text processing library instead for character classification, conversion, comparison, and further processing.</p></li>
+<li><p>Define as <code>explicit</code> any constructor of a class that can be called with a single argument of a different type .</p></li>
+<li><p>Define any conversion operator as <code>explicit</code></p></li>
+<li><p>Use strong types instead of the built-in types for domain values and on system boundaries, e.g., for input, convert a read value immediately to the appropriate strong type.</p></li>
+<li><p>Use a braced-initializer when defining variables of an arithmetic type to prevent a potential narrowing conversion from the initial value’s type.</p></li>
+<li><p>Avoid the use of the following text-representing character types,</p>
+<ul>
+<li><code>char</code>,</li>
+<li><code>char8_t</code>,</li>
+<li><code>wchar_t</code>,</li>
+<li><code>char16_t</code> and</li>
+<li><code>char32_t</code>, in arithmetic or relational expressions; use an appropriate text processing library instead for character classification, conversion, comparison, and further processing.</li>
+</ul></li>
 <li><p>Use a consistent style in a project with respect to implicit pointer conversions in boolean contexts.</p></li>
 </ul>
 </body>
