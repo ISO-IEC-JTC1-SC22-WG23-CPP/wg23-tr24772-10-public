@@ -214,8 +214,20 @@
 <header id="title-block-header">
 <h1 class="title">parts/4.3.SymbolLookupResolution.md</h1>
 </header>
-<h2 id="symbol-lookup-and-overload-resolution">4.2 Symbol Lookup and Overload Resolution</h2>
-<p><em><strong>THIS REQUIRES MORE WORK</strong></em></p>
+<h2 id="name-lookup-and-overload-resolution">4.3 Name Lookup and Overload Resolution</h2>
+<p>Each name used in a C++ program must be declared before it can be used. A declaration denotes the existence of an name and specifies the kind of language entity the name denotes. Declarations may introduce entities, associate them with names and define their properties. For example, variables, types, functions, templates, or namespaces are entities. The declarations that define all properties required to use an entity are definitions.</p>
+<p>Each declaration that appears in a C++ program is only visible in some possibly discontiguous scopes. Starting from the global scope <code class="sourceCode cpp">::</code> namespaces form potentially nested scopes for declarations. Some declarations form their own scopes nested in other scopes. Within a function’s scope, nested compound-statements introduce nested scopes.</p>
+<p><strong>TODO: using declarations/directives</strong></p>
+<p>Within a scope, unqualified name lookup can be used to associate a name with its declaration.</p>
+<p>A qualified name is created by prefixing a name of an entity with the scope-resolution operator and the name of its surrounding scope, as in <code class="sourceCode cpp"><span class="bu">std::</span>begin</code>. The prefix for the global scope or a surrounding namespace is often omitted, when not required, e.g., <code class="sourceCode cpp">::<span class="bu">std::</span>begin</code>, but might be needed to avoid ambiguities, such as <code class="sourceCode cpp">::read</code>.</p>
+<p>Unqualified name lookup leading to an ambiguity is in general ill-formed.</p>
+<p><strong>Overload resolution for functions and function templates</strong></p>
+<p>A name denoting the called function in a function call expression can refer to multiple function (template) declarations, known as the overload set. Overload resolution is the process used to select the best matching function from the overload set, based on the number and types of the arguments in the function call expression. After overload resolution there shall be a single candidate function (template) as the best match, which is called, otherwise the program is ill-formed.</p>
+<p>If an unqualified name is used in a function call expression and the resulting overload set does not refer to a member function (template), the overload set is extended from the the functions to include functions declared in namespaces associated with the types of the arguments of the function call expression. This mechanism is called Argument-Dependent Lookup (ADL).</p>
+<p>If an expression with an operand of user-declared type uses an overloadable operator, the resulting expression is treated like an unqualified function-call expression calling the corresponding overloaded operator functions, e.g., <code class="sourceCode cpp"><span class="kw">operator</span>+</code>.</p>
+<p><strong>Compiler-provided definitions</strong></p>
+<hr />
+<p><em><strong>THIS REQUIRES MORE WORK</strong> check below fot thins missed above</em></p>
 <ul>
 <li>special members</li>
 <li>templates?</li>
