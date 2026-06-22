@@ -214,7 +214,7 @@
 <header id="title-block-header">
 <h1 class="title">parts/4.3.SymbolLookupResolution.md</h1>
 </header>
-<h2 id="name-lookup-and-overload-resolution">4.3 Name Lookup and Overload Resolution</h2>
+<h2 id="namelookup">4.3 Name Lookup and Overload Resolution</h2>
 <p>Each name used in a C++ program must be declared before it can be used. A declaration denotes the existence of an name and specifies the kind of language entity the name denotes. Declarations may introduce entities, associate them with names and define their properties. For example, variables, types, functions, templates, or namespaces are entities. The declarations that define all properties required to use an entity are definitions.</p>
 <p>Each declaration that appears in a C++ program is only visible in some possibly discontiguous scopes. Starting from the global scope <code class="sourceCode cpp">::</code> namespaces form potentially nested scopes for declarations. Some declarations form their own scopes nested in other scopes. Within a function’s scope, nested compound-statements introduce nested scopes.</p>
 <p>Within a scope, unqualified name lookup can be used to associate a name with its declaration. Within a class template unqualified name lookup will not find names that depend on a template parameter, such as members of a base class template instantiated with the class template parameters.</p>

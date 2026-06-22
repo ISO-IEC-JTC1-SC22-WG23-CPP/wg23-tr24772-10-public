@@ -216,11 +216,9 @@
 </header>
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
 <h3 id="applicability-to-language">6.20.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant.</p>
-<p>C++ provides the scope resolution operator <code>::{.cpp}</code> to access identifiers from non-local scopes.</p>
-<p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See clause 6.41 for inheritance issues associated with name reuse.</p>
-<p>Overloaded function names and operators considered in an expression are not restricted to a simple scope hierarchy, because of argument-dependent lookup (ADL). In generic code the unqualified function or operator selected can come from a scope based on the type of the arguments and not from the current scope hierarchy. The rules for which namespaces are eligible for lookup of unqualified functions and operators are intricate, but required to make overloaded operators work.</p>
-<p>In addition, if implicit conversions can happen on arguments, the overload selected by ADL can be different from programmer expectation even in non-generic code, especially when an argument is of a type that can be implicitly converted to another type where a corresponding overload is defined. Visibility on a namespace-level of such an operator overload may make it eligible, even if neither argument matches the parameter types directly. In the best case this leads to a compile error due to ambiguities, but it can also result in perfectly compiling code executing an unexcepted overload.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
+<p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See <a href="#RIP">6.41 [RIP]</a> for inheritance issues associated with name reuse.</p>
+<p>If implicit conversions can happen on arguments, the overload selected can be different from programmer expectation, especially when an argument is of a type that can be implicitly converted to another type where a corresponding overload is defined. Visibility of an overload may make it eligible, even if neither argument matches the parameter types directly. In the best case this leads to a compile error due to ambiguities, but it can also result in perfectly compiling code executing an unexcepted overload.</p>
 <p>The following example demonstrates part of the problem:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;typeinfo&gt;</span></span>
@@ -256,7 +254,7 @@
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    Y::println(<span class="dv">42</span><span class="bu">u</span>);<span class="co">// u:42 - calls Y::print</span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The above code calls the overload <code>print(A)</code> from println since it is pulled in by ADL. On the other hand, ADL is required to work to allow the output operator for type <code>X::A</code> to work.</p>
-<p>The consideration of implicit conversions together with ADL can be suppressed by defining operator overloads as class members or as <em>hidden friends</em>. The latter is achieved by declaring all corresponding overloads as <code class="sourceCode cpp"><span class="kw">friend</span></code> functions in the class that take the class’ objects as arguments. Generic base classes can provide mix-in facilities for <em>hidden friends</em> by taking the argument type that is the derived class as template parameter.</p>
+<p>The consideration of implicit conversions together with ADL can be suppressed by defining operator overloads as class members or as <em>hidden friends</em>. Generic base classes can provide mix-in facilities for <em>hidden friends</em> by taking the argument type that is the derived class as template parameter.</p>
 <h3 id="avoidance-mechanismsfor-language-users">6.20.2 Avoidance mechanismsfor language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
@@ -266,13 +264,7 @@
 <li><p>Limit the visibility of overloaded operators or functions for class types by defining them as member functions or <em>hidden friends</em>.</p></li>
 <li><p>Place overloaded operators that are not class members and cannot be provided as <em>hidden friends</em> together with their argument type in a namespace that is not the global namespace,so that they are picked up by ADL.</p></li>
 <li><p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p></li>
-<li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p>
-<ul>
-<li><pre><code>  DCL60-CPP. Obey the one-definition</code></pre>
-<p>rule (6.21)</p></li>
-<li><pre><code>  DCL40-C. Do not create incompatible declarations of the same</code></pre>
-<p>function or object (6.21)</p></li>
-</ul></li>
+<li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p></li>
 </ul>
 </body>
 </html>
