@@ -216,15 +216,15 @@
 </header>
 <h2 id="BJL">6.21 Namespace Issues [BJL]</h2>
 <h3 id="applicability-to-language">6.21.1 Applicability to language</h3>
-<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.21 exists in C++. It can occur in particular when a used library changes its API. The situations where it exists are related to the following cases:</p>
+<p>The vulnerability described in ISO/IEC 24772-1:2024 6.21 exists in C++. It can occur in particular when a used library changes its API. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>. The situations where it exists are related to the following cases:</p>
 <ul>
-<li>Template specialization, where clause 6.40 [#SYM] applies;</li>
-<li>Overloading, where clause 6.20 [#YOW] applies;</li>
-<li>Overriding, where clause 6.41 [#RIP] applies.</li>
+<li>Template specialization, where <a href="#SYM">6.40 Templates and generics [SYM]</a> applies;</li>
+<li>Overloading, where <a href="#YOW">6.20 Identifier name reuse [YOW]</a> applies;</li>
+<li>Overriding, where <a href="#RIP">6.41 Inheritance [RIP]</a> applies.</li>
 </ul>
 <p>In the case of template specialization or non-identical definitions of the same entity in different translation units (ODR-violation), ill-formed code might be the result, however, a C++ compiler is not obliged to diagnose that situation, leading to undefined behaviour <a href="#EWF">[EWF]</a>.</p>
-<p>In the case of overloading and overriding cases, C++ compilers are required to diagnose an ambiguity if it exists. A funciton object is never subject to overload resolution. Hiding a function with a function object ensures that in calls where the function object is visible, it is used, or the program will be ill-formed.</p>
-<p>Overload resolution applies preference rules in order to select among multiple matching functions or function templates as a means to resolve the ambiguity among these functions. Hence, for calls that are not perfect matches, the user cannot guarantee in the presence of later changes which function is called, as another, better match can be introduced subsequently. The call in question will then change its binding without warning upon its next compilation. For cases, where the preference rules do not resolve the ambiguity, the resulting error message by the compiler avoids the vulnerability. Function template specializations are not considered during overload resolution; only the base template is considered.</p>
+<p>In the case of overloading and overriding cases, C++ compilers are required to diagnose an ambiguity if it exists. A function object is never subject to overload resolution. Hiding a function with a function object ensures that in calls where the function object is visible, it is used, or the program will be ill-formed.</p>
+<p>Subsequent code changes can change the resulting function selected by overload resolution in case of a non-exact match previously found, e.g., found via implicit conversion of an argument. The call in question will then change its binding without warning upon its next compilation.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// void foo (int);</span></span>
@@ -244,9 +244,9 @@
 <li>a non-template function that is preferred to a function template,</li>
 <li>a template specialization.</li>
 </ul>
-<p>A <code class="sourceCode cpp"><span class="kw">using</span></code> directive broadens the possible scopes that will be examined for names during lookup.<br />
-Where lookup searches a namespace referred to by a <code class="sourceCode cpp"><span class="kw">using</span></code> directive, all names in that namespace will be visible but some can be unwanted.<br />
-A <em>using</em> declaration, on the other hand, declares only the specified name into the scope of the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration.</p>
+<p>A <em>using directive</em> broadens the possible scopes that will be examined for names during lookup.<br />
+A <em>using declaration</em>, on the other hand, only makes the specified name accessible in the current scope.</p>
+<!-- TODO: go over below for simplifications after 4.3 was introduced -->
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS1</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> f1 (<span class="dt">int</span>);</span>
