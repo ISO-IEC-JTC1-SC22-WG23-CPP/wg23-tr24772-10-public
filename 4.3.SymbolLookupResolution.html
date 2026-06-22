@@ -217,48 +217,18 @@
 <h2 id="name-lookup-and-overload-resolution">4.3 Name Lookup and Overload Resolution</h2>
 <p>Each name used in a C++ program must be declared before it can be used. A declaration denotes the existence of an name and specifies the kind of language entity the name denotes. Declarations may introduce entities, associate them with names and define their properties. For example, variables, types, functions, templates, or namespaces are entities. The declarations that define all properties required to use an entity are definitions.</p>
 <p>Each declaration that appears in a C++ program is only visible in some possibly discontiguous scopes. Starting from the global scope <code class="sourceCode cpp">::</code> namespaces form potentially nested scopes for declarations. Some declarations form their own scopes nested in other scopes. Within a function’s scope, nested compound-statements introduce nested scopes.</p>
-<p><strong>TODO: using declarations/directives</strong></p>
-<p>Within a scope, unqualified name lookup can be used to associate a name with its declaration.</p>
-<p>A qualified name is created by prefixing a name of an entity with the scope-resolution operator and the name of its surrounding scope, as in <code class="sourceCode cpp"><span class="bu">std::</span>begin</code>. The prefix for the global scope or a surrounding namespace is often omitted, when not required, e.g., <code class="sourceCode cpp">::<span class="bu">std::</span>begin</code>, but might be needed to avoid ambiguities, such as <code class="sourceCode cpp">::read</code>.</p>
+<p>Within a scope, unqualified name lookup can be used to associate a name with its declaration. Within a class template unqualified name lookup will not find names that depend on a template parameter, such as members of a base class template instantiated with the class template parameters.</p>
+<p>A qualified name is created by prefixing a name of an entity with the scope-resolution operator and the name of its surrounding scope, as in <code class="sourceCode cpp"><span class="bu">std::</span>begin</code>, or by accessing members of an object of class type, such as <code class="sourceCode cpp"><span class="kw">this</span>-&gt;member</code>. The prefix for the global scope or a surrounding namespace is often omitted, when not required, e.g., <code class="sourceCode cpp">::<span class="bu">std::</span>begin</code>, but might be needed to avoid ambiguities, such as <code class="sourceCode cpp">::read</code>.</p>
 <p>Unqualified name lookup leading to an ambiguity is in general ill-formed.</p>
+<p>A <em>using declaration</em> makes all declarations of the qualified name accessible in the current scope for unqualified lookup. This includes <em>inheriting constructors</em> in a derived class, that makes constructors of a base class appear to be declared as constructors of the derived class.</p>
+<p>A <em>using directive</em> makes all declarations from the given namespace accessible for unqualified lookup in the current scope.</p>
 <p><strong>Overload resolution for functions and function templates</strong></p>
-<p>A name denoting the called function in a function call expression can refer to multiple function (template) declarations, known as the overload set. Overload resolution is the process used to select the best matching function from the overload set, based on the number and types of the arguments in the function call expression. After overload resolution there shall be a single candidate function (template) as the best match, which is called, otherwise the program is ill-formed.</p>
-<p>If an unqualified name is used in a function call expression and the resulting overload set does not refer to a member function (template), the overload set is extended from the the functions to include functions declared in namespaces associated with the types of the arguments of the function call expression. This mechanism is called Argument-Dependent Lookup (ADL).</p>
+<p>A name denoting the called function in a function call expression can refer to multiple function (template) declarations, known as the overload set. Overload resolution is the process used to select the best matching function from the overload set, based on the number and types of the arguments in the function call expression. After overload resolution C++ mandates there be a single candidate function (template) as the best match, which is called.</p>
+<p>If an unqualified name is used in a function call expression and the resulting overload set does not refer to a member function (template), the overload set is extended to include functions declared in namespaces associated with the types of the arguments of the function call expression. In such a context <code class="sourceCode cpp"><span class="kw">friend</span></code> functions defined within a class will be considered when an argument of the call is of that class type (<em>hidden friends</em>). This mechanism is called Argument-Dependent Lookup (ADL).</p>
 <p>If an expression with an operand of user-declared type uses an overloadable operator, the resulting expression is treated like an unqualified function-call expression calling the corresponding overloaded operator functions, e.g., <code class="sourceCode cpp"><span class="kw">operator</span>+</code>.</p>
+<p>Using <em>hidden friends</em> is a means to limit the size of overload sets for frequently defined function names, such as overloaded operators.</p>
 <p><strong>Compiler-provided definitions</strong></p>
-<hr />
-<p><em><strong>THIS REQUIRES MORE WORK</strong> check below fot thins missed above</em></p>
-<ul>
-<li>special members</li>
-<li>templates?</li>
-</ul>
-<p>scopes, names, ADL, using</p>
-<!-- from issue https://github.com/ISO-IEC-JTC1-SC22-WG23-CPP/wg23-tr24772-10/issues/80 -->
-<p>Add to clause 4 “Language concepts” an issue on C++ symbol lookup issues considering the following: 1. Minimize the set of names that are available to avoid referring to an item that was not the intended target 2. hidden friends 3. ADL (argument dependent lookup) 4. Lack of this-&gt; in class templates 5. Minimizing lexical scope and visibility 6. Minimizing names in global scopes 7. Minimizing use of “using” directives</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">template</span> &lt;<span class="kw">typename</span> S, <span class="kw">typename</span> Q&gt; <span class="kw">friend</span> <span class="dt">void</span> add (S, Q);</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> B {</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    B(<span class="dt">int</span>);</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    B (NS::A&lt;<span class="dt">int</span>&gt; <span class="at">const</span> &amp;);</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>B &amp; add(B <span class="at">const</span> &amp; lhs, B <span class="at">const</span> &amp; rhs);</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar (NS::A&lt;<span class="dt">int</span>&gt; &amp; a, B <span class="at">const</span> &amp; b)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    add(a, b);</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>A C++ program may span multiple scopes, and when a function is called, the compiler may have many choices to select from to resolve the actual function that will be called. The set of names found for a function depend upon whether the name is qualified or if it is unqualified.</p>
-<p>Unqualified lookup begins the search in the current scope and works its way out to the global scope and stops when it finds the first matching name. The search will include: - Names directly visible; - (Non-dependent) base classes if the scope is for a member; - Names introduced by the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration; - Names introduced by the <code class="sourceCode cpp"><span class="kw">using</span></code> directive; and - Members of inline namespaces After these steps, Argument-Dependent Lookup (ADL) occurs. In ADL, the scope(s) of type of the function’s arguments are also searched. This search also includes <code class="sourceCode cpp">friends</code> that would not normally be found. ADL never finds member functions.</p>
-<p>Unqualified name lookup in templates has two phases: - When the template is initially parsed, names are looked up as above, excluding dependent bases; and - When the template is instantiated, ADL is performed for function names, but ADL does not find member functions.</p>
-<p>A qualified name lookup takes place when: - the name includes its scope (e.g <code class="sourceCode cpp">a::foo</code>); or - the name is used in a class member access expression (<code class="sourceCode cpp"><span class="kw">this</span>-&gt;foo</code>). Qualified lookup only searches: - Names directly visible; - (Non-dependent) base classes if the scope is for a member; - Names introduced by the <code class="sourceCode cpp"><span class="kw">using</span></code> declaration; - Names introduced by the <code class="sourceCode cpp"><span class="kw">using</span></code> directive; - Members of inline namespaces; and - Names that can be resolved when a template is instantiated.</p>
-<p>Overload resolution</p>
+<p>In some circumstances C++ implementations are required to implicitly define the destructor, constructors and assigment operators for a class.</p>
+<p>Any expression with a relational or equality operator such as <code>a != b</code> a C++ implementation can rewrite the expression to call a user-defined <code class="sourceCode cpp"><span class="kw">operator</span>==</code> or <code class="sourceCode cpp"><span class="kw">operator</span>&lt;=&gt;</code>. This mechanism appears to provide the corresponding operator function definitions, but is implemented as a rewrite of the expression.</p>
 </body>
 </html>
