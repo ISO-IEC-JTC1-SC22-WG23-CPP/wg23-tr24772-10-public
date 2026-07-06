@@ -216,9 +216,9 @@
 </header>
 <h2 id="loop-control-variables-tex">6.29 Loop Control Variables [TEX]</h2>
 <h3 id="applicability-to-language">6.29.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.29 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.29 exists in C++.</p>
 <p>C++ allows the modification of loop control variables within non range-based loops. This is usually not considered good programming practice as it can cause unexpected problems. The flexibility of C++ expects the programmer to use this capability responsibly.</p>
-<p>Since the modification of a loop control variable within a loop is infrequently encountered, reviewers of C++ code may not expect it and hence miss noticing the modification. Modifying the loop control variable can cause unexpected results if not carefully done. In C++, the following is semantically correct, but is error-prone:</p>
+<p>Since the modification of a loop control variable within a loop is infrequently encountered, reviewers of C++ code do expect it and hence miss noticing the modification. Modifying the loop control variable can cause unexpected results if not carefully done. In C++, the following is semantically correct, but is error-prone:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">1</span>; i &lt; <span class="dv">10</span>; i++){</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
@@ -251,10 +251,10 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.29.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.29.5.</p></li>
-<li><p>Do not modify a loop control variable within a loop.</p></li>
-<li><p>Use a range-for loop in preference to general loops.</p></li>
-<li><p>Alternatively, use standard library generic algorithm functions like <code>copy</code>, <code>reduce</code>, <code>transform</code>, <code>inner_product</code>, etc. in preference to general loops.</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.29.5;</p></li>
+<li><p>do not modify a loop control variable within a loop;</p></li>
+<li><p>use a range-for loop in preference to general loops; and</p></li>
+<li><p>prefer standard library generic algorithm functions like <code>copy</code>, <code>reduce</code>, <code>transform</code>, <code>inner_product</code>, etc. instead of general loops.</p></li>
 </ul>
 <p>Note: See also the C++ Core Guidelines ES.71, ES.86.</p>
 </body>
