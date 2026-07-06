@@ -1542,17 +1542,17 @@ dereference null pointers" -->
 </ul>
 <h2 id="PIK">6.16 Using Shift Operations for Multiplication and Division [PIK]</h2>
 <h3 id="applicability-to-language">6.16.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-12024 6.16 exists in C++. C++ complicates the discussion in 24772-1:2024 6.16 as a result of the integral promotion (see 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.16 exists in C++. C++ complicates the discussion in 24772-1:2024 6.16 as a result of the integral promotion (see 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
 <p>Not every use of a shift operator is a bit-shift due to operator overloading.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.16.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>use the avoidance mechanisms of ISO/IEC 24772-1:2024 clause 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
 <li>For promoted operands, consider converting the result of a shift operation back to the original type of the left hand operand (say using a static cast or an assignment to an object of that type) before using the result in further operations.</li>
 </ul>
 <h2 id="NAI">6.17 Choice of Clear Names [NAI]</h2>
 <h3 id="applicability-to-language">6.17.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.17 is applicable to C++, as it is susceptible to errors resulting from the use of similarly appearing names. However, the language rules prevent using an identifier that has not been declared. There are two possible issues: the use of the identical name for different purposes (see clause <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>) and the use of similar names for different purposes.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.17 is applicable to C++, as it is susceptible to errors resulting from the use of similarly appearing names. However, the language rules prevent using an identifier that has not been declared. There are two possible issues: the use of the identical name for different purposes (see clause <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>) and the use of similar names for different purposes.</p>
 <ul>
 <li><em>Mixed casing</em>: C++ distinguishes upper case and lower-case letters in names. Thus, confusion can arise through the use of <code>Item</code> and <code>item</code> as distinct declared identifiers with different meanings.</li>
 <li><em>Underscores</em>: C++ permits single underscores in identifiers and they are significant. Thus, <code>BigDog</code> and <code>Big_Dog</code> are different identifiers. Multiple underscores or a leading underscore followed by an upper-case letter cause undefined behaviour <a href="#EWF">[EWF]</a>, thus <code>Big__Dog</code> and <code>_BigDog</code> should not be used.</li>
@@ -1567,8 +1567,8 @@ dereference null pointers" -->
 <h3 id="avoidance-mechanisms-for-language-users">6.17.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2019 clause 6.17.5.</p></li>
-<li><p>Follow the rules of ISO/IEC 14882:2020 clause [lex.name] regarding names to refrain from usage.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.17.5.</p></li>
+<li><p>Follow the rules of ISO/IEC 14882:2023 clause [lex.name] regarding names to refrain from usage.</p></li>
 <li><p>Avoid the use of similar names to denote different objects of the same type.</p></li>
 <li><p>Use consistency in choosing names, especially for dealing with similar names.</p></li>
 <li><p>Use static analysis and tooling to enforce project-specific naming rules and detect possible similar names, for example, homoglyphs and unexpected text-direction vulnerabilities.</p></li>
