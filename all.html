@@ -1720,7 +1720,7 @@ A <em>using declaration</em>, on the other hand, only makes the specified name a
 <span id="cb110-6"><a href="#cb110-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
 <span id="cb110-7"><a href="#cb110-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">0</span>);    <span class="co">// ambiguous, ill-formed, won&#39;t compile</span></span>
 <span id="cb110-8"><a href="#cb110-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>The following example demonstrates a situation where the late addition of a better matching overload causes a silent change in the semantics of an existing program.</p>
+<p>The following example demonstrates a situation market with <code>(1)</code> where the late addition of a better matching overload causes a silent change in the semantics of an existing program.</p>
 <div class="sourceCode" id="cb111"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS</span>
 <span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
@@ -1752,9 +1752,9 @@ A <em>using declaration</em>, on the other hand, only makes the specified name a
 <span id="cb111-29"><a href="#cb111-29" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb111-30"><a href="#cb111-30" aria-hidden="true" tabindex="-1"></a>  A * a;</span>
 <span id="cb111-31"><a href="#cb111-31" aria-hidden="true" tabindex="-1"></a>  B * b;</span>
-<span id="cb111-32"><a href="#cb111-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// After the commented-out code is added to NS2, the binding of foo changes silently from NS::foo to NS2::foo</span></span>
+<span id="cb111-32"><a href="#cb111-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// (1)</span></span>
 <span id="cb111-33"><a href="#cb111-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>.</p>
+<p>After the commented-out code is added to <code>NS2</code>, the binding of function call <code>foo (a)</code> (1) changes silently from <code class="sourceCode cpp">NS::foo</code> to <code class="sourceCode cpp">NS2::foo</code>. This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>.</p>
 <p>Analogously, when a more specialized template is added to an imported namespace where the more general template has already been provided in another namespace, preference rules will silently prefer the more specialized template.</p>
 <p>A similar situation can occur when a conflict arises between compiler-synthesized or rewritten operators and explicitly created versions of those operators, as in the following example.</p>
 <div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
