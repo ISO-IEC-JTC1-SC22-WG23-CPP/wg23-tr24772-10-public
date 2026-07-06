@@ -216,7 +216,7 @@
 </header>
 <h2 id="deep-vs.-shallow-copying-yan">6.38 Deep vs. Shallow Copying [YAN]</h2>
 <h3 id="applicability-to-language">6.38.1 Applicability to Language</h3>
-<p>The vulnerability described in ISO/IEC TR 24772-1:2019 clause 6.38 exists in C++ and only arises in C++ when there is a mismatch between the type’s copy semantics and the programmer’s intent.</p>
+<p>The vulnerability described in ISO/IEC 24772-1:2024 6.38 exists in C++ and only arises in C++ when there is a mismatch between the type’s copy semantics and the programmer’s intent.</p>
 <p>On the language level, reference semantics, that can lead to shallow copies, usually requires the use of pointer or reference types, however, an integral type can also have reference semantics, for example, when it is used as an index or as an operating system handle.</p>
 <p>Such types with reference semantics are also called <em>pointer-like types</em> and they will suffer from the aliasing problematic of this vulnerability and additionally from potential dangling due to expired lifetime (<a href="#lifetime">4.4</a>) of referred objects (see <a href="#XYK">[XYK]</a>).</p>
 <p>In general, relationship types with an immutable referent, such as a const-reference, do not suffer the deep vs. shallow copying semantics problem, unless mixed with relationship types with a mutable reference to the same object. However, the lifetime of a const referent is still an issue to manage (see <a href="#XYK">[XYK]</a>).</p>
@@ -230,16 +230,12 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.38.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.38.5.</p></li>
-<li><p>Use and create value types.</p></li>
-<li><p>Consider <em>pointer-like types</em> only when the lifetime of the referent can be ensured, and</p>
-<ul>
-<li>when reference semantics is required, e.g., for side effects, or</li>
-<li>when copying is prohibitively expensive.</li>
-</ul></li>
-<li><p>Be aware of <em>pointer-like types</em> and document the reference semantics of user-defined class types.</p></li>
-<li><p>For <em>manager types</em>, define copy constructor, copy assignment operator, move constructor, move assignment operator, and their destructor appropriately.</p></li>
-<li><p>Prefer value parameters to thread functions and coroutines.</p></li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.38.5;</li>
+<li>use and create value types;</li>
+<li>consider <em>pointer-like types</em> only when the lifetime of the referent can be ensured, when reference semantics is required, e.g., for side effects, or when copying is prohibitively expensive;</li>
+<li>be aware of <em>pointer-like types</em> and document the reference semantics of user-defined class types;</li>
+<li>for <em>manager types</em>, define copy constructor, copy assignment operator, move constructor, move assignment operator, and their destructor appropriately; and</li>
+<li>prefer value parameters to thread functions and coroutines.</li>
 </ul>
 </body>
 </html>
