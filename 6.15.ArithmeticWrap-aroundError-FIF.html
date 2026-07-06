@@ -216,7 +216,7 @@
 </header>
 <h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
-<p>C++ has the vulnerability as documented in ISO/IEC 24772-1 clause 6.15, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
+<p>C++ has the vulnerability as documented in ISO/IEC 24772-1:2024 6.15, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
 <ul>
 <li>although signed integers are defined to be represented as two’s complement, signed integer overflow is undefined behaviour,</li>
 <li>unsigned integer arithmetic is defined to wrap-around (modulo arithmetic) and not overflow,</li>
@@ -249,7 +249,7 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.15.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.15.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.15.5.</p></li>
 <li><p>Use appropriate user-defined types with well-defined range in place of built-in integral types, that mitigate against implicit conversions and undefined behaviour.</p></li>
 <li><p>Use types with a well-defined range and have compile-time guarantees that the range of types used is sufficient, i.e., with <code class="sourceCode cpp"><span class="kw">static_assert</span></code>.</p></li>
 <li><p>Avoid implicit integral promotions and integral conversions, especially on function arguments.</p></li>

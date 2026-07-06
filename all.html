@@ -1496,7 +1496,7 @@ dereference null pointers" -->
 </ul>
 <h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
-<p>C++ has the vulnerability as documented in ISO/IEC 24772-1 clause 6.15, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
+<p>C++ has the vulnerability as documented in ISO/IEC 24772-1:2024 6.15, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
 <ul>
 <li>although signed integers are defined to be represented as two’s complement, signed integer overflow is undefined behaviour,</li>
 <li>unsigned integer arithmetic is defined to wrap-around (modulo arithmetic) and not overflow,</li>
@@ -1529,7 +1529,7 @@ dereference null pointers" -->
 <h3 id="avoidance-mechanisms-for-language-users">6.15.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.15.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.15.5.</p></li>
 <li><p>Use appropriate user-defined types with well-defined range in place of built-in integral types, that mitigate against implicit conversions and undefined behaviour.</p></li>
 <li><p>Use types with a well-defined range and have compile-time guarantees that the range of types used is sufficient, i.e., with <code class="sourceCode cpp"><span class="kw">static_assert</span></code>.</p></li>
 <li><p>Avoid implicit integral promotions and integral conversions, especially on function arguments.</p></li>
@@ -1542,12 +1542,12 @@ dereference null pointers" -->
 </ul>
 <h2 id="PIK">6.16 Using Shift Operations for Multiplication and Division [PIK]</h2>
 <h3 id="applicability-to-language">6.16.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1 clause 6.16 exists in C++. C++ complicates the discussion in 24772-1 clause 6.16 as a result of the integral promotion (see clause 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-12024 6.16 exists in C++. C++ complicates the discussion in 24772-1:2024 6.16 as a result of the integral promotion (see 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
 <p>Not every use of a shift operator is a bit-shift due to operator overloading.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.16.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>use the avoidance mechanisms of ISO/IEC TR 24772-1:2019 clause 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
+<li>use the avoidance mechanisms of ISO/IEC 24772-1:2024 clause 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
 <li>For promoted operands, consider converting the result of a shift operation back to the original type of the left hand operand (say using a static cast or an assignment to an object of that type) before using the result in further operations.</li>
 </ul>
 <h2 id="NAI">6.17 Choice of Clear Names [NAI]</h2>
