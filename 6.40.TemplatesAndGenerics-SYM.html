@@ -216,8 +216,8 @@
 </header>
 <h2 id="SYM">6.40 Templates and Generics [SYM]</h2>
 <h3 id="applicability-to-language">6.40.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 clause 6.40 exists in C++. C++ provides the facility <em>Templates</em> to support the generic programming methodology.</p>
-<p>C++ provides templates for functions, classes(types), and variables (constants). In addition one can form alias templates for class templates. Template parameters can be types, values (including addresses of global variables), and templates. C++ Templates can have variadic template parameters, that mean any number of arguments of a given kind can be used. Concepts are templates that describe constraints on template arguments and can be used to define template parameters or other deduced contexts.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.40 exists in C++.</p>
+<p>C++ provides the facility <em>Templates</em> to support the generic programming methodology. C++ provides templates for functions, classes(types), and variables (constants). In addition one can form alias templates for class templates. Template parameters can be types, values (including addresses of global variables), and templates. C++ Templates can have variadic template parameters, that mean any number of arguments of a given kind can be used. Concepts are templates that describe constraints on template arguments and can be used to define template parameters or other deduced contexts.</p>
 <p>At compile-time, templates are instantiated with concrete template arguments. Function templates as well as class template constructors can deduce the concrete template argument from the types of the function arguments used in a call. For class templates in addition to the implicit deduction guides provided by its constructors, explicit deduction guides can be specified. This mechanism of template-argument deduction allows one to use templates without explicitly mentioning a template argument for each template parameter. For class templates, only those member functions that are actually used get instantiated. Each template instantiation is checked for syntax, concept and type errors.</p>
 <p>Each instantiation of a template is compiled separately, which can cause different instantiations from the same original source code to call different actual functions because of overload resolution.</p>
 <p>When a template is instantiated, different specializations that match the template arguments are possible. There is an ranking of the different (partial) specializations that the compiler uses for selection. In case of ambiguities, the compiler will fail. <em>Concepts</em> are also considered during this ranking.</p>
@@ -301,17 +301,17 @@ auto y = Short{4} + Short{2};</code></pre>
 <h3 id="avoidance-mechanisms-for-language-users">6.40.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.40.5. and the guidance provided in the different related sections of this document.</p></li>
-<li><p>Use <code>static_assert</code> to prevent the use of inappropriate template arguments.</p></li>
-<li><p>Consider using <em>concepts</em> to constrain template parameters.</p></li>
-<li><p>Prefer <em>concepts</em> over <em>SFINAE</em>.</p></li>
-<li><p>Be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions.</p></li>
-<li><p>For generic operator functions, consider providing them as hidden friends through mix-in class templates.</p></li>
-<li><p>Use <em>qualified-id</em> or <code class="sourceCode cpp"><span class="kw">this</span>-&gt;</code> to refer to names that may be found in a dependent base class.</p></li>
-<li><p>For template specialization, ensure that specializations are declared as follows:</p>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.40.5. and avoidance mechanism provided in the different related sections of this document;</p></li>
+<li><p>use <code>static_assert</code> to prevent the use of inappropriate template arguments;</p></li>
+<li><p>consider using <em>concepts</em> to constrain template parameters;</p></li>
+<li><p>prefer <em>concepts</em> over <em>SFINAE</em>;</p></li>
+<li><p>be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions;</p></li>
+<li><p>for generic operator functions, consider providing them as hidden friends through mix-in class templates;</p></li>
+<li><p>use <em>qualified-id</em> or <code class="sourceCode cpp"><span class="kw">this</span>-&gt;</code> to refer to names that may be found in a dependent base class; and</p></li>
+<li><p>for template specialization, ensure that specializations are declared as follows:</p>
 <ol type="1">
-<li><p>In the same file as the primary template; or</p></li>
-<li><p>In the same file as the user-defined type for which the specialization is declared.</p></li>
+<li><p>in the same file as the primary template; or</p></li>
+<li><p>in the same file as the user-defined type for which the specialization is declared.</p></li>
 </ol></li>
 <li><p>Prohibit specializing function templates.</p></li>
 </ul>
