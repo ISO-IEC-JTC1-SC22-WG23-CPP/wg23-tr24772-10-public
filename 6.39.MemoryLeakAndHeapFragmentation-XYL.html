@@ -216,10 +216,9 @@
 </header>
 <h2 id="memory-leak-and-heap-fragmentation-xyl">6.39 Memory Leak and Heap Fragmentation [XYL]</h2>
 <h3 id="applicability-to-language">6.39.1 Applicability to language</h3>
-<p>The memory leak vulnerability documented in ISO/IEC 24772-1:2024 clause 6.39 exists in C++, unless the programmer takes steps to avoid it. A leak occurs when an object whose lifetime (<a href="#lifetime">4.4</a>) has not ended but there are no more variables, pointers or references to that object.</p>
-<p>See ISO/IEC TR 24772-3 for the vulnerabilities associated with the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code>.</p>
-<p>C++ has an additional vulnerability in that it provides multiple alternatives for allocation and deallocation.</p>
-<p>Failing to match the deallocation to the corresponding allocation results in undefined behaviour <a href="#EWF">[EWF]</a>. For example, if an array <code class="sourceCode cpp"><span class="kw">new</span>[]</code> expression was used to allocate and create an array then array <code class="sourceCode cpp"><span class="kw">delete</span>[]</code> must be used for its destruction and release to avoid undefined behaviour.</p>
+<p>The memory leak vulnerability documented in ISO/IEC 24772-1:2024 6.39 applies to C++, unless the programmer takes steps to avoid it. A leak occurs when an object whose lifetime (<a href="#lifetime">4.4</a>) has not ended but there are no more variables, pointers or references to that object.</p>
+<p>See ISO/IEC TR 24772-3:2020 for the vulnerabilities associated with the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code>.</p>
+<p>C++ has an additional vulnerability in that it provides multiple alternatives for allocation and deallocation and failing to match the deallocation to the corresponding allocation results in undefined behaviour <a href="#EWF">[EWF]</a>. For example, if an array <code class="sourceCode cpp"><span class="kw">new</span>[]</code> expression was used to allocate and create an array then array <code class="sourceCode cpp"><span class="kw">delete</span>[]</code> must be used for its destruction and release to avoid undefined behaviour.</p>
 <p>C++ destructors allow <em>scope-based resource management</em> (RAII) (Note: - put in Terms and definitions) which mitigates memory leaks by automatically calling the destructor when the lifetime of an object ends, thereby providing the opportunity to release their memory. The standard library provides container classes that follow the <em>scope-based resource management</em> idiom for the management of memory resources. Additionally, the standard library provides the class templates <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> for managing heap-allocated objects.</p>
 <p>Ignoring issues with constructors throwing exceptions during heap allocation with a <code class="sourceCode cpp"><span class="kw">new</span></code> expression can cause leaks. Using <em>smart pointers</em> through the factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique()</code> and <code class="sourceCode cpp"><span class="bu">std::</span>make_shared()</code> assists in avoiding memory leaks.</p>
 <p>If using functions that manage memory using the C library mechanisms is unavoidable, wrapping such a pointer immediately into a specialization of <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr&lt;&gt;</code> that uses <code>free()</code> in its deleter object ensures that memory is correctly released when the <code>unique_ptr</code> is destroyed, for example:</p>
@@ -269,16 +268,17 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.39.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanism of ISO/IEC 24772-1:2024 6.39.5</p></li>
-<li><p>Refrain from using the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code> wherever possible.</p></li>
-<li><p>Avoid mixing C-based functions and C++ memory management functions.</p></li>
-<li><p>Prefer C++ allocators that are derived from <code class="sourceCode cpp"><span class="bu">std::</span>pmr<span class="bu">::</span>memory_resource</code>.</p></li>
-<li><p>Prefer containers standard library containers over other forms of memory management.</p></li>
-<li><p>Use smart pointers and their factory functions to allocate and manage heap memory.</p></li>
-<li><p>For heap fragmentation issues, use special memory resource objects with appropriate allocation strategies.</p></li>
-<li><p>If using <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> in potentially cyclic data structures, break cycles using <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code>.</p></li>
-<li><p>Use static analysis to prevent uses of C-library memory management functions and direct calls to operators <code class="sourceCode cpp"><span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">delete</span></code>.</p></li>
-<li><p>Use dynamic analysis to detect memory leaks and issues with heap fragmentation.</p></li>
+<li>apply the avoidance mechanism of ISO/IEC 24772-1:2024 6.39.5;</li>
+<li>refrain from using the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code> wherever possible;<br />
+</li>
+<li>avoid mixing C-based functions and C++ memory management functions;</li>
+<li>prefer C++ allocators that are derived from <code class="sourceCode cpp"><span class="bu">std::</span>pmr<span class="bu">::</span>memory_resource</code>;</li>
+<li>prefer containers standard library containers over other forms of memory management;</li>
+<li>use smart pointers and their factory functions to allocate and manage heap memory.</li>
+<li>for heap fragmentation issues, use special memory resource objects with appropriate allocation strategies;</li>
+<li>if using <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> in potentially cyclic data structures, break cycles using <code class="sourceCode cpp"><span class="bu">std::</span>weak_ptr</code>;</li>
+<li>use static analysis to prevent uses of C-library memory management functions and direct calls to operators <code class="sourceCode cpp"><span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">delete</span></code>; and</li>
+<li>use dynamic analysis to detect memory leaks and issues with heap fragmentation.</li>
 </ul>
 </body>
 </html>
