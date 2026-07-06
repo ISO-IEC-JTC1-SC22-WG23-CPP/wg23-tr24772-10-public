@@ -2109,17 +2109,17 @@ It is not be clear whether the programmer intended to use the logical operator <
 </ul>
 <h2 id="XYQ">6.26 Dead and Deactivated Code [XYQ]</h2>
 <h3 id="applicability-to-language">6.26.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.26 exists in C++ in function bodies compiled into the target program.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.26 exists in C++ in function bodies compiled into the target program.</p>
 <p>This clause does not consider other parts of the C++ source that do not result in the generation of code, such as: - discarded statements that are intentionally unreachable, e.g., through branches of the <code>if constexpr'{.cpp} statement.     - commented out code;   - a function deactivated with</code>=delete`{.cpp}; - an uninstantiated template; - code excluded using the C++ preprocessor.</p>
 <p>An instantiated template follows the same reachability rules as would be followed for the non-template case.</p>
 <p>C++ overload resolution rules can cause confusion (see <a href="#BJL">6.21 Namespace issues[BJL]</a>). To prevent the selection of an unintented overload, a function can be defined with <code class="sourceCode cpp">=<span class="kw">delete</span></code>. C++ provides <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> to mark branches that are intentionally dead, but care is necessary since calling <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> at runtime is undefined behaviour.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.26.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.26.5.</li>
-<li>Define functions that are intentionally deactivated as <code class="sourceCode cpp">= <span class="kw">delete</span></code></li>
-<li>In situations where compile-tests are possible instead of the runtime equivalent, consider the use of <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">static_assert</span></code> to force compile-time processing.</li>
-<li>In situations where compile-tests are not possible, consider the use of <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> to document code as intentionally deactivated.</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.26.5;</li>
+<li>define functions that are intentionally deactivated as <code class="sourceCode cpp">= <span class="kw">delete</span></code>;</li>
+<li>in situations where compile-tests are possible instead of the runtime equivalent, consider the use of <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">static_assert</span></code> to force compile-time processing, and;</li>
+<li>in situations where compile-tests are not possible, consider the use of <code class="sourceCode cpp"><span class="bu">std::</span>unreachable()</code> to document code as intentionally deactivated.</li>
 </ul>
 <h2 id="switch-statements-and-static-analysis-cll">6.27 Switch Statements and Static Analysis [CLL]</h2>
 <h3 id="applicability-to-language">6.27.1 Applicability to language</h3>
