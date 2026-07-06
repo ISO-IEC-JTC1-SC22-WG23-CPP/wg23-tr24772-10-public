@@ -2173,7 +2173,7 @@ switch (i) {
 </blockquote>
 <h2 id="demarcation-of-control-flow-eoj">6.28 Demarcation of Control Flow [EOJ]</h2>
 <h3 id="applicability-to-language">6.28.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.28 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 4772-1:2024 6.28 exists in C++.</p>
 <p>C++ lacks a keyword to be used as an explicit terminator. Therefore, it may not be readily apparent which statements are part of a loop construct or an if statement.</p>
 <p>Consider the following sections of code:</p>
 <div class="sourceCode" id="cb141"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> foo(<span class="dt">int</span> a, <span class="at">const</span> <span class="dt">int</span> *b) {</span>
@@ -2211,10 +2211,10 @@ if (i == 10){
 <h3 id="avoidance-mechanisms-for-language-users">6.28.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.28.5.</p></li>
-<li><p>Enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software.</p></li>
-<li><p>Declare loop variables in the initializer of the loop statement</p></li>
-<li><p>Prefer the standard library algorithms over hand-crafted loops.</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.28.5;</p></li>
+<li><p>enclose the bodies of <code class="sourceCode cpp"><span class="cf">if</span></code>, <code class="sourceCode cpp"><span class="cf">else</span></code>, <code class="sourceCode cpp"><span class="cf">while</span></code>, <code class="sourceCode cpp"><span class="cf">for</span></code>, and similar in braces. This will reduce confusion and potential problems when modifying the software;</p></li>
+<li><p>declare loop variables in the initializer of the loop statement;</p></li>
+<li><p>prefer the standard library algorithms over hand-crafted loops; and</p></li>
 <li><p>Consider the use of source code auto-formatters before code reviews.</p></li>
 </ul>
 <blockquote>
