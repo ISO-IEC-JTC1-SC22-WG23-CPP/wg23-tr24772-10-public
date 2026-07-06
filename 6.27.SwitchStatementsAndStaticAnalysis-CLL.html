@@ -216,7 +216,7 @@
 </header>
 <h2 id="switch-statements-and-static-analysis-cll">6.27 Switch Statements and Static Analysis [CLL]</h2>
 <h3 id="applicability-to-language">6.27.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.27 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.27 exists in C++.</p>
 <p>Because of the way in which the switch-case statement in C++ is structured, it can be relatively easy to unintentionally omit the break statement between cases causing potential unintended execution of statements.</p>
 <p>The switch statement has the form:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> abc = someExpression();</span>
@@ -239,15 +239,15 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.27.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.27.5</p></li>
-<li><p>Use <code class="sourceCode cpp">[[<span class="at">fallthrough</span>]]</code> wherever fall-through is intended.</p></li>
-<li><p>Terminate every case with either a flow control transfer or <code class="sourceCode cpp">[[<span class="at">fallthrough</span>]]</code> as illustrated in the following example:</p>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.27.5;</p></li>
+<li><p>use <code class="sourceCode cpp">[[<span class="at">fallthrough</span>]]</code> wherever fall-through is intended;</p></li>
+<li><p>terminate every case with either a flow control transfer or <code class="sourceCode cpp">[[<span class="at">fallthrough</span>]]</code> as illustrated in the following example:</p>
 <pre><code>```{.cpp}
 int i;
 . . .
 switch (i) {
        case 1: 
-                     [[fallthrough]]; // documents the intended fallthrough.
+         [fallthrough]]; // documents the intended fallthrough.
        case 2:
             i++;    
             break;
@@ -258,8 +258,8 @@ switch (i) {
             return 42;
        default: throw CaseNotFound();   
       }
-```</code></pre></li>
-<li><p>Adopt a style that permits your language processor and analysis tools to verify that all cases are covered. Where this is not possible, use a default clause that diagnoses the error.</p></li>
+```;</code></pre></li>
+<li><p>adopt a style that permits your language processor and analysis tools to verify that all cases are covered, and where this is not possible, use a default clause that diagnoses the error.</p></li>
 </ul>
 <blockquote>
 <p>See also the C++ Core Guidelines ES.78</p>
