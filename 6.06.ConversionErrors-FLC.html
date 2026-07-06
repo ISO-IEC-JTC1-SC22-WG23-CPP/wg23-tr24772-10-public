@@ -216,7 +216,7 @@
 </header>
 <h2 id="FLC">6.6 Conversion Errors [FLC]</h2>
 <h3 id="applicability-to-language">6.6.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO IEC 24772-1 clause 6.6 applies to C++. C++ includes some of the conversion mechanisms of C as documented in ISO IEC TR 24772-3 6.6, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
+<p>The vulnerability as documented in ISO IEC 24772-1:2024 6.6 applies to C++. C++ includes some of the conversion mechanisms of C as documented in ISO/IEC TR 24772-3 6.6, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
 <p>In C++, some conversions are explicit while others are implicit. Conversions can change: - the size of a type, - whether or not the type is signed, and - possibly other properties of the type. A narrowing conversion is when the target type cannot represent all the values of the original type.</p>
 <p>Many errors are associated with implicit conversions. For a comprehensive overview see clause 7.3 [conv] of [C++23]</p>
 <p>Explicit conversions use one of the mechanisms provided by C++ through a</p>
@@ -274,7 +274,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.6.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.6.5:</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.6.5:</p></li>
 <li><p>Prohibit C-style casts; use C++ type conversion operators instead, as they document intent and disallow some unsafe conversions. (see C++ Core Guidelines ES.49)</p></li>
 <li><p>Avoid casts and type punning (see C++ Core guidelines ES.48), and treat every cast as a candidate for refactoring. If type punning is required, use <code>std::bit_cast</code>.</p></li>
 <li><p>Avoid narrowing conversions. (see C++ Core Guidelines ES.46)</p></li>
