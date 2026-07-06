@@ -216,7 +216,7 @@
 </header>
 <h2 id="off-by-one-error-xzh">6.30 Off-by-one Error [XZH]</h2>
 <h3 id="applicability-to-language">6.30.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.30 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.30 exists in C++.</p>
 <p>Arrays are a common place for off by one errors to manifest. In C++, arrays are indexed starting at 0, causing the common mistake of looping from 0 to the size of the array as in:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> foo() {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> a[<span class="dv">10</span>];</span>
@@ -238,9 +238,9 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.30.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.30.5.</p></li>
-<li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++.</p></li>
-<li><p>Use range-based for loops, std algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.30.5;</p></li>
+<li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++; and</p></li>
+<li><p>use range-based for loops, “std” algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p></li>
 </ul>
 <blockquote>
 <p>See also the C++ Core guidelines ES.1, ES.42, ES.71, SL.con.3 (more to come)</p>

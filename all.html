@@ -2265,7 +2265,7 @@ if (i == 10){
 <p>Note: See also the C++ Core Guidelines ES.71, ES.86.</p>
 <h2 id="off-by-one-error-xzh">6.30 Off-by-one Error [XZH]</h2>
 <h3 id="applicability-to-language">6.30.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.30 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.30 exists in C++.</p>
 <p>Arrays are a common place for off by one errors to manifest. In C++, arrays are indexed starting at 0, causing the common mistake of looping from 0 to the size of the array as in:</p>
 <div class="sourceCode" id="cb148"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb148-1"><a href="#cb148-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> foo() {</span>
 <span id="cb148-2"><a href="#cb148-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> a[<span class="dv">10</span>];</span>
@@ -2287,16 +2287,16 @@ if (i == 10){
 <h3 id="avoidance-mechanisms-for-language-users">6.30.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.30.5.</p></li>
-<li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++.</p></li>
-<li><p>Use range-based for loops, std algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.30.5;</p></li>
+<li><p>Use careful programming, testing of border conditions, and static analysis tools to detect off-by-one errors in C++; and</p></li>
+<li><p>use range-based for loops, “std” algorithms, iterator style loops terminated by !=, or container classes in preference to C-style arrays and structures.</p></li>
 </ul>
 <blockquote>
 <p>See also the C++ Core guidelines ES.1, ES.42, ES.71, SL.con.3 (more to come)</p>
 </blockquote>
 <h2 id="structured-programming-ewd">6.31 Structured Programming [EWD]</h2>
 <h3 id="applicability-to-language">6.31.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.31 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 clause 6.31 exists in C++.</p>
 <p>It is as easy to write structured programs in C++ as it is not to. C++ contains the <code class="sourceCode cpp"><span class="cf">goto</span></code> statement, which can create unstructured code. It also has <code class="sourceCode cpp"><span class="cf">continue</span></code>, <code class="sourceCode cpp"><span class="cf">break</span></code>, and <code class="sourceCode cpp"><span class="cf">return</span></code> that can create a complicated control flow, when used in an undisciplined manner. Spaghetti code can be more difficult for static analyzers to analyze and is sometimes used on purpose to intentionally obfuscate the functionality of software. Code that has been modified multiple times by an assortment of programmers to add or remove functionality or to fix problems can be prone to become unstructured.</p>
 <p>Because unstructured code in can cause problems for analyzers, both automated and human, of code, problems with the code may not be detected as readily or at all as would be the case if the software was written in a structured manner.</p>
 <p>In C++, the <code class="sourceCode cpp"><span class="cf">break</span></code> and <code class="sourceCode cpp"><span class="cf">continue</span></code> operations only act on the innermost loop. At times, escape from nested loops is required. In such cases, the use of <code class="sourceCode cpp"><span class="cf">goto</span></code> may be simpler and easier to verify than a series of tests with <code class="sourceCode cpp"><span class="cf">break</span></code> and/or <code class="sourceCode cpp"><span class="cf">continue</span></code> operations.</p>
@@ -2305,10 +2305,10 @@ if (i == 10){
 <h3 id="avoidance-mechanisms-for-language-users">6.31.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.31.5.</p></li>
-<li><p>Write clear and concise structured code to make code as understandable as possible.</p></li>
-<li><p>Avoid the use of <code class="sourceCode cpp">setjmp</code> and <code class="sourceCode cpp">longjmp</code></p></li>
-<li><p>Consider the use of coroutines as an alternative to <code class="sourceCode cpp"><span class="cf">goto</span></code> and <code class="sourceCode cpp">setjmp/longjmp</code></p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.31.5;</p></li>
+<li><p>write clear and concise structured code to make code as understandable as possible;</p></li>
+<li><p>avoid the use of <code class="sourceCode cpp">setjmp</code> and <code class="sourceCode cpp">longjmp</code>; and</p></li>
+<li><p>consider the use of coroutines as an alternative to <code class="sourceCode cpp"><span class="cf">goto</span></code> and <code class="sourceCode cpp">setjmp/longjmp</code>.</p></li>
 </ul>
 <p>See also the C++ Core guidelines ES.76, ES.77, SL.C.1</p>
 <h2 id="passing-parameters-and-return-values-csj">6.32 Passing Parameters and Return Values [CSJ]</h2>
