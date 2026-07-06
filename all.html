@@ -2805,7 +2805,7 @@ auto y = Short{4} + Short{2};</code></pre>
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
 <p>The vulnerability as described in ISO/IEC 24772-1:2024 6.41 is applicable to C++.</p>
-<p>In C++, inheritance is defined differently than in most other languages that support inheritance, e.g.: - There is no implicit common base class. - Defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members.) - Dynamic polymorphism requires the use of references or pointers. - Private virtual member functions can be overridden in derived classes.</p>
+<p>In C++, inheritance is defined differently than in most other languages that support inheritance, e.g.: - there is no implicit common base class; - defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members); - dynamic polymorphism requires the use of references or pointers; and - private virtual member functions can be overridden in derived classes.</p>
 <p>A vulnerability similar to namespace issues (see [BJL]) can arise if a new <em>final overrider</em> is defined in one of multiple parents, which can result in a silent change to the semantics of an existing program, as shown in the following example.</p>
 <div class="sourceCode" id="cb172"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb172-1"><a href="#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
 <span id="cb172-2"><a href="#cb172-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> foo ();</span>
@@ -2846,24 +2846,24 @@ auto y = Short{4} + Short{2};</code></pre>
 <h2 id="avoidance-mechanisms-for-language-users">6.41.2 Avoidance mechanisms for language users</h2>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 41.5.</li>
-<li>Avoid multiple inheritance.</li>
-<li>Ensure that shallow-copying or shallow-move of inheritance hierarchies cannot occur, e.g. by defining the appropriate member operation <code class="sourceCode cpp">=<span class="kw">delete</span></code> (see clause 6.38 Deep vs. Shallow Copying [YAN]).</li>
-<li>If the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations.</li>
-<li>Prefer composition over inheritance.</li>
-<li>Keep inheritance hierarchies shallow.</li>
-<li>Avoid the use of virtual member functions unless unbounded run-time polymorphism can be justified.</li>
-<li>If a class has any virtual functions, ensure it has a virtual destructor.</li>
-<li>Use the special identifier <code class="sourceCode cpp"><span class="kw">override</span></code> whenever overriding a virtual member function.</li>
-<li>Use the special identifier <code class="sourceCode cpp"><span class="kw">final</span></code> to prevent an unexpected overriding of that function deeper in the hierarchy.</li>
-<li>Require the use of <code class="sourceCode cpp"><span class="kw">final</span></code> or <code class="sourceCode cpp"><span class="kw">override</span></code> when overriding a member function.</li>
-<li>Do not assume that a private virtual function cannot be overridden.</li>
-<li>Consider using fully-qualified names to address members of a base class.</li>
-<li>When defining an overload that hides overloads in a base class, consider adding a <em>using declaration</em> for the name from the base class.</li>
-<li>Avoid the use of using-declarations that refer to constructors in types where default initialization is not appropriate for base classes of the derived type or members of the derived type.</li>
-<li>Avoid using a “using-declaration” to promote the accessability of a base class member.</li>
-<li>Prohibit mixing virtual and non-virtual inheritance of the same base class in a hierarchy.</li>
-<li>Preserve class invariants and declare all class members as <code class="sourceCode cpp"><span class="kw">protected</span></code> or <code class="sourceCode cpp"><span class="kw">private</span></code> whenever appropriate.</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 41.5;</li>
+<li>avoid multiple inheritance;</li>
+<li>Ensure that shallow-copying or shallow-move of inheritance hierarchies cannot occur, e.g. by defining the appropriate member operation <code class="sourceCode cpp">=<span class="kw">delete</span></code> (see clause 6.38 Deep vs. Shallow Copying [YAN]);</li>
+<li>if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations;</li>
+<li>prefer composition over inheritance;</li>
+<li>keep inheritance hierarchies shallow;</li>
+<li>avoid the use of virtual member functions unless unbounded run-time polymorphism can be justified;</li>
+<li>if a class has any virtual functions, ensure it has a virtual destructor;</li>
+<li>use the special identifier <code class="sourceCode cpp"><span class="kw">override</span></code> whenever overriding a virtual member function;</li>
+<li>use the special identifier <code class="sourceCode cpp"><span class="kw">final</span></code> to prevent an unexpected overriding of that function deeper in the hierarchy;</li>
+<li>require the use of <code class="sourceCode cpp"><span class="kw">final</span></code> or <code class="sourceCode cpp"><span class="kw">override</span></code> when overriding a member function;</li>
+<li>do not assume that a private virtual function cannot be overridden;</li>
+<li>consider using fully-qualified names to address members of a base class;</li>
+<li>when defining an overload that hides overloads in a base class, consider adding a <em>using declaration</em> for the name from the base class;</li>
+<li>avoid the use of using-declarations that refer to constructors in types where default initialization is not appropriate for base classes of the derived type or members of the derived type;</li>
+<li>avoid using a “using-declaration” to promote the accessability of a base class member;</li>
+<li>prohibit mixing virtual and non-virtual inheritance of the same base class in a hierarchy; and</li>
+<li>preserve class invariants and declare all class members as <code class="sourceCode cpp"><span class="kw">protected</span></code> or <code class="sourceCode cpp"><span class="kw">private</span></code> whenever appropriate.</li>
 <li>Use static analysis tools, including compilers from different sources, to:
 <ul>
 <li>detect hiding of member names in virtual base classes, and</li>
