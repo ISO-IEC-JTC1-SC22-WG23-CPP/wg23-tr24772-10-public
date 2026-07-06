@@ -216,7 +216,7 @@
 </header>
 <h2 id="KOA">6.25 Likely Incorrect Expression [KOA]</h2>
 <h3 id="applicability-to-language">6.25.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.25 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.25 exists in C++.</p>
 <p>C++ has several instances of operators which are similar in structure, but different in meaning. Examples of operators in C-based languages that can cause confusion are:</p>
 <ul>
 <li><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">=</code>;</li>
@@ -312,24 +312,24 @@ It is not be clear whether the programmer intended to use the logical operator <
 <p>In the above function, when a key is not already present in the map, it will be added. This can result in resource exhaustion.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
-<p>— Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.25.5.</p>
+<p>— apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.25.5;</p>
 <ul>
-<li><p>Simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example by,</p>
-<ul>
+<li><p>simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example by:</p>
+<ol type="1">
 <li>using parentheses around sub-expressions to limit precedence confusion,</li>
 <li>extracting intermediate results into const variables with a meaningful name, or</li>
-<li>extracting a subexpression into a function with a meaningful name.</li>
-</ul></li>
-<li><p>Prohibit assignments embedded within other statements and expressions.</p></li>
-<li><p>Spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators.</p></li>
-<li><p>Avoid the use of unary plus, since it is almost always a no-op for built-in types.</p></li>
-<li><p>Prohibit mixing Boolean operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) with non-<code>bool</code> operands, e.g., operands of numeric types.</p></li>
-<li><p>Avoid bit operators (<code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> ) with anything except operands of non-<code>bool</code> unsigned types.</p></li>
-<li><p>Prefer using alternative tokens for the logical operators, such as <code>and</code>, <code>or</code>, and <code>not</code>, and comparison operators such as <code>equal</code> and <code>not_eq</code>.</p></li>
-<li><p>For code structure that require an empty statement, use an empty code block <code class="sourceCode cpp">{}</code> instead of <code class="sourceCode cpp">;</code>.</p></li>
-<li><p>Prohibit conflicting side-effects in sub-expressions.</p></li>
-<li><p>Avoid defining semantics of overloaded operators to deviate from the semantics of these operators for the built-in types.</p></li>
-<li><p>Prefer defaulted and synthesized comparison operators over individual overloads to ensure that all of the related comparison operators behave consistently.</p></li>
+<li>extracting a subexpression into a function with a meaningful name;</li>
+</ol></li>
+<li><p>prohibit assignments embedded within other statements and expressions;</p></li>
+<li><p>spell unary operators (e.g., <code>-</code>) with a leading blank in expressions to avoid them being misread as combined operators;</p></li>
+<li><p>avoid the use of unary plus, since it is almost always a no-op for built-in types;</p></li>
+<li><p>prohibit mixing Boolean operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) with non-<code>bool</code> operands, e.g., operands of numeric types;</p></li>
+<li><p>avoid bit operators (<code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> ) with anything except operands of non-<code>bool</code> unsigned types;</p></li>
+<li><p>prefer using alternative tokens for the logical operators, such as <code>and</code>, <code>or</code>, and <code>not</code>, and comparison operators such as <code>equal</code> and <code>not_eq</code>;</p></li>
+<li><p>for code structure that require an empty statement, use an empty code block <code class="sourceCode cpp">{}</code> instead of <code class="sourceCode cpp">;</code>.</p></li>
+<li><p>prohibit conflicting side-effects in sub-expressions;</p></li>
+<li><p>avoid defining semantics of overloaded operators to deviate from the semantics of these operators for the built-in types;</p></li>
+<li><p>prefer defaulted and synthesized comparison operators over individual overloads to ensure that all of the related comparison operators behave consistently.</p></li>
 <li><p>Use <code class="sourceCode cpp">find()</code> or <code class="sourceCode cpp">contains()</code> to check if a key exists in associative containers.</p></li>
 </ul>
 </body>
