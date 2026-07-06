@@ -216,7 +216,7 @@
 </header>
 <h2 id="BLP">6.42 Violations of the Liskov Substitution Principle or the Contract Model [BLP]</h2>
 <h3 id="applicability-to-language">6.42.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.42 applies to C++. C++ leaves verification of the correctness of an overridden call to the programmer.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.42 applies to C++. C++ leaves verification of the correctness of an overridden call to the programmer.</p>
 <p>The vulnerability can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning.</p>
 <p>An example is provided below.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Base  {</span>
@@ -238,9 +238,9 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.42.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 6.42.5</p></li>
-<li><p>Use static analysis tools that identify violations of preconditions and postconditions.</p></li>
-<li><p>Ensure that all invariants of a derived class are preserved by all public operations on its public base classes.</p></li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1 6.42.5;</li>
+<li>use static analysis tools that identify violations of preconditions and postconditions; and</li>
+<li>ensure that all invariants of a derived class are preserved by all public operations on its public base classes;</li>
 </ul>
 <blockquote>
 <p>See also C++ Core Guidelines C.120, C.121, C.122, C.126, C.127, and C.129 through C.133.</p>
