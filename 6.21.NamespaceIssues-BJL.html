@@ -222,7 +222,7 @@
 <li>Overloading, where <a href="#YOW">6.20 Identifier name reuse [YOW]</a> applies;</li>
 <li>Overriding, where <a href="#RIP">6.41 Inheritance [RIP]</a> applies.</li>
 </ul>
-<p>In the case of template specialization or non-identical definitions of the same entity in different translation units (ODR-violation), ill-formed code can be the result, however, a C++ compiler is not obliged to diagnose that situation (IFNDR), leading to undefined behaviour <a href="#EWF">[EWF]</a>.</p>
+<p>In the case of template specialization or non-identical definitions of the same entity in different translation units (ODR-violation), ill-formed code can be the result, however, a C++ compiler is not obliged to diagnose that situation (IFNDR), leading to undefined behaviour <a href="#EWF">[EWF]</a>. Care must be taken, when a definition in a file included in multiple translation units can be modified through the preprocessor <a href="#NMP">[#NMP]</a>.</p>
 <p>In the case of overloading and overriding cases, C++ compilers are required to diagnose an ambiguity if it exists. A function object is never subject to overload resolution. Hiding a function with a function object ensures that in calls where the function object is visible, it is used, or the program will be ill-formed.</p>
 <p>Subsequent code changes can change the resulting function selected by overload resolution in case of a non-exact match previously found, e.g., found via implicit conversion of an argument. The call in question will then change its binding without warning upon its next compilation.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo (<span class="dt">long</span>);</span>
@@ -282,7 +282,7 @@ A <em>using declaration</em>, on the other hand, only makes the specified name a
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">0</span>);    <span class="co">// ambiguous, ill-formed, won&#39;t compile</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>The following example demonstrates a situation market with <code>(1)</code> where the late addition of a better matching overload causes a silent change in the semantics of an existing program.</p>
+<p>The following example demonstrates a situation (<code>#1</code>) where the late addition of a better matching overload causes a silent change in the semantics of an existing program.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
@@ -314,10 +314,10 @@ A <em>using declaration</em>, on the other hand, only makes the specified name a
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  A * a;</span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  B * b;</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// (1)</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// #1</span></span>
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>After the commented-out code is added to <code>NS2</code>, the binding of function call <code>foo (a)</code> (1) changes silently from <code class="sourceCode cpp">NS::foo</code> to <code class="sourceCode cpp">NS2::foo</code>. This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>.</p>
-<p>Analogously, when a more specialized template is added to an imported namespace where the more general template has already been provided in another namespace, preference rules will silently prefer the more specialized template.</p>
+<p>After the commented-out code is added to <code>NS2</code>, the binding of function call <code>foo (a)</code> (<code>#1</code>) changes silently from <code class="sourceCode cpp">NS::foo</code> to <code class="sourceCode cpp">NS2::foo</code>. This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>.</p>
+<p>Analogously, adding an explicit template specialization can cause different template instantiations, even indirectly, which can be surprising.</p>
 <p>A similar situation can occur when a conflict arises between compiler-synthesized or rewritten operators and explicitly created versions of those operators, as in the following example.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>{</span>
@@ -325,31 +325,31 @@ A <em>using declaration</em>, on the other hand, only makes the specified name a
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>};</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Evil hijacking of !=</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">// bool operator != (A const &amp;, A const &amp;) { return true; } // #1</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">// bool operator != (A const &amp;, A const &amp;) { return true; } // #2</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar (A <span class="at">const</span> &amp; a) {</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  a != a;                                                    <span class="co">// #2</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  a != a;                                                    <span class="co">// #3</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>In the above example, the declaration of <code class="sourceCode cpp"><span class="kw">operator</span>==</code> will have a corresponding synthesised <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> generated by the compiler, since there is no suitable user-declared <code class="sourceCode cpp">!=</code>. If the <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> becomes visible, then the code at #2 uses the user-declared <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> instead of the synthesized one, which can lead to a silent and unexpected change of behaviour. This is particularly risky when the operator is declared outside of the immediate visibility of the original definition.</p>
+<p>In the above example, the declaration of <code class="sourceCode cpp"><span class="kw">operator</span>==</code> will have a corresponding synthesised <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> generated by the compiler, since there is no suitable user-declared <code class="sourceCode cpp">!=</code>. If the <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> becomes visible, then the code at <code>#3</code> uses the user-declared <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> instead of the synthesized one, which can lead to a silent and unexpected change of behaviour. This is particularly risky when the operator is declared outside of the immediate visibility of the original definition.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.21.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of clauses 6.20.2, 6.40.2, and 6.41.2 as applicable.</p></li>
+<li><p>Apply the avoidance mechanisms of 6.20.2, 6.40.2, and 6.41.2 as applicable.</p></li>
 <li><p>Consider using fully qualified names for calls that rely on an implicit conversions.</p></li>
 <li><p>Consider using named function objects instead of function names for calling a function to suppress overload resolution including functions found by argument dependent lookup (ADL).</p></li>
 <li><p>Avoid implicit conversions of function arguments.</p></li>
 <li><p>Prefer using declarations to using directives.</p></li>
 <li><p>Do not overload and use default arguments for the same set of functions.</p></li>
-<li><p>Do not specialize function templates.</p></li>
-<li><p>For template specialization, ensure that specializations are declared as follows:</p>
+<li><p>Prohibit specializing function templates.</p></li>
+<li><p>For template specialization, ensure that specializations are declared:</p>
 <ol type="1">
 <li><p>In the same file as the primary template; or</p></li>
 <li><p>In the same file as the user-defined type for which the specialization is declared.</p></li>
 </ol></li>
-<li><p>Define an entity in only one file to prevent ODR-violations.</p></li>
+<li><p>When adding a template specialization to existing code, ensure that no template instantiation is silently changed in an unsafe manner.</p></li>
+<li><p>Define an entity in only one file to prevent ODR-violations and ensure that inclusions of that file in different translation units don’t result in definition differences.</p></li>
 <li><p>Ensure that no ODR-violations occur, i.e., through a static analysis tool.</p></li>
-<li><p>Use a version-aware analysis tool to identify situations where preference rules cause a silent change of name binding between versions.</p></li>
-<li><p>Only declare equaility or relational operators as member functions or friend functions of the class</p></li>
+<li><p>Only declare equaility or relational operators as member functions or friend functions of the class.</p></li>
 </ul>
 </body>
 </html>
