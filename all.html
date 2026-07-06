@@ -2473,7 +2473,7 @@ for(auto range = make().front(); char c : range){ // mitigation, create a variab
 </ul>
 <h2 id="OTR">6.34 Subprogram Signature Mismatch [OTR]</h2>
 <h3 id="applicability-to-language">6.34.1 Applicability to language</h3>
-<p>The vulnerabilities documented in ISO IEC 24772-1 6.34 is applicable to C++ as described below.</p>
+<p>The vulnerabilities documented in ISO IEC 24772-1:2024 6.34 applies to C++ as described below.</p>
 <p>In general in C++, there must be a match between the number of parameters in a function call and the number of arguments in the function definition. For issues related to macro signatures, see subclause <a href="NMP">Pre-processor directives[NMP]</a>.</p>
 <p>The number of arguments can be different to the number of parameters in a function where: - a function template includes a <em>function parameter pack</em>, or - a function parameter includes a default argument, or - a function parameter-declaration-clause ends with an ellipsis, <code>f(\...)</code>.</p>
 <p>Calling a function template with a <em>function parameter pack</em> results in a specialization of the function with the parameter types matching the corresponding argument types.</p>
@@ -2536,17 +2536,17 @@ No information about the number or types of the parameters is supplied by the co
 <h3 id="avoidance-mechanisms-for-language-users">6.34.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC TR 24772-1:2019 clause 6.34.5.</p></li>
-<li><p>Avoid using functionality from <code>&lt;cstdarg&gt;</code>; use variadic function templates instead.</p></li>
-<li><p>When using functions declared with <code>extern "C"</code> linkage specifications, use static analysis tools to ensure that all such declarations of equally named functions have identical signatures.</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC TR 24772-1:2019 clause 6.34.5;</p></li>
+<li><p>avoid using functionality from <code>&lt;cstdarg&gt;</code>; use variadic function templates instead; and</p></li>
+<li><p>when using functions declared with <code>extern "C"</code> linkage specifications, use static analysis tools to ensure that all such declarations of equally named functions have identical signatures.</p></li>
 </ul>
 <p>Note: See also C++ Core Guidelines F.55.</p>
 <h2 id="GDL">6.35 Recursion [GDL]</h2>
 <h3 id="applicability-to-language">6.35.1 Applicability to language</h3>
-<p>C++ permits recursion, hence is subject to the problems described in ISO/IEC 24772-1 clause 6.35.</p>
+<p>C++ permits recursion, hence is subject to the problems described in ISO/IEC 24772-1:2024 6.35.</p>
 <p>C++ allows recursive <code class="sourceCode cpp"><span class="kw">constexpr</span></code> functions and <code class="sourceCode cpp"><span class="kw">consteval</span></code> functions that are evaluated at compile time where such calls don’t contribute to the vulnerability.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.35.2 Avoidance mechanisms for language users</h3>
-<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.35.5.</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.35.5.</p>
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
 <p>The vulnerabilities described in ISO/IEC 24772-1:2019 clause 6.36 exist in C++, however, C++ provides a mitigation.</p>
