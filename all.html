@@ -1592,17 +1592,17 @@ dereference null pointers" -->
 </ul>
 <h2 id="YZS">6.19 Unused Variable [YZS]</h2>
 <h3 id="applicability-to-language">6.19.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.19 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.19 exists in C++.</p>
 <p>A common practice for resource management in C++ relies on what is called “RAII” or “SBRM” (scope-based resource management): employing a class’ destructor to release resources managed by the object. This can lead to code without visible use of a variable being present in the source code, because all work is done by the variable’s constructor and/or destructor.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.19.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.19.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.19.5.</p></li>
 <li><p>Use compiler warnings and/or static analysis tools to indicate and eliminate unused variables.</p></li>
 </ul>
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
 <h3 id="applicability-to-language">6.20.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
 <p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See <a href="#RIP">6.41 [RIP]</a> for inheritance issues associated with name reuse.</p>
 <p>If implicit conversions can happen on arguments, the overload selected can be different from programmer expectation, especially when an argument is of a type that can be implicitly converted to another type where a corresponding overload is defined. Visibility of an overload may make it eligible, even if neither argument matches the parameter types directly. In the best case this leads to a compile error due to ambiguities, but it can also result in perfectly compiling code executing an unexcepted overload.</p>
 <p>The following example demonstrates part of the problem:</p>
@@ -1644,7 +1644,7 @@ dereference null pointers" -->
 <h3 id="avoidance-mechanismsfor-language-users">6.20.2 Avoidance mechanismsfor language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
 <li><p>Limit the visibility of overloaded operators or functions for class types by defining them as member functions or <em>hidden friends</em>.</p></li>
@@ -1791,7 +1791,7 @@ A <em>using declaration</em>, on the other hand, only makes the specified name a
 </ul>
 <h2 id="LAV">6.22 Missing Initialization of Variables [LAV]</h2>
 <h3 id="applicability-to-language">6.22.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 exists in C++, however, defining variables only when they can be initialized properly with an initializer in their definition avoids reading uninitialized memory.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 exists in C++, however, defining variables only when they can be initialized properly with an initializer in their definition avoids reading uninitialized memory.</p>
 <p>Defining/allocating objects of trivial type with automatic/dynamic storage duration without initialization leaves the object with an indeterminate value. A subsequent read of such a variable before it has been written is undefined behavior <a href="#EWF">[EWF]</a>. In addition, sub-objects of trivial type that are omitted in a constructor’s member initializer list and not initialized by the constructor’s body or by a <em>default member initializer</em> will not be initialized by that constructor. For example, the following class definitions suffer from incomplete initialization of subobjects, even though class <code>test</code> defines a default constructor:</p>
 <div class="sourceCode" id="cb113"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> base { <span class="dt">short</span> num; };                                                     </span>
 <span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> test : base                                                              </span>
@@ -1852,14 +1852,14 @@ following initialization cases:
 <h3 id="avoidance-mechanisms-for-language-users">6.22.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>Use the avoidance mechanisms of ISO/IEC 24772-1 subclause 6.22.5</li>
-<li>Initialize every object defined, including data members, such as by providing an initializer for each variable definition.</li>
-<li>Consider defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> to enforce initialization, otherwise defer the definition of the variable until a sensible initial value can be provided.</li>
-<li>In situations where variable initialization seems to require complex logic, encapsulate that logic either in a function or a lambda that encapsulates the complex logic and returns the initial value. In case of multiple interdependent variables, group those in a struct and return the struct.</li>
-<li>Avoid using non-const variables with static storage duration (see <span id="CGX">6.61 Concurrent Data Access [CGX]</span>).</li>
-<li>Define variables with static storage duration with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">constinit</span></code> whenever possible to avoid problems with dynamic initialization order.</li>
-<li>Do not depend on the order of dynamic initialization of non-local variables with static storage duration, unless the initialization order is guaranteed by the language.</li>
-<li>If the use of uninitialized variables is unavoidable, employ tools, including the compiler, that detect reads of variables with indeterminate values.</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.22.5</li>
+<li>initialize every object defined, including data members, such as by providing an initializer for each variable definition.</li>
+<li>consider defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> to enforce initialization, otherwise defer the definition of the variable until a sensible initial value can be provided.</li>
+<li>in situations where variable initialization seems to require complex logic, encapsulate that logic either in a function or a lambda that encapsulates the complex logic and returns the initial value. In case of multiple interdependent variables, group those in a struct and return the struct.</li>
+<li>avoid using non-const variables with static storage duration (see <span id="CGX">6.61 Concurrent Data Access [CGX]</span>).</li>
+<li>define variables with static storage duration with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> or <code class="sourceCode cpp"><span class="kw">constinit</span></code> whenever possible to avoid problems with dynamic initialization order.</li>
+<li>do not depend on the order of dynamic initialization of non-local variables with static storage duration, unless the itialization order is guaranteed by the language.</li>
+<li>if the use of uninitialized variables is unavoidable, employ tools, including the compiler, that detect reads of variables with indeterminate values.</li>
 </ul>
 <h2 id="operator-precedence-and-associativity-jcw">6.23 Operator Precedence and Associativity [JCW]</h2>
 <h3 id="applicability-to-language">Applicability to language</h3>

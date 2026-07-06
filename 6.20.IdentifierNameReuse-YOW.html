@@ -216,7 +216,7 @@
 </header>
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
 <h3 id="applicability-to-language">6.20.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 clause 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
 <p>Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See <a href="#RIP">6.41 [RIP]</a> for inheritance issues associated with name reuse.</p>
 <p>If implicit conversions can happen on arguments, the overload selected can be different from programmer expectation, especially when an argument is of a type that can be implicitly converted to another type where a corresponding overload is defined. Visibility of an overload may make it eligible, even if neither argument matches the parameter types directly. In the best case this leads to a compile error due to ambiguities, but it can also result in perfectly compiling code executing an unexcepted overload.</p>
 <p>The following example demonstrates part of the problem:</p>
@@ -258,7 +258,7 @@
 <h3 id="avoidance-mechanismsfor-language-users">6.20.2 Avoidance mechanismsfor language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Document argument-dependent lookup usage where name qualification is not desirable.</p></li>
 <li><p>Limit the visibility of overloaded operators or functions for class types by defining them as member functions or <em>hidden friends</em>.</p></li>
