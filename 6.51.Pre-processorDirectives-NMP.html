@@ -216,7 +216,7 @@
 </header>
 <h2 id="NMP">6.51 Pre-processor Directives [NMP]</h2>
 <h3 id="applicability-to-language">6.51.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1:2019 clause 6.51 applies to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 clause 6.51 applies to C++.</p>
 <p>The C++ pre-processor allows the use of macros that are text-replaced before compilation.</p>
 <p>Function-like macros look similar to functions but have different semantics. Because the arguments are text-replaced, expressions passed to a function-like macro may be evaluated multiple times. This can result in unintended and undefined behaviour <a href="#EWF">[EWF]</a> if the arguments have side effects or are pre-processor directives. Additionally, the arguments and body of function-like macros should be fully parenthesized to avoid unintended and undefined behaviour.</p>
 <p>The following code example demonstrates undefined behaviour when a function-like macro is called with arguments that have side-effects (in this case, the increment operator) .</p>
@@ -260,20 +260,15 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.51.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible, but if a function-like macro must be used, ensure that:</p>
-<ul>
-<li>its parameters and body are parenthesized;</li>
-<li>each argument is evaluated at most once;</li>
-<li>the replaced code does not have side effects.</li>
-</ul></li>
-<li><p>Ensure that arguments to function-like macros do not resemble a preprocessing directive.</p></li>
-<li><p>Replace object-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible.</p></li>
-<li><p>Replace conditional compilation with the preprocessor with <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> where possible, e.g., in function bodies, including cases where compile-time define of a macro (as empty) controls if a macro definition is used to expand to an empty statement or another statement.</p></li>
-<li><p>Replace preprocessor include directives with module <code class="sourceCode cpp"><span class="kw">import</span></code> where possible.</p></li>
-<li><p>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> mechanisms over macros that use <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, or <code class="sourceCode cpp"><span class="ot">__func__</span></code>.</p></li>
-<li><p>Only use macros for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments.</p></li>
-<li><p>Avoid the use of <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> and <code class="sourceCode cpp"><span class="er">#</span></code> in the same macro body.</p></li>
-<li><p>Ensure that a line starting with a ‘#’ preprocessing token is a valid preprocessing directive, e.g., through static analysis.</p></li>
+<li>replace function-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> inline functions where possible, but if a function-like macro must be used, ensure that its parameters and body are parenthesized, each argument is evaluated at most once, and the replaced code does not have side effects;</li>
+<li>ensure that arguments to function-like macros do not resemble a preprocessing directive;</li>
+<li>replace object-like macros with <code class="sourceCode cpp"><span class="kw">constexpr</span></code> variables where possible;</li>
+<li>replace conditional compilation with the preprocessor with <code class="sourceCode cpp"><span class="cf">if</span> <span class="kw">constexpr</span></code> where possible, e.g., in function bodies, including cases where compile-time define of a macro (as empty) controls if a macro definition is used to expand to an empty statement or another statement;</li>
+<li>replace preprocessor include directives with module <code class="sourceCode cpp"><span class="kw">import</span></code> where possible;</li>
+<li>prefer <code class="sourceCode cpp"><span class="bu">std::</span>source_location</code> mechanisms over macros that use <code class="sourceCode cpp"><span class="ot">__LINE__</span></code>, <code class="sourceCode cpp"><span class="ot">__FILE__</span></code>, or <code class="sourceCode cpp"><span class="ot">__func__</span></code>;</li>
+<li>only use macros for <em>include guards</em>, to control conditional compilation, or when the macro’s definition requires token pasting (<code>##</code>.{.cpp}) or stringification (<code class="sourceCode cpp"><span class="er">#</span></code>) of macro arguments;</li>
+<li>avoid the use of <code class="sourceCode cpp"><span class="pp">#</span><span class="er">#</span></code> and <code class="sourceCode cpp"><span class="er">#</span></code> in the same macro body; and</li>
+<li>ensure that a line starting with a ‘#’ preprocessing token is a valid preprocessing directive, e.g., through static analysis.</li>
 </ul>
 </body>
 </html>
