@@ -216,7 +216,7 @@
 </header>
 <h1 id="UJO">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1 clause 6.65 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.65 exists in C++.</p>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime without invoking mechanisms which have undefined behaviour <a href="#EWF">[EWF]</a>. For example, an access path to an object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that the value of the object will not change via this access path without invoking mechanisms which have undefined behaviour, e.g.,</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;              <span class="co">// the simplest access path</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; j = <span class="kw">const_cast</span>&lt;<span class="dt">int</span>&amp;&gt;(i); <span class="co">// undefined behaviour</span></span>
@@ -293,7 +293,7 @@ Historically, classes with expensive computations in frequently-called const-mem
 <h3 id="avoidance-mechanisms-for-language-users">6.65.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO IEC 24772-1 clause 6.65.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO IEC 24772-1:2024 6.65.5.</p></li>
 <li><p>Forbid casting away <code class="sourceCode cpp"><span class="at">const</span></code> by <code class="sourceCode cpp"><span class="kw">const_cast</span></code> or by any other means.</p></li>
 <li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits values accessed by a <code class="sourceCode cpp"><span class="at">const</span></code> access path to be modified via a different access path.</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">const</span></code> on pointer-like parameters as a promise to callers and an obligation on the implementation to not modify the referred object.</p></li>
