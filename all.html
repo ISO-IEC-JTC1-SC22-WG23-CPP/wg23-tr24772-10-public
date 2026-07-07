@@ -3209,7 +3209,7 @@ auto y = Short{4} + Short{2};</code></pre>
 </ul>
 <h2 id="implementation-defined-behaviour-fab">6.57 Implementation-defined Behaviour [FAB]</h2>
 <h3 id="applicability-to-language">6.57.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO IEC 24772-1 6.57 applies to C++. See 4.7.3. In ISO/IEC 14882, the term “implementation-defined” is used to describe implementation-defined behaviour. In addition, the C++ standard provides a dedicated index titled, “Index of implementation-defined behavior”.</p>
+<p>The vulnerability as described in ISO IEC 24772-1:2024 6.57 applies to C++. See 4.7.3. In ISO/IEC 14882, the term “implementation-defined” is used to describe implementation-defined behaviour. In addition, the C++ standard provides a dedicated index titled, “Index of implementation-defined behavior”.</p>
 <p>In deciding whether or not to use a feature with implementation-defined behaviours, it is important be cognizant that:</p>
 <ul>
 <li><p>A given implementation may change or remove an implementation-defined behaviour; and</p></li>
@@ -3219,9 +3219,9 @@ auto y = Short{4} + Short{2};</code></pre>
 <h3 id="avoidance-mechanisms-for-language-users">6.57.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 clause 6.57.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 clause 6.57.5.</p></li>
 <li><p>Eliminate to the extent possible any reliance on implementation-defined behaviour from programs in order to increase portability.</p></li>
-<li><p>Use multiple compilers and tools to increase the likelyhood of identifying constructs that have implementation-defined behaviours.</p></li>
+<li><p>Use multiple compilers and static analysis tools to increase the likelyhood of identifying constructs that have implementation-defined behaviours.</p></li>
 <li><p>Refer to “Index of implementation-defined behavior” (reference?) for the definitive list of C++ implementation-defined behaviours and understand the relevant compiler documentation for each of these behaviours.</p></li>
 </ul>
 <h2 id="deprecated-language-features-mem">6.58 Deprecated Language Features [MEM]</h2>
