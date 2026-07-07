@@ -3145,18 +3145,18 @@ auto y = Short{4} + Short{2};</code></pre>
 </ul>
 <h2 id="suppression-of-language-defined-run-time-checking-mxb">6.52 Suppression of Language-defined Run-time Checking [MXB]</h2>
 <h3 id="applicability-to-language">6.52.1 Applicability to language</h3>
-<p>With the exception of the macro <code>assert</code>, the vulnerability as described in ISO/IEC 24772-1 6.52 does not apply to C++, since C++ provides no language-defined runtime checking. Macro assert is defined by the standard but is invoked by the programmer, hence is not a language-defined check by the language.</p>
+<p>With the exception of the macro <code>assert</code>, the vulnerability as described in ISO/IEC 24772-1:2024 6.52 does not apply to C++, since C++ provides no language-defined runtime checking. Macro assert is defined by the standard but is invoked by the programmer, hence is not a language-defined check by the language.</p>
 <p>C++ libraries, however, often provide run-time checks which meet the criteria of this vulnerability. Also, compilers and other tools commonly provide means to perform such runtime checks.</p>
 <p>A standard library implementation as well as a compiler can provide additional run-time checks, e.g., with a hardened standard library or in the form of “code sanitizers”. Having such checks in production code requires handling potential failures discovered.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.51.2 Avoidance mechanisms for language users</h3>
-<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can apply the avoidance mechanisms of ISO/IEC 24772-1 6.52.5.</p>
+<p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.52.5.</p>
 <h2 id="provision-of-inherently-unsafe-operations-skl">6.53 Provision of Inherently Unsafe Operations [SKL]</h2>
 <h3 id="applicability-to-language">6.53.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1 6.53 applies to C++. In particular, anything described by ISO/IEC 14882:2023 as “undefined behaviour” <a href="#EWF">[EWF]</a> is unsafe and should be avoided.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.53 applies to C++. In particular, any construct described by ISO/IEC 14882:2023 as “undefined behaviour” <a href="#EWF">[EWF]</a> is unsafe and should be avoided.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.53.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 6.53.5 and ISO/IEC TR 24772-3 6.53.2.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.53.5 and ISO/IEC TR 24772-3:2020 6.53.2.</p></li>
 <li><p>Enable checks that warn about unsafe operations.</p></li>
 <li><p>Apply static analysis tools to detect unsafe constructs.</p></li>
 </ul>
