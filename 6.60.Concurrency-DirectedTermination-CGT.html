@@ -216,7 +216,7 @@
 </header>
 <h2 id="concurrency-directed-termination-cgt">6.60 Concurrency – Directed termination [CGT]</h2>
 <h3 id="applicability-to-language">6.60.1 Applicability to language</h3>
-<p>This vulnerability as specified in ISO/IEC 24772-1 clause 6.60 is mitigated in C++, as long as the standard C++ library facilities for threads are used. For issues associated with threades created using the standard C library, see ISO/IEC 24772-3 clause 6.60.</p>
+<p>This vulnerability as specified in ISO/IEC 24772-1:2024 6.60 is mitigated in C++, as long as the standard C++ library facilities for threads are used. For issues associated with threades created using the standard C library, see ISO/IEC TR 24772-3:2020 6.60.</p>
 <p>C++ does not provide the means to terminate a C++ thread asynchronously, except in the case that std::terminate() is called. Instead C++ allows cooperative termination through the use of <code class="sourceCode cpp"><span class="bu">std::</span>stop_token</code>, however, a thread instructed by a stop request to cease execution can ignore such a request. For example, using <code class="sourceCode cpp"><span class="bu">std::</span>jthread<span class="bu">::</span>request_stop()</code> to send a stop request to the started thread, the created thread can have a thread function that never handles such a stop request.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> some_function(<span class="dt">int</span> value);</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> stoppable_function(<span class="bu">std::</span>stop_token tok, <span class="dt">int</span> value);</span>
@@ -275,8 +275,8 @@
 <h2 id="avoidance-mechanisms-for-language-users">6.60.2 Avoidance mechanisms for language users</h2>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>For threads created using the C library, follow the avoidance mechanisms of ISO/IEC TR 24772-3.</p></li>
-<li><p>Follow the avoidance mechanisms of ISO/IEC 24772-1 clause 6.60.5.</p></li>
+<li><p>For threads created using the C library, apply the avoidance mechanisms of ISO/IEC TR 24772-3:2020.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.60.5.</p></li>
 <li><p>Use code reviews and static analysis tools if available, to ensure that threads correctly terminate.</p></li>
 </ul>
 </body>
