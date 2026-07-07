@@ -217,7 +217,7 @@
 <h2 id="concurrency-premature-termination-cgs">6.62 Concurrency – Premature Termination [CGS]</h2>
 <h3 id="applicability-to-language">6.62.1 Applicability to language</h3>
 <h3 id="section"></h3>
-<p>The vulnerability as described in ISO IEC 24772-1 6.62 applies to C++.</p>
+<p>The vulnerability as described in ISO IEC 24772-1:2024 6.62 applies to C++.</p>
 <p>For concurrent entities created using the C library, apply the avoidance mechanisms documented in ISO IEC TR 24772-3 clause 6.62.</p>
 <p>C++ standard threads</p>
 <p>Within C++ standard thread concurrency, the vulnerability as specified in ISO/IEC 24772-1 clause 6.62 can arise as follows: - as part of the termination of the complete program resulting from an explicit call to a program-terminating function in any thread in the program or an implicit call on std::terminate, for example, - as a result of an unhandled exception in any thread function when using <code class="sourceCode cpp">thread</code> or <code class="sourceCode cpp">jthread</code> - as a result of an unhandled exception in any thread function when using C++ parallel algorithms - as a result of faulty inter-thread asynchronous communications that results in unplanned termination of a communicating thread.</p>
@@ -232,7 +232,7 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.62.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.63.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.63.5.</p></li>
 <li><p>Use low-level operating system primitives or other APIs where available to check that a required thread is still active.</p></li>
 <li><p>Prohibit explicit or implicit calls to program-terminating functions whenever active threads are executing.</p></li>
 <li><p>Check and obey the result of <code>stop_token.stop_requested()</code> periodically (see 6.60 Concurrency - Directed termination [CGT])</p></li>
