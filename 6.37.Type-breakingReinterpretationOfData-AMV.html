@@ -228,7 +228,7 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.37.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2-024 6.37.5, and clauses <a href="#FLC">6.6 Conversion Errors [FLC]</a> and <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> of this document;</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.37.5, and clauses <a href="#FLC">6.6 Conversion Errors [FLC]</a> and <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> of this document;</p></li>
 <li><p>prohibit casts that reinterpret data values;</p></li>
 <li><p>whenever possible use <code class="sourceCode cpp"><span class="bu">std::</span>variant</code> or a similar safe union type instead of <code class="sourceCode cpp"><span class="kw">union</span></code>;</p></li>
 <li><p>prefer <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> over <code class="sourceCode cpp">memcpy</code> when reinterpreting the bit-representation of an object to a different type is unavoidable;</p></li>
