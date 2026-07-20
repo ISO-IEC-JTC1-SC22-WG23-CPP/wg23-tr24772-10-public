@@ -218,11 +218,13 @@
 <h3 id="applicability-to-language">6.49.1 Applicability to language</h3>
 <p>The vulnerability as enumerated in ISO/IEC 24772-1:2024 6.49 applies to C++.</p>
 <p>As a mitigation, the C++ <code class="sourceCode cpp"><span class="at">extern</span> <span class="st">&quot;C&quot;</span></code> linkage specifier usually provides simple interoperability with libraries using the C application binary interface (ABI).</p>
+<p>If signatures are specified in C-compatible header file, conditional compilation based on the predefined preprocessor constant <code>__cplusplus</code> can ensure, that a C++ compiler is also able to process the header file.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.49.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.49.5; and</p></li>
 <li><p>Apply the avoidance mechanisms of clause <a href="#DJS">6.47 Inter-language Calling [DJS]</a> as applicable.</p></li>
+<li><p>Ensure compatiblity of C header files with the C++ language.</p></li>
 </ul>
 </body>
 </html>
