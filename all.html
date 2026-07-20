@@ -1358,7 +1358,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
 <h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.9 exists in C++ when an access is performed using <code>operator[]</code>.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.9 applies to C++ when an access is performed using <code>operator[]</code>.</p>
 <p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code>operator[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code>operator[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
 <p>For issues associated with exception handling and error handling, see clause <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
 <p>The parameter type for contiguous sequences <code>std::span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API. With the introduction of the <code>at()</code> function in C++ 26, a checked version of indexing is available. For more information on the use of <code>std::span</code> see <a href="#HCB">6.8</a></p>
@@ -1372,7 +1372,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="XYW">6.10 Unchecked Array Copying [XYW]</h2>
 <h3 id="applicability-to-language">6.10.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 exists in C++, but can be mitigated using features provided by the language.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.10 applies to C++, but can be mitigated using features provided by the language.</p>
 <p>A buffer overflow occurs when some number of elements is copied from one buffer to another and the amount being copied is greater than is allocated for the destination buffer. This is a special case of <span id="HCB">6.8 Buffer Boundary Violation [HCB]</span>. The C library functions or hand-written loops for copying bytes or C-style strings are especially prone to this vulnerability.</p>
 <p>As with clause 6.8 [HCB], in most cases the vulnerability can be avoided by using library classes, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which provide a copy operations operator that adjust the size of the target to fit the object being copied.</p>
 <p>The standard library algorithms that copy into a target range can suffer from this vulnerability. In the case of potential overflow, the programmer must either ensure automatic extension of the underlying container, such as by using <code class="sourceCode cpp"><span class="bu">std::</span>back_inserter(container)</code> as the output iterator, or ensure that the output range has sufficient space available. In the case of overlapping input and output ranges, the suitable copying algorithm must be selected, depending on the relative ordering of the ranges. In general, this situation can be avoided by using a more appropriate algorithm, for example, <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p>
