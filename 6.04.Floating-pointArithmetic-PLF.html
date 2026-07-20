@@ -154,7 +154,7 @@
 </header>
 <h2 id="floating-point-arithmetic-plf">6.4 Floating-point Arithmetic [PLF]</h2>
 <h3 id="applicability-to-language">6.4.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC TR 24772-1 6.4 is applicable to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.4 applies to C++.</p>
 <p>The C++ standard assumes IEC 60559 if <code>std::numeric_limits\&lt;T&gt;::is_iec559</code> is true for the types in use. In the absence of this, C++ makes few guarantees about the behaviour of floating point numbers. In particular - <code>std::less</code> is not a total order, and - <code>std::equal</code> is not equivalent to substitutability since NaNs compare unequal to themselves but neither less nor greater, and negative zero compares equal to positive zero.</p>
 <p>Sorting floating point numbers with the built-in operators violates the preconditions of sorting predicates in the presence of NaN values and can raise floating point errors. The default sorting predicate <code>std::less</code> is suspect to this precondition violation, resulting in undefined behavior <a href="#EWF">[EWF]</a> when sorting a range of floating point values that contain NaNs. This situation can be detected when the return type of <code>operator&lt;=&gt;</code> for a floating point type is <code>std::partial_ordering</code>.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.4.2 Avoidance mechanisms for language users</h3>
