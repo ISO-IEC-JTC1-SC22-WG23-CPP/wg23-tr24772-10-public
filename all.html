@@ -2538,7 +2538,7 @@ No information about the number or types of the parameters is supplied by the co
 <h3 id="avoidance-mechanisms-for-language-users">6.34.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC TR 24772-1:2019 clause 6.34.5;</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.34.5;</p></li>
 <li><p>avoid using functionality from <code>&lt;cstdarg&gt;</code>; use variadic function templates instead; and</p></li>
 <li><p>when using functions declared with <code>extern "C"</code> linkage specifications, use static analysis tools to ensure that all such declarations of equally named functions have identical signatures.</p></li>
 </ul>
@@ -2552,7 +2552,7 @@ No information about the number or types of the parameters is supplied by the co
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
 <p>The vulnerabilities described in ISO/IEC 24772-1:2024 6.36 exist in C++, however, C++ provides a mitigation.</p>
-<p>C++ includes the C library, especially the header <code>&lt;cerrno&gt;</code> and thus shares C’s issues with the global error-reporting variable <code>errno</code>. See ISO IEC TR 24772-3 6.36 for details and guidance.</p>
+<p>C++ includes the C library, especially the header <code>&lt;cerrno&gt;</code> and thus shares C’s issues with the global error-reporting variable <code>errno</code>. See ISO IEC TR 24772-3:2019 6.36 for details and guidance.</p>
 <p>In addition to <code>errno</code>, some C++ library features expose error conditions indirectly via a side-effect on the object the operation failed with or via side-effect on a reference parameter. For example, input stream objects will go into a <code>fail</code> state, when formatted input cannot be performed. Without resetting that fail-state of a stream, further input will continue to fail, that can cause further failures when a failure is ignored. Streams provide a non-default mode to throw exceptions on failure. Another example of error reporting via a side-effect is the filesystem library that provides overloads that take a non-const reference of <code>std::error_code</code>.</p>
 <p>In general, reporting errors as side-effects, in the worst case via a global state, can easily or accidentally ignore by developers, leading to further consistency problems in the continued execution of the program.</p>
 <p>By default, C++ has the C weakness of permitting the call to a function that returns an error code without capturing the return value in a variable.</p>
