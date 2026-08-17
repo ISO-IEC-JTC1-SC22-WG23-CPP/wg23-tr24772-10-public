@@ -953,7 +953,7 @@ use and possible exhaustion).</code></pre></li>
 <p>A <em>using declaration</em> makes all declarations of the qualified name accessible in the current scope for unqualified lookup. This includes <em>inheriting constructors</em> in a derived class, that makes constructors of a base class appear to be declared as constructors of the derived class.</p>
 <p>A <em>using directive</em> makes all declarations from the given namespace accessible for unqualified lookup in the current scope.</p>
 <p><strong>Overload resolution for functions and function templates</strong></p>
-<p>A name denoting the called function in a function call expression can refer to multiple function (template) declarations, known as the overload set. Overload resolution is the process used to select the best matching function from the overload set, based on the number and types of the arguments in the function call expression. After overload resolution C++ mandates there be a single candidate function (template) as the best match, which is called.</p>
+<p>A name denoting the called function in a function call expression can refer to multiple function (template) declarations, known as the overload set. Overload resolution is the process used to select the best matching function from the overload set, based on the number and types of the arguments in the function call expression. Overload resolution does not take default arguments into account. After overload resolution C++ mandates there be a single candidate function (template) as the best match, which is called.</p>
 <p>If an unqualified name is used in a function call expression and the resulting overload set does not refer to a member function (template), the overload set is extended to include functions declared in namespaces associated with the types of the arguments of the function call expression. In such a context <code class="sourceCode cpp"><span class="kw">friend</span></code> functions defined within a class will be considered when an argument of the call is of that class type (<em>hidden friends</em>). This mechanism is called Argument-Dependent Lookup (ADL).</p>
 <p>If an expression with an operand of user-declared type uses an overloadable operator, the resulting expression is treated like an unqualified function-call expression calling the corresponding overloaded operator functions, e.g., <code class="sourceCode cpp"><span class="kw">operator</span>+</code>.</p>
 <p>Using <em>hidden friends</em> is a means to limit the size of overload sets for frequently defined function names, such as overloaded operators.</p>
@@ -1645,6 +1645,7 @@ void bar(){
 </ul>
 <h2 id="BJL">6.21 Namespace Issues [BJL]</h2>
 <h3 id="applicability-to-language">6.21.1 Applicability to language</h3>
+<p><strong>TODO - needs another full path wrt overload resolution </strong></p>
 <p>The vulnerability described in ISO/IEC 24772-1:2024 6.21 exists in C++. It can occur in particular when a used library changes its API. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>. The situations where it exists are related to the following cases:</p>
 <ul>
 <li>Template specialization, where <a href="#SYM">6.40 Templates and generics [SYM]</a> applies;</li>
@@ -1698,65 +1699,77 @@ void bar(){
 <span id="cb110-23"><a href="#cb110-23" aria-hidden="true" tabindex="-1"></a>    f2(<span class="dv">0</span>);              <span class="co">// Calls &#39;NS3::f2&#39; as expected</span></span>
 <span id="cb110-24"><a href="#cb110-24" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb110-25"><a href="#cb110-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<!-- from 6.40: -->
-<p>Overload resolution only considers conversions for the explicitly specified arguments and does not take default parameters into account:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">short</span>, <span class="dt">int</span> = <span class="dv">0</span>);</span>
-<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f1 (<span class="dt">int</span>, <span class="dt">short</span> = <span class="dv">0</span>);</span>
-<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f2 ()</span>
-<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>);       <span class="co">// calls &#39;f1(1, 0)&#39; as &#39;1 -&gt; int&#39; is better match than &#39;1 -&gt; short&#39;</span></span>
-<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>  f1 (<span class="dv">1</span>, <span class="dv">0</span>);    <span class="co">// ambiguous, ill-formed, won&#39;t compile</span></span>
-<span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The following example demonstrates a situation (<code>#1</code>) where the late addition of a better matching overload causes a silent change in the semantics of an existing program.</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS</span>
-<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> A</span>
-<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a>  };</span>
-<span id="cb112-6"><a href="#cb112-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb112-7"><a href="#cb112-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">template</span> &lt; <span class="kw">typename</span> T &gt; T foo ( T t )</span>
-<span id="cb112-8"><a href="#cb112-8" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb112-9"><a href="#cb112-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t;</span>
-<span id="cb112-10"><a href="#cb112-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb112-11"><a href="#cb112-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb112-12"><a href="#cb112-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb112-13"><a href="#cb112-13" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> NS2 <span class="co">// separately developed and included from a header file</span></span>
-<span id="cb112-14"><a href="#cb112-14" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb112-15"><a href="#cb112-15" aria-hidden="true" tabindex="-1"></a>   <span class="kw">struct</span> B</span>
-<span id="cb112-16"><a href="#cb112-16" aria-hidden="true" tabindex="-1"></a>   {</span>
-<span id="cb112-17"><a href="#cb112-17" aria-hidden="true" tabindex="-1"></a>   };</span>
-<span id="cb112-18"><a href="#cb112-18" aria-hidden="true" tabindex="-1"></a><span class="co">// This code will be added later</span></span>
-<span id="cb112-19"><a href="#cb112-19" aria-hidden="true" tabindex="-1"></a><span class="co">//  template &lt; typename T &gt; T * foo ( T * t )</span></span>
-<span id="cb112-20"><a href="#cb112-20" aria-hidden="true" tabindex="-1"></a><span class="co">//  {</span></span>
-<span id="cb112-21"><a href="#cb112-21" aria-hidden="true" tabindex="-1"></a><span class="co">//    return t;</span></span>
-<span id="cb112-22"><a href="#cb112-22" aria-hidden="true" tabindex="-1"></a><span class="co">//  }</span></span>
-<span id="cb112-23"><a href="#cb112-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb112-24"><a href="#cb112-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb112-25"><a href="#cb112-25" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> NS2;</span>
-<span id="cb112-26"><a href="#cb112-26" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> NS;</span>
-<span id="cb112-27"><a href="#cb112-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb112-28"><a href="#cb112-28" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar()</span>
-<span id="cb112-29"><a href="#cb112-29" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb112-30"><a href="#cb112-30" aria-hidden="true" tabindex="-1"></a>  A * a;</span>
-<span id="cb112-31"><a href="#cb112-31" aria-hidden="true" tabindex="-1"></a>  B * b;</span>
-<span id="cb112-32"><a href="#cb112-32" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// #1</span></span>
-<span id="cb112-33"><a href="#cb112-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>After the commented-out code is added to <code>NS2</code>, the binding of function call <code>foo (a)</code> (<code>#1</code>) changes silently from <code class="sourceCode cpp">NS::foo</code> to <code class="sourceCode cpp">NS2::foo</code>. This issue can be avoided by avoiding <code>using namespace xxx{.cpp}</code> and explicitly qualifying each call, such as <code>NS::foo(a){.cpp}</code>.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt; <span class="kw">typename</span> T &gt; T foo ( T t ) <span class="co">// general</span></span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> t;</span>
+<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a><span class="co">// This code will be added later</span></span>
+<span id="cb111-9"><a href="#cb111-9" aria-hidden="true" tabindex="-1"></a><span class="co">//  template &lt; typename T &gt; T * foo ( T * t ) // more specialized</span></span>
+<span id="cb111-10"><a href="#cb111-10" aria-hidden="true" tabindex="-1"></a><span class="co">//  {</span></span>
+<span id="cb111-11"><a href="#cb111-11" aria-hidden="true" tabindex="-1"></a><span class="co">//    return t;</span></span>
+<span id="cb111-12"><a href="#cb111-12" aria-hidden="true" tabindex="-1"></a><span class="co">//  }</span></span>
+<span id="cb111-13"><a href="#cb111-13" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar()</span>
+<span id="cb111-14"><a href="#cb111-14" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb111-15"><a href="#cb111-15" aria-hidden="true" tabindex="-1"></a>  A * a;</span>
+<span id="cb111-16"><a href="#cb111-16" aria-hidden="true" tabindex="-1"></a>  foo (a); <span class="co">// #1</span></span>
+<span id="cb111-17"><a href="#cb111-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>After the commented-out code is added, the binding of function call <code>foo (a)</code> (<code>#1</code>) changes silently from the general <code class="sourceCode cpp">foo</code> to the more specialized <code class="sourceCode cpp">foo</code>. This issue can be only be avoided by having these unrelated function templates in separate namespaces and explicit qualification at the call site.</p>
 <p>Analogously, adding an explicit template specialization can cause different template instantiations, even indirectly, which can be surprising.</p>
 <p>A similar situation can occur when a conflict arises between compiler-synthesized or rewritten operators and explicitly created versions of those operators, as in the following example.</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
-<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> <span class="kw">operator</span>==(A <span class="at">const</span> &amp;) <span class="at">const</span> { <span class="cf">return</span> <span class="kw">true</span>; }   </span>
-<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb113-5"><a href="#cb113-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb113-6"><a href="#cb113-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Evil hijacking of !=</span></span>
-<span id="cb113-7"><a href="#cb113-7" aria-hidden="true" tabindex="-1"></a><span class="co">// bool operator != (A const &amp;, A const &amp;) { return true; } // #2</span></span>
-<span id="cb113-8"><a href="#cb113-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb113-9"><a href="#cb113-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar (A <span class="at">const</span> &amp; a) {</span>
-<span id="cb113-10"><a href="#cb113-10" aria-hidden="true" tabindex="-1"></a>  a != a;                                                    <span class="co">// #3</span></span>
-<span id="cb113-11"><a href="#cb113-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A</span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> <span class="kw">operator</span>==(A <span class="at">const</span> &amp;) <span class="at">const</span> { <span class="cf">return</span> <span class="kw">true</span>; }   </span>
+<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-6"><a href="#cb112-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Evil hijacking of !=</span></span>
+<span id="cb112-7"><a href="#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="co">// bool operator != (A const &amp;, A const &amp;) { return true; } // #2</span></span>
+<span id="cb112-8"><a href="#cb112-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-9"><a href="#cb112-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bar (A <span class="at">const</span> &amp; a) {</span>
+<span id="cb112-10"><a href="#cb112-10" aria-hidden="true" tabindex="-1"></a>  a != a;                                                    <span class="co">// #3</span></span>
+<span id="cb112-11"><a href="#cb112-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>In the above example, the declaration of <code class="sourceCode cpp"><span class="kw">operator</span>==</code> will have a corresponding synthesised <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> generated by the compiler, since there is no suitable user-declared <code class="sourceCode cpp">!=</code>. If the <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> becomes visible, then the code at <code>#3</code> uses the user-declared <code class="sourceCode cpp"><span class="kw">operator</span>!=</code> instead of the synthesized one, which can lead to a silent and unexpected change of behaviour. This is particularly risky when the operator is declared outside of the immediate visibility of the original definition.</p>
+<p><strong>TODO Overload resolution </strong> Overloading and specialization of functions is a cornerstone of C++ generic programming. In this context, the reuse of function names is essential. See <a href="#RIP">6.41 [RIP]</a> for inheritance issues associated with name reuse.</p>
+<p>If implicit conversions can happen on arguments, the overload selected can be different from programmer expectation, especially when an argument is of a type that can be implicitly converted to another type where a corresponding overload is defined. Visibility of an overload may make it eligible, even if neither argument matches the parameter types directly. In the best case this leads to a compile error due to ambiguities, but it can also result in perfectly compiling code executing an unexcepted overload.</p>
+<p>The following example demonstrates part of the problem:</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;typeinfo&gt;</span></span>
+<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> Y {</span>
+<span id="cb113-5"><a href="#cb113-5" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb113-6"><a href="#cb113-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> print(T i){</span>
+<span id="cb113-7"><a href="#cb113-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; <span class="kw">typeid</span>(T).name()&lt;&lt; <span class="st">&quot;:&quot;</span> &lt;&lt; i ;</span>
+<span id="cb113-8"><a href="#cb113-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb113-9"><a href="#cb113-9" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb113-10"><a href="#cb113-10" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> println(T x){</span>
+<span id="cb113-11"><a href="#cb113-11" aria-hidden="true" tabindex="-1"></a>    print(x); <span class="co">// expects to call Y::print</span></span>
+<span id="cb113-12"><a href="#cb113-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout&lt;&lt;<span class="ch">&#39;</span><span class="sc">\n</span><span class="ch">&#39;</span>;</span>
+<span id="cb113-13"><a href="#cb113-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb113-14"><a href="#cb113-14" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb113-15"><a href="#cb113-15" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> X {</span>
+<span id="cb113-16"><a href="#cb113-16" aria-hidden="true" tabindex="-1"></a>   <span class="kw">struct</span> A{</span>
+<span id="cb113-17"><a href="#cb113-17" aria-hidden="true" tabindex="-1"></a>        A(<span class="dt">double</span>){}</span>
+<span id="cb113-18"><a href="#cb113-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">friend</span> <span class="co">// make this a hidden friend</span></span>
+<span id="cb113-19"><a href="#cb113-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>ostream &amp; <span class="kw">operator</span> &lt;&lt; (<span class="bu">std::</span>ostream &amp; out, A <span class="at">const</span> &amp;a){</span>
+<span id="cb113-20"><a href="#cb113-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> out &lt;&lt; <span class="st">&quot;An A as expected</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
+<span id="cb113-21"><a href="#cb113-21" aria-hidden="true" tabindex="-1"></a>        } </span>
+<span id="cb113-22"><a href="#cb113-22" aria-hidden="true" tabindex="-1"></a>    };</span>
+<span id="cb113-23"><a href="#cb113-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> print(A a){ <span class="co">// not expected to be called by println</span></span>
+<span id="cb113-24"><a href="#cb113-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>cout &lt;&lt; <span class="st">&quot;Surprise happens!&quot;</span>;</span>
+<span id="cb113-25"><a href="#cb113-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb113-26"><a href="#cb113-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb113-27"><a href="#cb113-27" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main(){</span>
+<span id="cb113-28"><a href="#cb113-28" aria-hidden="true" tabindex="-1"></a>    X::A a{<span class="fl">3.14</span>};</span>
+<span id="cb113-29"><a href="#cb113-29" aria-hidden="true" tabindex="-1"></a>    Y::println(<span class="dv">42</span>); <span class="co">// i:42 - calls Y::print</span></span>
+<span id="cb113-30"><a href="#cb113-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout &lt;&lt; a; <span class="co">// An A as expected - calls X::operator&lt;&lt;</span></span>
+<span id="cb113-31"><a href="#cb113-31" aria-hidden="true" tabindex="-1"></a>    Y::println(a);  <span class="co">// Surprise happens! - calls X::print</span></span>
+<span id="cb113-32"><a href="#cb113-32" aria-hidden="true" tabindex="-1"></a>    Y::println(<span class="dv">42</span><span class="bu">u</span>);<span class="co">// u:42 - calls Y::print</span></span>
+<span id="cb113-33"><a href="#cb113-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The above code calls the overload <code>print(A)</code> from println since it is pulled in by ADL. On the other hand, ADL is required to work to allow the output operator for type <code>X::A</code> to work.</p>
+<p>The consideration of implicit conversions together with ADL can be suppressed by defining operator overloads as class members or as <em>hidden friends</em>. Generic base classes can provide mix-in facilities for <em>hidden friends</em> by taking the argument type that is the derived class as template parameter.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.21.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
@@ -1775,7 +1788,13 @@ void bar(){
 <li><p>When adding a template specialization to existing code, ensure that no template instantiation is silently changed in an unsafe manner.</p></li>
 <li><p>Define an entity in only one file to prevent ODR-violations and ensure that inclusions of that file in different translation units don’t result in definition differences.</p></li>
 <li><p>Ensure that no ODR-violations occur, i.e., through a static analysis tool.</p></li>
-<li><p>Only declare equaility or relational operators as member functions or friend functions of the class.</p></li>
+<li><p>Only declare equaility or relational operators as member functions or friend functions of the class.</p>
+<p><strong>TODO from 6.20</strong></p>
+<ul>
+<li>Document argument-dependent lookup usage where name qualification is not desirable.</li>
+</ul></li>
+<li><p>Limit the visibility of overloaded operators or functions for class types by defining them as member functions or <em>hidden friends</em>.</p></li>
+<li><p>Place overloaded operators that are not class members and cannot be provided as <em>hidden friends</em> together with their argument type in a namespace that is not the global namespace,so that they are picked up by ADL.</p></li>
 </ul>
 <h2 id="LAV">6.22 Missing Initialization of Variables [LAV]</h2>
 <h3 id="applicability-to-language">6.22.1 Applicability to language</h3>
