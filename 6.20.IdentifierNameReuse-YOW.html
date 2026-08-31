@@ -216,8 +216,11 @@
 </header>
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
 <h3 id="applicability-to-language">6.20.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.20 exists in C++, except for the second issue of limited identifier length. In C++ all characters in an identifier are significant. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
-<p>Using directives don’t import a name to the current scope. Only names not found in the current or its surrounding scopes up to the common scope shared with the namespace in the using directive will be made accessible.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.20 exists in C++, except for the second issue of limited identifier length.</p>
+<p>In C++ all characters in an identifier are significant.</p>
+<p>In C++ the same name can be used for different functions as long as they have distinct parameters or different scopes where they are defined.</p>
+<p>See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
+<p><em>Using directives</em> don’t import a name to the current scope. Only names not found in the current or its surrounding scopes up to the common scope shared with the namespace in the using directive will be made accessible.</p>
 <pre><code>namespace NS1 {
 int const a{1}; 
 }
@@ -248,8 +251,6 @@ void bar(){
         lam(); // prints 3
     }
 }</code></pre>
-<p><strong>TODO Overload resolution is in 6.21</strong></p>
-<p><em>what remains here</em></p>
 <h3 id="avoidance-mechanismsfor-language-users">6.20.2 Avoidance mechanismsfor language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
