@@ -1216,7 +1216,7 @@ Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre
 <span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="kw">static_cast</span>&lt;Color&gt;((<span class="kw">static_cast</span>&lt;<span class="dt">short</span>&gt;(a) + b) % <span class="dv">3</span>);</span>
 <span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Unscoped enumeration types implicitly promote to an integral type and can be used as the index of an array without a cast. Without a user-specified mapping to an underlying representation, there will be “holes” as documented in ISO IEC 24772-1:2024 clause 6.5 and ISO IEC TR 24772-3 clause 6.5.</p>
+<p>Unscoped enumeration types implicitly promote to an integral type and can be used as the index of an array without a cast. Without a user-specified mapping to an underlying representation, there will be “holes” as documented in ISO IEC 24772-1:2024, 6.5 and ISO IEC TR 24772-3, 6.5.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.5.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
