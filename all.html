@@ -2829,7 +2829,7 @@ No information about the number or types of the parameters is supplied by the co
 </ul>
 <h2 id="SYM">6.40 Templates and Generics [SYM]</h2>
 <h3 id="applicability-to-language">6.40.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.40 exists in C++ by the language mechanism of templates. While templates are a pure compile-time mechanism, their use can result in programmer confusion because of the potentially deeply-nested nature or template instantiation. Actual errors during instantiation will fail to compile. Confusion can occur when programmer mistakes lead to successful compilation but their intent is not met due to misunderstanding of the language rules.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.40 exists in C++ by the language mechanism of templates. While templates are a pure compile-time mechanism, their use can result in programmer confusion because of the potentially deeply-nested nature or template instantiation. Actual errors during instantiation will fail to compile. Confusion can occur when programmer mistakes lead to successful compilation but their intent is not met due to misunderstanding of the language rules.</p>
 <p>Similar to 6.21 Namespace Issues [<a href="#BJL">BJL</a>], adding a template specialization later can cause uses of the base template to pick up this new specialization. As long as no ambiguity occurs and the new specialization is a better match it will change the behaviour of existing code that previously instantiated the base template or a different specialization. If different translation units happen to use a template with different set of specialization declarations the mechanism might lead to different instantiations of the same template with the same arguments. This results in an ODR violation and is undefined behaviour (see 6.56 [<a href="#EWF">EWF</a>]). A common mitigation is to put all specializations of a template in the same file or module as the base template declaration, or alternatively a specialization of a template together with the definition of the user-defined entity for which it is specialised.</p>
 <p>Due to the two phase compilation model of templates, name lookup can be surprising in class templates with dependent base classes. An unqualified name used in the derived class that is defined in the base will be found in an outer namespace instead.</p>
 <pre><code>double foo{0};
@@ -2873,7 +2873,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.41 is applicable to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.41 applies to C++.</p>
 <p>In C++, inheritance is defined differently than in most other languages that support inheritance, e.g.: - there is no implicit common base class; - defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members); - dynamic polymorphism requires the use of references or pointers; and - private virtual member functions can be overridden in derived classes.</p>
 <p>A vulnerability similar to namespace issues (see [BJL]) can arise if a new <em>final overrider</em> is defined in one of multiple parents, which can result in a silent change to the semantics of an existing program, as shown in the following example.</p>
 <div class="sourceCode" id="cb177"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
@@ -2915,7 +2915,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h2 id="avoidance-mechanisms-for-language-users">6.41.2 Avoidance mechanisms for language users</h2>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 41.5;</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 41.5;</li>
 <li>avoid multiple inheritance;</li>
 <li>Ensure that shallow-copying or shallow-move of inheritance hierarchies cannot occur, e.g. by defining the appropriate member operation <code class="sourceCode cpp">=<span class="kw">delete</span></code> (see clause 6.38 Deep vs. Shallow Copying [YAN]);</li>
 <li>if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations;</li>
@@ -2941,7 +2941,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="BLP">6.42 Violations of the Liskov Substitution Principle or the Contract Model [BLP]</h2>
 <h3 id="applicability-to-language">6.42.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.42 applies to C++. C++ leaves verification of the correctness of an overridden call to the programmer.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.42 applies to C++. C++ leaves verification of the correctness of an overridden call to the programmer.</p>
 <p>The vulnerability can be mitigated by a style of programming that uses wrapper functions to check preconditions, calls a virtual function to perform the required functionality and subsequently checks the postconditions before returning.</p>
 <p>An example is provided below.</p>
 <div class="sourceCode" id="cb178"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb178-1"><a href="#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Base  {</span>
@@ -2963,7 +2963,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h3 id="avoidance-mechanisms-for-language-users">6.42.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1 6.42.5;</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1, 6.42.5;</li>
 <li>use static analysis tools that identify violations of preconditions and postconditions; and</li>
 <li>ensure that all invariants of a derived class are preserved by all public operations on its public base classes;</li>
 </ul>
