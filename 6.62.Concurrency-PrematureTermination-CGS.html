@@ -216,10 +216,10 @@
 </header>
 <h2 id="concurrency-premature-termination-cgs">6.62 Concurrency – Premature Termination [CGS]</h2>
 <h3 id="applicability-to-language">6.62.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO IEC 24772-1:2024 6.62 applies to C++.</p>
-<p>If the concurrency mechanisms of ISO/IEC 9899:2024 are used, then the vulnerabilities as described in ISO/IEC TR 24772-3:2020 apply.</p>
+<p>The vulnerability as described in ISO IEC 24772-1:2024, 6.62 applies to C++.</p>
+<p>If the concurrency mechanisms of ISO/IEC 9899:2024 are used, then the vulnerabilities documented in ISO/IEC TR 24772-3:2020, apply.</p>
 <p>C++ standard threads</p>
-<p>Within C++ standard thread concurrency, the vulnerability as specified in ISO/IEC 24772-1 clause 6.62 can arise as follows: - as part of the termination of the complete program resulting from an explicit call to a program-terminating function in any thread in the program or an implicit call on std::terminate, for example, - as a result of an unhandled exception in any thread function when using <code class="sourceCode cpp">thread</code> or <code class="sourceCode cpp">jthread</code> - as a result of an unhandled exception in any thread function when using C++ parallel algorithms - as a result of faulty inter-thread asynchronous communications that results in unplanned termination of a communicating thread.</p>
+<p>Within C++ standard thread concurrency, the vulnerability as specified in ISO/IEC 24772-1, 6.62 can arise as follows: - as part of the termination of the complete program resulting from an explicit call to a program-terminating function in any thread in the program or an implicit call on std::terminate, for example, - as a result of an unhandled exception in any thread function when using <code class="sourceCode cpp">thread</code> or <code class="sourceCode cpp">jthread</code> - as a result of an unhandled exception in any thread function when using C++ parallel algorithms - as a result of faulty inter-thread asynchronous communications that results in unplanned termination of a communicating thread.</p>
 <p>Errors relating to improper shutdown and cleanup are addressed in 6.36 Unhandled errors and exceptions(??) If non-standard C++ concurrency is used, the vulnerability and avoidance mechanisms are as specified in ISO/IEC 24772-1 and ISO/IEC 24772-3.</p>
 <p>(see https://en.cppreference.com/w/cpp/error/terminate for more termination conditions)</p>
 <p>Joining a thread causes the joining thread to await the joined thread’s termination before continuing. Useful for executing in parallel and then proceeding after the dispatched work is complete, but does not notify the joining task if the termination was premature.</p>
