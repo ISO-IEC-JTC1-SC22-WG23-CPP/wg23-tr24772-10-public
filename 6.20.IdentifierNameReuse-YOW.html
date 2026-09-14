@@ -216,7 +216,7 @@
 </header>
 <h2 id="identifier-name-reuse-yow">6.20 Identifier Name Reuse [YOW]</h2>
 <h3 id="applicability-to-language">6.20.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.20 exists in C++, except for the second issue of limited identifier length.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.20 exists in C++, except for the second issue of limited identifier length.</p>
 <p>In C++ all characters in an identifier are significant.</p>
 <p>In C++ the same name can be used for different functions as long as they have distinct parameters or different scopes where they are defined.</p>
 <p>See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>.</p>
@@ -254,7 +254,7 @@ void bar(){
 <h3 id="avoidance-mechanismsfor-language-users">6.20.2 Avoidance mechanismsfor language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.20.5, with the exclusion of guidance related to truncated identifiers.</p></li>
 <li><p>Qualify names to disambiguate potential conflicts between names introduced from different scopes.</p></li>
 <li><p>Use modern integrated development environments that inform about the declaration of any identifier occurrence.</p></li>
 <li><p>Enable compiler diagnostics that inform about the hiding of declarations.</p></li>
