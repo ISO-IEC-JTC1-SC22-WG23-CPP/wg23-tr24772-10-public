@@ -1696,7 +1696,7 @@ void bar(){
 </ul>
 <h2 id="BJL">6.21 Namespace Issues [BJL]</h2>
 <h3 id="applicability-to-language">6.21.1 Applicability to language</h3>
-<p>The vulnerability described in ISO/IEC 24772-1:2024 6.21 exists in C++. It can occur in particular when a used library changes its API. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>. The situations where it exists are related to the following cases:</p>
+<p>The vulnerability described in ISO/IEC 24772-1:2024, 6.21 exists in C++. It can occur in particular when a used library changes its API. See also <a href="#namelookup">4.3 Name Lookup and Overload Resolution</a>. The situations where it exists are related to the following cases:</p>
 <ul>
 <li>Template specialization, where <a href="#SYM">6.40 Templates and generics [SYM]</a> applies;</li>
 <li>Overloading;</li>
@@ -1835,7 +1835,7 @@ void bar(){
 </ul>
 <h2 id="LAV">6.22 Missing Initialization of Variables [LAV]</h2>
 <h3 id="applicability-to-language">6.22.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 exists in C++, however, defining variables only when they can be initialized properly with an initializer in their definition avoids reading uninitialized memory.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.22 exists in C++, however, defining variables only when they can be initialized properly with an initializer in their definition avoids reading uninitialized memory.</p>
 <p>Defining/allocating objects of trivial type with automatic/dynamic storage duration without initialization leaves the object with an indeterminate value. A subsequent read of such a variable before it has been written is undefined behavior <a href="#EWF">[EWF]</a>. In addition, sub-objects of trivial type that are omitted in a constructor’s member initializer list and not initialized by the constructor’s body or by a <em>default member initializer</em> will not be initialized by that constructor. For example, the following class definitions suffer from incomplete initialization of subobjects, even though class <code>test</code> defines a default constructor:</p>
 <div class="sourceCode" id="cb115"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> base { <span class="dt">short</span> num; };                                                     </span>
 <span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> test : base                                                              </span>
@@ -1896,7 +1896,7 @@ following initialization cases:
 <h3 id="avoidance-mechanisms-for-language-users">6.22.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.22.5</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.22.5</li>
 <li>initialize every object defined, including data members, such as by providing an initializer for each variable definition.</li>
 <li>consider defining non-member variables as <code class="sourceCode cpp"><span class="at">const</span></code> to enforce initialization, otherwise defer the definition of the variable until a sensible initial value can be provided.</li>
 <li>in situations where variable initialization seems to require complex logic, encapsulate that logic either in a function or a lambda that encapsulates the complex logic and returns the initial value. In case of multiple interdependent variables, group those in a struct and return the struct.</li>
