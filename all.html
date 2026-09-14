@@ -3093,20 +3093,20 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="argument-passing-to-library-functions-trj">6.46 Argument Passing to Library Functions [TRJ]</h2>
 <h3 id="applicability-to-language">6.46.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.46 applies to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.46 applies to C++.</p>
 <p>Libraries that supply objects or functions are in most cases not required to check the validity of parameters passed to them. In those cases where parameter validation is required there might not be adequate parameter validation.</p>
 <p>When calling a library, either the calling function or the library may make assumptions about parameters. For example, it may be assumed by a library that a parameter is non-zero so division by that parameter is performed without checking the value. Sometimes some validation is performed by the calling function, but the library may use the parameters in ways that were unanticipated by the calling function resulting in a potential vulnerability. Even when libraries do validate parameters, their response to an invalid parameter is usually undefined and can cause unanticipated results.</p>
 <p>This vulnerability applies in particular to C++ libraries which are designed for high efficiency; responsibility for satisfying the preconditions for most functions rests with the caller. When these preconditions are not met, the result will be undefined behaviour <a href="#EWF">[EWF]</a>. In addition, error conditions are specified by the language for specific functions, such as raising an exception, returning an error code or a known value, such as NaN.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.46.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.47.5;</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.47.5;</p></li>
 <li><p>use translation modes provided by the implementation to perform addition analysis or checking, such as contracts checks, or instrumentation of executing code; and</p></li>
 <li><p>pay attention to the distinction between precondition violation and error conditions in library documentation: the former results in undefined behaviour; the latter results in defined but possibly unwanted behaviour.</p></li>
 </ul>
 <h2 id="inter-language-calling-djs">6.47 Inter-language Calling [DJS]</h2>
 <h3 id="applicability-to-language">6.47.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.47 applies to C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.47 applies to C++.</p>
 <p>C++ is a multi-paradigm language with a number of features that do not interface simply with other language systems. It is left to the implementation team the task of converting the results of these paradigms to constructs that can cross an interface for further processing in other languages. Standard layout types assist in this task.</p>
 <p>C++, like many languages, requires dynamic initialization of objects of static storage duration prior to execution of the main program. Building a program with inter-language calling requires that corresponding dynamic initialization happens properly. In particular, it is important that all subsystems bound to the main program complete initialization before the main program starts, else a call to such a component can produce unpredictable results, hence in a multilanguage environment, the programmer is required to ensure that the initialization code for an imported libary is invoked.</p>
 <p>C++ compilers implement the “C++” language linkage and the “C” language linkage. It is implementation-defined what other language linkages the implementation supports. Typically, other language systems also provide linkages to C systems for interoperability, hence the “C” linkage mechanism is often used as the link between subsystems. The C-language linkage mangling process does not include a function signature, hence it is possible for functions with the same name but different signatures to be mapped to the same mangled name and result in an ill-formed program.</p>
@@ -3116,7 +3116,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h3 id="avoidance-mechanisms-for-language-users">6.47.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.47.5;</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.47.5;</li>
 <li>use standard layout types for interoperable interfaces;</li>
 <li>use language linkage facilities that support the languages being used;</li>
 <li>use static analysis tools to ensure the correctness of function signatures across multilanguage interfaces;</li>
@@ -3127,13 +3127,13 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="NYY">6.48 Dynamically-linked Code and Self-modifying Code [NYY]</h2>
 <h3 id="applicability-to-language">6.48.1 Applicability to language</h3>
-<p>The vulnerability described in ISO/IEC 24772-1:2024 6.48 applies to C++. As for the C programming language, the process of linking and loading is outside the scope of the C++ standard.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.48 applies to C++. As for the C programming language, the process of linking and loading is outside the scope of the C++ standard.</p>
 <p>In C++, the conversion of a function pointer to another type (to misdirect a pointer, for example) requires the use of a C-style cast or <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. Such casts can result in unspecified behaviour, undefined behaviour or implementation-defined behaviour.</p>
 <!-- The reflection mechanism introduced in the C++26 revision of the standard does not allow self-modifying code, because it is compile-time only. -->
 <h3 id="avoidance-mechanisms-for-language-users">6.48.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.48.5 and ISO/IEC 24772-3:2020 6.48.2;</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.48.5 and ISO/IEC TR 24772-3:2020, 6.48.2;</li>
 <li>apply the avoidance mechanisms of 6.11.2 Pointer type conversions [HFC]; and</li>
 <li>document and carefully review all uses of <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> or C-style casts.</li>
 </ul>
