@@ -216,7 +216,7 @@
 </header>
 <h2 id="KOA">6.25 Likely Incorrect Expression [KOA]</h2>
 <h3 id="applicability-to-language">6.25.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.25 exists in C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.25 applies to C++.</p>
 <p>C++ has several instances of operators which are similar in structure, but different in meaning. Examples of operators in C-based languages that can cause confusion are:</p>
 <ul>
 <li><code class="sourceCode cpp">==</code> and <code class="sourceCode cpp">=</code>;</li>
@@ -312,7 +312,7 @@ It is not be clear whether the programmer intended to use the logical operator <
 <p>In the above function, when a key is not already present in the map, it will be added. This can result in resource exhaustion.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.25.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
-<p>— apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.25.5;</p>
+<p>— apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.25.5;</p>
 <ul>
 <li><p>simplify expressions to aid in code readability and help future maintainers understand the intent and nuances of the code. For example by:</p>
 <ol type="1">
