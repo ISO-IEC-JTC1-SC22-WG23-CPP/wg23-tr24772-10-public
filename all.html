@@ -3310,7 +3310,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="CGA">6.59 Concurrency – Activation [CGA]</h2>
 <h3 id="applicability-to-language">6.59.1 Applicability to language</h3>
-<p>The vulnerabilities as specified in ISO/IEC 24772-1:2024 6.59 do not apply to C++, as long as the standard library facilities for creating threads are used. If the C standard library mechanisms or threading libraries from POSIX or other applications are used to create threads, then the vulnerabilities apply as described in ISO/IEC TR 24772-3:2020 clause 6.59. This subclause will examine the C++ standard mechanisms.</p>
+<p>The vulnerabilities as specified in ISO/IEC 24772-1:2024, 6.59 do not apply to C++, as long as the standard library facilities for creating threads are used. If the C standard library mechanisms or threading libraries from POSIX or other applications are used to create threads, then the vulnerabilities apply as described in ISO/IEC TR 24772-3:2020, 6.59. This subclause will examine the C++ standard mechanisms.</p>
 <p>Creating a thread using the <code class="sourceCode cpp"><span class="bu">std::</span>async</code> function or the <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> results in the constructor synchronized with the thread creation site. Unless the thread is detached, <code class="sourceCode cpp">join()</code> must be called when using <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>terminate</code> will be invoked upon destruction of the thread object. This can be avoided by using <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> instead.</p>
 <p>Failure to create or start a thread due to lack of system resources will cause an exception to be thrown to the creating thread thus the thread object never exists. For the vulnerabilities with unhandled exceptions see clause <a href="#OYB">6.36 Ignored error status and unhandled exceptions [OYB]</a>.</p>
 <p>C++ provides other ways to create parallel executing functions via - the <code class="sourceCode cpp"><span class="bu">std::</span>async()</code> call or the <code class="sourceCode cpp"><span class="bu">std::</span>packaged_task()</code> functions; - Coroutines (describe and reference clause 7.5 and 7.6).</p>
@@ -3322,7 +3322,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h3 id="avoidance-mechanisms-for-language-users">6.59.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>When using non-standard thread facilities, e.g., by making use of <code class="sourceCode cpp"><span class="bu">std::</span>thread<span class="bu">::</span>native_handle</code>, apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.59.5.</li>
+<li>When using non-standard thread facilities, e.g., by making use of <code class="sourceCode cpp"><span class="bu">std::</span>thread<span class="bu">::</span>native_handle</code>, apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.59.5.</li>
 <li>Prefer <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> over <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> for explicit thread creation.</li>
 <li>When handling the exception thrown due to failure to create a thread, ensure that potentially dependent other threads are informed.</li>
 <li>Prefer the use of managed threading constructs such as <code class="sourceCode cpp"><span class="bu">std::</span>async</code> or C++ parallel algorithms instead of explicit thread creation and management.</li>
@@ -3331,7 +3331,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="concurrency-directed-termination-cgt">6.60 Concurrency – Directed termination [CGT]</h2>
 <h3 id="applicability-to-language">6.60.1 Applicability to language</h3>
-<p>This vulnerability as specified in ISO/IEC 24772-1:2024 6.60 is mitigated in C++, as long as the standard C++ library facilities for threads are used. For issues associated with threades created using the standard C library, see ISO/IEC TR 24772-3:2020 6.60.</p>
+<p>This vulnerability as specified in ISO/IEC 24772-1:2024, 6.60 is mitigated in C++, as long as the standard C++ library facilities for threads are used. For issues associated with threades created using the standard C library, see ISO/IEC TR 24772-3:2020, 6.60.</p>
 <p>C++ does not provide the means to terminate a C++ thread asynchronously, except in the case that std::terminate() is called. Instead C++ allows cooperative termination through the use of <code class="sourceCode cpp"><span class="bu">std::</span>stop_token</code>, however, a thread instructed by a stop request to cease execution can ignore such a request. For example, using <code class="sourceCode cpp"><span class="bu">std::</span>jthread<span class="bu">::</span>request_stop()</code> to send a stop request to the started thread, the created thread can have a thread function that never handles such a stop request.</p>
 <div class="sourceCode" id="cb195"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> some_function(<span class="dt">int</span> value);</span>
 <span id="cb195-2"><a href="#cb195-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> stoppable_function(<span class="bu">std::</span>stop_token tok, <span class="dt">int</span> value);</span>
@@ -3390,8 +3390,8 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h2 id="avoidance-mechanisms-for-language-users">6.60.2 Avoidance mechanisms for language users</h2>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>For threads created using the C library, apply the avoidance mechanisms of ISO/IEC TR 24772-3:2020.</p></li>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.60.5.</p></li>
+<li><p>For threads created using the C library, apply the avoidance mechanisms of ISO/IEC TR 24772-3:2020, 6.60.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.60.5.</p></li>
 <li><p>Use code reviews and static analysis tools if available, to ensure that threads correctly terminate.</p></li>
 </ul>
 <h2 id="CGX">6.61 Concurrent Data Access [CGX]</h2>
