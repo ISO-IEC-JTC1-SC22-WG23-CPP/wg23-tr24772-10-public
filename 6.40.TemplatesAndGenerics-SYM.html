@@ -216,26 +216,9 @@
 </header>
 <h2 id="SYM">6.40 Templates and Generics [SYM]</h2>
 <h3 id="applicability-to-language">6.40.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.40 exists in C++.</p>
-<p>C++ provides the facility <em>Templates</em> to support the generic programming methodology. C++ provides templates for functions, classes(types), and variables (constants). In addition one can form alias templates for class templates. Template parameters can be types, values (including addresses of global variables), and templates. C++ Templates can have variadic template parameters, that mean any number of arguments of a given kind can be used. Concepts are templates that describe constraints on template arguments and can be used to define template parameters or other deduced contexts.</p>
-<p>At compile-time, templates are instantiated with concrete template arguments. Function templates as well as class template constructors can deduce the concrete template argument from the types of the function arguments used in a call. For class templates in addition to the implicit deduction guides provided by its constructors, explicit deduction guides can be specified. This mechanism of template-argument deduction allows one to use templates without explicitly mentioning a template argument for each template parameter. For class templates, only those member functions that are actually used get instantiated. Each template instantiation is checked for syntax, concept and type errors.</p>
-<p>Each instantiation of a template is compiled separately, which can cause different instantiations from the same original source code to call different actual functions because of overload resolution.</p>
-<p>When a template is instantiated, different specializations that match the template arguments are possible. There is an ranking of the different (partial) specializations that the compiler uses for selection. In case of ambiguities, the compiler will fail. <em>Concepts</em> are also considered during this ranking.</p>
-<p>Templates add another level of complexity to overload resolution. If the chosen specialization compiles but is not the one expected by the programmer, the program will behave differently than expected.</p>
-<p>Overload resolution happens before template specialization, if such occurs. This means that even though an explicit function template specialization appears to be a better match to the programmer, it is not considered by overload resolution as only the primary template is considered.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt; T foo (T);</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;&gt; <span class="dt">int</span>* foo&lt;<span class="dt">int</span>*&gt;(<span class="dt">int</span>*); <span class="co">// explicit specialization of foo(T)</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt; T * foo (T*) = <span class="kw">delete</span>; </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i;</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> a = foo(&amp;i); <span class="co">// calls foo(T*), not the explicit specialization</span></span></code></pre></div>
-<p>TO BE CONTINUED.</p>
-<p>Class template and variable template specializations can provide specific code for a given set of template arguments. Such specializations must be defined in the namespace of the primary template. To prevent confusion and different compilation of identical looking template instantiations, a specialization should either be defined in the same file as the generic template, or in case of a specialization for a specific template argument type, in the file of the definition of that type.</p>
-<p>Functions and lambdas that define parameters with the use of <code class="sourceCode cpp"><span class="kw">auto</span></code> are implicitly templates without using the <code class="sourceCode cpp"><span class="kw">template</span></code> keyword.</p>
-<p>Variables defined with the use of <code>auto</code> keyword get their concrete type deduced from their initializer, as if they were function template parameters.</p>
-<p>A constructor template or assignment operator template is never a copy or move operation and hence does not prevent the implicit definition of a copy or move operations even if it looks similar.</p>
-<p>Due to the two phase compilation model of templates, name lookup can be surprising in class templates with dependent base classes. A name used in the derived class that is defined in the base might be found in an outer namespace instead.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.40 exists in C++ by the language mechanism of templates. While templates are a pure compile-time mechanism, their use can result in programmer confusion because of the potentially deeply-nested nature or template instantiation. Actual errors during instantiation will fail to compile. Confusion can occur when programmer mistakes lead to successful compilation but their intent is not met due to misunderstanding of the language rules.</p>
+<p>Similar to 6.21 Namespace Issues [<a href="#BJL">BJL</a>], adding a template specialization later can cause uses of the base template to pick up this new specialization. As long as no ambiguity occurs and the new specialization is a better match it will change the behaviour of existing code that previously instantiated the base template or a different specialization. If different translation units happen to use a template with different set of specialization declarations the mechanism might lead to different instantiations of the same template with the same arguments. This results in an ODR violation and is undefined behaviour (see 6.56 [<a href="#EWF">EWF</a>]). A common mitigation is to put all specializations of a template in the same file or module as the base template declaration, or alternatively a specialization of a template together with the definition of the user-defined entity for which it is specialised.</p>
+<p>Due to the two phase compilation model of templates, name lookup can be surprising in class templates with dependent base classes. An unqualified name used in the derived class that is defined in the base will be found in an outer namespace instead.</p>
 <pre><code>double foo{0};
 template &lt;typename T&gt; 
 struct base {
@@ -247,73 +230,33 @@ auto bar() {
 return foo; // matches global foo not base&lt;T&gt;::foo [1]
 }
 };</code></pre>
-<p>In the above example line [1], in place of <code>foo</code>, either <code class="sourceCode cpp"><span class="kw">this</span>-&gt;foo</code> or the fully qualified name <code class="sourceCode cpp">d::foo</code> would refer to the member of the base class.</p>
-<p>When used appropriately, templates are suitable for embedded and safety critical systems;</p>
-<ul>
-<li>They provide type-safe generics in contrast to legacy <code class="sourceCode cpp"><span class="dt">void</span> *</code>-based or macro-based genericity;</li>
-<li>They have no runtime overhead;</li>
-<li>They do not have any implicit run-time memory usage; and</li>
-<li>They do not generate code for unused operations.</li>
-</ul>
-<p>While using template greatly increases type safety, there can be requirements on template arguments that can neither be specified by concepts nor checked by a compiler. For example, sorting elements requires the comparison function to provide a <em>strict weak ordering</em> which is a property of the values of the type to be sorted by which are impossible to check at compile time for all possible value combinations.</p>
-<p>C++ provides means to restrict template arguments. One is to use concepts, that can prevent instantiating a template, but allow for substituting it with an alternative. A second means is to use <code class="sourceCode cpp"><span class="kw">static_assert</span></code> in a template’s definition to prevent certain instantiations.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> wrapper {</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>T x;</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span>(<span class="kw">not</span> (<span class="bu">std::</span>is_pointer_v&lt;T&gt; || <span class="bu">std::</span>is_reference_v&lt;T&gt;));</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>wrapper(T )-&gt;wrapper&lt;T&gt;;</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&gt; w{<span class="dv">42</span>};</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>wrapper x{&amp;w}; <span class="co">// compile error due to static_assert</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>wrapper&lt;<span class="dt">int</span>&amp;&gt;{}; <span class="co">// compile error due to static_assert</span></span></code></pre></div>
-<p>The generic nature of templates require a more elaborate approach to unit tests. Such tests should provide instantiations of the base template and all provided explicit template specializations to ensure that each code path is actually tested. Tests for non-compilability of suppressed instantiations, i.e., through concepts or static_assert, are also beneficial.</p>
-<p>Templates allow to reduce the amount of boilerplate code to write, e.g., by providing consistent definitions of operators. However, defining operator function templates in namespace scope can greatly influence compile times due to potential participation in the overload set, whenever the operator is used in code. In addition such generic operator functions might be picked up in inappropriate places causing programmer confusion. Implementing them as hidden friends in a CRTP base class instead makes using operator function templates feasible (see <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>).</p>
-<pre><code>template &lt;typename T&gt;
-struct Plus {
-friend constexpr auto operator+(T l, T const &amp;r) {
-  return l += r;
-}
-};
-struct Int: Plus&lt;Int&gt; {
-constexpr auto operator+=(Int const &amp;r) {
-  val += r.val;
-  return *this;
-}
-constexpr Int(int v):val{v}{}
-int val;
-};
-struct Short: Plus&lt;Short&gt; {
-constexpr auto operator+=(Short const &amp;r) {
-  val += r.val;
-  return *this;
-}
-constexpr Short(short v):val{v}{}
-short val;
-};
-auto x = Int{4} + Int{38};
-auto y = Short{4} + Short{2};</code></pre>
-<pre><code>&lt;!--
-
-(*We may wish to summarize)*
---&gt;</code></pre>
+<p>In the above example line [1], in place of <code>foo</code>, name qualification either as <code class="sourceCode cpp"><span class="kw">this</span>-&gt;foo</code> or <code class="sourceCode cpp">d::foo</code> would refer to the member of the base class and avoid the name lookup confusion.</p>
+<p>Function template specialization is syntactically possible, but doesn’t affect overload resolution. Overloading is the mechanism to select special-cases for functions based on their parameter types.</p>
+<p>Generic parameters allow a mechanism to prevent accidental implicit type conversions applied by the compiler (see 6.06 [<a href="#FLC">FLC</a>]). See the following example, where the function taking an <code class="sourceCode cpp"><span class="dt">int</span></code> could be called with almost any built-in type, because of implicit conversions to <code class="sourceCode cpp"><span class="dt">int</span></code>. Adding a generic overload will be a better match instead.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> doit(<span class="kw">auto</span> x)=<span class="kw">delete</span>; <span class="co">// #1</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> doit(<span class="dt">int</span> i) { <span class="co">/* only int */</span> }</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>doit(<span class="dv">42</span>); <span class="co">// compiles</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>doit(<span class="kw">true</span>); <span class="co">// compile error with generic overload #1</span></span></code></pre></div>
+<p>Alternatively, implicit conversions can be disabled through a generic parameter with the concept <code>std::same_as</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> doit(<span class="bu">std::</span>same_as&lt;<span class="dt">int</span>&gt; <span class="kw">auto</span> i){}</span></code></pre></div>
+<p>Employing <code>static_assert</code> with a condition checking the appropriateness of a template parameter in a template body will cause a compile error if the condition is false. Alternatively, one can use <em>concepts</em> to limit template instantiations so that alternative specializations or overloads can to be considered.</p>
+<p>In class templates a generic constructor or assignment operator never matches the compiler-provided definitions of copy or move operations.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.40.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.40.5. and avoidance mechanism provided in the different related sections of this document;</p></li>
-<li><p>use <code>static_assert</code> to prevent the use of inappropriate template arguments;</p></li>
+<li><p>document the implicit concept of each template parameter.</p></li>
+<li><p>use <code>static_assert</code> to prevent instantiation of a template with inappropriate template arguments;</p></li>
 <li><p>consider using <em>concepts</em> to constrain template parameters;</p></li>
-<li><p>prefer <em>concepts</em> over <em>SFINAE</em>;</p></li>
+<li><p>prefer <em>concepts</em> for achieving template selection via <em>SFINAE</em> over legacy mechanisms such as <code class="sourceCode cpp"><span class="bu">std::</span>enable_if_t</code>;</p></li>
 <li><p>be aware that a constructor template or assignment operator function template will not replace compiler-provided special member functions;</p></li>
-<li><p>for generic operator functions, consider providing them as hidden friends through mix-in class templates;</p></li>
-<li><p>use <em>qualified-id</em> or <code class="sourceCode cpp"><span class="kw">this</span>-&gt;</code> to refer to names that may be found in a dependent base class; and</p></li>
-<li><p>for template specialization, ensure that specializations are declared as follows:</p>
+<li><p>use name qualification for names that may be found in a dependent base class;</p></li>
+<li><p>for template specialization definitions, ensure that specializations are declared as follows:</p>
 <ol type="1">
-<li><p>in the same file as the primary template; or</p></li>
-<li><p>in the same file as the user-defined type for which the specialization is declared.</p></li>
+<li><p>in the same file or module as the primary template; or</p></li>
+<li><p>in the same file or module as the user-defined type for which the specialization is declared.</p></li>
 </ol></li>
-<li><p>Prohibit specializing function templates.</p></li>
+<li><p>prohibit specializing function templates.</p></li>
 </ul>
 </body>
 </html>
