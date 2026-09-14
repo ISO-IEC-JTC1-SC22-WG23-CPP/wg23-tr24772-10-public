@@ -216,7 +216,7 @@
 </header>
 <h2 id="BKK">6.44 Polymorphic variables [BKK]</h2>
 <h3 id="applicability-to-language">6.44.1 Applicability to language</h3>
-<p>This vulnerability as described in ISO/IEC 24772-1:2024 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see subclause <a href="#IHN">Type System[IHN]</a>.</p>
+<p>This vulnerability as documented in ISO/IEC 24772-1:2024, 6.44 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see subclause <a href="#IHN">Type System[IHN]</a>.</p>
 <p>C++ provides language mitigations to help avoid the problems as follows:</p>
 <p>Since C++ supports multiple inheritance, up-casting, down-casting, and cross-casting operations can be used to switch to different (pointer/reference) types in the inheritance hierarchy of a specific object, i.e.,</p>
 <ul>
@@ -273,7 +273,7 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.44.5;</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.44.5;</p></li>
 <li><p>in a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130);</p></li>
 <li><p>avoid designs relying on downcasts or crosscasts and rely on proper virtual member functions in the base classes instead;</p></li>
 <li><p>avoid explicit upcast and rely on implicit conversion;</p></li>

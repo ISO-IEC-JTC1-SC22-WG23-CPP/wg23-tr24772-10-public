@@ -2972,7 +2972,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </blockquote>
 <h2 id="redispatching-pph">6.43 Redispatching [PPH]</h2>
 <h3 id="applicability-to-language">6.43.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.43 applies to C++ for virtual functions, except for constructors and destructors which are not dispatching.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.43 applies to C++ for virtual functions, except for constructors and destructors which are not dispatching.</p>
 <p>An example of the infinite recursion in C++ is:</p>
 <div class="sourceCode" id="cb179"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb179-1"><a href="#cb179-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb179-2"><a href="#cb179-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3007,7 +3007,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="BKK">6.44 Polymorphic variables [BKK]</h2>
 <h3 id="applicability-to-language">6.44.1 Applicability to language</h3>
-<p>This vulnerability as described in ISO/IEC 24772-1:2024 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see subclause <a href="#IHN">Type System[IHN]</a>.</p>
+<p>This vulnerability as documented in ISO/IEC 24772-1:2024, 6.44 applies to C++. In addition to the upcast and downcast issues addressed in that document, this clause also addresses cross-casting, which is unique to C++. For further type system related issues see subclause <a href="#IHN">Type System[IHN]</a>.</p>
 <p>C++ provides language mitigations to help avoid the problems as follows:</p>
 <p>Since C++ supports multiple inheritance, up-casting, down-casting, and cross-casting operations can be used to switch to different (pointer/reference) types in the inheritance hierarchy of a specific object, i.e.,</p>
 <ul>
@@ -3064,7 +3064,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h3 id="avoidance-mechanisms-for-language-users">6.44.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.44.5;</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.44.5;</p></li>
 <li><p>in a base class declaring virtual member functions, define a virtual defaulted destructor (Core Guidelines C.35) and make the class non-copyable (Core Guidelines C.130);</p></li>
 <li><p>avoid designs relying on downcasts or crosscasts and rely on proper virtual member functions in the base classes instead;</p></li>
 <li><p>avoid explicit upcast and rely on implicit conversion;</p></li>
@@ -3078,7 +3078,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </blockquote>
 <h2 id="LRM">6.45 Extra Intrinsics [LRM]</h2>
 <h3 id="applicability-to-the-language">6.45.1 Applicability to the language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.45 applies to C++ as explained below.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.45 applies to C++.</p>
 <p>C++ implementations are allowed to provide built-in functionality but are restricted to a specific naming schema reserved by the standard. For example, names containing a double underscore or that begin with an underscore and a capital letter are reserved for that purpose. See ISO/IEC 14882 clause [Lex.name]. The use of such names by the programmer is forbidden by the language. Language processors are not required to prohibit such usage, hence the vulnerability exists.</p>
 <p>The standard restricts definitions in reserved namespaces, such as <code>std</code> (see ISO/IEC 14882 clause [namespace.constraints]). In addition, specializing a template from namespace <code>std</code> is restricted (see ISO/IEC 14882 clause [namespace.std]) unless explicitly allowed, for example, see ISO/IEC 14882 clause [unord.hash].</p>
 <h3 id="avoidance-mechanisms-for-program-users">6.45.2 Avoidance mechanisms for program users</h3>
