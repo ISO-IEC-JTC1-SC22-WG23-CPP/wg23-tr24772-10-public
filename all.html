@@ -2740,8 +2740,8 @@ No information about the number or types of the parameters is supplied by the co
 </ul>
 <h2 id="deep-vs.-shallow-copying-yan">6.38 Deep vs. Shallow Copying [YAN]</h2>
 <h3 id="applicability-to-language">6.38.1 Applicability to Language</h3>
-<p>The vulnerability described in ISO/IEC 24772-1:2024 6.38 exists in C++ and only arises in C++ when there is a mismatch between the type’s copy semantics and the programmer’s intent.</p>
-<p>On the language level, reference semantics, that can lead to shallow copies, usually requires the use of pointer or reference types, however, an integral type can also have reference semantics, for example, when it is used as an index or as an operating system handle.</p>
+<p>The vulnerability described in ISO/IEC 24772-1:2024, 6.38 applies to C++ and only arises in C++ when there is a mismatch between a type’s copy semantics and the programmer’s intent.</p>
+<p>On the language level, reference semantics that can lead to shallow copies, usually requires the use of pointer or reference types, however, an integral type can also have reference semantics, for example, when it is used as an index or as an operating system handle.</p>
 <p>Such types with reference semantics are also called <em>pointer-like types</em> and they will suffer from the aliasing problematic of this vulnerability and additionally from potential dangling due to expired lifetime (<a href="#lifetime">4.4</a>) of referred objects (see <a href="#XYK">[XYK]</a>).</p>
 <p>In general, relationship types with an immutable referent, such as a const-reference, do not suffer the deep vs. shallow copying semantics problem, unless mixed with relationship types with a mutable reference to the same object. However, the lifetime of a const referent is still an issue to manage (see <a href="#XYK">[XYK]</a>).</p>
 <p>The standard library type <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr&lt;T&gt;</code> has shallow copy semantics when the managed type is non-const, but in contrast to other relationship types guarantees the lifetime of the referent.</p>
@@ -2754,7 +2754,7 @@ No information about the number or types of the parameters is supplied by the co
 <h3 id="avoidance-mechanisms-for-language-users">6.38.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.38.5;</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.38.5;</li>
 <li>use and create value types;</li>
 <li>consider <em>pointer-like types</em> only when the lifetime of the referent can be ensured, when reference semantics is required, e.g., for side effects, or when copying is prohibitively expensive;</li>
 <li>be aware of <em>pointer-like types</em> and document the reference semantics of user-defined class types;</li>
@@ -2763,7 +2763,7 @@ No information about the number or types of the parameters is supplied by the co
 </ul>
 <h2 id="memory-leak-and-heap-fragmentation-xyl">6.39 Memory Leak and Heap Fragmentation [XYL]</h2>
 <h3 id="applicability-to-language">6.39.1 Applicability to language</h3>
-<p>The memory leak vulnerability documented in ISO/IEC 24772-1:2024 6.39 applies to C++, unless the programmer takes steps to avoid it. A leak occurs when an object whose lifetime (<a href="#lifetime">4.4</a>) has not ended but there are no more variables, pointers or references to that object.</p>
+<p>The memory leak vulnerability documented in ISO/IEC 24772-1:2024, 6.39 applies to C++, unless the programmer takes steps to avoid it. A leak occurs when an object whose lifetime (<a href="#lifetime">4.4</a>) has not ended but there are no more variables, pointers or references to that object.</p>
 <p>See ISO/IEC TR 24772-3:2020 for the vulnerabilities associated with the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code>.</p>
 <p>C++ has an additional vulnerability in that it provides multiple alternatives for allocation and deallocation and failing to match the deallocation to the corresponding allocation results in undefined behaviour <a href="#EWF">[EWF]</a>. For example, if an array <code class="sourceCode cpp"><span class="kw">new</span>[]</code> expression was used to allocate and create an array then array <code class="sourceCode cpp"><span class="kw">delete</span>[]</code> must be used for its destruction and release to avoid undefined behaviour.</p>
 <p>C++ destructors allow <em>scope-based resource management</em> (RAII) (Note: - put in Terms and definitions) which mitigates memory leaks by automatically calling the destructor when the lifetime of an object ends, thereby providing the opportunity to release their memory. The standard library provides container classes that follow the <em>scope-based resource management</em> idiom for the management of memory resources. Additionally, the standard library provides the class templates <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> and <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> for managing heap-allocated objects.</p>
@@ -2815,7 +2815,7 @@ No information about the number or types of the parameters is supplied by the co
 <h3 id="avoidance-mechanisms-for-language-users">6.39.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanism of ISO/IEC 24772-1:2024 6.39.5;</li>
+<li>apply the avoidance mechanism of ISO/IEC 24772-1:2024, 6.39.5;</li>
 <li>refrain from using the C functions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code> wherever possible;<br />
 </li>
 <li>avoid mixing C-based functions and C++ memory management functions;</li>
