@@ -1175,7 +1175,7 @@ char f() { return data[size-1];} // Possible buffer overflow</code></pre>
 <p>Need to consider C++-11, 14 and 17.</p>
 <h1 id="specific-guidance-for-c-vulnerabilities">6. Specific Guidance for C++ Vulnerabilities</h1>
 <h2 id="general">6.1 General</h2>
-<p>This clause contains specific advice for C++ about the possible presence of vulnerabilities as described in TR 24772-1, and provides specific guidance on how to avoid them in C++ code. This section mirrors TR 24772-1 clause 6 in that the vulnerability “Type System [IHN]” is found in 6.2 of TR 24772–1, and C++ specific guidance is found in clause 6.2 and subclauses in this TR.</p>
+<p>This clause contains specific advice for C++ about the possible presence of vulnerabilities as described in ISO/IEC 24772-1:2024 and provides specific guidance on how to avoid them in C++ code. This section mirrors ISO/IEC 24772-1:2024, 6 in that the vulnerability “Type System [IHN]” is found in ISO/IEC 24772-1:2024, 6.2 and C++ specific guidance is found in clause 6.2 and subclauses in this TR.</p>
 <p>As part of its design (and with few exceptions), C++ has a common subset with the complete C language. For code portions written in the common subset, the vulnerabilities described and the advice given in ISO/IEC TR 24772-3:2020, <em>Part 3 – Vulnerability descriptions for the programming language C</em>, apply, except when this document provides refined advice. The following subclauses usually do not further acknowledge the issues from the subset since those have been adequately addressed in the referenced document. However, C++ provides mechanisms to mitigate many of the problems that arise. Please refer to the respective clauses of this document for these mitigations and related guidelines.</p>
 <h2 id="IHN">6.2 Type System [IHN]</h2>
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
@@ -1533,16 +1533,16 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.11.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2024 clause 6.11.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.11.5.</p></li>
 <li><p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p></li>
-<li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause <a href="#UJO">Modifying constants [UJO]</a>.</p></li>
+<li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in <a href="#UJO">Modifying constants [UJO]</a>.</p></li>
 <li><p>When downcasting or crosscasting see the guidance in <a href="#BKK">Polymorphic Variables [BKK]</a>.</p></li>
 <li><p>If pointer and reference conversions cannot be avoided, treat compiler warnings that are issued for such conversions as hard errors.</p></li>
 <li><p>Ensure through static analysis that arbitrary pointer casts return a type compatible with the source.</p></li>
 </ul>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
-<p>The vulnerabilites described in ISO/IEC 24772-1:2024 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in clause <a href="#HCB">6.8</a>.</p>
+<p>The vulnerabilites described in ISO/IEC 24772-1:2024 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in <a href="#HCB">6.8</a>.</p>
 <p>Pointers to functions, pointers to members, and pointers to <code class="sourceCode cpp"><span class="dt">void</span></code> do not allow pointer arithmetic.</p>
 <p>The set of valid pointers referring to an array consists of the pointers to each array element plus the pointer just past the end of the array, however dereferencing a pointer one past the end of the array is undefined behaviour <a href="#EWF">[EWF]</a>. A pointer to a single object is considered to point to an array of size one with respect to pointer arithmetic.</p>
 <p>Adding or subtracting an integral value to a pointer value must yield a result that is a valid pointer refering to the same array, otherwise the behavior is undefined. Note: the built-in indexing operator is defined in terms of pointer arithmetic.</p>

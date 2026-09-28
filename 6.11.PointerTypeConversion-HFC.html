@@ -227,9 +227,9 @@
 <h3 id="avoidance-mechanisms-for-language-users">6.11.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2024 clause 6.11.5.</p></li>
+<li><p>Use the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.11.5.</p></li>
 <li><p>Avoid the C-style cast, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, and casts to and from <code>void*</code>.</p></li>
-<li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in clause <a href="#UJO">Modifying constants [UJO]</a>.</p></li>
+<li><p>For conversions that remove the <code class="sourceCode cpp"><span class="at">const</span></code> qualification, see the guidance in <a href="#UJO">Modifying constants [UJO]</a>.</p></li>
 <li><p>When downcasting or crosscasting see the guidance in <a href="#BKK">Polymorphic Variables [BKK]</a>.</p></li>
 <li><p>If pointer and reference conversions cannot be avoided, treat compiler warnings that are issued for such conversions as hard errors.</p></li>
 <li><p>Ensure through static analysis that arbitrary pointer casts return a type compatible with the source.</p></li>
