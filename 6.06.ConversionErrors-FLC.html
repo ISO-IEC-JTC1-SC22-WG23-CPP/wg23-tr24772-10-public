@@ -216,7 +216,7 @@
 </header>
 <h2 id="FLC">6.6 Conversion Errors [FLC]</h2>
 <h3 id="applicability-to-language">6.6.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO IEC 24772-1:2024, 6.6 applies to C++. C++ includes some of the conversion mechanisms of C as documented in ISO/IEC TR 24772-3, 6.6, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
+<p>The vulnerability as documented in ISO IEC 24772-1:2024, 6.6 applies to C++. C++ includes some of the conversion mechanisms of C as documented in ISO/IEC TR 24772-3, 6.6, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882, Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
 <p>In C++, some conversions are explicit while others are implicit. Conversions can change: - the size of a type, - whether or not the type is signed, and - possibly other properties of the type. A narrowing conversion is when the target type cannot represent all the values of the original type.</p>
 <p>Many errors are associated with implicit conversions. For a comprehensive overview see 7.3 [conv] of [C++23]</p>
 <p>Explicit conversions use one of the mechanisms provided by C++ through a</p>
