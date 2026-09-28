@@ -216,8 +216,8 @@
 </header>
 <h2 id="loop-control-variables-tex">6.29 Loop Control Variables [TEX]</h2>
 <h3 id="applicability-to-language">6.29.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.29 exists in C++.</p>
-<p>C++ allows the modification of loop control variables within non range-based loops. This is usually not considered good programming practice as it can cause unexpected problems. The flexibility of C++ expects the programmer to use this capability responsibly.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.29 appolies to C++.</p>
+<p>C++ permits the modification of loop control variables within non range-based loops. This is usually not considered good programming practice as it can cause unexpected problems. The flexibility of C++ expects the programmer to use this capability responsibly.</p>
 <p>Since the modification of a loop control variable within a loop is infrequently encountered, reviewers of C++ code do expect it and hence miss noticing the modification. Modifying the loop control variable can cause unexpected results if not carefully done. In C++, the following is semantically correct, but is error-prone:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">1</span>; i &lt; <span class="dv">10</span>; i++){</span>
