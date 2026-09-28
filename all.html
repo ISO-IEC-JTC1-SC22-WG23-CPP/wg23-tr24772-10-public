@@ -873,7 +873,7 @@ optionally-named entity that can contain scoped declarations</p>
 <li><pre><code>Use of the `explicit`{.cpp} keyword for constructors and conversion
 operators</code></pre></li>
 <li><pre><code>`operator bool()`{.cpp} discussion</code></pre></li>
-<li><pre><code>many built-in implicit conversions, refer to TR 24772-3 clause 6.2
+<li><pre><code>many built-in implicit conversions, refer to TR 24772-3, 6.2
 and other clauses (C)</code></pre></li>
 <li><pre><code>conversion to bool and null pointer conversions</code></pre></li>
 <li><pre><code>legacy code operator void\* - change to explicit operator bool</code></pre></li>
@@ -1175,7 +1175,7 @@ char f() { return data[size-1];} // Possible buffer overflow</code></pre>
 <p>Need to consider C++-11, 14 and 17.</p>
 <h1 id="specific-guidance-for-c-vulnerabilities">6. Specific Guidance for C++ Vulnerabilities</h1>
 <h2 id="general">6.1 General</h2>
-<p>This clause contains specific advice for C++ about the possible presence of vulnerabilities as described in ISO/IEC 24772-1:2024 and provides specific guidance on how to avoid them in C++ code. This section mirrors ISO/IEC 24772-1:2024, 6 in that the vulnerability “Type System [IHN]” is found in ISO/IEC 24772-1:2024, 6.2 and C++ specific guidance is found in clause 6.2 and subclauses in this TR.</p>
+<p>This clause contains specific advice for C++ about the possible presence of vulnerabilities as described in TR 24772-1, and provides specific guidance on how to avoid them in C++ code. This section mirrors TR 24772-1, 6 in that the vulnerability “Type System [IHN]” is found in 6.2 of TR 24772–1, and C++ specific guidance is found in 6.2 and subclauses in this TR.</p>
 <p>As part of its design (and with few exceptions), C++ has a common subset with the complete C language. For code portions written in the common subset, the vulnerabilities described and the advice given in ISO/IEC TR 24772-3:2020, <em>Part 3 – Vulnerability descriptions for the programming language C</em>, apply, except when this document provides refined advice. The following subclauses usually do not further acknowledge the issues from the subset since those have been adequately addressed in the referenced document. However, C++ provides mechanisms to mitigate many of the problems that arise. Please refer to the respective clauses of this document for these mitigations and related guidelines.</p>
 <h2 id="IHN">6.2 Type System [IHN]</h2>
 <h3 id="applicability-to-language">6.2.1 Applicability to language</h3>
@@ -1240,7 +1240,7 @@ Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre
 </ul>
 <h2 id="bit-representations-str">6.3 Bit Representations [STR]</h2>
 <h3 id="applicability-to-language">6.3.1 Applicability to language</h3>
-<p>The vulnerabilities documented in ISO/IEC 24772-1:2024 6.3 applies to C++.</p>
+<p>The vulnerabilities documented in ISO/IEC 24772-1:2024, 6.3 applies to C++.</p>
 <p>The “endianness” of integer types and packing of bit fields are implementation-defined properties and not portable.</p>
 <p>The standard library type <code>std::endian</code> provides a portable check the endianness of a platform that code can use to operate on individual bytes of a machine word in the correct order.</p>
 <p>There is no portable mapping from bitfields in a struct to individual bits in a machine word. Therefore, C++ bitfields should not be used to directly map to bits in hardware, even though the compiler provides suitable mapping and manipulation operations. A further complication is that accessing a bitfield cannot easily be performed atomically, because any non-participating bits of a memory location need to be read before the relevant bits can be mutated through masking, and the complete memory location must be written again. It is possible to simulate bitfields with a defined layout through library class types that implement the required masking operations.</p>
@@ -1254,7 +1254,7 @@ Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre
 <h3 id="avoidance-mechanisms-for-language-users">6.3.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-3 6.3.2</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-3, 6.3.2</p></li>
 <li><p>Prohibit the use of shift operations to implement multiplication or division by powers of two.</p></li>
 <li><p>Use built-in bitwise operations only with operands of unsigned integral types or enums with an unsigned underlying type.</p></li>
 <li><p>When performing bitwise operations on operands of an unsigned type that gets promoted to a signed integral type, cast the result to the corresponding unsigned type immediately.</p></li>
@@ -1265,20 +1265,20 @@ Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre
 </ul>
 <h2 id="floating-point-arithmetic-plf">6.4 Floating-point Arithmetic [PLF]</h2>
 <h3 id="applicability-to-language">6.4.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.4 applies to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.4 applies to C++.</p>
 <p>The C++ standard assumes IEC 60559 if <code>std::numeric_limits\&lt;T&gt;::is_iec559</code> is true for the types in use. In the absence of this, C++ makes few guarantees about the behaviour of floating point numbers. In particular - <code>std::less</code> is not a total order, and - <code>std::equal</code> is not equivalent to substitutability since NaNs compare unequal to themselves but neither less nor greater, and negative zero compares equal to positive zero.</p>
 <p>Sorting floating point numbers with the built-in operators violates the preconditions of sorting predicates in the presence of NaN values and can raise floating point errors. The default sorting predicate <code>std::less</code> is suspect to this precondition violation, resulting in undefined behavior <a href="#EWF">[EWF]</a> when sorting a range of floating point values that contain NaNs. This situation can be detected when the return type of <code>operator&lt;=&gt;</code> for a floating point type is <code>std::partial_ordering</code>.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.4.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1 6.4.5</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1, 6.4.5</p></li>
 <li><p>Verify compliance to ISO/IEC/IEEE 60559:2011 at compile time through <code>std::numeric_limits&lt;T&gt;::is_iec559</code>. Other numeric characteristics such as <code>min()</code>, <code>max()</code>, existence of NaNs, <code>has_denorm</code>, and infinities can be determined in this class template.</p></li>
 <li><p>Be aware that the default comparisons in the standard library can produce wrong results when used on floating point numbers.</p></li>
 <li><p>Check the ordering properties of the floating-point types at compile time to prevent erroneous ordering operations.</p></li>
 </ul>
 <h2 id="CCB">6.5 Enumerator Issues [CCB]</h2>
 <h3 id="applicability-to-language">6.5.1 Applicability to language</h3>
-<p>The vulnerability documented in ISO IEC 24772-1:2024 6.5 applies to C++, as C++ allows the specification of the values underlying a member of an enumeration type.</p>
+<p>The vulnerability documented in ISO IEC 24772-1:2024, 6.5 applies to C++, as C++ allows the specification of the values underlying a member of an enumeration type.</p>
 <p>C++ provides scoped (<code>enum class</code>) and unscoped (<code>enum</code>) enumeration types, where an underlying integral type can be specified. Unscoped enumeration types without an <em>enum-base</em> have a non-fixed underlying type that only guarantees that values in the range of the provided enumerators are valid. The latter can cause non-representable values to be assigned to a variable of such an unscoped enumeration type. For enumeration types with a fixed underlying type all values of the underlying integral type are valid. See ISO IEC 24772-3 for vulnerabilities associated with unscoped enums with no fixed underlying type, except an explicit conversion is required to convert an integer to an enumeration type object.</p>
 <p>Casting a value to an enumeration type is undefined behavior <a href="#EWF">[EWF]</a> unless the source value is within the range of values of an enumeration type. See CERT INT50-CPP. (remove CERT reference???)</p>
 <div class="sourceCode" id="cb92"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Color  {red=<span class="dv">1</span>, green, blue};</span>
@@ -1311,7 +1311,7 @@ Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre
 <li><pre><code>  See MISRA C++ 8.5.3 </code></pre></li>
 <li><pre><code>  See MISRA C++ 28.5.5 </code></pre></li>
 </ul></li>
-<li><p>If <em>unscoped enumerations</em> are used, follow the general advice of ISO/IEC TR 24772-3 6.5.2 as well as the following:</p>
+<li><p>If <em>unscoped enumerations</em> are used, follow the general advice of ISO/IEC TR 24772-3, 6.5.2 as well as the following:</p>
 <ol type="1">
 <li><p>For an enumeration type with a fixed underlying type, prohibit the assignment of integer values that are outside the range of the enumeration’s underlying type.</p></li>
 <li><p>For an enumeration type with no fixed underlying type, prohibit the assignment of integer values that cannot be represented by the enumeration type.</p></li>
@@ -1320,7 +1320,7 @@ Celsius wrong = convert_to_fahrenheit({20.}); // doesn&#39;t compile</code></pre
 </ul>
 <h2 id="FLC">6.6 Conversion Errors [FLC]</h2>
 <h3 id="applicability-to-language">6.6.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO IEC 24772-1:2024 6.6 applies to C++. C++ includes some of the conversion mechanisms of C as documented in ISO/IEC TR 24772-3 6.6, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
+<p>The vulnerability as documented in ISO IEC 24772-1:2024, 6.6 applies to C++. C++ includes some of the conversion mechanisms of C as documented in ISO/IEC TR 24772-3, 6.6, however C++ type conversion mechanisms differ from the mechanisms of C, as documented in ISO IEC 14882 Annex C. This subclause highlights differences where C++ provides mitigations of potential vulnerabilities found in C.</p>
 <p>In C++, some conversions are explicit while others are implicit. Conversions can change: - the size of a type, - whether or not the type is signed, and - possibly other properties of the type. A narrowing conversion is when the target type cannot represent all the values of the original type.</p>
 <p>Many errors are associated with implicit conversions. For a comprehensive overview see 7.3 [conv] of [C++23]</p>
 <p>Explicit conversions use one of the mechanisms provided by C++ through a</p>
@@ -1378,7 +1378,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.6.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.6.5:</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.6.5:</p></li>
 <li><p>Prohibit C-style casts; use C++ type conversion operators instead, as they document intent and disallow some unsafe conversions. (see C++ Core Guidelines ES.49)</p></li>
 <li><p>Avoid casts and type punning (see C++ Core guidelines ES.48), and treat every cast as a candidate for refactoring. If type punning is required, use <code>std::bit_cast</code>.</p></li>
 <li><p>Avoid narrowing conversions. (see C++ Core Guidelines ES.46)</p></li>
@@ -1400,7 +1400,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="CJM">6.7 String Termination [CJM]</h2>
 <h3 id="applicability-to-language">6.7.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.7 exists in C++ when C-style strings are used. For example, passing a non-null-terminated character array to an interface that requires a null-terminated string can result in undefined behaviour <a href="#EWF">[EWF]</a>. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.7 exists in C++ when C-style strings are used. For example, passing a non-null-terminated character array to an interface that requires a null-terminated string can result in undefined behaviour <a href="#EWF">[EWF]</a>. C++ provides alternative string processing capabilities that do not exhibit those vulnerabilities.</p>
 <p>C++ provides a class template for string processing, <code>std::basic_string</code>, that manages the space for the string and the string length and always includes a string termination character. For example, when concatenating, the <code>std::basic_string</code> object will increase in size to contain the resulting string. Futhermore, as the string is guaranteed to have a string termination character, using its underlying raw pointer as a C-style string will mitigate this vulnerability because the string termination character is present.</p>
 <p>C++ provides the library class templates <code>std::basic_stringview</code> and <code>std::span</code> that implement reference semantics to non-owned buffers. These types do not rely on a string termination character to determine the length of the string, thus, use of these types avoids those vulnerabilities. However, using its underlying raw pointer as a C-style string can result in these vulnerabilities because the string termination character is not guaranteed to be present.</p>
 <div class="sourceCode" id="cb104"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo(<span class="bu">std::</span>string <span class="at">const</span>&amp; s, <span class="bu">std::</span>string_view <span class="at">const</span>&amp; sv)</span>
@@ -1412,7 +1412,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Avoid C-style strings.</p></li>
-<li><p>If using C-style strings is unavoidable, apply the avoidance mechanisms of ISO/IEC TR 24772-3:2020 6.7.2.</p></li>
+<li><p>If using C-style strings is unavoidable, apply the avoidance mechanisms of ISO/IEC TR 24772-3:2020, 6.7.2.</p></li>
 <li><p>Ensure that explicit overflow checks are performed for all string operations.</p></li>
 <li><p>Prefer using a string type, e.g., <code>std::string</code>, that manages the memory of its string and handles termination in order to mitigate against this vulnerability.</p></li>
 <li><p>Prohibit the use of the underlying raw pointer of a <code>std::string_view</code> or a <code>std::span</code> with interfaces that expect C-style strings.</p></li>
@@ -1474,8 +1474,8 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.8.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.8.5.</p></li>
-<li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in ISO/IEC TR 24772-3:2020 6.8.2.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.8.5.</p></li>
+<li><p>Avoid C-style arrays. If unavoidable, guidance for the use of C-style arrays is provided in ISO/IEC TR 24772-3:2020, 6.8.2.</p></li>
 <li><p>Avoid container functions, such as <code class="sourceCode cpp">data()</code>, that bypass the safety features of the respective containers.</p></li>
 <li><p>To model a fixed-size array, use a library class such as <code class="sourceCode cpp"><span class="bu">std::</span>array</code>.</p></li>
 <li><p>To model arrays with dynamically changing size, use containers of the standard library, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>deque</code>.</p></li>
@@ -1489,21 +1489,21 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="XYZ">6.9 Unchecked Array Indexing [XYZ]</h2>
 <h3 id="applicability-to-language">6.9.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.9 applies to C++ when an access is performed using <code>operator[]</code>.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.9 applies to C++ when an access is performed using <code>operator[]</code>.</p>
 <p>C-style arrays, C-style pointers, random-access iterators, and some standard library containers allow element access via <code>operator[]</code> which is unchecked. However, those standard library containers also provide an access function <code>at()</code> that behaves like <code>operator[]</code>, but performs a check that the access is within the bounds of the container and throws an exception otherwise.</p>
 <p>For issues associated with exception handling and error handling, see <a href="#OYB">6.36</a> Ignored error status and unhandled exceptions.</p>
 <p>The parameter type for contiguous sequences <code>std::span</code> does not provide a checked version of indexing and therefore should only be used via its iterator/range API. With the introduction of the <code>at()</code> function in C++ 26, a checked version of indexing is available. For more information on the use of <code>std::span</code> see <a href="#HCB">6.8</a></p>
 <h3 id="avoidance-mechanisms-for-language-users">6.9.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.9.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.9.5.</p></li>
 <li><p>Follow the advice of <a href="#HCB">6.8.2</a>.</p></li>
 <li><p>Prefer the <code>at()</code> member function of the standard library containers over <code>operator[]</code> and handle the bounds violation exceptions.</p></li>
 <li><p>If indexing cannot be avoided, use static analysis or explicit checks to establish that bounds violations do not occur.</p></li>
 </ul>
 <h2 id="XYW">6.10 Unchecked Array Copying [XYW]</h2>
 <h3 id="applicability-to-language">6.10.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.10 applies to C++, but can be mitigated using features provided by the language.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.10 applies to C++, but can be mitigated using features provided by the language.</p>
 <p>A buffer overflow occurs when some number of elements is copied from one buffer to another and the amount being copied is greater than is allocated for the destination buffer. This is a special case of <span id="HCB">6.8 Buffer Boundary Violation [HCB]</span>. The C library functions or hand-written loops for copying bytes or C-style strings are especially prone to this vulnerability.</p>
 <p>As with 6.8 [HCB], in most cases the vulnerability can be avoided by using library classes, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, which provide a copy operations operator that adjust the size of the target to fit the object being copied.</p>
 <p>The standard library algorithms that copy into a target range can suffer from this vulnerability. In the case of potential overflow, the programmer must either ensure automatic extension of the underlying container, such as by using <code class="sourceCode cpp"><span class="bu">std::</span>back_inserter(container)</code> as the output iterator, or ensure that the output range has sufficient space available. In the case of overlapping input and output ranges, the suitable copying algorithm must be selected, depending on the relative ordering of the ranges. In general, this situation can be avoided by using a more appropriate algorithm, for example, <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p>
@@ -1512,7 +1512,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.10.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.10.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.10.5.</p></li>
 <li><p>Use standard library containers instead of C-style arrays, such as <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, that provide copying mechanisms that ensure the target array is large enough for the indicated source.</p></li>
 <li><p>When using standard library algorithms that copy into an output range, ensure that either the output range is extended automatically or has sufficient space available.</p></li>
 <li><p>Sidestep the need to use a copy algorithm on overlapping ranges, by selecting a more appropriate algorithm, such as <code class="sourceCode cpp"><span class="bu">std::</span>rotate</code>.</p></li>
@@ -1522,7 +1522,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="HFC">6.11 Pointer Type Conversions [HFC]</h2>
 <h3 id="applicability-to-language">6.11.1 Applicability to language</h3>
-<p>The vulnerabilites as described in ISO/IEC 24772-1:2024 6.11.1 applies to C++. In addition to pointers, C++ references are also vulnerable and the issues below include references when pointers are mentioned. In places where references cannot be substituted the corresponding code won’t compile.</p>
+<p>The vulnerabilites as described in ISO/IEC 24772-1:2024, 6.11.1 applies to C++. In addition to pointers, C++ references are also vulnerable and the issues below include references when pointers are mentioned. In places where references cannot be substituted the corresponding code won’t compile.</p>
 <p>In general casting pointers breaks the type system and should be avoided.</p>
 <p>In C++, a C-style cast is defined in terms of the C++ cast operators <code class="sourceCode cpp"><span class="kw">const_cast</span></code>, <code class="sourceCode cpp"><span class="kw">static_cast</span></code>, and <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. In addition, certain placement new expressions that do not initialize the storage can act like <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>. In some cases, it is unspecified which cast is used, for example, when a cast operation involves an incomplete type, a <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> may be used for the conversion which can produce an incorrect result.</p>
 <p>Especially, <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> has the problem that it takes the original pointer value as a pointer of the target type rather than the original type. The C++ standard defines most cases where that happens as undefined behavior <a href="#EWF">[EWF]</a>. For example, the lifetime model of C++ might result in accessing the target type object outside of its lifetime (see 4.4). Other run-time issues can be caused by alignment violations. Using <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span>&lt;<span class="bu">std::</span>byte*&gt;</code> to access the underlying memory of an object by casting its address permits access to the raw memory. However, casting the address of a piece of raw memory with the correct alignment and size to an object pointer and accessing that object is undefined behavior for most types, because doing so, will not start the lifetime of the object (see 4.4).</p>
@@ -1542,7 +1542,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
-<p>The vulnerabilites described in ISO/IEC 24772-1:2024 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in <a href="#HCB">6.8</a>.</p>
+<p>The vulnerabilites described in ISO/IEC 24772-1:2024, 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in <a href="#HCB">6.8</a>.</p>
 <p>Pointers to functions, pointers to members, and pointers to <code class="sourceCode cpp"><span class="dt">void</span></code> do not allow pointer arithmetic.</p>
 <p>The set of valid pointers referring to an array consists of the pointers to each array element plus the pointer just past the end of the array, however dereferencing a pointer one past the end of the array is undefined behaviour <a href="#EWF">[EWF]</a>. A pointer to a single object is considered to point to an array of size one with respect to pointer arithmetic.</p>
 <p>Adding or subtracting an integral value to a pointer value must yield a result that is a valid pointer refering to the same array, otherwise the behavior is undefined. Note: the built-in indexing operator is defined in terms of pointer arithmetic.</p>
@@ -1559,7 +1559,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="XYH">6.13 NULL Pointer Dereference [XYH]</h2>
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO IEC 24772-1:2024 6.13 applies to C++. Dereferencing a pointer with the value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is undefined behavior <a href="#EWF">[EWF]</a>.</p>
+<p>The vulnerability as described in ISO IEC 24772-1:2024, 6.13 applies to C++. Dereferencing a pointer with the value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is undefined behavior <a href="#EWF">[EWF]</a>.</p>
 <p>Using pointers is inherently problematic especially for function parameters and return values, due to the following issues:</p>
 <ul>
 <li>is a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value valid in context?</li>
@@ -1581,12 +1581,12 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> instead of a pointer to represent a potentially empty value.</p></li>
 <li><p>Use containers with value semantics instead of plain arrays such as <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>.</p></li>
 <li><p>Use <code class="sourceCode cpp">make_unique()</code> or <code class="sourceCode cpp">make_shared()</code> for dynamically allocating objects.</p></li>
-<li><p>If using objects of pointer-like types that may be a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.13.5.</p></li>
+<li><p>If using objects of pointer-like types that may be a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-1, 6.13.5.</p></li>
 <li><p>Use static and dynamic analysis tools to detect potential violations of this guideline.</p></li>
 </ul>
 <h2 id="XYK">6.14 Dangling Reference to Heap [XYK]</h2>
 <h3 id="applicability-to-language">6.14.1 Applicability to language</h3>
-<p>The vulnerability documented in ISO/IEC 24772-1:2024 6.14 and ISO/IEC TR 24772-3:2020 C applies to C++. C++, however, provides mechanisms to mitigate the vulnerability. In contrast to C, where the mere existance of reachable memory for an object is sufficient to access it, the lifetime model of C++ makes it <em>undefined behaviour</em> <a href="#EWF">[EWF]</a> to access an object outside of its lifetime See <a href="#lifetime">4.4</a>. This results in undefined behavior when an object access is attempted before one of its constructors is finished or after its destruction. For example, container types like <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or wrapper types like <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> might have memory for an object available, that is not constructed or has ended its lifetime. For similar situations that result from accessing temporary objects or variables outside of their lifetime see <a href="#DCM">[DCM]</a>. If such a temporary or local object manages heap memory (e.g., <code>std::vector</code>) referring to an element after the manager’s lifetime ended falls into the category of this vulnerability, but is covered there.</p>
+<p>The vulnerability documented in ISO/IEC 24772-1:2024, 6.14 and ISO/IEC TR 24772-3:2020 C applies to C++. C++, however, provides mechanisms to mitigate the vulnerability. In contrast to C, where the mere existance of reachable memory for an object is sufficient to access it, the lifetime model of C++ makes it <em>undefined behaviour</em> <a href="#EWF">[EWF]</a> to access an object outside of its lifetime See <a href="#lifetime">4.4</a>. This results in undefined behavior when an object access is attempted before one of its constructors is finished or after its destruction. For example, container types like <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or wrapper types like <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> might have memory for an object available, that is not constructed or has ended its lifetime. For similar situations that result from accessing temporary objects or variables outside of their lifetime see <a href="#DCM">[DCM]</a>. If such a temporary or local object manages heap memory (e.g., <code>std::vector</code>) referring to an element after the manager’s lifetime ended falls into the category of this vulnerability, but is covered there.</p>
 <p>C++ provides a rich set of <em>pointer-like</em> types (potentially referring to heap memory) whose values may dangle, e.g.,</p>
 <ul>
 <li>References (the term value here includes references)</li>
@@ -1616,7 +1616,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.14.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.14.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.14.5.</p></li>
 <li><p>Prefer value types that manage heap memory, for example, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code> or <code class="sourceCode cpp"><span class="bu">std::</span>string</code>, and pass by value/return by value over the use of <em>pointer-like</em> types.</p></li>
 <li><p>If value types are not feasible, adopt a style that makes explicit the ownership and lifetime of heap resources, by using <code class="sourceCode cpp"><span class="bu">std::</span>unique_ptr</code> or <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr</code> or similar manager types and allocate heap memory exclusively with their corresponding factory functions <code class="sourceCode cpp"><span class="bu">std::</span>make_unique/<span class="bu">std::</span>make_shared</code>.</p></li>
 <li><p>Ensure all copies of any <em>pointer-like</em> value are no longer accessible or accessed after the referent’s lifetime ends.</p></li>
@@ -1627,7 +1627,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="FIF">6.15 Arithmetic Wrap-around Error [FIF]</h2>
 <h3 id="applicability-to-language">6.15.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.15 applies to C++, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.15 applies to C++, since overflow situations are undefined behaviour <a href="#EWF">[EWF]</a> for signed integer arithemtic and wrap-around for unsigned integer arithmetic, which can lead to surprising results. C++ specifies that</p>
 <ul>
 <li>although signed integers are defined to be represented as two’s complement, signed integer overflow is undefined behaviour,</li>
 <li>unsigned integer arithmetic is defined to wrap-around (modulo arithmetic) and not overflow,</li>
@@ -1660,7 +1660,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <h3 id="avoidance-mechanisms-for-language-users">6.15.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.15.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.15.5.</p></li>
 <li><p>Use appropriate user-defined types with well-defined range in place of built-in integral types, that mitigate against implicit conversions and undefined behaviour.</p></li>
 <li><p>Use types with a well-defined range and have compile-time guarantees that the range of types used is sufficient, i.e., with <code class="sourceCode cpp"><span class="kw">static_assert</span></code>.</p></li>
 <li><p>Avoid implicit integral promotions and integral conversions, especially on function arguments.</p></li>
@@ -1673,17 +1673,17 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="PIK">6.16 Using Shift Operations for Multiplication and Division [PIK]</h2>
 <h3 id="applicability-to-language">6.16.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.16 exists in C++. C++ complicates the discussion in 24772-1:2024 6.16 as a result of the integral promotion (see 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.16 exists in C++. C++ complicates the discussion in 24772-1:2024, 6.16 as a result of the integral promotion (see 6.06 [FLC]). A left-shift on an operand that gets promoted can result in a value outside the operand’s unpromoted type’s range.</p>
 <p>Not every use of a shift operator is a bit-shift due to operator overloading.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.16.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
+<li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.16 *Using Shift Operations for Multiplication and Division [PIK].</li>
 <li>For promoted operands, consider converting the result of a shift operation back to the original type of the left hand operand (say using a static cast or an assignment to an object of that type) before using the result in further operations.</li>
 </ul>
 <h2 id="NAI">6.17 Choice of Clear Names [NAI]</h2>
 <h3 id="applicability-to-language">6.17.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.17 is applicable to C++, as it is susceptible to errors resulting from the use of similarly appearing names. However, the language rules prevent using an identifier that has not been declared. There are two possible issues: the use of the identical name for different purposes (see clause <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>) and the use of similar names for different purposes.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.17 is applicable to C++, as it is susceptible to errors resulting from the use of similarly appearing names. However, the language rules prevent using an identifier that has not been declared. There are two possible issues: the use of the identical name for different purposes (see <a href="#YOW">6.20 Identifier Name Reuse [YOW]</a>) and the use of similar names for different purposes.</p>
 <ul>
 <li><em>Mixed casing</em>: C++ distinguishes upper case and lower-case letters in names. Thus, confusion can arise through the use of <code>Item</code> and <code>item</code> as distinct declared identifiers with different meanings.</li>
 <li><em>Underscores</em>: C++ permits single underscores in identifiers and they are significant. Thus, <code>BigDog</code> and <code>Big_Dog</code> are different identifiers. Multiple underscores or a leading underscore followed by an upper-case letter cause undefined behaviour <a href="#EWF">[EWF]</a>, thus <code>Big__Dog</code> and <code>_BigDog</code> should not be used.</li>
@@ -1699,7 +1699,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.17.5.</p></li>
-<li><p>Follow the rules of ISO/IEC 14882:2023 clause [lex.name] regarding names to refrain from usage.</p></li>
+<li><p>Follow the rules of ISO/IEC 14882:2023, [lex.name] regarding names to refrain from usage.</p></li>
 <li><p>Avoid the use of similar names to denote different objects of the same type.</p></li>
 <li><p>Use consistency in choosing names, especially for dealing with similar names.</p></li>
 <li><p>Use static analysis and tooling to enforce project-specific naming rules and detect possible similar names, for example, homoglyphs and unexpected text-direction vulnerabilities.</p></li>
@@ -1713,13 +1713,13 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.18 exists in C++.</p>
 <p>The language definition permits the compiler to eliminate effects of the abstract machine that are not observable, in particular, dead stores. For example, the often-attempted write operations to non- volatile member variables in a destructor that are not subsequently used can be elided by the compiler.</p>
 <p>C++ compilers and static analysis tools do exist that detect and generate warnings for dead stores.</p>
-<p>The error in ISO/IEC 24772-1:2024 6.18.3 that the planned reader misspells the name of the store is possible but unlikely in C++ since the language specifies that all objects shall be declared and typed, and the existence of two objects with almost identical names and compatible types (for assignment) in the same scope would be readily detectable. See 6.17 [NAI] Choice of clear names, 6.20 Identifier name reuse [YOW], and 6.21 Namespace issues [BJL]</p>
+<p>The error in ISO/IEC 24772-1:2024, 6.18.3 that the planned reader misspells the name of the store is possible but unlikely in C++ since the language specifies that all objects shall be declared and typed, and the existence of two objects with almost identical names and compatible types (for assignment) in the same scope would be readily detectable. See 6.17 [NAI] Choice of clear names, 6.20 Identifier name reuse [YOW], and 6.21 Namespace issues [BJL]</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.18.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.18.5.</p></li>
 <li><p>Use compilers and static analysis tools to identify dead stores in the program.</p></li>
-<li><p>Provide sufficient synchronization to non-const variables that are accessed by multiple execution agents. See clause 6.61 Concurrent data access [CGX]</p></li>
+<li><p>Provide sufficient synchronization to non-const variables that are accessed by multiple execution agents. See 6.61 Concurrent data access [CGX]</p></li>
 </ul>
 <h2 id="YZS">6.19 Unused Variable [YZS]</h2>
 <h3 id="applicability-to-language">6.19.1 Applicability to language</h3>
@@ -2014,7 +2014,7 @@ following initialization cases:
 <span id="cb122-9"><a href="#cb122-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (a.<span class="kw">operator</span>&amp;&amp; (<span class="kw">false</span>,foo())); <span class="co">// &#39;foo()&#39; always evaluated</span></span>
 <span id="cb122-10"><a href="#cb122-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Note that overloaded assignment falls into this category.</p>
-<p>For issues related to the declaration of equality and relational operators see Clause 6.25 [KOA].</p>
+<p>For issues related to the declaration of equality and relational operators see 6.25 [KOA].</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.23.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
@@ -2331,7 +2331,7 @@ if (i == 10){
       else 
           a = 10;   
           b = 5;    // added later, intended to be part 
-                        // of the else clause
+                    // of the else clause
 ```</code></pre>
 <p>If the assignments to b were added later and were expected to be part of each <code class="sourceCode cpp"><span class="cf">if</span></code> and <code class="sourceCode cpp"><span class="cf">else</span></code> clause (they are indented as such), the above code is incorrect: the assignment to <code class="sourceCode cpp">b</code> that was intended to be in the <code class="sourceCode cpp"><span class="cf">else</span></code> clause is unconditionally executed.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.28.2 Avoidance mechanisms for language users</h3>
@@ -2400,7 +2400,7 @@ if (i == 10){
 <span id="cb155-5"><a href="#cb155-5" aria-hidden="true" tabindex="-1"></a>      ...</span>
 <span id="cb155-6"><a href="#cb155-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">0</span>);</span>
 <span id="cb155-7"><a href="#cb155-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>C++ mitigates the issue of sentinel values in strings document in ISO/IEC 24772-1 clause 6.30 by providing the <code class="sourceCode cpp">string</code> class and the <code class="sourceCode cpp">string_view</code> class.</p>
+<p>C++ mitigates the issue of sentinel values in strings document in ISO/IEC 24772-1, 6.30 by providing the <code class="sourceCode cpp">string</code> class and the <code class="sourceCode cpp">string_view</code> class.</p>
 <p>C++ does not flag accesses outside of array bounds, so an off by one error may not be as detectable in C++ as in some other languages. Several good and freely available tools can be used to help detect accesses beyond the bounds of arrays that are caused by an off by one error. However, such tools will not help in the case where only a portion of the array is used, and the access is still within the bounds of the array.</p>
 <p>C++ mitigates these issues by providing</p>
 <ul>
@@ -2676,7 +2676,7 @@ No information about the number or types of the parameters is supplied by the co
 <h2 id="ignored-error-status-and-unhandled-exceptions-oyb">6.36 Ignored Error Status and Unhandled Exceptions [OYB]</h2>
 <h3 id="applicability-to-language">6.36.1 Applicability to language</h3>
 <p>The vulnerabilities described in ISO/IEC 24772-1:2024, 6.36 applies to C++, however, C++ provides a mitigation.</p>
-<p>C++ includes the C library, especially the header <code>&lt;cerrno&gt;</code> and thus shares C’s issues with the global error-reporting variable <code>errno</code>. See ISO IEC TR 24772-3:2019 6.36 for details and guidance.</p>
+<p>C++ includes the C library, especially the header <code>&lt;cerrno&gt;</code> and thus shares C’s issues with the global error-reporting variable <code>errno</code>. See ISO IEC TR 24772-3:2019, 6.36 for details and guidance.</p>
 <p>In addition to <code>errno</code>, some C++ library features expose error conditions indirectly via a side-effect on the object the operation failed with or via side-effect on a reference parameter. For example, input stream objects will go into a <code>fail</code> state, when formatted input cannot be performed. Without resetting that fail-state of a stream, further input will continue to fail, that can cause further failures when a failure is ignored. Streams provide a non-default mode to throw exceptions on failure. Another example of error reporting via a side-effect is the filesystem library that provides overloads that take a non-const reference of <code>std::error_code</code>.</p>
 <p>In general, reporting errors as side-effects, in the worst case via a global state, can easily or accidentally ignore by developers, leading to further consistency problems in the continued execution of the program.</p>
 <p>By default, C++ has the C weakness of permitting the call to a function that returns an error code without capturing the return value in a variable.</p>
@@ -2722,7 +2722,7 @@ No information about the number or types of the parameters is supplied by the co
 <p>The vulnerability as documented in ISO IEC 24772-1:2024, 6.37 applies to C++. The language mechanisms where type-breaking reinterpretation of data can happen involve unions and <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>. <!-- reinterpret cast only between pointer and int --> For type-breaking reinterpretation involving pointers or references see <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a>.</p>
 <p>In C++, the issue of casting vulnerabilities are mitigated by the fact that the C++ named casts, i.e., <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, <code class="sourceCode cpp"><span class="kw">const_cast</span></code>, <code class="sourceCode cpp"><span class="kw">static_cast</span></code>, <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code>, and <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code>, are easily identified, e.g., by text search for more careful review. C-style casts do not share this property and therefore should be prohibited. In addition, C++ named casts include some compile-time checks, and in the case of dynamic_cast run-time checks, that help avoid some but not all vulnerabilities.</p>
 <p>Of the available "_cast" operations, only <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> provides reinterpretation of data values, and only <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> allow the reintepretation of data as a different type within limits. For uses of <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code> see <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a>. The named casts <code class="sourceCode cpp"><span class="kw">static_cast</span></code>, <code class="sourceCode cpp"><span class="kw">dynamic_cast</span></code>, and <code class="sourceCode cpp"><span class="kw">const_cast</span></code> perform type conversions and not reintepretation of bits and thus don’t have this vulnerability but are subject to potential conversion errors (see <a href="#FLC">6.6 Conversion Errors [FLC]</a>).</p>
-<p>Reading a union member that was not previously written is undefined behaviour <a href="#EWF">[EWF]</a> except for a few cases described by ISO/IEC 14882:2020 clause [class.mem.general]. The reinterpretation of data values via different union members that is common practice in C is undefined behaviour in C++. The type <code class="sourceCode cpp"><span class="bu">std::</span>variant</code> provides a similar mechanism to union but prevents reading an inactive member.</p>
+<p>Reading a union member that was not previously written is undefined behaviour <a href="#EWF">[EWF]</a> except for a few cases described by ISO/IEC 14882:2020, [class.mem.general]. The reinterpretation of data values via different union members that is common practice in C is undefined behaviour in C++. The type <code class="sourceCode cpp"><span class="bu">std::</span>variant</code> provides a similar mechanism to union but prevents reading an inactive member.</p>
 <p>If there is no value of the target type corresponding to the bit representation of the source type’s value, using <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> is undefined behaviour, such as in the following example.</p>
 <div class="sourceCode" id="cb171"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb171-1"><a href="#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> E { one, two, four=<span class="dv">4</span> };</span>
 <span id="cb171-2"><a href="#cb171-2" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> x = <span class="bu">std::</span>bit_cast&lt;E&gt;(<span class="dv">42</span>); <span class="co">// 42 is not representable by E</span></span></code></pre></div>
@@ -2731,7 +2731,7 @@ No information about the number or types of the parameters is supplied by the co
 <h3 id="avoidance-mechanisms-for-language-users">6.37.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.37.5, and clauses <a href="#FLC">6.6 Conversion Errors [FLC]</a> and <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> of this document;</p></li>
+<li><p>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.37.5, <a href="#FLC">6.6 Conversion Errors [FLC]</a> and <a href="#HFC">6.11 Pointer Type Conversions [HFC]</a> of this document;</p></li>
 <li><p>prohibit casts that reinterpret data values;</p></li>
 <li><p>whenever possible use <code class="sourceCode cpp"><span class="bu">std::</span>variant</code> or a similar safe union type instead of <code class="sourceCode cpp"><span class="kw">union</span></code>;</p></li>
 <li><p>prefer <code class="sourceCode cpp"><span class="bu">std::</span>bit_cast</code> over <code class="sourceCode cpp">memcpy</code> when reinterpreting the bit-representation of an object to a different type is unavoidable;</p></li>
@@ -2873,7 +2873,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="RIP">6.41 Inheritance [RIP]</h2>
 <h2 id="applicability-to-language">6.41.1 Applicability to language</h2>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 6.41 applies to C++.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.41 applies to C++.</p>
 <p>In C++, inheritance is defined differently than in most other languages that support inheritance, e.g.: - there is no implicit common base class; - defining a member with a name that is defined in a base class causes hiding the base class member in the derived class including all overloads with that name. (Full qualification via the base class name is required to access these hidden members); - dynamic polymorphism requires the use of references or pointers; and - private virtual member functions can be overridden in derived classes.</p>
 <p>A vulnerability similar to namespace issues (see [BJL]) can arise if a new <em>final overrider</em> is defined in one of multiple parents, which can result in a silent change to the semantics of an existing program, as shown in the following example.</p>
 <div class="sourceCode" id="cb177"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A {</span>
@@ -2905,7 +2905,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <p>If a “using-declaration” refers to a constructor of a direct base class, all constructors of that base are candidates for the initialization of the derived class. If a base class constructor is selected to initialize the derived type, any other bases or members of the derived type will be initialized as if by an <code>= default</code> default constructor. This can leave some members uninitialzed, that can result in undefined behaviour.</p>
 <p>If a using-declaration refers to a protected member of a base class, its accessibility can be changed, which destroys the encapsulation of the member.</p>
 <p>If a base class overloads <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code>, any derived classes will inherit those operations. If the base class’ <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">new</span></code> and/or <code class="sourceCode cpp"><span class="kw">operator</span> <span class="kw">delete</span></code> assume the size of the objects being allocated are all the size of the base class and they are not all the same size, then this can result in undefined behaviour.</p>
-<p>The mechanisms of failure from ISO/IEC 24772-1:2024 clause 6.41 can be mitigated in C++ as follows:</p>
+<p>The mechanisms of failure from ISO/IEC 24772-1:2024, 6.41 can be mitigated in C++ as follows:</p>
 <ul>
 <li><p><em>Execution of malicious redefinitions</em> can be prevented by use of <code class="sourceCode cpp"><span class="kw">final</span></code> on each member function to generate compiler diagnostics when overriding is not permitted.</p></li>
 <li><p><em>Accidental redefinition</em> can be mitigated by a project mandate to use the <code class="sourceCode cpp"><span class="kw">override</span></code> or <code class="sourceCode cpp"><span class="kw">final</span></code> special identifiers when overriding a virtual member functions.</p></li>
@@ -2917,7 +2917,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <ul>
 <li>apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 41.5;</li>
 <li>avoid multiple inheritance;</li>
-<li>Ensure that shallow-copying or shallow-move of inheritance hierarchies cannot occur, e.g. by defining the appropriate member operation <code class="sourceCode cpp">=<span class="kw">delete</span></code> (see clause 6.38 Deep vs. Shallow Copying [YAN]);</li>
+<li>Ensure that shallow-copying or shallow-move of inheritance hierarchies cannot occur, e.g. by defining the appropriate member operation <code class="sourceCode cpp">=<span class="kw">delete</span></code> (see 6.38 Deep vs. Shallow Copying [YAN]);</li>
 <li>if the implementation of copy-operations or move-operations in a derived class is mandatory, then statically ensure that all calls are to the corresponding base classes’ operations;</li>
 <li>prefer composition over inheritance;</li>
 <li>keep inheritance hierarchies shallow;</li>
@@ -3077,8 +3077,8 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h2 id="LRM">6.45 Extra Intrinsics [LRM]</h2>
 <h3 id="applicability-to-the-language">6.45.1 Applicability to the language</h3>
 <p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.45 applies to C++.</p>
-<p>C++ implementations are allowed to provide built-in functionality but are restricted to a specific naming schema reserved by the standard. For example, names containing a double underscore or that begin with an underscore and a capital letter are reserved for that purpose. See ISO/IEC 14882 clause [Lex.name]. The use of such names by the programmer is forbidden by the language. Language processors are not required to prohibit such usage, hence the vulnerability exists.</p>
-<p>The standard restricts definitions in reserved namespaces, such as <code>std</code> (see ISO/IEC 14882 clause [namespace.constraints]). In addition, specializing a template from namespace <code>std</code> is restricted (see ISO/IEC 14882 clause [namespace.std]) unless explicitly allowed, for example, see ISO/IEC 14882 clause [unord.hash].</p>
+<p>C++ implementations are allowed to provide built-in functionality but are restricted to a specific naming schema reserved by the standard. For example, names containing a double underscore or that begin with an underscore and a capital letter are reserved for that purpose. See ISO/IEC 14882, [Lex.name]. The use of such names by the programmer is forbidden by the language. Language processors are not required to prohibit such usage, hence the vulnerability exists.</p>
+<p>The standard restricts definitions in reserved namespaces, such as <code>std</code> (see ISO/IEC 14882, [namespace.constraints]). In addition, specializing a template from namespace <code>std</code> is restricted (see ISO/IEC 14882, [namespace.std]) unless explicitly allowed, for example, see ISO/IEC 14882, [unord.hash].</p>
 <h3 id="avoidance-mechanisms-for-program-users">6.45.2 Avoidance mechanisms for program users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
@@ -3144,7 +3144,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.49.5.</p></li>
-<li><p>Apply the avoidance mechanisms of clause <a href="#DJS">6.47 Inter-language Calling [DJS]</a> as applicable.</p></li>
+<li><p>Apply the avoidance mechanisms of <a href="#DJS">6.47 Inter-language Calling [DJS]</a> as applicable.</p></li>
 <li><p>Ensure compatiblity of C header files with the C++ language.</p></li>
 </ul>
 <h2 id="unanticipated-exceptions-from-library-routines-hjw">6.50. Unanticipated Exceptions from Library Routines [HJW]</h2>
@@ -3310,12 +3310,12 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <h3 id="applicability-to-language">6.59.1 Applicability to language</h3>
 <p>The vulnerabilities as specified in ISO/IEC 24772-1:2024, 6.59 do not apply to C++, as long as the standard library facilities for creating threads are used. If the C standard library mechanisms or threading libraries from POSIX or other applications are used to create threads, then the vulnerabilities apply as described in ISO/IEC TR 24772-3:2020, 6.59. This subclause will examine the C++ standard mechanisms.</p>
 <p>Creating a thread using the <code class="sourceCode cpp"><span class="bu">std::</span>async</code> function or the <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> results in the constructor synchronized with the thread creation site. Unless the thread is detached, <code class="sourceCode cpp">join()</code> must be called when using <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>terminate</code> will be invoked upon destruction of the thread object. This can be avoided by using <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> instead.</p>
-<p>Failure to create or start a thread due to lack of system resources will cause an exception to be thrown to the creating thread thus the thread object never exists. For the vulnerabilities with unhandled exceptions see clause <a href="#OYB">6.36 Ignored error status and unhandled exceptions [OYB]</a>.</p>
-<p>C++ provides other ways to create parallel executing functions via - the <code class="sourceCode cpp"><span class="bu">std::</span>async()</code> call or the <code class="sourceCode cpp"><span class="bu">std::</span>packaged_task()</code> functions; - Coroutines (describe and reference clause 7.5 and 7.6).</p>
+<p>Failure to create or start a thread due to lack of system resources will cause an exception to be thrown to the creating thread thus the thread object never exists. For the vulnerabilities with unhandled exceptions see <a href="#OYB">6.36 Ignored error status and unhandled exceptions [OYB]</a>.</p>
+<p>C++ provides other ways to create parallel executing functions via - the <code class="sourceCode cpp"><span class="bu">std::</span>async()</code> call or the <code class="sourceCode cpp"><span class="bu">std::</span>packaged_task()</code> functions; - Coroutines ( TODO describe and reference 7.5 and 7.6).</p>
 <p>If <code class="sourceCode cpp"><span class="bu">std::</span>async()</code> threads are created without a launch policy, then system determines whether or not the thread is run lazily (in the current thread) or in a new thread. The launch policy <code class="sourceCode cpp"><span class="bu">std::</span>launch<span class="bu">::</span>async</code> or <code class="sourceCode cpp"><span class="bu">std::</span>launch<span class="bu">::</span>deferred</code> controls whether each asynch thread creation creates new threads or executes the call on demand. When a launch policy is <code class="sourceCode cpp"><span class="bu">std::</span>launch<span class="bu">::</span>async</code> then each call to <code class="sourceCode cpp"><span class="bu">std::</span>async()</code> will always create a new thread which can lead to resource exhaustion. When a launch policy is <code class="sourceCode cpp"><span class="bu">std::</span>launch<span class="bu">::</span>deferred()</code> the function will execute on the thread that executes the respective <code class="sourceCode cpp">get()</code> function for that <code>async</code> function.</p>
 <p>C++ provides a mechanism to construct and control the execution of a function on a user-controlled potentially asynchronous thread via the <code class="sourceCode cpp"><span class="bu">std::</span>packaged_task</code> mechanism that allows access to the result via a <code class="sourceCode cpp"><span class="bu">std::</span>future</code> object. Each <code class="sourceCode cpp">packaged_task</code> object can be executed at most once and can be executed on the current thread or on a different thread.</p>
 <p>There are a number of vulnerabilities that are possible once the thread is created using <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> or <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code>. See <a href="#CGM">6.63 lock protocol errors [CGM]</a>. Each <code class="sourceCode cpp"><span class="bu">std::</span>thread</code> object must have its <code class="sourceCode cpp">.join()</code> member function called before the object is destroyed unless its <code class="sourceCode cpp">.detach()</code> member function was previously called. This is not required for threads created as <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code>. If <code class="sourceCode cpp">.detach()</code> was called on thread object then any calls to <code class="sourceCode cpp">.join()</code> will result in an exception.</p>
-<p>Any exception thrown within a thread’s function needs to be handled by that thread, otherwise such an exception will cause program termination. For handling such termination see clause <a href="#CGS">6.62 Concurrency - Premature termination [CGS]</a>. Employing a <code class="sourceCode cpp"><span class="bu">std::</span>packaged_task</code> object as the thread function allows to pass an exception to the holder of its <code class="sourceCode cpp"><span class="bu">std::</span>future</code> object.</p>
+<p>Any exception thrown within a thread’s function needs to be handled by that thread, otherwise such an exception will cause program termination. For handling such termination see <a href="#CGS">6.62 Concurrency - Premature termination [CGS]</a>. Employing a <code class="sourceCode cpp"><span class="bu">std::</span>packaged_task</code> object as the thread function allows to pass an exception to the holder of its <code class="sourceCode cpp"><span class="bu">std::</span>future</code> object.</p>
 <p>A detached thread will execute until its thread function ends or until the program is terminated. The <code class="sourceCode cpp"><span class="bu">std::</span>jthread</code> type allows to employ cooperative thread termination through <code class="sourceCode cpp"><span class="bu">std::</span>stop_token</code> See <a href="#CGT">6.60 Concurrency – Directed termination [CGT]</a> or <a href="#CGS">6.62 Concurrency – Premature termination [CGS]</a>.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.59.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
@@ -3461,7 +3461,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
 <li><p>Forbid the use of the C library facilities provided by <strong><code>&lt;cstdio&gt;</code></strong>.</p></li>
-<li><p>Apply the avoidance mechanisms provided by the standard library as described in ISO/IEC 14882 20.20 Formatting [format] or similar libraries, if <em>printf-style</em> formatting of output or strings is desired, or when the formatting facilities of <code>std::ostream</code> are inadequate.</p></li>
+<li><p>Apply the avoidance mechanisms provided by the standard library as described in ISO/IEC 14882, 20.20 Formatting [format] or similar libraries, if <em>printf-style</em> formatting of output or strings is desired, or when the formatting facilities of <code>std::ostream</code> are inadequate.</p></li>
 <li><p>Read untrusted input as plain characters and then check for validity, before any conversion to numbers or program entities occurs, using facilities that do not require format strings and that check and report error conditions.</p></li>
 </ul>
 <h1 id="UJO">6.65 Modifying constants [UJO]</h1>

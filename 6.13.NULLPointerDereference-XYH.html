@@ -216,7 +216,7 @@
 </header>
 <h2 id="XYH">6.13 NULL Pointer Dereference [XYH]</h2>
 <h3 id="applicability-to-language">6.13.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO IEC 24772-1:2024 6.13 applies to C++. Dereferencing a pointer with the value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is undefined behavior <a href="#EWF">[EWF]</a>.</p>
+<p>The vulnerability as described in ISO IEC 24772-1:2024, 6.13 applies to C++. Dereferencing a pointer with the value of <code class="sourceCode cpp"><span class="kw">nullptr</span></code> is undefined behavior <a href="#EWF">[EWF]</a>.</p>
 <p>Using pointers is inherently problematic especially for function parameters and return values, due to the following issues:</p>
 <ul>
 <li>is a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value valid in context?</li>
@@ -238,7 +238,7 @@
 <li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> instead of a pointer to represent a potentially empty value.</p></li>
 <li><p>Use containers with value semantics instead of plain arrays such as <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>.</p></li>
 <li><p>Use <code class="sourceCode cpp">make_unique()</code> or <code class="sourceCode cpp">make_shared()</code> for dynamically allocating objects.</p></li>
-<li><p>If using objects of pointer-like types that may be a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-1 clause 6.13.5.</p></li>
+<li><p>If using objects of pointer-like types that may be a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-1, 6.13.5.</p></li>
 <li><p>Use static and dynamic analysis tools to detect potential violations of this guideline.</p></li>
 </ul>
 </body>
