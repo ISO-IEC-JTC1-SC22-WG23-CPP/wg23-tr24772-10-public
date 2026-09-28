@@ -3443,8 +3443,8 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="uncontrolled-format-string-shl">6.64 Uncontrolled Format String [SHL]</h2>
 <h3 id="applicability-to-language">6.64.1 Applicability to language</h3>
-<p>The vulnerability as described in ISO/IEC 24772-1:2024 applies to C++.</p>
-<p>C++ inherits the C libraries which provide a large family of input and output functions that use a control string to interpret the data read or format the output. These strings include all the feature described in ISO/IEC TR 24772-1:2019 clause 6.64.1.</p>
+<p>The vulnerability as described in ISO/IEC 24772-1:2024, 6.64 applies to C++.</p>
+<p>C++ inherits the C libraries which provide a large family of input and output functions that each use a control string to interpret the data read or to format the output. These strings include all the feature described in ISO/IEC 24772-1:2024, 6.64.1.</p>
 <p>C++ provides type-safe alternatives for input/output, which do not use format strings and which should be used in preference, such as</p>
 <div class="sourceCode" id="cb196"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb196-1"><a href="#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> aNumber{};</span>
 <span id="cb196-2"><a href="#cb196-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="bu">std::</span>cin){ <span class="co">// is input still available</span></span>
@@ -3468,7 +3468,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h1 id="UJO">6.65 Modifying constants [UJO]</h1>
 <h3 id="applicability-to-language">6.65.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024 6.65 exists in C++.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.65 applies to C++.</p>
 <p>An object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that its value will not change in its lifetime without invoking mechanisms which have undefined behaviour <a href="#EWF">[EWF]</a>. For example, an access path to an object can be declared as <code class="sourceCode cpp"><span class="at">const</span></code>, denoting that the value of the object will not change via this access path without invoking mechanisms which have undefined behaviour, e.g.,</p>
 <div class="sourceCode" id="cb197"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb197-1"><a href="#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> <span class="at">const</span> i = <span class="dv">0</span>;              <span class="co">// the simplest access path</span></span>
 <span id="cb197-2"><a href="#cb197-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>&amp; j = <span class="kw">const_cast</span>&lt;<span class="dt">int</span>&amp;&gt;(i); <span class="co">// undefined behaviour</span></span>
@@ -3545,7 +3545,7 @@ Historically, classes with expensive computations in frequently-called const-mem
 <h3 id="avoidance-mechanisms-for-language-users">6.65.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Apply the avoidance mechanisms of ISO IEC 24772-1:2024 6.65.5.</p></li>
+<li><p>Apply the avoidance mechanisms of ISO IEC 24772-1:2024, 6.65.5.</p></li>
 <li><p>Forbid casting away <code class="sourceCode cpp"><span class="at">const</span></code> by <code class="sourceCode cpp"><span class="kw">const_cast</span></code> or by any other means.</p></li>
 <li><p>Be aware that, while <code class="sourceCode cpp"><span class="at">const</span></code> means “read only”, C++ permits values accessed by a <code class="sourceCode cpp"><span class="at">const</span></code> access path to be modified via a different access path.</p></li>
 <li><p>Apply <code class="sourceCode cpp"><span class="at">const</span></code> on pointer-like parameters as a promise to callers and an obligation on the implementation to not modify the referred object.</p></li>
