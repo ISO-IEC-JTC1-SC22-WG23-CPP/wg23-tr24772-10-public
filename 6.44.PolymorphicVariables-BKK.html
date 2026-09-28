@@ -225,9 +225,7 @@
 <li><p><em>cross-casting</em> is casting an object to a sibling/cousin (possibly removed) type in the object's type inheritance hierarchy with multiple inheritance.</p></li>
 <li><p>Unsafe casts, which include C-style casts and <code class="sourceCode cpp"><span class="kw">reinterpret_cast</span></code>, can cast to unrelated arbitrarily structured types. This allows reading and modifying arbitrary memory areas. See subclause [[6.11 Pointer Casting and Pointer Type Changes] [HFC](#HFC) for more details.</p></li>
 </ul>
-<blockquote>
-<p>Developers should be aware that virtual member functions can be overridden in derived classes, even if they are private.</p>
-</blockquote>
+<p>In addition, developers should be aware that virtual member functions can be overridden in derived classes, even if they are private.</p>
 <p>Given the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Z { <span class="dt">int</span> z; <span class="kw">virtual</span> ~Z() { } };</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Y { <span class="dt">int</span> y; <span class="kw">virtual</span> ~Y() { } };</span>
