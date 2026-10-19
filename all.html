@@ -1542,7 +1542,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 </ul>
 <h2 id="RVG">6.12 Pointer Arithmetic [RVG]</h2>
 <h3 id="applicability-to-language">6.12.1 Applicability to language</h3>
-<p>The vulnerabilites described in ISO/IEC 24772-1:2024, 6.12.1 also apply to C++. The vulnerabilities caused by out-of-bounds access are covered in <a href="#HCB">6.8</a>.</p>
+<p>The vulnerabilites described in ISO/IEC 24772-1:2024, 6.12.1 applies to C++. The vulnerabilities caused by out-of-bounds access are covered in <a href="#HCB">6.8</a>.</p>
 <p>Pointers to functions, pointers to members, and pointers to <code class="sourceCode cpp"><span class="dt">void</span></code> do not allow pointer arithmetic.</p>
 <p>The set of valid pointers referring to an array consists of the pointers to each array element plus the pointer just past the end of the array, however dereferencing a pointer one past the end of the array is undefined behaviour <a href="#EWF">[EWF]</a>. A pointer to a single object is considered to point to an array of size one with respect to pointer arithmetic.</p>
 <p>Adding or subtracting an integral value to a pointer value must yield a result that is a valid pointer refering to the same array, otherwise the behavior is undefined. Note: the built-in indexing operator is defined in terms of pointer arithmetic.</p>
@@ -1581,7 +1581,7 @@ If such is meaningful, then <code>std::bit_cast</code> reduces the risk of some 
 <li><p>Use <code class="sourceCode cpp"><span class="bu">std::</span>optional</code> instead of a pointer to represent a potentially empty value.</p></li>
 <li><p>Use containers with value semantics instead of plain arrays such as <code class="sourceCode cpp"><span class="bu">std::</span>array</code>, <code class="sourceCode cpp"><span class="bu">std::</span>vector</code>.</p></li>
 <li><p>Use <code class="sourceCode cpp">make_unique()</code> or <code class="sourceCode cpp">make_shared()</code> for dynamically allocating objects.</p></li>
-<li><p>If using objects of pointer-like types that may be a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, use the avoidance mechanisms of ISO/IEC 24772-1, 6.13.5.</p></li>
+<li><p>If using objects of pointer-like types that may be a <code class="sourceCode cpp"><span class="kw">nullptr</span></code> value is unavoidable, apply the avoidance mechanisms of ISO/IEC 24772-1:2024, 6.13.5.</p></li>
 <li><p>Use static and dynamic analysis tools to detect potential violations of this guideline.</p></li>
 </ul>
 <h2 id="XYK">6.14 Dangling Reference to Heap [XYK]</h2>
