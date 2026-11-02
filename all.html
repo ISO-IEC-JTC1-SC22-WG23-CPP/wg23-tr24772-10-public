@@ -3391,6 +3391,7 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 <p>C++ provides atomic types, mutual exclusion primitives and higher-level synchronization mechanisms in the standard library to prevent data races. Sharing non-volatile constant data or not sharing data at all does not incur data races. For example, avoiding pointer-like types for thread function parameters guarantees that there is no sharing of the argument values.</p>
 <p>The C++ memory model defines how memory accesses can be reordered. The default memory order guarantees sequential consistency. For increased parallel execution other memory orders can be used but require expert-level of care.</p>
 <p><strong>NOTE: The above sentence needs explanation or rewrite.</strong></p>
+<p><strong>NOTE:</strong> std::shared_ptr<const T> can be safely copied to other threads. a non-const T requires synchronisation, even the when reference counters are atomic.</p>
 <p><strong>Note</strong></p>
 <p>Moved from 6.39 (where to place?)Add explicit synchronization when accessing the referenced object of a shared pointer. (for 6.61??) -and If there is concurrent access to the same shared_ptr object without synchronization and any of those accesses uses a non-const member function of shared_ptr then a data race will occur.</p>
 <p><strong>end</strong></p>
