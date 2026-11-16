@@ -3385,29 +3385,25 @@ return foo; // matches global foo not base&lt;T&gt;::foo [1]
 </ul>
 <h2 id="CGX">6.61 Concurrent Data Access [CGX]</h2>
 <h3 id="applicability-to-language">6.61.1 Applicability to language</h3>
-<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.61 applies to C++ threads. Accessing mutable data from multiple threads without synchronization is undefined behaviour <a href="#EWF">[EWF]</a>.</p>
-<p>C++ provides atomic types, mutual exclusion primitives and higher-level synchronization mechanisms in the standard library to prevent data races. Sharing non-volatile constant data or not sharing data at all does not incur data races. For example, avoiding pointer-like types for thread function parameters guarantees that there is no sharing of the argument values.</p>
-<p>The C++ memory model defines how memory accesses can be reordered. The default memory order guarantees sequential consistency. For increased parallel execution other memory orders can be used but require expert-level of care.</p>
-<p><strong>NOTE: The above sentence needs explanation or rewrite.</strong></p>
-<p><strong>NOTE:</strong> std::shared_ptr<const T> can be safely copied to other threads. a non-const T requires synchronisation, even the when reference counters are atomic.</p>
-<p><strong>Note</strong></p>
-<p>Moved from 6.39 (where to place?)Add explicit synchronization when accessing the referenced object of a shared pointer. (for 6.61??) -and If there is concurrent access to the same shared_ptr object without synchronization and any of those accesses uses a non-const member function of shared_ptr then a data race will occur.</p>
-<p><strong>end</strong></p>
-<p>C++ programs that used multiple threads before the C++11 standard can employ volatile variables to guarantee race free data access. This practice is not sanctioned by current standard as <code class="sourceCode cpp"><span class="at">volatile</span></code> is not permitted for synchronization. The use of <code>volatile std::sig_atomic_t</code> only prevents a data race between a signal handler an the execution thread running the signal handler.</p>
+<p>The vulnerability as documented in ISO/IEC 24772-1:2024, 6.61 applies to C++. Accessing mutable data from multiple threads without synchronization is undefined behaviour <a href="#EWF">[EWF]</a>. Variables with automatic storage duration or thread storage duration cannot create data races, as long as their address is not shared with other threads, i.e., by passing a reference to one as a thread function argument. Sharing non-volatile constant data or not sharing data at all does not incur data races.</p>
+<p>C++ provides atomic types, mutual exclusion primitives and higher-level synchronization mechanisms in the standard library to prevent data races. For example, avoiding pointer-like types for thread function parameters guarantees that there is no sharing of the argument values.</p>
+<p>The C++ memory model defines how memory accesses on atomic variables can be reordered. The default memory order guarantees sequential consistency. For increased parallel execution other memory orders can be used but require expert-level of care.</p>
+<p>A special case of safe sharing is immutable data shared with a reference-counted <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr&lt;T <span class="at">const</span>&gt;</code> copies in multiple threads. This use case allows dynamic initialisation and destruction of immutable shared data without the need to rely on variables with static storage duration. However, mutable data of type <code>T</code> shared via <code class="sourceCode cpp"><span class="bu">std::</span>shared_ptr&lt;T&gt;</code> copies requires synchronisation, because only the reference counters of a shared pointer are atomic.</p>
+<p>Before multi-threading was standardised for C++, implementations supported <code class="sourceCode cpp"><span class="at">volatile</span></code> variables for data race free access. This use of <code class="sourceCode cpp"><span class="at">volatile</span></code> is no longer sanctioned by the standard and shared mutable <code class="sourceCode cpp"><span class="at">volatile</span></code> variables can cause a data race. Communicating from a signal handler using the legacy <code>volatile std::sig_atomic_t</code>{.cpp) variables is not an atomic operation.</p>
 <p>The C++ algorithm library allows specifying non-sequential execution policy for most algorithms. Employing parallel (<code class="sourceCode cpp"><span class="bu">std::</span>par</code>) or vectorized (<code class="sourceCode cpp"><span class="bu">std::</span>unseq</code>, <code class="sourceCode cpp"><span class="bu">std::</span>par_unseq</code>) execution policies may have additional requirements on data layout of the underlying ranges, especially to avoid data races.</p>
-<p>Primitives requiring explicit locking and unlocking the pairwise application of these operations is supported implicitly by <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code>, even when an exception might be thrown. In addition to scope-based locking, <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> guarantees deadlock-free locking of multiple mutexes.</p>
-<p>Variables with thread storage duration cannot create data races, as long as their address is not shared with other threads.</p>
-<p>Discuss sharing of memory between tasks!! i.e. Don’t do it!?</p>
+<p>Primitives requiring explicit locking and unlocking the pairwise application of these operations is supported implicitly by <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> or <code class="sourceCode cpp"><span class="bu">std::</span>unique_lock</code>, even when an exception might be thrown. In addition to scope-based locking, <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> guarantees deadlock-free locking of multiple mutexes.</p>
 <h3 id="avoidance-mechanisms-for-language-users">6.61.2 Avoidance mechanisms for language users</h3>
 <p>To avoid the vulnerability or mitigate its ill effects, C++ software developers can:</p>
 <ul>
-<li><p>Place all mutable data in memory accessible to only one thread at a time;</p></li>
-<li><p>Use the appropriate standard library features for synchronization of shared mutable data, in particular use <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> or the other scoped-based locking library facilities;</p></li>
-<li><p>Prohibit calling lock and unlock facilities directly.</p></li>
+<li><p>Place all unsynchronized mutable data in memory accessible to only one thread at a time;</p></li>
+<li><p>Pass thread function arguments by non-pointer-like values unless they are internally synchronized;</p></li>
+<li><p>Use the appropriate standard library features for synchronization;</p></li>
+<li><p>Prohibit calling pairwise lock and unlock facilities directly, in particular use <code class="sourceCode cpp"><span class="bu">std::</span>scoped_lock</code> or the other scoped-based locking library facilities;</p></li>
 <li><p>Forbid the use of volatile for synchronization;</p></li>
+<li><p>For sharing immutable data requiring dynamic intialisation, consider passing it via <code class="sourceCode cpp">shared_ptr&lt;T <span class="at">const</span>&gt;</code> to all relevant threads;</p></li>
 <li><p>Avoid specifying memory orders on atomic operations other than sequential consistency;</p></li>
-<li><p>Use atomic variables or fences for synchronization of data shared from a signal handler, employ <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> only in a single-threaded environment;</p></li>
-<li><p>Pass all thread function arguments by non-pointer-like values.</p></li>
+<li><p>Use non-blocking atomic variables or fences for synchronisation of data shared from a signal handler, limit the use of <code class="sourceCode cpp"><span class="at">volatile</span> <span class="dt">sig_atomic_t</span></code> to a single-threaded environment;</p></li>
+<li><p>When using non-sequential-consistency memory ordering, get expert-level guidance and consider providing mathematical proof, that the relevant system properties are guaranteed by your use of those memory orders.</p></li>
 </ul>
 <h2 id="concurrency-premature-termination-cgs">6.62 Concurrency – Premature Termination [CGS]</h2>
 <h3 id="applicability-to-language">6.62.1 Applicability to language</h3>
